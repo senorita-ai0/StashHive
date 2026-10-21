@@ -142,6 +142,31 @@ void main() {
     expect(repository.collections.value, ['Existing']);
   });
 
+  test('restores the previous attachment if an edited item write fails', () async {
+    final originalBytes = Uint8List.fromList([1, 3, 5, 7]);
+    final editedBytes = Uint8List.fromList([2, 4, 6, 8]);
+    final image = buildImage();
+    await repository.save(image, attachmentBytes: originalBytes);
+
+    LibraryRepository.saveBeforeItemCommitForTesting = () async {
+      throw StateError('simulated item write failure');
+    };
+    try {
+      await expectLater(
+        repository.save(image.copyWith(title: 'Edited image'), attachmentBytes: editedBytes),
+        throwsA(isA<StateError>()),
+      );
+    } finally {
+      LibraryRepository.saveBeforeItemCommitForTesting = null;
+    }
+
+    expect(repository.findById(image.id)!.title, image.title);
+    expect(
+      await repository.readAttachment(image.attachmentKey!),
+      orderedEquals(originalBytes),
+    );
+  });
+
   test('rolls back staged items and attachments when restore is interrupted', () async {
     await repository.addCollection('Existing');
     await repository.save(buildLink(id: 'existing-1', collection: 'Existing'));

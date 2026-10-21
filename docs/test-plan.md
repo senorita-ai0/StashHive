@@ -84,3 +84,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - test/library_repository_test.dart injects an exception after the restored item and attachment have been written but before collection preferences commit.
 - Expected: the incoming item and its attachment bytes are removed; the previously saved item and collection assignment remain unchanged; the original error remains visible to the caller.
 - This regression is authored but unrun. It tests the rollback control flow in-process; it does not simulate process death or a filesystem failure during Hive compaction/flush.
+
+
+### Attachment edit rollback regression — 2026-10-21
+
+- test/library_repository_test.dart injects a failure after replacement attachment bytes are written but before the saved-item map commits.
+- Expected: the original item title and attachment bytes remain intact, and the original save error is returned. The test hook must be reset even if the assertion fails.
+- Source/test added, execution pending. Real disk-full, process-death and filesystem failure behavior is still unverified.

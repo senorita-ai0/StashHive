@@ -38,6 +38,7 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 - Hardened backup validation against malformed record types, invalid collection lists and unreferenced attachments; preserved item-assigned collection names in encoded/restored backups.
 - Added regression coverage for malformed mixed-backup rejection without partially importing records; execution is pending the manual validation checkpoint.
 - Strengthened best-effort restore rollback after staged item/attachment writes, preserves prior collection preferences when rollback is possible, and added a fault-injection regression.
+- Fixed save rollback so a failed attachment edit attempts to restore the previously stored bytes instead of deleting them; added a fault-injection regression.
 
 
 ### Phase 2 refinement — 2026-10-21

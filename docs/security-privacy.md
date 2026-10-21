@@ -72,3 +72,9 @@ If the project becomes public, add a monitored security contact before release. 
 - Restore reserves both item-box and attachment-box keys, including orphaned keys and keys tied to unreadable records, before choosing imported IDs.
 - If a restore fails after writes begin, cleanup is attempted for every staged item and attachment, then the prior collection preference value is restored (or the preference key is removed if it did not previously exist). A rollback failure does not mask the original restore exception.
 - This is best-effort rollback, not an atomic database transaction. Power loss, process death and physical storage failure during rollback remain unverified.
+
+
+## Attachment edit failure handling — source added, verification pending
+
+- Before replacing attachment bytes, save captures the prior raw attachment-box value. If the item record cannot commit, it tries to restore that value; for a new attachment with no prior value, it removes the staged bytes.
+- Cleanup failures do not mask the original item-save exception. This is best-effort in-process rollback, not an atomic transaction against power loss or storage failure.

@@ -32,6 +32,11 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function()? restoreBeforeCollectionsCommitForTesting;
 
+  /// Fault-injection seam for testing the save path after attachment bytes are
+  /// staged but before the saved-item record is committed.
+  @visibleForTesting
+  static Future<void> Function()? saveBeforeItemCommitForTesting;
+
   bool get darkMode => _preferencesBox.get('darkMode') == true;
 
   static Future<LibraryRepository> open() async {
@@ -107,19 +112,41 @@ class LibraryRepository {
 
   Future<void> save(SavedItem item, {List<int>? attachmentBytes}) async {
     final key = item.attachmentKey;
-    if (key != null && attachmentBytes == null && !_attachmentsBox.containsKey(key)) {
-      throw StateError('The selected attachment is not available locally. Please select it again.');
+    if (key != null &&
+        attachmentBytes == null &&
+        !_attachmentsBox.containsKey(key)) {
+      throw StateError(
+        'The selected attachment is not available locally. Please select it again.',
+      );
     }
+
+    final hadPreviousAttachment =
+        key != null && _attachmentsBox.containsKey(key);
+    final previousAttachment =
+        hadPreviousAttachment ? _attachmentsBox.get(key) : null;
     var attachmentWritten = false;
     if (key != null && attachmentBytes != null) {
       await _attachmentsBox.put(key, attachmentBytes);
       attachmentWritten = true;
     }
     try {
+      final beforeItemCommit = saveBeforeItemCommitForTesting;
+      if (beforeItemCommit != null) await beforeItemCommit();
       await _itemsBox.put(item.id, item.toMap());
     } catch (_) {
+      // A failed edit must not destroy the previously saved attachment. Restore
+      // its exact stored value if one existed; only remove staged bytes for a
+      // brand-new attachment. Rollback errors must not mask the write error.
       if (attachmentWritten && key != null) {
-        await _attachmentsBox.delete(key);
+        try {
+          if (hadPreviousAttachment) {
+            await _attachmentsBox.put(key, previousAttachment);
+          } else {
+            await _attachmentsBox.delete(key);
+          }
+        } catch (_) {
+          // Best-effort recovery; retain the original save failure.
+        }
       }
       rethrow;
     }

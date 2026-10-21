@@ -49,7 +49,8 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 - [ ] Accessibility and visual comparison against the seven SVG screen references.
 - [ ] Run malformed-backup rejection and no-partial-restore regression tests at the manual validation checkpoint.
 - [x] Added a fault-injection regression for an exception after item/attachment writes and before collection commit; source attempts best-effort cleanup and restores the previous collection preference value.
-- [ ] Exercise real Hive/filesystem write interruption behavior; the injected regression covers rollback flow, not device-level crash durability.
+- [x] Hardened attachment edits so a failed saved-item write restores the previous attachment bytes instead of deleting the user's existing file; added a save-path fault-injection regression.
+- [ ] Run restore and attachment-edit rollback regressions at the manual validation checkpoint; exercise real Hive/filesystem interruption behavior, which is not covered by in-process fault injection.
 
 ## Current limitations
 
