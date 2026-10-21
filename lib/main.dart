@@ -2729,6 +2729,7 @@ class BackupPrivacyPage extends StatefulWidget {
 
 class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
   bool _exporting = false;
+  bool _choosingBackup = false;
   bool _restoring = false;
 
   void _message(String message) {
@@ -2771,7 +2772,8 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
   }
 
   Future<void> _restore() async {
-    if (_restoring) return;
+    if (_choosingBackup || _restoring) return;
+    setState(() => _choosingBackup = true);
     try {
       final picked = await FilePicker.pickFiles(
         type: FileType.custom,
@@ -2811,7 +2813,10 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         ),
       );
       if (confirmed != true || !mounted) return;
-      setState(() => _restoring = true);
+      setState(() {
+        _choosingBackup = false;
+        _restoring = true;
+      });
       final imported = await widget.repository.restoreBackup(source);
       _message('Restored ' + imported.toString() + (imported == 1 ? ' item.' : ' items.'));
     } on FormatException catch (error) {
@@ -2819,7 +2824,12 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
     } catch (error) {
       _message('Could not restore the backup: ' + error.toString());
     } finally {
-      if (mounted) setState(() => _restoring = false);
+      if (mounted) {
+        setState(() {
+          _choosingBackup = false;
+          _restoring = false;
+        });
+      }
     }
   }
 
@@ -2859,10 +2869,17 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Stored on this device', style: TextStyle(fontWeight: FontWeight.w700)),
+                            Text(
+                              kIsWeb ? 'Stored in this browser' : 'Stored on this device',
+                              style: TextStyle(fontWeight: FontWeight.w700),
+                            ),
                             SizedBox(height: 4),
-                            Text('StashHive does not sync your library to the cloud.',
-                                style: TextStyle(color: kMuted, fontSize: 12)),
+                            Text(
+                              kIsWeb
+                                  ? 'Your library stays in this browser profile; it is not synced to the cloud.'
+                                  : 'StashHive does not sync your library to the cloud.',
+                              style: TextStyle(color: kMuted, fontSize: 12),
+                            ),
                           ],
                         ),
                       ),
@@ -2896,8 +2913,12 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                   icon: Icons.file_upload_outlined,
                   title: 'Restore from backup',
                   subtitle: 'Choose a StashHive .json backup file. Current items are preserved.',
-                  buttonText: _restoring ? 'Restoring…' : 'Choose backup file',
-                  loading: _restoring,
+                  buttonText: _restoring
+                      ? 'Restoring…'
+                      : _choosingBackup
+                          ? 'Choosing backup…'
+                          : 'Choose backup file',
+                  loading: _choosingBackup || _restoring,
                   onPressed: _restore,
                 ),
                 const SizedBox(height: 18),
@@ -2919,7 +2940,9 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        'Uninstalling the app or clearing browser site data can erase your local library. Save backups somewhere safe. Android and web libraries are separate.',
+                        kIsWeb
+                            ? "Clearing this browser's site data can erase your local library. Save backups somewhere safe. Another browser or profile has a separate library."
+                            : 'Uninstalling the app or clearing app data can erase your local library. Save backups somewhere safe. The web and Android libraries are separate.',
                         style: TextStyle(fontSize: 12, height: 1.45),
                       ),
                     ],
@@ -3002,10 +3025,17 @@ class _BackupCard extends StatelessWidget {
               child: FilledButton(
                 onPressed: loading ? null : onPressed,
                 child: loading
-                    ? const SizedBox(
-                        height: 17,
-                        width: 17,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    ? Semantics(
+                        label: buttonText,
+                        liveRegion: true,
+                        child: const SizedBox(
+                          height: 17,
+                          width: 17,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        ),
                       )
                     : Text(buttonText),
               ),

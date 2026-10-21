@@ -55,3 +55,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 - FR-009 includes Android share-intake source, manifest configuration and a three-second event de-duplication window; device/build validation remains pending.
 - Regression tests for the new behavior are authored but not run, because the owner requested manual-only CI.
+
+### TSK-315 — Platform-specific backup / restore interaction
+
+- Implementation: `lib/main.dart`, `_BackupPrivacyPageState` and `_BackupCard`.
+- Requirements: FR-012–015, FR-018, NFR-006.
+- Behavior: browser-specific storage label and warning, duplicate restore guard from file selection through completion, live-region label on busy indicator.
+- Verification: source reviewed and committed; actual web/Android behavior remains unverified until manual validation.

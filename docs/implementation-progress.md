@@ -84,3 +84,9 @@ Delete now snapshots the item and attachment values, then attempts best-effort r
 ## Save post-write failure recovery — 2026-10-21
 
 The save path now snapshots the prior item map and attachment value before writes, and marks each write as attempted before awaiting storage. If a save fails after an item record may have been committed, it attempts to restore the original map (or remove a new record) as well as the previous attachment bytes. A fault-injection regression simulates an error after the item map write. The test has been authored but remains unrun; rollback is best-effort.
+
+## Phase 3 — platform assurance increment (2026-10-21)
+
+- Backup & Privacy now distinguishes storage in a browser profile from storage in the Android/device app, and gives platform-specific data-loss warnings.
+- The restore action enters a busy state before opening the file picker, preventing repeated taps from starting multiple overlapping restore flows. The busy indicator exposes a live-region label for assistive technology.
+- This is source-level work only. Web reload/quota behavior, keyboard/screen-reader review and platform flows remain pending manual verification; CI was not run.

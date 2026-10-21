@@ -112,3 +112,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - A fault-injection test throws after the saved-item record write and verifies that both the prior item fields and prior attachment bytes are restored.
 - Storage rollback remains best-effort if the underlying storage also rejects recovery writes. This regression is authored but not executed.
+
+### Phase 3 platform-specific storage copy and restore guard — 2026-10-21
+
+- Verify the Backup & Privacy screen says “Stored in this browser” on web and explains browser-profile/site-data boundaries.
+- Verify Android copy refers to app/device storage and that clearing app data/uninstalling may remove the local library.
+- Rapidly activate restore and confirm only one file picker/restore flow can be active; verify cancel resets the button and screen-reader announcements describe the busy action.
+- Run these checks on web and Android at the owner's manual validation checkpoint. No automated execution is claimed.

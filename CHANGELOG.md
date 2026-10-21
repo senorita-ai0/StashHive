@@ -72,3 +72,9 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 
 - Extended save rollback to restore the previous item record when an error occurs after the record write may have taken effect, and to include attachment-stage failures in the recovery block.
 - Added a fault-injection regression for an error after item write. Test/build execution remains pending.
+
+### Phase 3 platform assurance — 2026-10-21
+
+- Made Backup & Privacy describe browser-profile storage separately from device/app storage and present platform-specific data-loss warnings.
+- Disabled repeated restore activation starting before the file picker opens; added an accessible label for the busy indicator.
+- Platform verification and CI remain pending by owner request.
