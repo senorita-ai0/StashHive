@@ -170,3 +170,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - Use the saved-item action menu to open details and mark an item as a favorite.
 - Verify the detail callback fires and the repository state changes for the expected item. Test source is authored but unrun; manual keyboard/screen-reader testing remains NOT STARTED.
+
+
+### TC-029 — Share-event deduplication batch and cache boundaries
+
+- Submit a two-item batch, then the same items in reverse order; both distinct ordered batches should be accepted.
+- Submit the reversed batch again inside the deduplication window; it should be rejected as a duplicate.
+- With a one-entry cache, submit a different batch and verify the oldest fingerprint is evicted and can be accepted again.
+- Widget/unit test source is authored but unrun. Real Android initial-intent and stream delivery checks remain NOT STARTED.
