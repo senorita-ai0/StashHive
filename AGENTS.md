@@ -27,6 +27,8 @@
 - OCR/PDF text extraction, particularly Urdu/Nastaleeq, is a risk to validate—not a promise.
 - Do not log users' saved content. Avoid unrelated permissions and telemetry.
 - No auth/cloud sync/social feed/browser extension/payment system is part of the proposed MVP.
+- The first slice uses Hive CE behind the repository interface; database/package compatibility remains subject to CI and platform verification.
+- The first slice enforces a 15 MB imported attachment limit and a 100 MB combined attachment limit for version-1 JSON backups.
 - After blueprint approval, use the seven screen references in `docs/design/screen-reference.md` as the UI baseline. Preserve IDs, visible hierarchy, navigation, interactions and all required states.
 
 ## Engineering rules after approval

@@ -52,6 +52,7 @@ Flutter supports browser deployment, but web has different filesystem and browse
 - [Cost and monetization plan](docs/cost-and-monetization.md)
 - [AI workflow for this repository](docs/AI_WORKFLOW.md)
 - [Approval summary](docs/BLUEPRINT_REVIEW.md)
+- [Implementation progress](docs/implementation-progress.md)
 
 ## Before implementation
 

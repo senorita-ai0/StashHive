@@ -48,3 +48,14 @@
 - Screenshot Organizer: SnapSort: https://play.google.com/store/apps/details?hl=en_AU&id=com.saad.screenshotorganizer
 
 See [`competitor-gap-hypotheses.md`](competitor-gap-hypotheses.md) for a summary and explicit caveats. This is not yet a comprehensive mixed-content competitor audit.
+
+
+## Packages referenced by the first implementation slice (checked 2026-10-21)
+
+- Hive CE metadata/storage candidate: https://pub.dev/packages/hive_ce (the package page lists native/browser support; validate actual CRUD, backup and platform builds).
+- Hive CE Flutter integration: https://pub.dev/packages/hive_ce_flutter (used for Flutter initialization; pin/resolution/build must be checked in CI).
+- File selection: https://pub.dev/packages/file_picker (manual image/document and JSON backup intake; real Android/web behavior still needs testing).
+- Platform share flow: https://pub.dev/packages/share_plus (used to share backup exports and local files; user must choose a destination to retain an export).
+- External links: https://pub.dev/packages/url_launcher (used for opening validated HTTP/HTTPS links in the external browser).
+
+Dependency versions are declared in `pubspec.yaml`; a lockfile has not yet been generated from a successful `flutter pub get`. CI resolution is the first verification gate.

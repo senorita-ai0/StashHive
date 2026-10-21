@@ -62,3 +62,10 @@ The first coding increment should be a thin vertical slice: launch app → save 
 ## Release gate
 
 MVP must not be described as ready until create/edit/delete, link open, supported attachment import, metadata search, restart persistence, backup/restore, platform limitations, privacy, and target-device/browser smoke tests have evidence recorded in the traceability matrix.
+
+
+## Implementation status update — 2026-10-21
+
+The owner approved BUILD mode. TSK-001 (blueprint approval) is now **DONE**. Initial Phase 1 code has been authored for the app shell, local repository, manual save/edit, metadata search, collections/tags, item detail, selected-file imports and version-1 JSON backup/restore. TSK-101 and TSK-102 are **IN PROGRESS — verification pending** because the authoring environment has no Flutter/Dart executable. GitHub Actions is configured to run format, analysis, unit tests and a web build; check its actual run before claiming success.
+
+Next: resolve CI findings, run on a real Android device and Chrome, validate storage/backup edge cases, then wire Android share-intent intake. OCR remains gated; do not promise search inside images/PDFs until tested.

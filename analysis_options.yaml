@@ -1,0 +1,21 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - .dart_tool/**
+  errors:
+    invalid_use_of_visible_for_testing_member: warning
+    invalid_use_of_protected_member: warning
+
+linter:
+  rules:
+    avoid_print: true
+    always_declare_return_types: true
+    cancel_subscriptions: true
+    close_sinks: true
+    directives_ordering: true
+    no_leading_underscores_for_local_identifiers: true
+    prefer_const_constructors: true
+    prefer_final_locals: true
+    sort_child_properties_last: true

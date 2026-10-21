@@ -36,3 +36,11 @@
 ## Incident/reporting
 
 If the project becomes public, add a monitored security contact before release. Until an official contact and disclosure process exist, do not invent an email address or claim a formal security response service.
+
+
+## Phase 1 implementation details — verification pending
+
+- Import source: user-selected images and supported document extensions; 15 MB per-file cap in the initial UI.
+- Backup v1: JSON with base64 attachment content, maximum 15 MB per file and 100 MB combined attachment bytes; decode validates app marker/version, record count, IDs, URL schemes, text/tag bounds and attachment references before writing.
+- Restore uses merge semantics rather than replacing the user's current library. ID collisions are remapped, and the repository attempts to roll back records written during an exception.
+- These safeguards are authored but not security-audited or test-proven until CI and manual malformed-file tests pass.

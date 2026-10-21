@@ -126,3 +126,8 @@ flowchart TD
 - `DONE`: proposed component boundaries, main entity model, important trade-offs, privacy boundaries.
 - `IN PROGRESS`: selection of database/attachment format; Android share API proof of concept; web persistence/backup proof of concept; OCR feasibility.
 - `NOT STARTED`: product source implementation, dependency pinning, migrations, deployment.
+
+
+## Phase 1 implementation update — 2026-10-21
+
+Implemented source currently uses three Hive CE boxes: saved item records, attachment bytes, and settings/collection metadata. All UI accesses storage through `LibraryRepository`. Browser/Android behavior is not yet validated by a local SDK run; use CI and real platform tests before locking this choice. Backup format v1 is JSON with a manifest, version, items, collections and base64 attachment entries; the application limits each attachment to 15 MB and combined backup attachments to 100 MB.

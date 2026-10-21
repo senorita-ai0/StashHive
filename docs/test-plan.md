@@ -48,3 +48,16 @@
 ## Commands
 
 **Not yet available:** no Flutter `pubspec.yaml`, `lib/`, or test suite has been created because implementation is gated. After approval, verify the environment first, then record the exact successful commands for format, analyze, unit/widget/integration tests, Android release build, and web release build. Do not claim these checks pass before they have run.
+
+
+## Phase 1 verification setup — 2026-10-21
+
+The repository now contains unit tests for saved-item map round trips, metadata search, Unicode content, nullable-field clearing, backup encode/decode, attachment round trips, unsupported versions, unsafe URLs and missing attachment data. The configured workflow runs:
+
+- `dart format lib test` (formats sources in the CI working copy)
+- `flutter analyze`
+- `flutter test --reporter expanded`
+- `flutter build web --release`
+- Android debug build after CI has generated the Android platform folder.
+
+These checks are **not reported as passed yet** because the workflow must run against the pushed commit. Manual platform validation remains necessary for file pickers, share sheet, browser storage quotas and real device lifecycle behavior.
