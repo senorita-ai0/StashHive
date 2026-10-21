@@ -35,18 +35,25 @@ class IncomingShare {
   IncomingShare withShareProgress({
     required int position,
     required int total,
-  }) =>
-      IncomingShare(
-        kind: kind,
-        title: title,
-        url: url,
-        content: content,
-        bytes: bytes,
-        fileName: fileName,
-        mimeType: mimeType,
-        sharePosition: position < 1 ? 1 : position,
-        shareTotal: total < 1 ? 1 : total,
-      );
+  }) {
+    final safeTotal = total < 1 ? 1 : total;
+    final safePosition = position < 1
+        ? 1
+        : position > safeTotal
+            ? safeTotal
+            : position;
+    return IncomingShare(
+      kind: kind,
+      title: title,
+      url: url,
+      content: content,
+      bytes: bytes,
+      fileName: fileName,
+      mimeType: mimeType,
+      sharePosition: safePosition,
+      shareTotal: safeTotal,
+    );
+  }
 }
 
 /// Filters only near-simultaneous duplicate deliveries from the initial intent
