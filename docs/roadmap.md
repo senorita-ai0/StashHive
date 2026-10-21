@@ -181,3 +181,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-322:** Added regression coverage for ordered multi-item share batches and the bounded recent-fingerprint cache. A reversed batch must be treated as a distinct event; an identical recent batch is suppressed; adding a different batch at capacity evicts the oldest fingerprint.
 - Test source is committed but unrun. Android event delivery and cold-start/stream duplicate behavior remain pending device verification. Phase 2 remains open until the full validation gates pass.
+
+
+### Phase 2 — bounded incoming-share progress (2026-10-22)
+
+- **TSK-323:** `IncomingShare.withShareProgress` now clamps the displayed position to the normalized total as well as enforcing a minimum of one. Malformed progress values can no longer report a position beyond the batch size.
+- Added regression cases for zero/negative-style lower-bound input, position greater than total, and an invalid total. Test source is committed but unrun; Phase 2 remains open pending full test and Android validation.
