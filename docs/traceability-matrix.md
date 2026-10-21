@@ -90,3 +90,8 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-004–005, NFR-006.
 - Test: `test/accessibility_widgets_test.dart` checks the semantic name and tap action.
 - Verification: test source added, execution pending; keyboard and screen-reader checks remain manual.
+
+
+### TSK-319 follow-up — 2026-10-21
+
+- The Library search widget regression now verifies that semantic activation invokes the Search callback, not merely that the semantics node exposes a tap action. Semantics handles are disposed through test teardown. This is authored source only; execution and real keyboard/screen-reader checks remain pending.

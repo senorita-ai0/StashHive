@@ -149,3 +149,9 @@ TSK-318 adds title-based semantic labels to image thumbnails and detail previews
 ### Phase 3 — accessible Library search control (2026-10-21)
 
 TSK-319 changes the decorative search field on the Library page into a clearly named semantic navigation button while retaining the existing visual style. Its child TextField is excluded from semantics because it is not editable; the actual Search tab contains the editable query field. The widget regression test is authored but has not been executed.
+
+
+### Phase 3 — semantic activation regression — 2026-10-21
+
+- The Library search accessibility widget test now performs the control's semantic tap action and verifies that the Search navigation callback is invoked, rather than checking only that a tap action exists.
+- Semantics handles are registered for teardown so a failed assertion does not leave test semantics enabled. Test source is authored; execution remains pending. Keyboard, pointer and assistive-technology behavior still require validation.

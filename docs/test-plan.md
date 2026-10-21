@@ -145,3 +145,9 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the search-shaped Library control is announced as a button named “Search your library,” with the hint that it opens Search.
 - Confirm assistive technology does not announce a text-editing field on the Library tab; the actual Search tab field remains editable.
 - Confirm keyboard activation and pointer activation both open Search. Widget test source is added but not run, and manual screen-reader checks remain pending.
+
+
+### TC-025 — Semantic activation of Library search
+
+- Confirm the Library search teaser is named “Search your library,” exposes a tap action, and semantic activation invokes the Search navigation callback.
+- Verify the real control with keyboard and pointer on web/desktop and TalkBack/screen reader on supported platforms. The widget regression is authored but not run; platform checks remain NOT STARTED.

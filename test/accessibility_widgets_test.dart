@@ -23,15 +23,17 @@ void main() {
     await testDirectory.delete(recursive: true);
   });
 
-  testWidgets('Library search teaser is announced as a button', (tester) async {
+  testWidgets('Library search teaser exposes and handles semantic activation', (tester) async {
     final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
+    var openedSearch = false;
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: app.LibraryPage(
             repository: repository,
             onAdd: (_) {},
-            onSearch: (_) {},
+            onSearch: (_) => openedSearch = true,
             onOpenItem: (_) {},
           ),
         ),
@@ -40,15 +42,15 @@ void main() {
 
     final search = find.bySemanticsLabel('Search your library');
     expect(search, findsOneWidget);
-    expect(
-      tester.getSemantics(search).hasAction(SemanticsAction.tap),
-      isTrue,
-    );
-    semantics.dispose();
+    final node = tester.getSemantics(search);
+    expect(node.hasAction(SemanticsAction.tap), isTrue);
+    node.performAction(SemanticsAction.tap);
+    expect(openedSearch, isTrue);
   });
 
   testWidgets('favorite state is exposed with a meaningful semantic label', (tester) async {
     final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
     const item = SavedItem(
       id: 'favorite-link',
       kind: ItemKind.link,
@@ -75,6 +77,5 @@ void main() {
     );
 
     expect(find.bySemanticsLabel('Saved as a favorite'), findsOneWidget);
-    semantics.dispose();
   });
 }
