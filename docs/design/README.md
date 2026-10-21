@@ -1,28 +1,27 @@
 # StashHive — UX/UI Design Pack
 
-**Status:** Initial concept, not approved. No UI has been implemented.
+**Status:** Seven core screen mockups are now defined as the visual baseline for implementation review. They are static designs, not runtime screenshots.
 
-## Visual direction
+## Primary reference
 
-- Calm, premium utility UI: warm white surfaces, subtle lavender/blue accents, navy text, restrained use of color for content types, consistent icon size, medium-weight typography, rounded but not overly bubbly cards.
-- Make the search field the most prominent control on the library screen.
-- Content-type filters should be readable and scrollable on narrow screens.
-- Avoid bright saturated backgrounds on every card; use small icon/label accents so screenshots and previews remain the visual focus.
-- Include light theme first; dark theme can be an additional milestone after contrast and token consistency are set.
-- All type, labels, tags, and notes use scalable text and Unicode-safe controls.
-
-## Visual asset
-
-`docs/design/screens/stashhive-mobile-core-flows.svg` is an editable concept board showing three mobile screens: Library, Search Results, and Item Detail. It is a direction/reference, not a pixel-perfect specification and not a screenshot of a working app. The content shown is illustrative. The visual brief is recorded in `mockup-prompt.md`.
+Read [Premium Screen Reference](screen-reference.md) for each mockup, its visible hierarchy, interactions, required extra states and requirement mapping. Individual editable SVGs are in `screens/`.
 
 ## Screen inventory
 
-See [screen-inventory.md](screen-inventory.md). Screen IDs remain stable for traceability.
+| ID | Screen | Mockup |
+|---|---|---|
+| SCR-001 | Library | [SVG](screens/scr-001-library.svg) |
+| SCR-002 | Quick Save / Add Item | [SVG](screens/scr-002-quick-save.svg) |
+| SCR-003 | Search Results | [SVG](screens/scr-003-search-results.svg) |
+| SCR-004 | Item Details | [SVG](screens/scr-004-item-details.svg) |
+| SCR-005 | Collections & Tags | [SVG](screens/scr-005-collections-tags.svg) |
+| SCR-006 | Backup & Privacy | [SVG](screens/scr-006-backup-privacy.svg) |
+| SCR-007 | Settings | [SVG](screens/scr-007-settings.svg) |
 
-## Core flows
+## Visual direction
 
-See [user-flows.md](user-flows.md). The Must-have paths are Manual Save, Search & Retrieve, Organize, Delete, Backup and Restore.
+Light warm-neutral canvas, white surfaces, indigo actions, deep-navy typography and restrained type accents. Search stays prominent; content is the visual focus. Screens must be responsive, accessible, and honest about local-storage and bookmark/file states.
 
-## Design system
+## Implementation rule
 
-See [design-system.md](design-system.md). Values are proposed; review the image and approve/revise before implementation. Keep the final design accessible and responsive rather than copying mockup artifacts literally.
+Implement the layouts as the visual baseline, plus all empty/loading/error/permission/unsupported states specified in the reference and test plan. If real platform behavior requires a material deviation, update screenshots, this reference, screen inventory, requirements mapping and tests together.

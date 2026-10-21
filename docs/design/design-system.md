@@ -1,57 +1,40 @@
-# StashHive — Proposed Design System
+# StashHive — Design System
 
-**Status:** Draft tokens for blueprint review. Exact values may change after a Flutter implementation spike.
+**Status:** Draft; illustrated in [Premium Screen Reference](screen-reference.md).
 
-## Principles
-
-1. Search is the primary task; organizing is secondary.
-2. Content preview and title are more important than decorative gradients.
-3. Content types should be recognizable but not rely on color alone.
-4. Controls and typography should remain comfortable at narrow phone widths and large text settings.
-5. Destructive actions are visually separated from routine actions and offer confirmation/undo where feasible.
-
-## Proposed tokens
-
-| Token | Proposed value / rule | Use |
+| Token | Value | Use |
 |---|---|---|
-| `color.brand` | Indigo `#5B5CE2` | Primary actions, selected nav/filter, focus accents |
-| `color.brand-soft` | Lavender `#EEF0FF` | Soft selected background |
-| `color.text-primary` | Deep navy `#18213D` | Titles and primary labels |
-| `color.text-secondary` | Slate `#626D86` | Secondary metadata |
-| `color.surface` | Warm white `#FFFFFF` | Main surfaces |
-| `color.surface-muted` | `#F7F8FC` | App background and subtle section surfaces |
-| `color.border` | `#E5E8F2` | Dividers, input and card outlines |
-| `color.success` | Deep green with text/icon | Confirmation, not large decorative banner |
-| `color.danger` | Accessible red | Delete/error only |
-| `space.1`–`space.8` | 4, 8, 12, 16, 20, 24, 32, 40 dp | Consistent spacing; avoid arbitrary per-screen values |
-| `radius.card` | 16 dp (starting point) | Content cards |
-| `radius.control` | 12 dp (starting point) | Inputs, buttons, filter chips |
-| `type.body` | 14–16 sp with system scaling | General body content |
-| `type.caption` | 12–13 sp; never the only source of meaning | Dates and supporting metadata |
-| `type.heading` | 20–24 sp responsive | Screen headings |
+| color.brand | #5B5CE2 | Primary actions, selection, focus |
+| color.brand-soft | #EEF0FF | Selected backgrounds |
+| color.text-primary | #1B2340 | Titles and primary labels |
+| color.text-secondary | #7B849D | Supporting metadata |
+| color.surface | #FFFFFF | Cards and controls |
+| color.surface-muted | #F8F9FD | App background |
+| color.border | #E7E9F2 | Inputs, cards, separators |
+| color.success | #2F8968 | Success with icon/text |
+| color.warning | #B87A22 | Backup and data-loss notice |
+| color.danger | #C74A5B | Destructive actions/errors |
+| color.type-image | #218F84 | Image type (with a text label) |
+| color.type-document | #3673BE | Document type (with a text label) |
+| space.1–space.8 | 4, 8, 12, 16, 20, 24, 32, 40 dp | Consistent rhythm |
+| radius.card | 14–16 dp | Content cards |
+| radius.control | 12–14 dp | Inputs, buttons, chips |
+| type.body | 14–16 sp with system scaling | Body |
+| type.caption | 11–12 sp, not sole meaning | Dates and metadata |
+| type.heading | 24–28 sp, responsive | Screen title |
 
-## Components to standardize
+## Component rules
 
-- App shell/navigation for Android and web responsive layouts.
-- Search field with clear button, filters and visible focus state.
-- Filter chips and content-type badges.
-- Saved-item card variants: image, link, text, document.
-- Collection/tag chips.
-- Empty/loading/error cards.
-- Save/edit form fields and URL validation messages.
-- Destructive confirmation and undo affordance.
-- Backup/restore progress, success, failure, and unknown-version states.
+- Reuse the app shell, header, bottom navigation, search field, type chip, saved-item card, type badge, tag chip, collection row and primary button.
+- Pair content-type color with a text label or accessible icon; color alone is insufficient.
+- Search is prominent; saved content previews remain the focus.
+- Do not hardcode version, item counts, backup dates or storage meters; mockup values are illustrative.
+- Bookmark, copied attachment, metadata preview and offline snapshot are separate states.
 
-## Responsive behavior
+## Responsive and accessible behavior
 
-- Narrow phone: one-column list, search on top, horizontally scrollable type filters, bottom navigation if it remains accessible and does not obscure content.
-- Wide screen: constrained content width, optional side navigation, library/detail split view only if it simplifies use.
-- Keyboard: visible focus and sensible tab order on web; no hover-only interactions.
-- Large text: allow labels and card content to wrap; never clip titles or core buttons.
+Allow text to wrap under system scaling. Provide visible focus, semantic labels and keyboard order on web. Use adequate contrast, touch-sized targets, accessible error associations and reduced-motion behavior where needed.
 
-## Accessibility checks
+## Source of truth
 
-- Do not encode content types only by color; include labels/icons with accessible names.
-- Check text/background contrast, focus visibility, keyboard navigation, semantics, input errors, and scaling.
-- Motion is optional and should respect reduced-motion settings where applicable.
-- The target for the public web experience is WCAG 2.2 AA as a design goal, not a compliance claim.
+Use the seven IDs and layouts in [Premium Screen Reference](screen-reference.md). If implementation needs to deviate for platform behavior or usability, update the reference, screen inventory, requirements mapping and tests together.

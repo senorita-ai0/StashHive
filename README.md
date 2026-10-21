@@ -4,7 +4,7 @@
 
 StashHive is a personal digital library for people who want to save useful things from apps, websites, and their own device—and reliably find them later. Planned item types include screenshots and images, website/article/video links, text snippets, notes, PDFs, and documents.
 
-> **Current status: Blueprint review — product implementation has not started.** The repository currently contains product planning and design artifacts. Do not create the Flutter app or add runtime dependencies until the blueprint is approved.
+> **Current status: Blueprint review — product implementation has not started.** The repository contains planning and design artifacts. Read the [Premium Screen Reference](docs/design/screen-reference.md) to see the seven proposed UI screens. Do not create the Flutter app or add runtime dependencies until the blueprint is approved.
 
 ## Product principles
 
@@ -45,7 +45,8 @@ Flutter supports browser deployment, but web has different filesystem and browse
 - [Traceability matrix](docs/traceability-matrix.md)
 - [Risk register](docs/risk-register.md)
 - [Security and privacy](docs/security-privacy.md)
-- [Design overview](docs/design/README.md)
+- [**Premium Screen Reference — all seven screens**](docs/design/screen-reference.md)
+- [Design overview and individual SVGs](docs/design/README.md)
 - [Technical source review](docs/research/official-sources.md)
 - [Competitor scan and differentiation hypotheses](docs/research/competitor-gap-hypotheses.md)
 - [Cost and monetization plan](docs/cost-and-monetization.md)
@@ -54,7 +55,7 @@ Flutter supports browser deployment, but web has different filesystem and browse
 
 ## Before implementation
 
-Read `AGENTS.md` and the files linked above. Review the open assumptions and the proposed storage/share/OCR proof of concept. Implementation is paused until the user explicitly approves the blueprint. See [Blueprint Review Summary](docs/BLUEPRINT_REVIEW.md).
+Read `AGENTS.md` and the files linked above. The screen reference is the proposed visual baseline: implement its layout and labels plus all documented error/empty/loading/permission states. Review open assumptions and the proposed storage/share/OCR proofs of concept. Product implementation remains paused until the user explicitly approves the blueprint.
 
 ## License
 
