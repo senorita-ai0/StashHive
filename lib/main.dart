@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
@@ -263,7 +262,7 @@ class _HomeShellState extends State<HomeShell> {
   String _searchSeed = '';
   int _searchRevision = 0;
 
-  Future<void> _openAdd({ItemKind? kind}) async {
+  Future<void> _openAdd(ItemKind? kind) async {
     await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (_) => QuickSavePage(
@@ -324,7 +323,7 @@ class _HomeShellState extends State<HomeShell> {
       body: IndexedStack(index: _selectedTab, children: pages),
       floatingActionButton: _selectedTab == 0
           ? FloatingActionButton(
-              onPressed: () => _openAdd(),
+              onPressed: () => _openAdd(null),
               tooltip: 'Save something',
               backgroundColor: kBrand,
               foregroundColor: Colors.white,
@@ -403,7 +402,6 @@ class _LibraryPageState extends State<LibraryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     return SafeArea(
       child: Center(
         child: ConstrainedBox(
@@ -1090,7 +1088,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
 
   Future<void> _pickAttachment() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: _kind == ItemKind.image ? FileType.image : FileType.custom,
         allowedExtensions: _kind == ItemKind.image
             ? null
@@ -1098,7 +1096,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
         allowMultiple: false,
         withData: true,
       );
-      if (result == null || result.files.isEmpty) return;
+      if (!mounted || result == null || result.files.isEmpty) return;
       final file = result.files.first;
       final bytes = file.bytes;
       if (bytes == null) {
@@ -1345,7 +1343,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String?>(
-                    value: _collection,
+                    initialValue: _collection,
                     isExpanded: true,
                     decoration: const InputDecoration(
                       labelText: 'Collection (optional)',
@@ -2581,7 +2579,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
   Future<void> _restore() async {
     if (_restoring) return;
     try {
-      final picked = await FilePicker.platform.pickFiles(
+      final picked = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: const ['json'],
         allowMultiple: false,

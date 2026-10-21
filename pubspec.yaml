@@ -9,7 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cross_file: ^0.3.5
   file_picker: ^11.0.3
   hive_ce: ^2.22.0
   hive_ce_flutter: ^2.5.0
