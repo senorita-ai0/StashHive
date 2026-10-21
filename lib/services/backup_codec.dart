@@ -257,8 +257,19 @@ class BackupCodec {
       declaredCollections,
       items.map((item) => item.collection),
     );
+    final canonicalCollectionNames = <String, String>{
+      for (final name in safeRestoredCollections) name.toLowerCase(): name,
+    };
+    final safeRestoredItems = items.map((item) {
+      final assigned = item.collection;
+      if (assigned == null) return item;
+      final canonical = canonicalCollectionNames[assigned.toLowerCase()];
+      return canonical == null || canonical == assigned
+          ? item
+          : item.copyWith(collection: canonical);
+    }).toList(growable: false);
     return DecodedBackup(
-      items: List<SavedItem>.unmodifiable(items),
+      items: List<SavedItem>.unmodifiable(safeRestoredItems),
       attachments: Map<String, BackupAttachment>.unmodifiable(attachments),
       collections: safeRestoredCollections,
       exportedAt: decoded['exportedAt'] is String ? decoded['exportedAt'] as String : '',
@@ -300,7 +311,7 @@ class BackupCodec {
     }
     final attachmentKey = value['attachmentKey'];
     if (attachmentKey is String &&
-        (attachmentKey.isEmpty || attachmentKey.length > 128)) {
+        (attachmentKey.trim().isEmpty || attachmentKey.length > 128)) {
       throw const FormatException('A saved item has an invalid attachment key.');
     }
     final attachmentName = value['attachmentName'];

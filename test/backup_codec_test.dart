@@ -125,6 +125,19 @@ void main() {
       expect(decoded.items.single.collection, 'Research');
     });
 
+    test('canonicalizes assigned collection names case-insensitively', () {
+      final json = BackupCodec.encode(
+        items: [sampleLink().copyWith(collection: 'research')],
+        attachmentBytes: <String, Uint8List>{},
+        collections: const ['Research'],
+      );
+
+      final decoded = BackupCodec.decode(json);
+
+      expect(decoded.collections, ['Research']);
+      expect(decoded.items.single.collection, 'Research');
+    });
+
     test('rejects attachment payloads not referenced by any item', () {
       final payload = <String, Object?>{
         'app': 'StashHive',
