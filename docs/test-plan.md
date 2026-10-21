@@ -178,3 +178,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Submit the reversed batch again inside the deduplication window; it should be rejected as a duplicate.
 - With a one-entry cache, submit a different batch and verify the oldest fingerprint is evicted and can be accepted again.
 - Widget/unit test source is authored but unrun. Real Android initial-intent and stream delivery checks remain NOT STARTED.
+
+
+### TC-030 — Incoming-share batch progress bounds
+
+- Clone a share draft with a position below one and confirm it normalizes to position one.
+- Clone a draft with a position greater than the total and confirm the position clamps to the total.
+- Supply an invalid total and confirm both normalized total and position are one.
+- Unit test source is authored but unrun; end-to-end Android batch presentation remains NOT STARTED.
