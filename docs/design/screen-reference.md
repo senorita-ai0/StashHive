@@ -130,3 +130,7 @@ Library and Search card heights now adapt to the active text scaler so two-line 
 ## Phase 3 refinement — screen-reader labels
 
 Saved image previews now have title-based semantic labels, and the visible favorite star communicates that an item is saved as a favorite. Verify the resulting semantics on Android TalkBack and at least one desktop/web screen reader; source changes alone do not establish accessibility compliance.
+
+## Phase 3 refinement — accessible Library search
+
+The Library search teaser acts as a navigation button; it is not itself an editable search field. The implementation now exposes that distinction in its semantics while preserving the visual treatment from SCR-001. The real Search screen remains the place for text entry.

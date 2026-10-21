@@ -98,3 +98,8 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 
 - Added a meaningful semantic label for favorite markers and title-based labels for image thumbnails and detail previews.
 - Added a widget-level regression test for favorite state; it has not been run. TalkBack and web screen-reader verification remain pending.
+
+### Phase 3 accessibility refinement — 2026-10-21
+
+- Exposed the Library search teaser as an accessible navigation button and removed the misleading editable-field semantics from its decorative child.
+- Added a widget semantics regression test source. Test execution and manual keyboard/screen-reader verification remain pending.

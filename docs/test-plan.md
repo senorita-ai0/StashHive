@@ -139,3 +139,9 @@ The previous Android debug build failed when the generated plugin registrant cou
 - With a favorite item in the Library, inspect the semantics tree and confirm its favorite state is announced as “Saved as a favorite.”
 - Confirm the stored image thumbnail and item-detail preview expose a useful title-based image label.
 - Use TalkBack on Android and a screen reader on web to ensure the added labels are understandable and not redundantly repeated. Manual assistive-technology checks remain NOT STARTED.
+
+### TC-024 — Library search navigation semantics
+
+- Confirm the search-shaped Library control is announced as a button named “Search your library,” with the hint that it opens Search.
+- Confirm assistive technology does not announce a text-editing field on the Library tab; the actual Search tab field remains editable.
+- Confirm keyboard activation and pointer activation both open Search. Widget test source is added but not run, and manual screen-reader checks remain pending.

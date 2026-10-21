@@ -106,3 +106,7 @@ The text-scale layout helper now explicitly converts the bounded `clamp` result 
 - Saved-item cards now expose the favorite marker to assistive technology with a meaningful label.
 - Stored image thumbnails and the larger item-detail image expose title-based semantic labels instead of appearing as unlabeled pictures.
 - Added a widget-level semantics regression test for favorite state. This is source/test work only; no test execution or screen-reader verification has been performed.
+
+## Phase 3 — accessible Library search entry (2026-10-21)
+
+The Library's search-shaped navigation control now exposes a button role, the label “Search your library” and the hint “Opens the Search tab.” The decorative, non-editable text field is excluded from the semantics tree so assistive technology does not announce it as an editable field. Added a widget semantics test source; tests and screen-reader verification remain unrun.

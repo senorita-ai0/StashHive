@@ -88,6 +88,7 @@ MVP must not be described as ready until create/edit/delete, link open, supporte
 | TSK-316 | Match Library title wrapping to the approved responsive reference | IN PROGRESS — source adjusted; visual check pending | Long titles wrap to two lines on item cards without obscuring actions at narrow widths or large text scaling. |
 | TSK-317 | Scale Library/Search result cards with system text settings | IN PROGRESS — shared layout helper and unit tests added; run pending | Card heights grow with system text scaling for two-line titles and metadata, remain bounded for invalid/extreme scales, and pass visual checks on web and Android. |
 | TSK-318 | Expose saved-image and favorite state to assistive technology | IN PROGRESS — semantic labels and widget test authored; verification pending | Favorite markers and saved-image previews have meaningful semantics and pass TalkBack/web screen-reader review without duplicate announcements. |
+| TSK-319 | Make the Library search teaser accessible as a navigation button | IN PROGRESS — semantics and widget test authored; verification pending | The search-shaped control is announced as a button with a clear name/hint, not as an editable text field, and responds to keyboard/pointer activation. |
 
 The owner requested development first and builds at the final checkpoint. Do not dispatch GitHub Actions unless the owner explicitly asks for validation. A successful manual workflow will retain the web build and Android debug APK artifacts for 14 days.
 
@@ -144,3 +145,7 @@ TSK-317 introduces `savedItemCardExtentForTextScale` and applies it consistently
 ### Phase 3 — accessible saved-item labels (2026-10-21)
 
 TSK-318 adds title-based semantic labels to image thumbnails and detail previews, plus an explicit favorite-state label in Library/Search cards. A widget regression test is authored. Assistive-technology checks remain pending and should confirm that labels are useful without being announced twice.
+
+### Phase 3 — accessible Library search control (2026-10-21)
+
+TSK-319 changes the decorative search field on the Library page into a clearly named semantic navigation button while retaining the existing visual style. Its child TextField is excluded from semantics because it is not editable; the actual Search tab contains the editable query field. The widget regression test is authored but has not been executed.

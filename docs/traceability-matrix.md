@@ -83,3 +83,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-004, FR-011, NFR-006.
 - Test: `test/accessibility_widgets_test.dart` checks favorite-state semantics.
 - Verification: test source is added but unrun; actual TalkBack and web screen-reader testing remains pending.
+
+### TSK-319 — Library search navigation semantics
+
+- Implementation: `lib/main.dart`, `_LibraryPageState`.
+- Requirements: FR-004–005, NFR-006.
+- Test: `test/accessibility_widgets_test.dart` checks the semantic name and tap action.
+- Verification: test source added, execution pending; keyboard and screen-reader checks remain manual.

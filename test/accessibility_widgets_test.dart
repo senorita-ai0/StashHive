@@ -23,6 +23,30 @@ void main() {
     await testDirectory.delete(recursive: true);
   });
 
+  testWidgets('Library search teaser is announced as a button', (tester) async {
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: app.LibraryPage(
+            repository: repository,
+            onAdd: (_) {},
+            onSearch: (_) {},
+            onOpenItem: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    final search = find.bySemanticsLabel('Search your library');
+    expect(search, findsOneWidget);
+    expect(
+      tester.getSemantics(search).hasAction(SemanticsAction.tap),
+      isTrue,
+    );
+    semantics.dispose();
+  });
+
   testWidgets('favorite state is exposed with a meaningful semantic label', (tester) async {
     final semantics = tester.ensureSemantics();
     const item = SavedItem(

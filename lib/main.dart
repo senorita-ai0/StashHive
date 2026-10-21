@@ -591,14 +591,22 @@ class _LibraryPageState extends State<LibraryPage> {
                           color: Theme.of(context).textTheme.bodySmall?.color,
                         )),
                 const SizedBox(height: 17),
-                InkWell(
+                Semantics(
+                  button: true,
+                  label: 'Search your library',
+                  hint: 'Opens the Search tab',
                   onTap: () => widget.onSearch(''),
-                  borderRadius: BorderRadius.circular(16),
-                  child: IgnorePointer(
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        hintText: 'Search links, notes, screenshots…',
-                        prefixIcon: Icon(Icons.search_rounded),
+                  child: InkWell(
+                    onTap: () => widget.onSearch(''),
+                    borderRadius: BorderRadius.circular(16),
+                    child: ExcludeSemantics(
+                      child: IgnorePointer(
+                        child: TextField(
+                          decoration: const InputDecoration(
+                            hintText: 'Search links, notes, screenshots…',
+                            prefixIcon: Icon(Icons.search_rounded),
+                          ),
+                        ),
                       ),
                     ),
                   ),
