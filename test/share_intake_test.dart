@@ -195,6 +195,32 @@ void main() {
       );
     });
 
+    test('uses an unambiguous fingerprint for share batch contents', () {
+      final deduplicator = ShareEventDeduplicator();
+      final start = DateTime.utc(2026, 10, 22, 13);
+      SharedMediaFile shared(String path) => SharedMediaFile(
+            path: path,
+            type: SharedMediaType.text,
+            mimeType: 'text/plain',
+          );
+
+      expect(
+        deduplicator.shouldAccept(
+          [shared('a|b'), shared('c')],
+          now: start,
+        ),
+        isTrue,
+      );
+      expect(
+        deduplicator.shouldAccept(
+          [shared('a'), shared('b|c')],
+          now: start,
+        ),
+        isTrue,
+        reason: 'Different batch contents must not alias through a delimiter.',
+      );
+    });
+
     test('returns unsupported for shared video instead of mislabeling it', () async {
       final result = await ShareIntake.fromSharedMedia(
         SharedMediaFile(
