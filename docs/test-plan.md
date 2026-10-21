@@ -54,7 +54,7 @@
 
 ## Phase 2 test additions — 2026-10-21
 
-- test/share_intake_test.dart: URL, mixed text-and-URL, Unicode text, unsafe scheme and unsupported video.
+- test/share_intake_test.dart: URL, mixed text-and-URL, URL punctuation/path/query handling, Unicode text, unsafe scheme, text-size limit and unsupported video.
 - test/library_repository_test.dart: persistence across Hive reopen, attachment bytes after restore with ID collision, safe collection deletion, and missing-attachment rejection.
 - tool/test_configure_android_share_intents.py: install supported filters, idempotency, and missing MainActivity error.
 

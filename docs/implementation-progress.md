@@ -31,6 +31,7 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 - [x] Multiple items in a share are not silently treated as saved; the form explains that only the first item is prepared in this increment.
 - [x] Added tool/configure_android_share_intents.py to configure the generated Android manifest idempotently.
 - [x] Added tests for share parsing, local persistence across Hive box reopening, attachment restore with ID collision, collection deletion and manifest configuration.
+- [x] Expanded share-intake regression coverage for URLs embedded in prose (including punctuation and path/query strings) and the incoming-text size limit.
 - [x] Updated roadmap, test plan, traceability and progress documentation.
 
 ## Not yet verified

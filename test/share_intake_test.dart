@@ -36,6 +36,34 @@ void main() {
       expect(result.content, '');
     });
 
+    test('keeps the full URL when its path contains the letter s', () async {
+      final result = await ShareIntake.fromSharedMedia(
+        SharedMediaFile(
+          path: 'Save this: https://example.com/stories/space-station?source=share.',
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      );
+
+      expect(result, isNotNull);
+      expect(result!.kind, ItemKind.link);
+      expect(result.url, 'https://example.com/stories/space-station?source=share');
+      expect(result.content, '');
+    });
+
+    test('rejects shared text beyond the documented character limit', () async {
+      await expectLater(
+        ShareIntake.fromSharedMedia(
+          SharedMediaFile(
+            path: 'x' * (maxIncomingTextCharacters + 1),
+            type: SharedMediaType.text,
+            mimeType: 'text/plain',
+          ),
+        ),
+        throwsFormatException,
+      );
+    });
+
     test('preserves ordinary Unicode share text as a note draft', () async {
       const sharedText = 'قابلِ تلاش متن — Roman Urdu: mera khayal';
       final result = await ShareIntake.fromSharedMedia(
