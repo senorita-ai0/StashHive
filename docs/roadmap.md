@@ -175,3 +175,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - Strengthened the TSK-321 widget test to seed an item, activate “View details” and verify the details callback, then activate “Add to favorites” and verify repository state changes. This checks command behavior, not only visible menu labels.
 - Regression source is authored but intentionally unrun; CI stays manual-only. Keyboard focus order and screen-reader usability remain platform-validation items.
+
+
+### Phase 2 — share-event deduplication edge coverage (2026-10-22)
+
+- **TSK-322:** Added regression coverage for ordered multi-item share batches and the bounded recent-fingerprint cache. A reversed batch must be treated as a distinct event; an identical recent batch is suppressed; adding a different batch at capacity evicts the oldest fingerprint.
+- Test source is committed but unrun. Android event delivery and cold-start/stream duplicate behavior remain pending device verification. Phase 2 remains open until the full validation gates pass.
