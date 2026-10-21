@@ -64,6 +64,26 @@ void main() {
       );
     });
 
+    test('retains batch progress when cloning a shared draft', () {
+      final incoming = IncomingShare(
+        kind: ItemKind.note,
+        title: 'A note',
+        content: 'Remember this',
+        fileName: 'remember.txt',
+        mimeType: 'text/plain',
+      );
+
+      final prepared = incoming.withShareProgress(position: 2, total: 4);
+
+      expect(prepared.sharePosition, 2);
+      expect(prepared.shareTotal, 4);
+      expect(prepared.kind, ItemKind.note);
+      expect(prepared.title, 'A note');
+      expect(prepared.content, 'Remember this');
+      expect(prepared.fileName, 'remember.txt');
+      expect(prepared.mimeType, 'text/plain');
+    });
+
     test('preserves ordinary Unicode share text as a note draft', () async {
       const sharedText = 'قابلِ تلاش متن — Roman Urdu: mera khayal';
       final result = await ShareIntake.fromSharedMedia(

@@ -34,6 +34,7 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 - Added share-intake and repository persistence/restore regression tests; execution is pending a manual validation checkpoint.
 - Fixed stale collection counts by making collection cards rebuild when the saved-item list changes.
 - Expanded share parser regression tests for URLs embedded in prose and the documented shared-text size limit.
+- Changed multi-item Android shares to a sequential draft-review flow with per-item progress; unsupported/unreadable items no longer stop the rest of the batch.
 
 
 ### Phase 2 refinement — 2026-10-21

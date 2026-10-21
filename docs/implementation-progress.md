@@ -28,7 +28,7 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 - [x] Incoming content prefills Quick Save for user review; it is never saved silently.
 - [x] Added bounded, three-second suppression for duplicate initial/stream share events; later deliberate re-shares are accepted after the window.
 - [x] Made collection cards listen to saved-item changes so item counts refresh after edits, moves and deletes while the Collections tab stays open.
-- [x] Multiple items in a share are not silently treated as saved; the form explains that only the first item is prepared in this increment.
+- [x] Multi-item shares now open one editable draft at a time, with an item-position cue; unsupported or unreadable entries are skipped with feedback while later entries continue. Device verification remains pending.
 - [x] Added tool/configure_android_share_intents.py to configure the generated Android manifest idempotently.
 - [x] Added tests for share parsing, local persistence across Hive box reopening, attachment restore with ID collision, collection deletion and manifest configuration.
 - [x] Expanded share-intake regression coverage for URLs embedded in prose (including punctuation and path/query strings) and the incoming-text size limit.
@@ -52,7 +52,7 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 
 - OCR/PDF text extraction is not implemented; search covers stored metadata and user-entered text.
 - PDF/document content is not rendered inside StashHive; files are handed off through the platform share flow.
-- Multi-item shares prepare the first item only and tell the user to share the rest separately.
+- Multi-item shares are presented sequentially, one editable draft per supported entry; the user explicitly saves or cancels each before the next opens.
 - Android runner files are generated rather than committed. After generating them locally, run python3 tool/configure_android_share_intents.py.
 - Web and Android libraries remain separate; cloud sync is not present.
 - No build runs automatically. When ready for a validation checkpoint, manually run Actions → Manual Flutter validation → Run workflow.
@@ -61,6 +61,6 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 
 1. Run the manual workflow only when the owner requests validation; fix failures from actual logs.
 2. Test Android share intent delivery from browsers, messaging apps and file providers.
-3. Add regression cases for observed provider MIME types and share-event ordering.
+3. Add regression cases for observed provider MIME types and share-event ordering; manually verify multi-item share save/cancel/skip behavior on Android.
 4. Compare the running UI against docs/design/screens SVGs and fix layout/accessibility differences.
 5. Keep OCR gated on its separate offline feasibility report.

@@ -18,7 +18,8 @@ class IncomingShare {
     this.bytes,
     this.fileName,
     this.mimeType,
-    this.additionalItemCount = 0,
+    this.sharePosition = 1,
+    this.shareTotal = 1,
   });
 
   final ItemKind kind;
@@ -28,9 +29,14 @@ class IncomingShare {
   final Uint8List? bytes;
   final String? fileName;
   final String? mimeType;
-  final int additionalItemCount;
+  final int sharePosition;
+  final int shareTotal;
 
-  IncomingShare withAdditionalItemCount(int count) => IncomingShare(
+  IncomingShare withShareProgress({
+    required int position,
+    required int total,
+  }) =>
+      IncomingShare(
         kind: kind,
         title: title,
         url: url,
@@ -38,7 +44,8 @@ class IncomingShare {
         bytes: bytes,
         fileName: fileName,
         mimeType: mimeType,
-        additionalItemCount: count < 0 ? 0 : count,
+        sharePosition: position < 1 ? 1 : position,
+        shareTotal: total < 1 ? 1 : total,
       );
 }
 

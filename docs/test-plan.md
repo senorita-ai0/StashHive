@@ -24,7 +24,7 @@
 | TC-006 | FR-006 | Save a URL and open it with network on/off | URL saves offline; external site needs network; no offline-site claim. | NOT STARTED |
 | TC-007 | FR-007, FR-014 | Create/edit/search note offline | All operations work offline and survive restart. | NOT STARTED |
 | TC-008 | FR-008 | Import image/PDF, cancel picker, choose unsupported/large file | Successful import is durable; cancel creates no item; invalid input shows recoverable error. | NOT STARTED |
-| TC-009 | FR-009 | Share text/URL/image from supported Android apps | Confirmation/edit is shown; content saved once; unsupported share explained. | NOT STARTED |
+| TC-009 | FR-009 | Share text/URL/image/document from supported Android apps, including a multi-item batch | One editable draft is shown at a time; save/cancel advances to the next entry; unsupported or unreadable entries are skipped with feedback; no silent saves. | NOT STARTED — manual Android test |
 | TC-010 | FR-010 | Rename/delete collection and edit tags | Item relationship updates correctly; deleting collection does not delete saved items. | NOT STARTED |
 | TC-011 | FR-011, FR-017 | Open item detail for bookmark, image, and document | Each item's stored state and actions are accurately labeled. | NOT STARTED |
 | TC-012 | FR-012 | Export library with several attachments | Versioned archive downloads/writes; manifest and item/attachment counts agree. | NOT STARTED |
@@ -64,3 +64,9 @@
 ## Historical Android build failure to verify at release checkpoint
 
 The previous Android debug build failed when the generated plugin registrant could not resolve FilePickerPlugin. StashHive has upgraded file_picker to 12.3.0 based on the upstream fix reported for 12.x. Do not mark this as fixed until the owner asks for a manual validation run and the Android APK build completes successfully.
+
+
+### Multi-item share sequence regression — 2026-10-21
+
+- test/share_intake_test.dart covers preservation of draft content/metadata when batch-position information is attached.
+- Manual Android checks still need to cover: all supported items in order, cancel then continue, an unsupported entry between supported items, a file-read failure between valid entries, and a cold-start shared batch. These require the owner's final validation checkpoint/device and must not be represented as passed before then.

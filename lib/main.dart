@@ -354,34 +354,44 @@ class _HomeShellState extends State<HomeShell> {
 
   Future<void> _presentSharedItem(List<SharedMediaFile> media) async {
     if (!mounted || media.isEmpty) return;
-    final first = media.first;
-    try {
-      final incoming = await ShareIntake.fromSharedMedia(first);
+
+    // Multi-select shares are reviewed one item at a time. Each route is
+    // explicit: the user can save or cancel each draft before the next opens.
+    for (var index = 0; index < media.length; index++) {
       if (!mounted) return;
-      if (incoming == null) {
-        _showShareMessage(
-          'This type of shared content is not supported yet. Try a link, text, image or document.',
+      try {
+        final incoming = await ShareIntake.fromSharedMedia(media[index]);
+        if (!mounted) return;
+        if (incoming == null) {
+          _showShareMessage(
+            'Item ${index + 1} of ${media.length} is not supported yet; it was skipped.',
+          );
+          continue;
+        }
+        final prepared = incoming.withShareProgress(
+          position: index + 1,
+          total: media.length,
         );
-        return;
-      }
-      final prepared = incoming.withAdditionalItemCount(media.length - 1);
-      await Navigator.of(context).push<bool>(
-        MaterialPageRoute(
-          builder: (_) => QuickSavePage(
-            repository: widget.repository,
-            initialKind: prepared.kind,
-            initialShare: prepared,
+        await Navigator.of(context).push<bool>(
+          MaterialPageRoute(
+            builder: (_) => QuickSavePage(
+              repository: widget.repository,
+              initialKind: prepared.kind,
+              initialShare: prepared,
+            ),
           ),
-        ),
-      );
-      if (mounted) setState(() => _selectedTab = 0);
-    } on FormatException catch (error) {
-      _showShareMessage(error.message.toString());
-    } catch (_) {
-      _showShareMessage(
-        'That share could not be opened. Try saving it from inside StashHive.',
-      );
+        );
+      } on FormatException catch (error) {
+        _showShareMessage(
+          'Item ${index + 1} of ${media.length}: ${error.message}',
+        );
+      } catch (_) {
+        _showShareMessage(
+          'Item ${index + 1} of ${media.length} could not be prepared and was skipped.',
+        );
+      }
     }
+    if (mounted) setState(() => _selectedTab = 0);
   }
 
   void _showShareMessage(String message) {
@@ -1413,7 +1423,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                     'Keep the things you want to find again.',
                     style: TextStyle(color: kMuted),
                   ),
-                  if ((widget.initialShare?.additionalItemCount ?? 0) > 0) ...[
+                  if ((widget.initialShare?.shareTotal ?? 1) > 1) ...[
                     const SizedBox(height: 14),
                     Container(
                       padding: const EdgeInsets.all(13),
@@ -1422,9 +1432,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                         borderRadius: BorderRadius.circular(13),
                       ),
                       child: Text(
-                        'This share contained ' +
-                            ((widget.initialShare!.additionalItemCount + 1).toString()) +
-                            ' items. The first item is ready to save; share other items separately.',
+                        'Item ${widget.initialShare!.sharePosition} of ${widget.initialShare!.shareTotal}. Save or cancel this draft to continue to the next shared item.',
                         style: const TextStyle(fontSize: 12, height: 1.4),
                       ),
                     ),
