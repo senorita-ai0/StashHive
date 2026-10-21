@@ -118,3 +118,7 @@ Traceability: FR-018, NFR-002–006.
 3. Preserve screen IDs; update `docs/traceability-matrix.md` with implementation locations and tests.
 4. Storage and OCR dependencies remain decisions for feasibility testing.
 5. These mockups guide the UI but do not constitute a production build or deployment approval.
+
+## Phase 3 refinement — responsive saved-item titles
+
+Library item cards now allow titles to wrap to two lines before truncating, improving retrieval of long saved titles on narrow screens. Manually verify 320–360 px mobile widths, large system text and desktop layouts against SCR-001. This is a source-level adjustment, not a visual test result.

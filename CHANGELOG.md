@@ -78,3 +78,9 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 - Made Backup & Privacy describe browser-profile storage separately from device/app storage and present platform-specific data-loss warnings.
 - Disabled repeated restore activation starting before the file picker opens; added an accessible label for the busy indicator.
 - Platform verification and CI remain pending by owner request.
+
+### Phase 3 responsive Library refinement — 2026-10-21
+
+- Updated saved-item cards to show titles across up to two lines before truncation, aligning with the SCR-001 long-title requirement.
+- Updated phase tracking to reflect that Phase 3 source work has started while Phase 2 build and Android device validation remain outstanding.
+- No UI tests, screenshots or builds were run.

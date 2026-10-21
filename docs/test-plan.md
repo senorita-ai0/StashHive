@@ -119,3 +119,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Verify Android copy refers to app/device storage and that clearing app data/uninstalling may remove the local library.
 - Rapidly activate restore and confirm only one file picker/restore flow can be active; verify cancel resets the button and screen-reader announcements describe the busy action.
 - Run these checks on web and Android at the owner's manual validation checkpoint. No automated execution is claimed.
+
+### TC-021 — Library card title wrapping and text scaling
+
+- Seed the library with short, medium and very long item titles.
+- At narrow mobile widths, confirm a title can wrap to a second line without overlapping favorite or overflow actions.
+- Increase system text scaling and verify actions remain reachable and cards scroll without horizontal overflow.
+- Compare with SCR-001; status remains NOT STARTED until a real UI run is inspected.

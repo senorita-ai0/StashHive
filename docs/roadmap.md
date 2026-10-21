@@ -1,6 +1,6 @@
 # StashHive — Roadmap and Implementation Plan
 
-**Status:** Implementation in progress — Phase 2. Blueprint approved on 2026-10-21; validation workflow is intentionally manual-only.
+**Status:** Implementation in progress — Phase 3 platform assurance; Phase 2 sharing/build validation remains pending. Blueprint approved on 2026-10-21; validation workflow is intentionally manual-only.
 
 ## Milestones
 
@@ -85,6 +85,7 @@ MVP must not be described as ready until create/edit/delete, link open, supporte
 | TSK-313 | Recover from item deletion failures and protect shared attachment references | IN PROGRESS — rollback/source tests added; manual run pending | A deletion failure attempts to restore the item and attachment; referenced attachments are not removed; fault-injection tests pass. |
 | TSK-314 | Roll back save errors reported after storage writes | IN PROGRESS — item/attachment rollback and fault-injection test added; manual run pending | A failed save attempts to restore the previous saved-item map and attachment values even when a write may already have taken effect. |
 | TSK-315 | Platform-aware backup storage messaging and single-flight restore UI | IN PROGRESS — source added; platform verification pending | Browser users see browser-profile/site-data warnings; Android users see app/device warnings; restore cannot be started twice and busy states are accessible. |
+| TSK-316 | Match Library title wrapping to the approved responsive reference | IN PROGRESS — source adjusted; visual check pending | Long titles wrap to two lines on item cards without obscuring actions at narrow widths or large text scaling. |
 
 The owner requested development first and builds at the final checkpoint. Do not dispatch GitHub Actions unless the owner explicitly asks for validation. A successful manual workflow will retain the web build and Android debug APK artifacts for 14 days.
 
@@ -129,3 +130,7 @@ TSK-314 marks item and attachment writes as attempted before awaiting the storag
 ## Phase 3 — platform assurance started (2026-10-21)
 
 TSK-315 begins source-level platform hardening. Backup & Privacy communicates browser-local storage correctly on web, uses platform-specific data-loss messaging, and disables duplicate restore activation before the picker opens. This does not verify browser quota handling, keyboard/screen-reader behavior, or actual Android/web flows; those remain manual validation tasks. Phase 2 sharing and build checks are still pending.
+
+### Phase 3 responsive Library card refinement — 2026-10-21
+
+TSK-316 adjusts saved-item titles to wrap onto two lines before truncating, following the SCR-001 required long-title state. The responsive result still needs visual inspection at narrow widths and with enlarged text; no screenshot comparison has been marked passed.
