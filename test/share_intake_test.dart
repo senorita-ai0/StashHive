@@ -144,6 +144,41 @@ void main() {
       expect(deduplicator.shouldAccept(const [], now: start), isFalse);
     });
 
+    test('distinguishes batch order and respects the bounded fingerprint cache', () {
+      final deduplicator = ShareEventDeduplicator(
+        window: const Duration(seconds: 3),
+        maxEntries: 1,
+      );
+      final first = SharedMediaFile(
+        path: 'https://example.com/first',
+        type: SharedMediaType.url,
+        mimeType: 'text/uri-list',
+      );
+      final second = SharedMediaFile(
+        path: 'https://example.com/second',
+        type: SharedMediaType.url,
+        mimeType: 'text/uri-list',
+      );
+      final start = DateTime.utc(2026, 10, 22, 12);
+
+      expect(deduplicator.shouldAccept([first, second], now: start), isTrue);
+      expect(
+        deduplicator.shouldAccept([second, first], now: start),
+        isTrue,
+        reason: 'A differently ordered batch is a distinct share event.',
+      );
+      expect(
+        deduplicator.shouldAccept([second, first], now: start),
+        isFalse,
+        reason: 'The exact recent batch should still be deduplicated.',
+      );
+      expect(
+        deduplicator.shouldAccept([first], now: start),
+        isTrue,
+        reason: 'The bounded cache evicts its oldest fingerprint when full.',
+      );
+    });
+
     test('returns unsupported for shared video instead of mislabeling it', () async {
       final result = await ShareIntake.fromSharedMedia(
         SharedMediaFile(
