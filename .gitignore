@@ -1,0 +1,53 @@
+# Dart / Flutter (after app initialization)
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+coverage/
+
+# Android / Gradle
+**/android/.gradle/
+**/android/captures/
+**/android/local.properties
+**/android/key.properties
+**/android/*.jks
+**/android/*.keystore
+**/android/app/google-services.json
+
+# iOS / macOS
+**/ios/Flutter/.last_build_id
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/ephemeral/
+**/macos/Pods/
+**/macos/Flutter/ephemeral/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.p12
+*.mobileprovision
+
+# User data / exports (never commit an actual personal library)
+*.stashhive-backup
+*.stashhive-export
+user-library/
+local-data/
+
+# OS / logs / temp
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
