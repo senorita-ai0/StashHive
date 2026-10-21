@@ -84,6 +84,22 @@ void main() {
       expect(prepared.mimeType, 'text/plain');
     });
 
+    test('clamps shared batch progress into a valid range', () {
+      final incoming = IncomingShare(kind: ItemKind.note);
+
+      expect(
+        incoming.withShareProgress(position: 0, total: 3).sharePosition,
+        1,
+      );
+      expect(
+        incoming.withShareProgress(position: 8, total: 3).sharePosition,
+        3,
+      );
+      final invalidTotal = incoming.withShareProgress(position: 8, total: 0);
+      expect(invalidTotal.sharePosition, 1);
+      expect(invalidTotal.shareTotal, 1);
+    });
+
     test('preserves ordinary Unicode share text as a note draft', () async {
       const sharedText = 'قابلِ تلاش متن — Roman Urdu: mera khayal';
       final result = await ShareIntake.fromSharedMedia(
