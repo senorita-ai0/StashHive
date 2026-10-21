@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
@@ -68,7 +69,7 @@ class ShareEventDeduplicator {
 
   final Duration window;
   final int maxEntries;
-  final Map<int, DateTime> _seen = <int, DateTime>{};
+  final Map<String, DateTime> _seen = <String, DateTime>{};
 
   bool shouldAccept(
     List<SharedMediaFile> media, {
@@ -81,10 +82,12 @@ class ShareEventDeduplicator {
       return age.isNegative || age > window;
     });
 
-    final fingerprint = Object.hashAll(
-      media.map(
-        (item) => Object.hash(item.type, item.path, item.mimeType),
-      ),
+    // Keep the full canonical fingerprint as the cache key. An integer
+    // hash alone can collide and incorrectly suppress a different share.
+    final fingerprint = jsonEncode(
+      media
+          .map((item) => <Object?>[item.type.name, item.path, item.mimeType])
+          .toList(growable: false),
     );
     final previous = _seen[fingerprint];
     if (previous != null && timestamp.difference(previous) <= window) {
