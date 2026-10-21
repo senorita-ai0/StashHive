@@ -70,3 +70,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - test/share_intake_test.dart covers preservation of draft content/metadata when batch-position information is attached.
 - Manual Android checks still need to cover: all supported items in order, cancel then continue, an unsupported entry between supported items, a file-read failure between valid entries, and a cold-start shared batch. These require the owner's final validation checkpoint/device and must not be represented as passed before then.
+
+
+### Backup validation and failed-import safety — 2026-10-21
+
+- test/backup_codec_test.dart now covers wrong saved-item field types, attachment payloads with no item reference, and preservation of a collection assigned on an item but omitted from older top-level collection lists.
+- test/library_repository_test.dart covers a backup with one valid record followed by a malformed record; the restore must fail before importing any record or collection.
+- Execution remains pending. The restore is decoded and validated before writes, but simulated Hive write interruptions and rollback of real storage failures still need separate testing.

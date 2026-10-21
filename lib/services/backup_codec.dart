@@ -46,6 +46,10 @@ class BackupCodec {
     if (items.length > maxItems) {
       throw const FormatException('The library contains too many items to export.');
     }
+    final safeCollections = _normalizeCollectionNames(
+      collections,
+      items.map((item) => item.collection),
+    );
     final attachments = <String, Object?>{};
     var totalBytes = 0;
     for (final item in items) {
@@ -75,7 +79,7 @@ class BackupCodec {
       'app': 'StashHive',
       'formatVersion': formatVersion,
       'exportedAt': DateTime.now().toUtc().toIso8601String(),
-      'collections': collections,
+      'collections': safeCollections,
       'items': items.map((item) => item.toMap()).toList(),
       'attachments': attachments,
     });
@@ -111,11 +115,28 @@ class BackupCodec {
     final itemsValue = decoded['items'];
     final attachmentsValue = decoded['attachments'];
     final collectionsValue = decoded['collections'];
-    if (itemsValue is! List || attachmentsValue is! Map) {
+    if (itemsValue is! List ||
+        attachmentsValue is! Map ||
+        collectionsValue is! List) {
       throw const FormatException('The backup is missing required data.');
     }
     if (itemsValue.length > maxItems) {
       throw const FormatException('The backup contains too many items.');
+    }
+
+    if (collectionsValue.length > 500) {
+      throw const FormatException('The backup contains too many collections.');
+    }
+    final declaredCollections = <String>[];
+    for (final value in collectionsValue) {
+      if (value is! String) {
+        throw const FormatException('A collection name in the backup is invalid.');
+      }
+      final name = value.trim();
+      if (name.isEmpty || name.length > 80) {
+        throw const FormatException('A collection name must be between 1 and 80 characters.');
+      }
+      declaredCollections.add(name);
     }
 
     final items = <SavedItem>[];
@@ -124,6 +145,7 @@ class BackupCodec {
       if (value is! Map) {
         throw const FormatException('A saved item in the backup is invalid.');
       }
+      _validateSavedItemMap(value);
       final item = SavedItem.fromMap(value);
       if (item.id.isEmpty || item.id.length > 128) {
         throw const FormatException('A saved item has an invalid identifier.');
@@ -139,6 +161,19 @@ class BackupCodec {
           item.tags.length > 100 ||
           item.tags.any((tag) => tag.length > 100)) {
         throw const FormatException('A saved item exceeds supported limits.');
+      }
+      if (item.collection != null &&
+          (item.collection!.trim().isEmpty ||
+              item.collection!.trim() != item.collection ||
+              item.collection!.length > 80)) {
+        throw const FormatException('A saved item has an invalid collection name.');
+      }
+      if (item.hasAttachment &&
+          item.kind != ItemKind.image &&
+          item.kind != ItemKind.document) {
+        throw const FormatException(
+          'Only image and document items can contain an attachment.',
+        );
       }
       if (item.kind == ItemKind.link) {
         final uri = Uri.tryParse(item.url ?? '');
@@ -168,10 +203,13 @@ class BackupCodec {
       final name = value['name'];
       final mimeType = value['mimeType'];
       final encoded = value['base64'];
-      if (name is! String ||
-          name.isEmpty ||
+      if (key.trim().isEmpty ||
+          key.length > 128 ||
+          name is! String ||
+          name.trim().isEmpty ||
           name.length > 255 ||
           mimeType is! String ||
+          mimeType.trim().isEmpty ||
           mimeType.length > 128 ||
           encoded is! String ||
           encoded.length > ((maxAttachmentBytes * 4 ~/ 3) + 8)) {
@@ -206,22 +244,97 @@ class BackupCodec {
         'The backup is missing data for one or more attachments.',
       );
     }
-    final collections = collectionsValue is List
-        ? collectionsValue
-            .whereType<String>()
-            .map((value) => value.trim())
-            .where((value) => value.isNotEmpty && value.length <= 80)
-            .toSet()
-            .toList()
-        : <String>[];
-    if (collections.length > 500) {
-      throw const FormatException('The backup contains too many collections.');
+    if (attachments.keys.any((key) => !referencedAttachmentKeys.contains(key))) {
+      throw const FormatException(
+        'The backup contains attachment data that no saved item references.',
+      );
     }
+
+    // Older version-1 backups may have an assigned collection on an item
+    // without listing it at the top level. Preserve that relationship by
+    // including assigned names rather than leaving the item ungrouped.
+    final safeRestoredCollections = _normalizeCollectionNames(
+      declaredCollections,
+      items.map((item) => item.collection),
+    );
     return DecodedBackup(
       items: List<SavedItem>.unmodifiable(items),
       attachments: Map<String, BackupAttachment>.unmodifiable(attachments),
-      collections: List<String>.unmodifiable(collections),
+      collections: safeRestoredCollections,
       exportedAt: decoded['exportedAt'] is String ? decoded['exportedAt'] as String : '',
     );
   }
+  static void _validateSavedItemMap(Map<dynamic, dynamic> value) {
+    if (value['id'] is! String ||
+        value['kind'] is! String ||
+        value['title'] is! String ||
+        value['content'] is! String ||
+        value['tags'] is! List ||
+        value['isFavorite'] is! bool ||
+        value['createdAtMs'] is! int ||
+        value['updatedAtMs'] is! int) {
+      throw const FormatException(
+        'A saved item is missing required fields or has invalid field types.',
+      );
+    }
+    if ((value['url'] != null && value['url'] is! String) ||
+        (value['collection'] != null && value['collection'] is! String) ||
+        (value['attachmentKey'] != null && value['attachmentKey'] is! String) ||
+        (value['attachmentName'] != null && value['attachmentName'] is! String) ||
+        (value['attachmentMimeType'] != null &&
+            value['attachmentMimeType'] is! String)) {
+      throw const FormatException(
+        'A saved item contains invalid optional field types.',
+      );
+    }
+    final tags = value['tags'] as List;
+    if (tags.any((tag) => tag is! String)) {
+      throw const FormatException('A saved item contains an invalid tag.');
+    }
+    final collection = value['collection'];
+    if (collection is String &&
+        (collection.trim().isEmpty ||
+            collection.trim() != collection ||
+            collection.length > 80)) {
+      throw const FormatException('A saved item has an invalid collection name.');
+    }
+    final attachmentKey = value['attachmentKey'];
+    if (attachmentKey is String &&
+        (attachmentKey.isEmpty || attachmentKey.length > 128)) {
+      throw const FormatException('A saved item has an invalid attachment key.');
+    }
+    final attachmentName = value['attachmentName'];
+    if (attachmentName is String &&
+        (attachmentName.isEmpty || attachmentName.length > 255)) {
+      throw const FormatException('A saved item has an invalid attachment name.');
+    }
+    final mimeType = value['attachmentMimeType'];
+    if (mimeType is String &&
+        (mimeType.trim().isEmpty || mimeType.length > 128)) {
+      throw const FormatException('A saved item has an invalid attachment MIME type.');
+    }
+  }
+
+  static List<String> _normalizeCollectionNames(
+    Iterable<String?> declared,
+    Iterable<String?> assigned,
+  ) {
+    final result = <String>[];
+    final seen = <String>{};
+    for (final raw in [...declared, ...assigned]) {
+      if (raw == null) continue;
+      final name = raw.trim();
+      if (name.isEmpty || name.length > 80) {
+        throw const FormatException(
+          'Collection names must be between 1 and 80 characters.',
+        );
+      }
+      if (seen.add(name.toLowerCase())) result.add(name);
+      if (result.length > 500) {
+        throw const FormatException('The backup contains too many collections.');
+      }
+    }
+    return List<String>.unmodifiable(result);
+  }
+
 }

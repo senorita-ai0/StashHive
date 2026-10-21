@@ -35,6 +35,8 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 - Fixed stale collection counts by making collection cards rebuild when the saved-item list changes.
 - Expanded share parser regression tests for URLs embedded in prose and the documented shared-text size limit.
 - Changed multi-item Android shares to a sequential draft-review flow with per-item progress; unsupported/unreadable items no longer stop the rest of the batch.
+- Hardened backup validation against malformed record types, invalid collection lists and unreferenced attachments; preserved item-assigned collection names in encoded/restored backups.
+- Added regression coverage for malformed mixed-backup rejection without partially importing records; execution is pending the manual validation checkpoint.
 
 
 ### Phase 2 refinement — 2026-10-21

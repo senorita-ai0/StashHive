@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -111,6 +112,33 @@ void main() {
     expect(repository.collections.value, isNot(contains('Learning')));
     expect(repository.items.value, hasLength(1));
     expect(repository.items.value.single.collection, isNull);
+  });
+
+  test('rejects a malformed backup before writing any part of the import', () async {
+    await repository.addCollection('Existing');
+    await repository.save(buildLink(id: 'existing-1', collection: 'Existing'));
+
+    final validIncoming = buildLink(
+      id: 'incoming-1',
+      collection: 'Incoming',
+    ).toMap();
+    final malformedIncoming = <String, Object?>{
+      ...buildLink(id: 'broken-1', collection: 'Incoming').toMap(),
+      'content': 17,
+    };
+    final backup = jsonEncode(<String, Object?>{
+      'app': 'StashHive',
+      'formatVersion': 1,
+      'exportedAt': '2026-10-21T00:00:00Z',
+      'collections': ['Incoming'],
+      'items': [validIncoming, malformedIncoming],
+      'attachments': <String, Object?>{},
+    });
+
+    await expectLater(repository.restoreBackup(backup), throwsFormatException);
+
+    expect(repository.items.value.map((item) => item.id), ['existing-1']);
+    expect(repository.collections.value, ['Existing']);
   });
 
   test('a missing attachment cannot be saved as though it were local', () async {

@@ -95,6 +95,55 @@ void main() {
       expect(() => BackupCodec.decode(jsonEncode(payload)), throwsFormatException);
     });
 
+    test('rejects saved-item fields with invalid types instead of defaulting them', () {
+      final malformedItem = <String, Object?>{
+        ...sampleLink().toMap(),
+        'content': 42,
+      };
+      final payload = <String, Object?>{
+        'app': 'StashHive',
+        'formatVersion': BackupCodec.formatVersion,
+        'exportedAt': '2026-10-21T00:00:00Z',
+        'collections': ['Learning'],
+        'items': [malformedItem],
+        'attachments': <String, Object?>{},
+      };
+
+      expect(() => BackupCodec.decode(jsonEncode(payload)), throwsFormatException);
+    });
+
+    test('preserves item-assigned collections missing from the top-level list', () {
+      final json = BackupCodec.encode(
+        items: [sampleLink().copyWith(collection: 'Research')],
+        attachmentBytes: <String, Uint8List>{},
+        collections: const [],
+      );
+
+      final decoded = BackupCodec.decode(json);
+
+      expect(decoded.collections, contains('Research'));
+      expect(decoded.items.single.collection, 'Research');
+    });
+
+    test('rejects attachment payloads not referenced by any item', () {
+      final payload = <String, Object?>{
+        'app': 'StashHive',
+        'formatVersion': BackupCodec.formatVersion,
+        'exportedAt': '2026-10-21T00:00:00Z',
+        'collections': ['Learning'],
+        'items': [sampleLink().toMap()],
+        'attachments': <String, Object?>{
+          'orphan': <String, Object?>{
+            'name': 'orphan.bin',
+            'mimeType': 'application/octet-stream',
+            'base64': 'AQID',
+          },
+        },
+      };
+
+      expect(() => BackupCodec.decode(jsonEncode(payload)), throwsFormatException);
+    });
+
     test('rejects backup records with missing attachment bytes', () {
       final item = SavedItem(
         id: 'image-1',

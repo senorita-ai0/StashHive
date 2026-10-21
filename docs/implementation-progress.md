@@ -31,6 +31,7 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 - [x] Multi-item shares now open one editable draft at a time, with an item-position cue; unsupported or unreadable entries are skipped with feedback while later entries continue. Device verification remains pending.
 - [x] Added tool/configure_android_share_intents.py to configure the generated Android manifest idempotently.
 - [x] Added tests for share parsing, local persistence across Hive box reopening, attachment restore with ID collision, collection deletion and manifest configuration.
+- [x] Hardened backup decoding against missing/wrongly typed saved-item fields, invalid collection structures, malformed attachment metadata and unreferenced attachment payloads; assigned collection names are preserved during backup round-trips.
 - [x] Expanded share-intake regression coverage for URLs embedded in prose (including punctuation and path/query strings) and the incoming-text size limit.
 - [x] Updated roadmap, test plan, traceability and progress documentation.
 
@@ -46,7 +47,7 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 - [ ] Manually verify collection counts refresh after saving, editing, moving and deleting items without navigating away.
 - [ ] Confirm manifest configuration on an actual generated Android runner.
 - [ ] Accessibility and visual comparison against the seven SVG screen references.
-- [ ] Larger backup, malformed-file and storage-interruption recovery scenarios.
+- [ ] Run malformed-backup rejection and no-partial-restore regression tests at the manual validation checkpoint; exercise actual storage-write interruption behavior.
 
 ## Current limitations
 

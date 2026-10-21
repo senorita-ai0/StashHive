@@ -58,3 +58,10 @@ If the project becomes public, add a monitored security contact before release. 
 
 - Android share intake suppresses matching initial-intent/stream deliveries for a short three-second window, using a bounded in-memory cache. The same URL can be shared again after the window.
 - This avoids permanent suppression of repeated URLs. Tests are authored but not run for the current Phase 2 changes.
+
+
+## Backup validation refinement — source added, verification pending
+
+- Restore now checks required saved-item field types before constructing models, requires a collections list, bounds and validates collection names, validates attachment key/name/MIME metadata, and rejects attachment payloads that no item references.
+- Backup creation includes collection names referenced by saved items even if an older or inconsistent local collection list omitted them, so a round-trip does not silently strand those items outside the Collections screen.
+- Repository restore validates the complete decoded backup before beginning writes. This reduces malformed-input partial import risk; it does not yet prove recovery from a disk/box write failure during the write phase.
