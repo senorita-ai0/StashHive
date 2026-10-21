@@ -2245,8 +2245,12 @@ class _CollectionsPageState extends State<CollectionsPage> {
                 children: [
                   const Icon(Icons.folder_open_rounded, size: 50, color: kBrand),
                   const SizedBox(height: 13),
-                  Text('Make room for your ideas',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+                  Text(
+                    'Make room for your ideas',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
                   const SizedBox(height: 7),
                   const Text(
                     'Collections group related items. Tags can still help you connect ideas across collections.',
@@ -2264,70 +2268,87 @@ class _CollectionsPageState extends State<CollectionsPage> {
             ),
           );
         }
-        return ListView.separated(
-          padding: const EdgeInsets.only(bottom: 24),
-          itemCount: names.length + 1,
-          separatorBuilder: (_, __) => const SizedBox(height: 10),
-          itemBuilder: (context, index) {
-            if (index == names.length) {
-              return OutlinedButton.icon(
-                onPressed: () => _newCollection(),
-                icon: const Icon(Icons.add_rounded),
-                label: const Text('New collection'),
-              );
-            }
-            final name = names[index];
-            final count = widget.repository.items.value.where((item) => item.collection == name).length;
-            final palette = [
-              const Color(0xFF5B5CE2),
-              const Color(0xFF3673BE),
-              const Color(0xFF218F84),
-              const Color(0xFFB87A22),
-              const Color(0xFFB24E8C),
-            ];
-            final color = palette[index % palette.length];
-            return Card(
-              margin: EdgeInsets.zero,
-              elevation: 0,
-              color: Theme.of(context).colorScheme.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: Theme.of(context).dividerColor),
-              ),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-                leading: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(14),
+
+        // Counts depend on saved items as well as collection names. Listen to
+        // both sources so this page refreshes after an item is saved, edited,
+        // moved, or deleted without requiring a tab change.
+        return ValueListenableBuilder<List<SavedItem>>(
+          valueListenable: widget.repository.items,
+          builder: (context, items, _) {
+            return ListView.separated(
+              padding: const EdgeInsets.only(bottom: 24),
+              itemCount: names.length + 1,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                if (index == names.length) {
+                  return OutlinedButton.icon(
+                    onPressed: () => _newCollection(),
+                    icon: const Icon(Icons.add_rounded),
+                    label: const Text('New collection'),
+                  );
+                }
+                final name = names[index];
+                final count =
+                    items.where((item) => item.collection == name).length;
+                final palette = [
+                  const Color(0xFF5B5CE2),
+                  const Color(0xFF3673BE),
+                  const Color(0xFF218F84),
+                  const Color(0xFFB87A22),
+                  const Color(0xFFB24E8C),
+                ];
+                final color = palette[index % palette.length];
+                return Card(
+                  margin: EdgeInsets.zero,
+                  elevation: 0,
+                  color: Theme.of(context).colorScheme.surface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(color: Theme.of(context).dividerColor),
                   ),
-                  child: Icon(Icons.folder_copy_outlined, color: color),
-                ),
-                title: Text(name, style: const TextStyle(fontWeight: FontWeight.w700)),
-                subtitle: Text(count.toString() + (count == 1 ? ' saved item' : ' saved items')),
-                trailing: PopupMenuButton<String>(
-                  onSelected: (action) {
-                    if (action == 'rename') _newCollection(oldName: name);
-                    if (action == 'delete') _deleteCollection(name);
-                  },
-                  itemBuilder: (_) => const [
-                    PopupMenuItem(value: 'rename', child: Text('Rename')),
-                    PopupMenuItem(value: 'delete', child: Text('Delete')),
-                  ],
-                ),
-                onTap: () => Navigator.of(context).push<void>(
-                  MaterialPageRoute(
-                    builder: (_) => CollectionContentsPage(
-                      repository: widget.repository,
-                      collection: name,
-                      onOpenItem: widget.onOpenItem,
-                      onAdd: widget.onAdd,
+                  child: ListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                    leading: Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(Icons.folder_copy_outlined, color: color),
+                    ),
+                    title: Text(
+                      name,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    subtitle: Text(
+                      count.toString() +
+                          (count == 1 ? ' saved item' : ' saved items'),
+                    ),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (action) {
+                        if (action == 'rename') _newCollection(oldName: name);
+                        if (action == 'delete') _deleteCollection(name);
+                      },
+                      itemBuilder: (_) => const [
+                        PopupMenuItem(value: 'rename', child: Text('Rename')),
+                        PopupMenuItem(value: 'delete', child: Text('Delete')),
+                      ],
+                    ),
+                    onTap: () => Navigator.of(context).push<void>(
+                      MaterialPageRoute(
+                        builder: (_) => CollectionContentsPage(
+                          repository: widget.repository,
+                          collection: name,
+                          onOpenItem: widget.onOpenItem,
+                          onAdd: widget.onAdd,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             );
           },
         );

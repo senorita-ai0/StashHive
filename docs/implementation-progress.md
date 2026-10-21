@@ -27,6 +27,7 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 - [x] Added receive_sharing_intent and ShareIntake for Android shared URLs, text, images and supported documents.
 - [x] Incoming content prefills Quick Save for user review; it is never saved silently.
 - [x] Added bounded, three-second suppression for duplicate initial/stream share events; later deliberate re-shares are accepted after the window.
+- [x] Made collection cards listen to saved-item changes so item counts refresh after edits, moves and deletes while the Collections tab stays open.
 - [x] Multiple items in a share are not silently treated as saved; the form explains that only the first item is prepared in this increment.
 - [x] Added tool/configure_android_share_intents.py to configure the generated Android manifest idempotently.
 - [x] Added tests for share parsing, local persistence across Hive box reopening, attachment restore with ID collision, collection deletion and manifest configuration.
@@ -41,6 +42,7 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 - [ ] Build the web release and Android debug APK after Phase 2 changes.
 - [ ] Test sharing a browser URL, plain text, image and PDF/document on a real Android device.
 - [ ] Validate cold-start vs warm-start share delivery and confirm one share opens one draft.
+- [ ] Manually verify collection counts refresh after saving, editing, moving and deleting items without navigating away.
 - [ ] Confirm manifest configuration on an actual generated Android runner.
 - [ ] Accessibility and visual comparison against the seven SVG screen references.
 - [ ] Larger backup, malformed-file and storage-interruption recovery scenarios.

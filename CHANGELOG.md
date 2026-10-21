@@ -32,6 +32,7 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 - Added Android URL/text/image/document share intake that prefills Quick Save; saving remains an explicit user action.
 - Added an idempotent Android manifest configurator and fixture tests.
 - Added share-intake and repository persistence/restore regression tests; execution is pending a manual validation checkpoint.
+- Fixed stale collection counts by making collection cards rebuild when the saved-item list changes.
 
 
 ### Phase 2 refinement — 2026-10-21
