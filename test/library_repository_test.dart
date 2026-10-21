@@ -227,6 +227,35 @@ void main() {
     expect(repository.collections.value, ['Existing']);
   });
 
+  test('restores item and attachment if save fails after item write', () async {
+    final originalBytes = Uint8List.fromList([1, 3, 5, 7]);
+    final replacementBytes = Uint8List.fromList([2, 4, 6, 8]);
+    final original = buildImage();
+    await repository.save(original, attachmentBytes: originalBytes);
+
+    LibraryRepository.saveAfterItemCommitForTesting = () async {
+      throw StateError('simulated error after item record write');
+    };
+    try {
+      await expectLater(
+        repository.save(
+          original.copyWith(title: 'Edited after write'),
+          attachmentBytes: replacementBytes,
+        ),
+        throwsA(isA<StateError>()),
+      );
+    } finally {
+      LibraryRepository.saveAfterItemCommitForTesting = null;
+    }
+
+    expect(repository.findById(original.id)?.title, original.title);
+    expect(repository.items.value.single.title, original.title);
+    expect(
+      await repository.readAttachment(original.attachmentKey!),
+      orderedEquals(originalBytes),
+    );
+  });
+
   test('rolls back a partially written collection rename', () async {
     await repository.addCollection('Learning');
     await repository.save(buildLink(id: 'learning-1', collection: 'Learning'));

@@ -37,6 +37,10 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function()? saveBeforeItemCommitForTesting;
 
+  /// Fault-injection seam for errors reported after an item record was written.
+  @visibleForTesting
+  static Future<void> Function()? saveAfterItemCommitForTesting;
+
   /// Fault-injection seam for collection rename/delete rollback tests.
   @visibleForTesting
   static Future<void> Function(int index)? collectionBeforeItemWriteForTesting;
@@ -128,24 +132,46 @@ class LibraryRepository {
       );
     }
 
+    final hadPreviousItem = _itemsBox.containsKey(item.id);
+    final previousItemValue = _itemsBox.get(item.id);
     final hadPreviousAttachment =
         key != null && _attachmentsBox.containsKey(key);
     final previousAttachment =
         hadPreviousAttachment ? _attachmentsBox.get(key) : null;
-    var attachmentWritten = false;
-    if (key != null && attachmentBytes != null) {
-      await _attachmentsBox.put(key, attachmentBytes);
-      attachmentWritten = true;
-    }
+    var attachmentWriteAttempted = false;
+    var itemWriteAttempted = false;
+
     try {
+      if (key != null && attachmentBytes != null) {
+        // Set the flag before awaiting: the storage call may take effect and
+        // then report an error, in which case rollback still needs to run.
+        attachmentWriteAttempted = true;
+        await _attachmentsBox.put(key, attachmentBytes);
+      }
       final beforeItemCommit = saveBeforeItemCommitForTesting;
       if (beforeItemCommit != null) await beforeItemCommit();
+
+      itemWriteAttempted = true;
       await _itemsBox.put(item.id, item.toMap());
+      final afterItemCommit = saveAfterItemCommitForTesting;
+      if (afterItemCommit != null) await afterItemCommit();
     } catch (_) {
-      // A failed edit must not destroy the previously saved attachment. Restore
-      // its exact stored value if one existed; only remove staged bytes for a
-      // brand-new attachment. Rollback errors must not mask the write error.
-      if (attachmentWritten && key != null) {
+      // Restore the previous record too: a write can persist and still report
+      // an error. If this was a new item, remove its potentially staged key.
+      if (itemWriteAttempted) {
+        try {
+          if (hadPreviousItem) {
+            await _itemsBox.put(item.id, previousItemValue);
+          } else {
+            await _itemsBox.delete(item.id);
+          }
+        } catch (_) {
+          // Best-effort recovery; continue restoring any staged attachment.
+        }
+      }
+      // Restore the exact prior attachment value, or remove a newly introduced
+      // value. The rollback must not mask the original save error.
+      if (attachmentWriteAttempted && key != null) {
         try {
           if (hadPreviousAttachment) {
             await _attachmentsBox.put(key, previousAttachment);
@@ -153,9 +179,10 @@ class LibraryRepository {
             await _attachmentsBox.delete(key);
           }
         } catch (_) {
-          // Best-effort recovery; retain the original save failure.
+          // Retain the original save failure.
         }
       }
+      _refreshItems();
       rethrow;
     }
     _refreshItems();

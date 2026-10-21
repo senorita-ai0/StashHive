@@ -80,3 +80,7 @@ Collection rename and deletion now stage affected item records before committing
 ## Item deletion integrity — 2026-10-21
 
 Delete now snapshots the item and attachment values, then attempts best-effort rollback if deletion fails after a record or attachment may already have been removed. Attachment bytes are retained while any other raw saved-item record references the same key. Fault-injection coverage for post-attachment-delete failure and shared references has been added, but not run; manual validation remains pending.
+
+## Save post-write failure recovery — 2026-10-21
+
+The save path now snapshots the prior item map and attachment value before writes, and marks each write as attempted before awaiting storage. If a save fails after an item record may have been committed, it attempts to restore the original map (or remove a new record) as well as the previous attachment bytes. A fault-injection regression simulates an error after the item map write. The test has been authored but remains unrun; rollback is best-effort.

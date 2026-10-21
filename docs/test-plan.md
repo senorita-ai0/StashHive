@@ -107,3 +107,8 @@ The previous Android debug build failed when the generated plugin registrant cou
 - A fault-injection test simulates an error after an attachment has been deleted and expects both its item record and original bytes to be restored.
 - A shared-reference test ensures deleting one item does not remove bytes still referenced by another item.
 - These tests are authored, not executed. Rollback remains best-effort if the storage layer rejects the recovery writes too.
+
+### Save post-write failure regression — 2026-10-21
+
+- A fault-injection test throws after the saved-item record write and verifies that both the prior item fields and prior attachment bytes are restored.
+- Storage rollback remains best-effort if the underlying storage also rejects recovery writes. This regression is authored but not executed.

@@ -67,3 +67,8 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 - Added best-effort recovery for item/attachment delete failures.
 - Retained attachment bytes when another raw saved-item record still references the same key.
 - Added rollback and shared-attachment regression tests; execution remains pending.
+
+### Save post-write recovery — 2026-10-21
+
+- Extended save rollback to restore the previous item record when an error occurs after the record write may have taken effect, and to include attachment-stage failures in the recovery block.
+- Added a fault-injection regression for an error after item write. Test/build execution remains pending.

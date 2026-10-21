@@ -83,6 +83,7 @@ MVP must not be described as ready until create/edit/delete, link open, supporte
 | TSK-311 | Restore write-phase rollback | IN PROGRESS — rollback strengthened and fault-injection test added; manual run pending | An exception after staged item/attachment writes removes imported payloads and preserves pre-existing data and collection preferences; real device/storage interruption remains documented. |
 | TSK-312 | Preserve attachments on failed item edits | IN PROGRESS — save rollback strengthened and fault-injection test added; manual run pending | If the item map write fails after replacement bytes are staged, the prior item and attachment are preserved; new staged bytes are removed when there were no prior bytes. |
 | TSK-313 | Recover from item deletion failures and protect shared attachment references | IN PROGRESS — rollback/source tests added; manual run pending | A deletion failure attempts to restore the item and attachment; referenced attachments are not removed; fault-injection tests pass. |
+| TSK-314 | Roll back save errors reported after storage writes | IN PROGRESS — item/attachment rollback and fault-injection test added; manual run pending | A failed save attempts to restore the previous saved-item map and attachment values even when a write may already have taken effect. |
 
 The owner requested development first and builds at the final checkpoint. Do not dispatch GitHub Actions unless the owner explicitly asks for validation. A successful manual workflow will retain the web build and Android debug APK artifacts for 14 days.
 
@@ -119,3 +120,7 @@ TSK-312 addresses a data-loss path in save(): replacement bytes previously overw
 ### Item deletion integrity — 2026-10-21
 
 TSK-313 adds best-effort rollback if item deletion fails after attachment bytes may have been removed. Delete also checks raw stored item maps before removing an attachment so unreadable records referencing the same key protect its payload. Regression tests are authored but remain unrun; this does not guarantee atomicity under process death or persistent storage failure.
+
+### Save post-write failure integrity — 2026-10-21
+
+TSK-314 marks item and attachment writes as attempted before awaiting the storage operation. When a save fails, it attempts to restore the prior saved-item map or remove a new record, in addition to restoring attachment bytes. An in-process fault-injection test covers a failure after the item record write; Dart tests and platform storage behavior are still unverified.
