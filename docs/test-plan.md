@@ -186,3 +186,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Clone a draft with a position greater than the total and confirm the position clamps to the total.
 - Supply an invalid total and confirm both normalized total and position are one.
 - Unit test source is authored but unrun; end-to-end Android batch presentation remains NOT STARTED.
+
+
+### TC-031 — Collision-safe share-event fingerprinting
+
+- Submit two batches with distinct contents that could alias under a delimiter-based fingerprint (for example, paths `a|b` and `c` versus `a` and `b|c`); both should be accepted as distinct events.
+- Re-submit an identical batch inside the deduplication window and confirm it is rejected.
+- Unit regression source is authored but unrun. Android initial-intent/stream integration remains NOT STARTED.
