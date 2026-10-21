@@ -32,3 +32,16 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 - Added Android URL/text/image/document share intake that prefills Quick Save; saving remains an explicit user action.
 - Added an idempotent Android manifest configurator and fixture tests.
 - Added share-intake and repository persistence/restore regression tests; execution is pending a manual validation checkpoint.
+
+
+### Phase 2 refinement — 2026-10-21
+
+- Moved duplicate-share detection to event intake and limited it to a three-second window. This avoids delayed queued duplicate drafts while allowing deliberate re-shares afterward.
+- Added a regression test for the de-duplication window.
+- Recorded the previous Android APK failure: GeneratedPluginRegistrant could not resolve FilePickerPlugin. CI remains manual-only; no new build was run.
+
+
+### Android toolchain remediation candidate — 2026-10-21
+
+- Upgraded file_picker from 11.0.3 to 12.3.0 after inspecting the historical Android build logs and the upstream AGP 9 Kotlin-plugin-registration issue.
+- Not build-verified yet; CI remains manual-only as requested.

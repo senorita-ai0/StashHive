@@ -65,8 +65,13 @@ Dependency versions are declared in `pubspec.yaml`; a lockfile has not yet been 
 
 - Hive CE: https://pub.dev/packages/hive_ce
 - Hive CE Flutter integration: https://pub.dev/packages/hive_ce_flutter
-- File picker: https://pub.dev/packages/file_picker — version 11 uses the static `FilePicker.pickFiles()` API; see https://pub.dev/packages/file_picker/changelog.
+- File picker: https://pub.dev/packages/file_picker — StashHive pins the 12.3.0 line. The previous 11.x dependency failed in the historical Android build because Kotlin plugin code was not compiled under the generated AGP 9 setup; the package reports an Android registration fix in the 12.x line. See https://github.com/vicajilau/flutter_file_picker/issues/2200 and https://pub.dev/packages/file_picker/changelog. This is a candidate fix, not yet verified by a StashHive build.
 - Share Plus: https://pub.dev/packages/share_plus
 - URL Launcher: https://pub.dev/packages/url_launcher
 
 Dependencies are declared in `pubspec.yaml`. CI has resolved dependencies successfully; a committed lockfile/build verification is still outstanding.
+
+
+## Android build issue and dependency mitigation — 2026-10-21
+
+The historical Android APK build failed at GeneratedPluginRegistrant.java when it could not resolve FilePickerPlugin. The upstream issue describes this for file_picker 11.0.1–11.0.3 with AGP 9 and says the registration fix is in 12.x. StashHive now declares file_picker 12.3.0; the manual workflow has not been run after this change, so confirm the fix before marking the Android build as passed.

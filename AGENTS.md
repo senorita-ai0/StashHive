@@ -2,7 +2,7 @@
 
 ## Current state
 
-**Implementation approved; Phase 1 is in progress (2026-10-21).** Continue using small, testable vertical slices on `main`. Never claim a build/test passed without its actual result. Public deployment, publishing, spending and paid services require separate approval.
+**Implementation approved; Phase 2 is in progress (2026-10-21).** Continue using small, testable vertical slices on `main`. Never claim a build/test passed without its actual result. Public deployment, publishing, spending and paid services require separate approval.
 
 ## Read first
 

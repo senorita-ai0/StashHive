@@ -55,3 +55,13 @@ jobs:
 
       - name: Build Android debug APK
         run: flutter build apk --debug
+
+      - name: Upload validation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: stashhive-manual-builds
+          path: |
+            build/app/outputs/flutter-apk/app-debug.apk
+            build/web/
+          if-no-files-found: error
+          retention-days: 14

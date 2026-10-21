@@ -52,3 +52,9 @@ If the project becomes public, add a monitored security contact before release. 
 - Backup v1 validates app/version marker, record count, record IDs, URL schemes, text/tag bounds, attachment encodings and missing references before import; 15 MB per file and 100 MB combined attachment bytes.
 - Restore uses merge semantics; colliding IDs are remapped, and code attempts to roll back newly written records after a storage exception.
 - These safeguards are authored but not security-audited or test-proven until CI and malformed-file/interrupt tests pass.
+
+
+## Share-event replay handling — verification pending
+
+- Android share intake suppresses matching initial-intent/stream deliveries for a short three-second window, using a bounded in-memory cache. The same URL can be shared again after the window.
+- This avoids permanent suppression of repeated URLs. Tests are authored but not run for the current Phase 2 changes.

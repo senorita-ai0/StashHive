@@ -1,6 +1,6 @@
 # StashHive — AI Project Workflow
 
-Implementation was explicitly approved by the owner on 21 October 2026. BUILD mode is active for Phase 1; don't ask for the same approval again.
+Implementation was explicitly approved by the owner on 21 October 2026. BUILD mode is active for Phase 2; don't ask for the same approval again.
 
 ## Modes
 
@@ -26,4 +26,4 @@ Implementation was explicitly approved by the owner on 21 October 2026. BUILD mo
 
 ## Verification notes
 
-GitHub Actions is now manual-only (`workflow_dispatch`) at the owner's request. Phase 2 changes are not yet built or tested. Run the workflow only when the owner calls for a build checkpoint; report actual format/analyzer/test/web/Android results.
+GitHub Actions is manual-only (workflow_dispatch) at the owner's request. The last pre-Phase-2 workflow passed analyzer, tests and web build but failed the Android APK build on the generated FilePicker plugin registration. Phase 2 source is unverified. Do not dispatch until the owner calls for a build checkpoint; report actual format/analyzer/test/web/Android results.

@@ -271,7 +271,8 @@ class _HomeShellState extends State<HomeShell> {
   StreamSubscription<List<SharedMediaFile>>? _shareSubscription;
   final List<({List<SharedMediaFile> media, Completer<void> done})>
       _pendingShareBatches = [];
-  final Set<int> _seenShareFingerprints = <int>{};
+  final ShareEventDeduplicator _shareDeduplicator =
+      ShareEventDeduplicator();
   bool _processingShareBatches = false;
 
   @override
@@ -317,7 +318,7 @@ class _HomeShellState extends State<HomeShell> {
   }
 
   Future<void> _enqueueShareBatch(List<SharedMediaFile> media) async {
-    if (media.isEmpty) return;
+    if (media.isEmpty || !_shareDeduplicator.shouldAccept(media)) return;
     final done = Completer<void>();
     _pendingShareBatches.add((
       media: List<SharedMediaFile>.unmodifiable(media),
@@ -354,18 +355,6 @@ class _HomeShellState extends State<HomeShell> {
   Future<void> _presentSharedItem(List<SharedMediaFile> media) async {
     if (!mounted || media.isEmpty) return;
     final first = media.first;
-    // The plugin may report the initial intent on both the stream and the
-    // cold-start API. A bounded in-memory fingerprint prevents duplicate forms.
-    final fingerprint = Object.hash(
-      first.type.value,
-      first.path.hashCode,
-      first.mimeType,
-      media.length,
-    );
-    if (_seenShareFingerprints.contains(fingerprint)) return;
-    if (_seenShareFingerprints.length >= 64) _seenShareFingerprints.clear();
-    _seenShareFingerprints.add(fingerprint);
-
     try {
       final incoming = await ShareIntake.fromSharedMedia(first);
       if (!mounted) return;

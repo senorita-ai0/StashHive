@@ -6,7 +6,7 @@
 
 ## Previously verified (before Phase 2 changes)
 
-The last completed CI run before Phase 2 reported dependency resolution, Dart formatting, static analysis, unit tests and the Flutter web release build as passed. The Android debug APK was still running at the last observed status, so it is **not marked passed**. Those results apply to the previous commit, not the new Phase 2 code.
+The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, static analysis, unit tests and the Flutter web release build. The Android debug APK later **failed** in Java compilation: GeneratedPluginRegistrant.java referenced the unavailable com.mr.flutter.plugin.filepicker.FilePickerPlugin class. See https://github.com/senorita-ai0/StashHive/actions/runs/39606162778. The declared file_picker dependency is now upgraded to 12.3.0 because the upstream package documents a fix for the 11.x/AGP 9 registration issue; this mitigation is unverified until the manual workflow is run. Historical results apply to the previous commit, not the new Phase 2 source.
 
 ## Phase 1 source
 
@@ -22,9 +22,11 @@ The last completed CI run before Phase 2 reported dependency resolution, Dart fo
 ## Phase 2 source added (verification intentionally pending)
 
 - [x] Changed the GitHub Actions workflow to **manual-only** (workflow_dispatch). Pushes to main no longer start builds.
+- [x] Added an artifact upload step to the manual workflow for the web build and Android debug APK (14-day retention, only after a successful full run).
+- [x] Upgraded file_picker to 12.3.0 as a candidate fix for the previously observed AGP 9 / plugin registration issue; build verification is pending.
 - [x] Added receive_sharing_intent and ShareIntake for Android shared URLs, text, images and supported documents.
 - [x] Incoming content prefills Quick Save for user review; it is never saved silently.
-- [x] Added bounded in-memory suppression for duplicate initial/stream share events.
+- [x] Added bounded, three-second suppression for duplicate initial/stream share events; later deliberate re-shares are accepted after the window.
 - [x] Multiple items in a share are not silently treated as saved; the form explains that only the first item is prepared in this increment.
 - [x] Added tool/configure_android_share_intents.py to configure the generated Android manifest idempotently.
 - [x] Added tests for share parsing, local persistence across Hive box reopening, attachment restore with ID collision, collection deletion and manifest configuration.
@@ -34,6 +36,8 @@ The last completed CI run before Phase 2 reported dependency resolution, Dart fo
 
 - [ ] Run Dart analysis and unit tests after Phase 2 changes.
 - [ ] Run the Python manifest configurator unit tests.
+- [ ] Verify whether the file_picker 12.3.0 upgrade resolves the historical generated Android runner / FilePickerPlugin registration failure at the final build checkpoint.
+- [x] Added a manual-workflow artifact step so a successful checkpoint preserves build/web and the Android debug APK for 14 days.
 - [ ] Build the web release and Android debug APK after Phase 2 changes.
 - [ ] Test sharing a browser URL, plain text, image and PDF/document on a real Android device.
 - [ ] Validate cold-start vs warm-start share delivery and confirm one share opens one draft.

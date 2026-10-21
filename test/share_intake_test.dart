@@ -65,6 +65,37 @@ void main() {
       );
     });
 
+    test('suppresses immediate initial/stream duplicates but accepts later repeats', () {
+      final deduplicator = ShareEventDeduplicator(
+        window: const Duration(seconds: 3),
+      );
+      final shared = [
+        SharedMediaFile(
+          path: 'https://example.com/repeat',
+          type: SharedMediaType.url,
+          mimeType: 'text/uri-list',
+        ),
+      ];
+      final start = DateTime.utc(2026, 10, 21, 12);
+
+      expect(deduplicator.shouldAccept(shared, now: start), isTrue);
+      expect(
+        deduplicator.shouldAccept(
+          shared,
+          now: start.add(const Duration(milliseconds: 250)),
+        ),
+        isFalse,
+      );
+      expect(
+        deduplicator.shouldAccept(
+          shared,
+          now: start.add(const Duration(seconds: 4)),
+        ),
+        isTrue,
+      );
+      expect(deduplicator.shouldAccept(const [], now: start), isFalse);
+    });
+
     test('returns unsupported for shared video instead of mislabeling it', () async {
       final result = await ShareIntake.fromSharedMedia(
         SharedMediaFile(

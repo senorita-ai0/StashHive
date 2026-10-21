@@ -4,7 +4,7 @@
 
 StashHive is a personal digital library for saving links, notes, screenshots, images, PDFs and documents and finding them later from one local library.
 
-> **Current status: Phase 2 source is in progress.** Before Phase 2, dependency resolution, formatting, analysis, unit tests and the web release build passed in GitHub Actions; the Android debug build had not yet finished when CI was switched to manual-only. Phase 2 adds Android incoming-share intake and repository regression tests. Those new changes have not been built/tested yet, by design: builds run only when manually dispatched.
+> **Current status: Phase 2 source is in progress; verification is intentionally deferred.** Before Phase 2, dependency resolution, formatting, analysis, unit tests and the web release build passed in GitHub Actions. The Android debug build later failed because the generated Android runner could not resolve the FilePickerPlugin class referenced by GeneratedPluginRegistrant.java. The file_picker dependency was moved to 12.3.0 as a candidate fix for the known 11.x/AGP 9 issue; it is not verified until the manual build. CI is manual-only, and no Phase 2 build/test has been run.
 
 ## Product principles
 

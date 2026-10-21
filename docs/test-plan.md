@@ -1,6 +1,6 @@
 # StashHive — Test Plan
 
-**Status:** Planned only; no application code exists yet. Commands below become concrete after Flutter project initialization and environment inspection.
+**Status:** Implementation and test sources exist. Phase 2 tests have not yet run; the GitHub Actions workflow is manual-only by owner request.
 
 ## Test levels
 
@@ -47,7 +47,7 @@
 
 ## Commands
 
-**Not yet available:** no Flutter `pubspec.yaml`, `lib/`, or test suite has been created because implementation is gated. After approval, verify the environment first, then record the exact successful commands for format, analyze, unit/widget/integration tests, Android release build, and web release build. Do not claim these checks pass before they have run.
+**Manual validation only:** the full Flutter workflow does not run on pushes. At the agreed checkpoint, run formatting, analysis, Python configurator tests, Dart unit tests, web release build and Android debug build. The last pre-Phase-2 Android build failed because the generated runner could not resolve FilePickerPlugin; resolve that before marking Android build verification complete.
 
 
 
@@ -58,3 +58,8 @@
 - tool/test_configure_android_share_intents.py: install supported filters, idempotency, and missing MainActivity error.
 
 **Execution status:** tests are present but have not been run for Phase 2. The Flutter workflow is manual-only; no build or test result is claimed until the owner requests a validation checkpoint.
+
+
+## Historical Android build failure to verify at release checkpoint
+
+The previous Android debug build failed when the generated plugin registrant could not resolve FilePickerPlugin. StashHive has upgraded file_picker to 12.3.0 based on the upstream fix reported for 12.x. Do not mark this as fixed until the owner asks for a manual validation run and the Android APK build completes successfully.

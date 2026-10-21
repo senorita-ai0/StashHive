@@ -42,6 +42,49 @@ class IncomingShare {
       );
 }
 
+/// Filters only near-simultaneous duplicate deliveries from the initial intent
+/// API and the broadcast stream. A later deliberate share of the same URL is
+/// accepted after the short de-duplication window.
+class ShareEventDeduplicator {
+  ShareEventDeduplicator({
+    this.window = const Duration(seconds: 3),
+    this.maxEntries = 64,
+  })  : assert(window > Duration.zero),
+        assert(maxEntries > 0);
+
+  final Duration window;
+  final int maxEntries;
+  final Map<int, DateTime> _seen = <int, DateTime>{};
+
+  bool shouldAccept(
+    List<SharedMediaFile> media, {
+    DateTime? now,
+  }) {
+    if (media.isEmpty) return false;
+    final timestamp = now ?? DateTime.now();
+    _seen.removeWhere((_, seenAt) {
+      final age = timestamp.difference(seenAt);
+      return age.isNegative || age > window;
+    });
+
+    final fingerprint = Object.hashAll(
+      media.map(
+        (item) => Object.hash(item.type, item.path, item.mimeType),
+      ),
+    );
+    final previous = _seen[fingerprint];
+    if (previous != null && timestamp.difference(previous) <= window) {
+      return false;
+    }
+
+    while (_seen.length >= maxEntries) {
+      _seen.remove(_seen.keys.first);
+    }
+    _seen[fingerprint] = timestamp;
+    return true;
+  }
+}
+
 /// Converts Android OS shares into draft values. It never saves automatically;
 /// the user reviews and confirms the item in Quick Save.
 class ShareIntake {
