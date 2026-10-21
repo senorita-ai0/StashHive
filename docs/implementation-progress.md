@@ -96,3 +96,7 @@ The save path now snapshots the prior item map and attachment value before write
 - Added a shared layout metric for saved-item card height that expands with the active text scale, keeping two-line titles and metadata from competing for a fixed-height row on accessibility text sizes.
 - Applied the helper to Library and Search grids and added pure unit tests for the default size, scaled sizes, the upper cap and invalid scale input.
 - The source and tests are committed as authored; they have not been run. Screen-reader, mobile-width and actual large-text checks remain pending.
+
+## Layout metric source review correction — 2026-10-21
+
+The text-scale layout helper now explicitly converts the bounded `clamp` result to `double`, matching its declared return type. This is a source-level correction only; no Dart analyzer or tests were run.

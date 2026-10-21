@@ -89,3 +89,7 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 
 - Added a shared text-scale-aware height metric for Library and Search cards. Result cards grow with accessibility text size while staying within a defined maximum.
 - Added pure unit test source for the card-height metric; tests and visual checks remain unrun.
+
+### Layout metric type correction — 2026-10-21
+
+- Explicitly converted the bounded text-scale adjustment to a double to match the layout helper's return type. Analysis and unit-test execution remain pending.
