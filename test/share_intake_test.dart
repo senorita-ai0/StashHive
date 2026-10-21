@@ -55,7 +55,7 @@ void main() {
       await expectLater(
         ShareIntake.fromSharedMedia(
           SharedMediaFile(
-            path: 'x' * (maxIncomingTextCharacters + 1),
+            path: List<String>.filled(maxIncomingTextCharacters + 1, 'x').join(),
             type: SharedMediaType.text,
             mimeType: 'text/plain',
           ),
