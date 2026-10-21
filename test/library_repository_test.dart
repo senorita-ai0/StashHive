@@ -224,6 +224,33 @@ void main() {
     expect(repository.collections.value, ['Existing']);
   });
 
+  test('rolls back a partially written collection rename', () async {
+    await repository.addCollection('Learning');
+    await repository.save(buildLink(id: 'learning-1', collection: 'Learning'));
+    await repository.save(buildLink(id: 'learning-2', collection: 'Learning'));
+
+    LibraryRepository.collectionBeforeItemWriteForTesting = (index) async {
+      if (index == 1) {
+        throw StateError('simulated collection item write failure');
+      }
+    };
+    try {
+      await expectLater(
+        repository.renameCollection('Learning', 'Reading'),
+        throwsA(isA<StateError>()),
+      );
+    } finally {
+      LibraryRepository.collectionBeforeItemWriteForTesting = null;
+    }
+
+    expect(repository.collections.value, ['Learning']);
+    expect(repository.items.value, hasLength(2));
+    expect(
+      repository.items.value.map((item) => item.collection),
+      everyElement('Learning'),
+    );
+  });
+
   test('a missing attachment cannot be saved as though it were local', () async {
     final item = buildImage();
     await expectLater(

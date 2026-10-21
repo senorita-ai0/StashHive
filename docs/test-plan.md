@@ -96,3 +96,8 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - Removed redundant references to undeclared restore bookkeeping variables; rollback continues to clean up every staged item/attachment entry.
 - Dart analyzer, unit tests, web build and Android APK build remain pending the owner's manual validation checkpoint.
+
+### Collection mutation recovery — 2026-10-21
+
+- A fault-injection regression checks that a failed collection rename does not leave only some saved items assigned to the new collection.
+- Rename/delete rollback is best-effort; storage interruption behavior requires the owner's manual validation checkpoint and platform-level testing.

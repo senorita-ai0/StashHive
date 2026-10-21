@@ -56,3 +56,8 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 ### Restore compile-blocker correction — 2026-10-21
 
 - Removed stale, undeclared restore bookkeeping references that would prevent Dart compilation. No tests or builds were run; CI remains manual-only.
+
+### Collection mutation recovery — 2026-10-21
+
+- Made collection rename/delete update affected item records before committing collection preferences, with best-effort rollback if a write fails.
+- Added a fault-injection regression for a rename interrupted during item updates. Test/build execution remains pending.

@@ -37,6 +37,10 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function()? saveBeforeItemCommitForTesting;
 
+  /// Fault-injection seam for collection rename/delete rollback tests.
+  @visibleForTesting
+  static Future<void> Function(int index)? collectionBeforeItemWriteForTesting;
+
   bool get darkMode => _preferencesBox.get('darkMode') == true;
 
   static Future<LibraryRepository> open() async {
@@ -207,33 +211,106 @@ class LibraryRepository {
         item.toLowerCase() != oldName.toLowerCase())) {
       throw const FormatException('A collection with this name already exists.');
     }
-    final current = collections.value.map((item) => item == oldName ? cleaned : item).toList();
-    await _preferencesBox.put('collections', current);
-    for (final item in List<SavedItem>.from(items.value)) {
-      if (item.collection == oldName) {
-        await save(item.copyWith(
-          collection: cleaned,
-          updatedAtMs: DateTime.now().toUtc().millisecondsSinceEpoch,
-        ));
-      }
+    final oldIndex = collections.value.indexWhere(
+      (item) => item.toLowerCase() == oldName.toLowerCase(),
+    );
+    if (oldIndex < 0) {
+      throw const FormatException('The collection does not exist.');
     }
-    _refreshCollections();
-    _refreshItems();
+
+    final renamedCollections = List<String>.from(collections.value);
+    renamedCollections[oldIndex] = cleaned;
+    final affectedItems = items.value
+        .where((item) => item.collection?.toLowerCase() == oldName.toLowerCase())
+        .toList(growable: false);
+    await _commitCollectionMutation(
+      updatedCollections: renamedCollections,
+      affectedItems: affectedItems,
+      transform: (item) => item.copyWith(
+        collection: cleaned,
+        updatedAtMs: DateTime.now().toUtc().millisecondsSinceEpoch,
+      ),
+    );
   }
 
   Future<void> deleteCollection(String name) async {
-    final current = collections.value.where((item) => item != name).toList();
-    await _preferencesBox.put('collections', current);
-    for (final item in List<SavedItem>.from(items.value)) {
-      if (item.collection == name) {
-        await save(item.copyWith(
-          clearCollection: true,
-          updatedAtMs: DateTime.now().toUtc().millisecondsSinceEpoch,
-        ));
-      }
+    final exists = collections.value.any(
+      (item) => item.toLowerCase() == name.toLowerCase(),
+    );
+    if (!exists) {
+      throw const FormatException('The collection does not exist.');
     }
-    _refreshCollections();
+    final remainingCollections = collections.value
+        .where((item) => item.toLowerCase() != name.toLowerCase())
+        .toList(growable: false);
+    final affectedItems = items.value
+        .where((item) => item.collection?.toLowerCase() == name.toLowerCase())
+        .toList(growable: false);
+    await _commitCollectionMutation(
+      updatedCollections: remainingCollections,
+      affectedItems: affectedItems,
+      transform: (item) => item.copyWith(
+        clearCollection: true,
+        updatedAtMs: DateTime.now().toUtc().millisecondsSinceEpoch,
+      ),
+    );
+  }
+
+  Future<void> _commitCollectionMutation({
+    required List<String> updatedCollections,
+    required List<SavedItem> affectedItems,
+    required SavedItem Function(SavedItem item) transform,
+  }) async {
+    final hadCollectionsKey = _preferencesBox.containsKey('collections');
+    final previousCollectionsValue = _preferencesBox.get('collections');
+    final hadItemKeys = <String, bool>{
+      for (final item in affectedItems)
+        item.id: _itemsBox.containsKey(item.id),
+    };
+    final previousItemValues = <String, Object?>{
+      for (final item in affectedItems) item.id: _itemsBox.get(item.id),
+    };
+    final attemptedItemIds = <String>[];
+
+    try {
+      for (var index = 0; index < affectedItems.length; index++) {
+        final item = affectedItems[index];
+        // Include the current key before writing: a storage call may fail after
+        // committing, so rollback must attempt to restore it too.
+        attemptedItemIds.add(item.id);
+        final beforeItemWrite = collectionBeforeItemWriteForTesting;
+        if (beforeItemWrite != null) await beforeItemWrite(index);
+        await _itemsBox.put(item.id, transform(item).toMap());
+      }
+      await _preferencesBox.put('collections', updatedCollections);
+    } catch (_) {
+      for (final id in attemptedItemIds.reversed) {
+        try {
+          if (hadItemKeys[id] == true) {
+            await _itemsBox.put(id, previousItemValues[id]);
+          } else {
+            await _itemsBox.delete(id);
+          }
+        } catch (_) {
+          // Best-effort rollback; keep attempting the remaining records.
+        }
+      }
+      try {
+        if (hadCollectionsKey) {
+          await _preferencesBox.put('collections', previousCollectionsValue);
+        } else {
+          await _preferencesBox.delete('collections');
+        }
+      } catch (_) {
+        // Preserve the original operation error if preferences cannot roll back.
+      }
+      _refreshItems();
+      _refreshCollections();
+      rethrow;
+    }
+
     _refreshItems();
+    _refreshCollections();
   }
 
   Future<String> createBackup() async {
