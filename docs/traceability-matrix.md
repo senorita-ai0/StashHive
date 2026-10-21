@@ -113,3 +113,9 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Behavior: each menu tooltip names the card title so several generic “Item actions” controls are easier to distinguish.
 - Test: `test/accessibility_widgets_test.dart` verifies the contextual tooltip and visible menu choices.
 - Verification: test source added but unrun; real screen-reader and keyboard checks remain pending.
+
+
+### TSK-321 verification strengthening — 2026-10-22
+
+- The widget regression now seeds an item, opens “View details” and checks its callback, then marks the item favorite and checks repository state. This covers actual action behavior in addition to tooltip/choice visibility.
+- Test execution and platform accessibility verification remain pending.

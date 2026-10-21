@@ -162,5 +162,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 ### TC-027 — Saved-item action menu context
 
-- Render a saved-item card, confirm its action-menu tooltip identifies that item's title, open the menu, and verify “Add to favorites” and “View details” are exposed.
+- Seed and render a saved-item card, confirm its action-menu tooltip identifies that item's title, verify “View details” calls the details callback, then verify “Add to favorites” changes the saved item's favorite state.
 - Widget regression is authored but not run. Confirm tooltip verbosity and menu operation using keyboard/pointer and screen readers on web and Android; status remains NOT STARTED.
+
+
+### TC-028 — Saved-item action command behavior
+
+- Use the saved-item action menu to open details and mark an item as a favorite.
+- Verify the detail callback fires and the repository state changes for the expected item. Test source is authored but unrun; manual keyboard/screen-reader testing remains NOT STARTED.

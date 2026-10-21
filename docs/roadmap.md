@@ -90,7 +90,7 @@ MVP must not be described as ready until create/edit/delete, link open, supporte
 | TSK-318 | Expose saved-image and favorite state to assistive technology | IN PROGRESS — semantic labels and widget test authored; verification pending | Favorite markers and saved-image previews have meaningful semantics and pass TalkBack/web screen-reader review without duplicate announcements. |
 | TSK-319 | Make the Library search teaser accessible as a navigation button | IN PROGRESS — semantics and widget test authored; verification pending | The search-shaped control is announced as a button with a clear name/hint, not as an editable text field, and responds to keyboard/pointer activation. |
 | TSK-320 | Announce Search result-count changes to assistive technology | IN PROGRESS — live-region semantics and widget regression authored; run pending | Search result counts expose a single live status such as “1 result” or “0 results” as query/filter results change; screen-reader announcement behavior is manually verified. |
-| TSK-321 | Give saved-item action menus item-specific accessible names | IN PROGRESS — contextual tooltip and widget regression authored; run pending | Every card's action menu identifies which saved item it affects, and menu commands are discoverable by semantics/widget tests. |
+| TSK-321 | Give saved-item action menus item-specific accessible names | IN PROGRESS — contextual tooltip and command-activation regression authored; run pending | Every card's action menu identifies the item and View details/Add to favorites both invoke the expected action. |
 
 The owner requested development first and builds at the final checkpoint. Do not dispatch GitHub Actions unless the owner explicitly asks for validation. A successful manual workflow will retain the web build and Android debug APK artifacts for 14 days.
 
@@ -169,3 +169,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - Saved-item overflow menus now use an item-specific tooltip (“Actions for [title]”) rather than the same generic label on every card. This helps distinguish action menus when browsing a long library with assistive technology.
 - A widget regression checks the contextual tooltip and that the menu exposes “Add to favorites” and “View details”. The test is authored but unrun; TalkBack and web screen-reader checks remain pending.
+
+
+### Phase 3 — saved-item menu command regression — 2026-10-22
+
+- Strengthened the TSK-321 widget test to seed an item, activate “View details” and verify the details callback, then activate “Add to favorites” and verify repository state changes. This checks command behavior, not only visible menu labels.
+- Regression source is authored but intentionally unrun; CI stays manual-only. Keyboard focus order and screen-reader usability remain platform-validation items.

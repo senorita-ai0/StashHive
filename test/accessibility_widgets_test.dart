@@ -95,7 +95,7 @@ void main() {
     );
   });
 
-  testWidgets('Saved-item actions are named in the item context', (tester) async {
+  testWidgets('Saved-item action menu is contextual and runs its commands', (tester) async {
     const item = SavedItem(
       id: 'actions-link',
       kind: ItemKind.link,
@@ -108,6 +108,8 @@ void main() {
       createdAtMs: 1,
       updatedAtMs: 2,
     );
+    var openedDetails = false;
+    await repository.save(item);
 
     await tester.pumpWidget(
       MaterialApp(
@@ -115,7 +117,7 @@ void main() {
           body: app.SavedItemTile(
             item: item,
             repository: repository,
-            onTap: () {},
+            onTap: () => openedDetails = true,
           ),
         ),
       ),
@@ -128,6 +130,17 @@ void main() {
 
     expect(find.text('Add to favorites'), findsOneWidget);
     expect(find.text('View details'), findsOneWidget);
+
+    await tester.tap(find.text('View details'));
+    await tester.pumpAndSettle();
+    expect(openedDetails, isTrue);
+
+    await tester.tap(actions);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Add to favorites'));
+    await tester.pumpAndSettle();
+
+    expect(repository.items.value.single.isFavorite, isTrue);
   });
 
   testWidgets('favorite state is exposed with a meaningful semantic label', (tester) async {
