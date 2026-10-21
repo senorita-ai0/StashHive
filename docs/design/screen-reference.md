@@ -126,3 +126,7 @@ Library item cards now allow titles to wrap to two lines before truncating, impr
 ## Phase 3 refinement — large text and saved-item cards
 
 Library and Search card heights now adapt to the active text scaler so two-line titles and the metadata row have more vertical room at larger system text sizes. This is a responsive safeguard, not a claim that every screen-reader or large-text layout has passed verification.
+
+## Phase 3 refinement — screen-reader labels
+
+Saved image previews now have title-based semantic labels, and the visible favorite star communicates that an item is saved as a favorite. Verify the resulting semantics on Android TalkBack and at least one desktop/web screen reader; source changes alone do not establish accessibility compliance.

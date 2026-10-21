@@ -100,3 +100,9 @@ The save path now snapshots the prior item map and attachment value before write
 ## Layout metric source review correction — 2026-10-21
 
 The text-scale layout helper now explicitly converts the bounded `clamp` result to `double`, matching its declared return type. This is a source-level correction only; no Dart analyzer or tests were run.
+
+## Phase 3 — accessible image and favorite labels (2026-10-21)
+
+- Saved-item cards now expose the favorite marker to assistive technology with a meaningful label.
+- Stored image thumbnails and the larger item-detail image expose title-based semantic labels instead of appearing as unlabeled pictures.
+- Added a widget-level semantics regression test for favorite state. This is source/test work only; no test execution or screen-reader verification has been performed.

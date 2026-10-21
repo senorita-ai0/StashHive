@@ -93,3 +93,8 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 ### Layout metric type correction — 2026-10-21
 
 - Explicitly converted the bounded text-scale adjustment to a double to match the layout helper's return type. Analysis and unit-test execution remain pending.
+
+### Phase 3 accessibility semantics — 2026-10-21
+
+- Added a meaningful semantic label for favorite markers and title-based labels for image thumbnails and detail previews.
+- Added a widget-level regression test for favorite state; it has not been run. TalkBack and web screen-reader verification remain pending.

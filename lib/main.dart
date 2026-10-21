@@ -1047,7 +1047,14 @@ class SavedItemTile extends StatelessWidget {
                         if (item.isFavorite)
                           const Padding(
                             padding: EdgeInsets.only(left: 4),
-                            child: Icon(Icons.star_rounded, size: 16, color: Color(0xFFE1A52B)),
+                            child: Semantics(
+                              label: 'Saved as a favorite',
+                              child: Icon(
+                                Icons.star_rounded,
+                                size: 16,
+                                color: Color(0xFFE1A52B),
+                              ),
+                            ),
                           ),
                       ],
                     ),
@@ -1163,6 +1170,7 @@ class _ItemThumbnail extends StatelessWidget {
               borderRadius: BorderRadius.circular(13),
               child: Image.memory(
                 Uint8List.fromList(snapshot.data!),
+                semanticLabel: 'Image preview: ${item.title}',
                 width: size,
                 height: size,
                 fit: BoxFit.cover,
@@ -1760,7 +1768,10 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                   );
                 }
                 return InteractiveViewer(
-                  child: Image.memory(Uint8List.fromList(snapshot.data!)),
+                  child: Image.memory(
+                    Uint8List.fromList(snapshot.data!),
+                    semanticLabel: 'Image: ${item.title}',
+                  ),
                 );
               },
             ),

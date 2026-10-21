@@ -87,6 +87,7 @@ MVP must not be described as ready until create/edit/delete, link open, supporte
 | TSK-315 | Platform-aware backup storage messaging and single-flight restore UI | IN PROGRESS — source added; platform verification pending | Browser users see browser-profile/site-data warnings; Android users see app/device warnings; restore cannot be started twice and busy states are accessible. |
 | TSK-316 | Match Library title wrapping to the approved responsive reference | IN PROGRESS — source adjusted; visual check pending | Long titles wrap to two lines on item cards without obscuring actions at narrow widths or large text scaling. |
 | TSK-317 | Scale Library/Search result cards with system text settings | IN PROGRESS — shared layout helper and unit tests added; run pending | Card heights grow with system text scaling for two-line titles and metadata, remain bounded for invalid/extreme scales, and pass visual checks on web and Android. |
+| TSK-318 | Expose saved-image and favorite state to assistive technology | IN PROGRESS — semantic labels and widget test authored; verification pending | Favorite markers and saved-image previews have meaningful semantics and pass TalkBack/web screen-reader review without duplicate announcements. |
 
 The owner requested development first and builds at the final checkpoint. Do not dispatch GitHub Actions unless the owner explicitly asks for validation. A successful manual workflow will retain the web build and Android debug APK artifacts for 14 days.
 
@@ -139,3 +140,7 @@ TSK-316 adjusts saved-item titles to wrap onto two lines before truncating, foll
 ### Phase 3 — text scale-aware result layout (2026-10-21)
 
 TSK-317 introduces `savedItemCardExtentForTextScale` and applies it consistently to Library and Search result grids. At the default scale, cards use a 120 logical-pixel extent; larger text scales increase the extent within a fixed upper bound. Helper tests are authored but unrun. Actual large-text and responsive visual inspection remains pending.
+
+### Phase 3 — accessible saved-item labels (2026-10-21)
+
+TSK-318 adds title-based semantic labels to image thumbnails and detail previews, plus an explicit favorite-state label in Library/Search cards. A widget regression test is authored. Assistive-technology checks remain pending and should confirm that labels are useful without being announced twice.

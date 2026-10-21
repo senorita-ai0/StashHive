@@ -133,3 +133,9 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Verify extreme or invalid scale values are bounded to prevent unbounded card growth.
 - On web and Android, manually inspect Library and Search at 100%, 150% and 200% text scale; long titles should remain readable and action controls must not overlap.
 - Automated unit test source is added but execution remains pending the manual validation checkpoint.
+
+### TC-023 — Saved-item semantics
+
+- With a favorite item in the Library, inspect the semantics tree and confirm its favorite state is announced as “Saved as a favorite.”
+- Confirm the stored image thumbnail and item-detail preview expose a useful title-based image label.
+- Use TalkBack on Android and a screen reader on web to ensure the added labels are understandable and not redundantly repeated. Manual assistive-technology checks remain NOT STARTED.

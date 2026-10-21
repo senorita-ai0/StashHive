@@ -76,3 +76,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-004, FR-005, NFR-006.
 - Test: `test/layout_metrics_test.dart` covers baseline, scaled, bounded and invalid text-scale values.
 - Verification: authored but not executed; actual UI layout checks remain pending.
+
+### TSK-318 — Saved-item semantic labels
+
+- Implementation: `lib/main.dart`, `SavedItemTile`, `_ItemThumbnail`, and image detail preview.
+- Requirements: FR-004, FR-011, NFR-006.
+- Test: `test/accessibility_widgets_test.dart` checks favorite-state semantics.
+- Verification: test source is added but unrun; actual TalkBack and web screen-reader testing remains pending.
