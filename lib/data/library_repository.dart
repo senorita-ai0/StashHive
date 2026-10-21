@@ -27,6 +27,11 @@ class LibraryRepository {
   final ValueNotifier<List<String>> collections =
       ValueNotifier<List<String>>(<String>[]);
 
+  /// Fault-injection seam for verifying that a failed restore removes writes
+  /// already staged before the collection preferences are committed.
+  @visibleForTesting
+  static Future<void> Function()? restoreBeforeCollectionsCommitForTesting;
+
   bool get darkMode => _preferencesBox.get('darkMode') == true;
 
   static Future<LibraryRepository> open() async {
@@ -224,7 +229,12 @@ class LibraryRepository {
   Future<int> restoreBackup(String source) async {
     final decoded = BackupCodec.decode(source);
     final staged = <({SavedItem item, List<int>? bytes})>[];
-    final reserved = items.value.map((item) => item.id).toSet();
+    // Reserve raw box keys too, including keys belonging to unreadable records
+    // or orphaned attachments, so rollback can safely delete every staged ID.
+    final reserved = <String>{
+      ..._itemsBox.keys.whereType<String>(),
+      ..._attachmentsBox.keys.whereType<String>(),
+    };
     final seenImportedIds = <String>{};
     for (final item in decoded.items) {
       var newId = item.id;
@@ -257,8 +267,8 @@ class LibraryRepository {
       reserved.add(newId);
     }
 
-    final writtenItems = <String>[];
-    final writtenAttachments = <String>[];
+    final hadCollectionsKey = _preferencesBox.containsKey('collections');
+    final previousCollectionsValue = _preferencesBox.get('collections');
     try {
       for (final entry in staged) {
         final key = entry.item.attachmentKey;
@@ -275,13 +285,39 @@ class LibraryRepository {
           merged.add(name);
         }
       }
+      final beforeCollectionsCommit = restoreBeforeCollectionsCommitForTesting;
+      if (beforeCollectionsCommit != null) {
+        await beforeCollectionsCommit();
+      }
       await _preferencesBox.put('collections', merged);
     } catch (_) {
-      for (final id in writtenItems) {
-        await _itemsBox.delete(id);
+      // Every staged ID is guaranteed not to have existed before this restore.
+      // Attempt cleanup item-by-item so one rollback failure does not prevent
+      // cleanup attempts for other records or attachment payloads.
+      for (final entry in staged.reversed) {
+        try {
+          await _itemsBox.delete(entry.item.id);
+        } catch (_) {
+          // Preserve the original restore error; don't mask the primary failure.
+        }
+        final key = entry.item.attachmentKey;
+        if (key != null) {
+          try {
+            await _attachmentsBox.delete(key);
+          } catch (_) {
+            // Continue best-effort rollback of the remaining staged entries.
+          }
+        }
       }
-      for (final key in writtenAttachments) {
-        await _attachmentsBox.delete(key);
+      try {
+        if (hadCollectionsKey) {
+          await _preferencesBox.put('collections', previousCollectionsValue);
+        } else {
+          await _preferencesBox.delete('collections');
+        }
+      } catch (_) {
+        // Preserve the original restore error if preferences cannot be rolled
+        // back. Storage-interruption recovery still requires platform testing.
       }
       rethrow;
     }

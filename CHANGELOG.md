@@ -37,6 +37,7 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 - Changed multi-item Android shares to a sequential draft-review flow with per-item progress; unsupported/unreadable items no longer stop the rest of the batch.
 - Hardened backup validation against malformed record types, invalid collection lists and unreferenced attachments; preserved item-assigned collection names in encoded/restored backups.
 - Added regression coverage for malformed mixed-backup rejection without partially importing records; execution is pending the manual validation checkpoint.
+- Strengthened best-effort restore rollback after staged item/attachment writes, preserves prior collection preferences when rollback is possible, and added a fault-injection regression.
 
 
 ### Phase 2 refinement — 2026-10-21

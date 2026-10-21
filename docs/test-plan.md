@@ -77,3 +77,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - test/backup_codec_test.dart now covers wrong saved-item field types, attachment payloads with no item reference, and preservation of a collection assigned on an item but omitted from older top-level collection lists.
 - test/library_repository_test.dart covers a backup with one valid record followed by a malformed record; the restore must fail before importing any record or collection.
 - Execution remains pending. The restore is decoded and validated before writes, but simulated Hive write interruptions and rollback of real storage failures still need separate testing.
+
+
+### Restore write-phase rollback regression — 2026-10-21
+
+- test/library_repository_test.dart injects an exception after the restored item and attachment have been written but before collection preferences commit.
+- Expected: the incoming item and its attachment bytes are removed; the previously saved item and collection assignment remain unchanged; the original error remains visible to the caller.
+- This regression is authored but unrun. It tests the rollback control flow in-process; it does not simulate process death or a filesystem failure during Hive compaction/flush.

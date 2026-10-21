@@ -65,3 +65,10 @@ If the project becomes public, add a monitored security contact before release. 
 - Restore now checks required saved-item field types before constructing models, requires a collections list, bounds and validates collection names, validates attachment key/name/MIME metadata, and rejects attachment payloads that no item references.
 - Backup creation includes collection names referenced by saved items even if an older or inconsistent local collection list omitted them, so a round-trip does not silently strand those items outside the Collections screen.
 - Repository restore validates the complete decoded backup before beginning writes. This reduces malformed-input partial import risk; it does not yet prove recovery from a disk/box write failure during the write phase.
+
+
+## Restore rollback hardening — source added, verification pending
+
+- Restore reserves both item-box and attachment-box keys, including orphaned keys and keys tied to unreadable records, before choosing imported IDs.
+- If a restore fails after writes begin, cleanup is attempted for every staged item and attachment, then the prior collection preference value is restored (or the preference key is removed if it did not previously exist). A rollback failure does not mask the original restore exception.
+- This is best-effort rollback, not an atomic database transaction. Power loss, process death and physical storage failure during rollback remain unverified.

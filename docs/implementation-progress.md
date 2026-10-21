@@ -47,7 +47,9 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 - [ ] Manually verify collection counts refresh after saving, editing, moving and deleting items without navigating away.
 - [ ] Confirm manifest configuration on an actual generated Android runner.
 - [ ] Accessibility and visual comparison against the seven SVG screen references.
-- [ ] Run malformed-backup rejection and no-partial-restore regression tests at the manual validation checkpoint; exercise actual storage-write interruption behavior.
+- [ ] Run malformed-backup rejection and no-partial-restore regression tests at the manual validation checkpoint.
+- [x] Added a fault-injection regression for an exception after item/attachment writes and before collection commit; source attempts best-effort cleanup and restores the previous collection preference value.
+- [ ] Exercise real Hive/filesystem write interruption behavior; the injected regression covers rollback flow, not device-level crash durability.
 
 ## Current limitations
 

@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/models/saved_item.dart';
+import 'package:stashhive/services/backup_codec.dart';
 
 late Directory testDirectory;
 late LibraryRepository repository;
@@ -138,6 +139,63 @@ void main() {
     await expectLater(repository.restoreBackup(backup), throwsFormatException);
 
     expect(repository.items.value.map((item) => item.id), ['existing-1']);
+    expect(repository.collections.value, ['Existing']);
+  });
+
+  test('rolls back staged items and attachments when restore is interrupted', () async {
+    await repository.addCollection('Existing');
+    await repository.save(buildLink(id: 'existing-1', collection: 'Existing'));
+
+    final importedBytes = Uint8List.fromList([8, 7, 6, 5, 4]);
+    const incomingImage = SavedItem(
+      id: 'incoming-image-1',
+      kind: ItemKind.image,
+      title: 'Imported image',
+      content: 'From the backup',
+      url: null,
+      tags: ['Recovery'],
+      collection: 'Imported',
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 2000,
+      attachmentKey: 'incoming-image-1',
+      attachmentName: 'imported.png',
+      attachmentMimeType: 'image/png',
+    );
+    final backup = BackupCodec.encode(
+      items: const [incomingImage],
+      attachmentBytes: {'incoming-image-1': importedBytes},
+      collections: const ['Imported'],
+    );
+
+    LibraryRepository.restoreBeforeCollectionsCommitForTesting = () async {
+      throw StateError('simulated restore interruption');
+    };
+    try {
+      await expectLater(
+        repository.restoreBackup(backup),
+        throwsA(isA<StateError>()),
+      );
+    } finally {
+      LibraryRepository.restoreBeforeCollectionsCommitForTesting = null;
+    }
+
+    expect(
+      repository.items.value.map((item) => item.id),
+      orderedEquals(['existing-1']),
+    );
+    expect(
+      Hive.box<dynamic>('stashhive_items_v1').containsKey('incoming-image-1'),
+      isFalse,
+    );
+    expect(
+      Hive.box<dynamic>('stashhive_attachments_v1').containsKey('incoming-image-1'),
+      isFalse,
+    );
+    expect(
+      Hive.box<dynamic>('stashhive_preferences_v1').get('collections'),
+      ['Existing'],
+    );
     expect(repository.collections.value, ['Existing']);
   });
 
