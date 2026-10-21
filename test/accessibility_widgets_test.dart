@@ -48,6 +48,53 @@ void main() {
     expect(openedSearch, isTrue);
   });
 
+  testWidgets('Search result count is exposed as a live status', (tester) async {
+    final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
+    const item = SavedItem(
+      id: 'searchable-link',
+      kind: ItemKind.link,
+      title: 'Accessible Flutter guide',
+      content: 'Guide',
+      url: 'https://flutter.dev',
+      tags: ['Accessibility'],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1,
+      updatedAtMs: 2,
+    );
+    await repository.save(item);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: app.SearchPage(
+            repository: repository,
+            initialQuery: 'Accessible',
+            onOpenItem: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    final matchCount = find.bySemanticsLabel('1 result');
+    expect(matchCount, findsOneWidget);
+    expect(
+      tester.getSemantics(matchCount).hasFlag(SemanticsFlag.isLiveRegion),
+      isTrue,
+    );
+
+    await tester.enterText(find.byType(TextField), 'does-not-match');
+    await tester.pump();
+
+    final emptyCount = find.bySemanticsLabel('0 results');
+    expect(emptyCount, findsOneWidget);
+    expect(
+      tester.getSemantics(emptyCount).hasFlag(SemanticsFlag.isLiveRegion),
+      isTrue,
+    );
+  });
+
   testWidgets('favorite state is exposed with a meaningful semantic label', (tester) async {
     final semantics = tester.ensureSemantics();
     addTearDown(semantics.dispose);

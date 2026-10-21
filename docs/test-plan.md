@@ -151,3 +151,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - Confirm the Library search teaser is named “Search your library,” exposes a tap action, and semantic activation invokes the Search navigation callback.
 - Verify the real control with keyboard and pointer on web/desktop and TalkBack/screen reader on supported platforms. The widget regression is authored but not run; platform checks remain NOT STARTED.
+
+
+### TC-026 — Search result status announcements
+
+- Seed a saved item, search for a matching term, then change the query to a no-match term.
+- Confirm the result count exposes “1 result” and then “0 results” as a live semantic status without duplicate text announcements.
+- Widget regression source is authored but not run. Verify announcement clarity and avoid excessive chatter during rapid typing using TalkBack and a supported web screen reader; status remains NOT STARTED.

@@ -912,12 +912,19 @@ class _SearchPageState extends State<SearchPage> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            results.length.toString() + (results.length == 1 ? ' result' : ' results'),
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  color: kMuted,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                          Semantics(
+                            liveRegion: true,
+                            label:
+                                '${results.length} ${results.length == 1 ? 'result' : 'results'}',
+                            child: ExcludeSemantics(
+                              child: Text(
+                                '${results.length} ${results.length == 1 ? 'result' : 'results'}',
+                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                      color: kMuted,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 10),
                           Expanded(

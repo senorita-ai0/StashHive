@@ -95,3 +95,12 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-319 follow-up — 2026-10-21
 
 - The Library search widget regression now verifies that semantic activation invokes the Search callback, not merely that the semantics node exposes a tap action. Semantics handles are disposed through test teardown. This is authored source only; execution and real keyboard/screen-reader checks remain pending.
+
+
+### TSK-320 — Live Search result-count status — 2026-10-22
+
+- Implementation: `lib/main.dart`, `SearchPage` result count.
+- Requirements: FR-005, NFR-006.
+- Behavior: result count is exposed as a live-region semantic label while preserving the visible count and suppressing duplicate child semantics.
+- Test: `test/accessibility_widgets_test.dart` checks matching/no-match counts and the live-region flag.
+- Verification: test source added but unrun; on-device and browser screen-reader announcement behavior remains unverified.
