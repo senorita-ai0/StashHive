@@ -104,3 +104,12 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Behavior: result count is exposed as a live-region semantic label while preserving the visible count and suppressing duplicate child semantics.
 - Test: `test/accessibility_widgets_test.dart` checks matching/no-match counts and the live-region flag.
 - Verification: test source added but unrun; on-device and browser screen-reader announcement behavior remains unverified.
+
+
+### TSK-321 — Contextual saved-item action labels — 2026-10-22
+
+- Implementation: `lib/main.dart`, `SavedItemTile` overflow menu tooltip.
+- Requirements: FR-004, FR-011, NFR-006.
+- Behavior: each menu tooltip names the card title so several generic “Item actions” controls are easier to distinguish.
+- Test: `test/accessibility_widgets_test.dart` verifies the contextual tooltip and visible menu choices.
+- Verification: test source added but unrun; real screen-reader and keyboard checks remain pending.

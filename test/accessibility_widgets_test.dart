@@ -95,6 +95,41 @@ void main() {
     );
   });
 
+  testWidgets('Saved-item actions are named in the item context', (tester) async {
+    const item = SavedItem(
+      id: 'actions-link',
+      kind: ItemKind.link,
+      title: 'Accessible Flutter guide',
+      content: 'Guide',
+      url: 'https://flutter.dev',
+      tags: ['Accessibility'],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1,
+      updatedAtMs: 2,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: app.SavedItemTile(
+            item: item,
+            repository: repository,
+            onTap: () {},
+          ),
+        ),
+      ),
+    );
+
+    final actions = find.byTooltip('Actions for Accessible Flutter guide');
+    expect(actions, findsOneWidget);
+    await tester.tap(actions);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Add to favorites'), findsOneWidget);
+    expect(find.text('View details'), findsOneWidget);
+  });
+
   testWidgets('favorite state is exposed with a meaningful semantic label', (tester) async {
     final semantics = tester.ensureSemantics();
     addTearDown(semantics.dispose);

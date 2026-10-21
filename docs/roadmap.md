@@ -90,6 +90,7 @@ MVP must not be described as ready until create/edit/delete, link open, supporte
 | TSK-318 | Expose saved-image and favorite state to assistive technology | IN PROGRESS — semantic labels and widget test authored; verification pending | Favorite markers and saved-image previews have meaningful semantics and pass TalkBack/web screen-reader review without duplicate announcements. |
 | TSK-319 | Make the Library search teaser accessible as a navigation button | IN PROGRESS — semantics and widget test authored; verification pending | The search-shaped control is announced as a button with a clear name/hint, not as an editable text field, and responds to keyboard/pointer activation. |
 | TSK-320 | Announce Search result-count changes to assistive technology | IN PROGRESS — live-region semantics and widget regression authored; run pending | Search result counts expose a single live status such as “1 result” or “0 results” as query/filter results change; screen-reader announcement behavior is manually verified. |
+| TSK-321 | Give saved-item action menus item-specific accessible names | IN PROGRESS — contextual tooltip and widget regression authored; run pending | Every card's action menu identifies which saved item it affects, and menu commands are discoverable by semantics/widget tests. |
 
 The owner requested development first and builds at the final checkpoint. Do not dispatch GitHub Actions unless the owner explicitly asks for validation. A successful manual workflow will retain the web build and Android debug APK artifacts for 14 days.
 
@@ -162,3 +163,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - Search result counts now expose a live-region semantic label (for example, “1 result” and “0 results”) so assistive technology can detect updates while a query changes. The visible result-count styling is retained, and its child text is excluded from semantics to avoid duplicate announcements.
 - A widget regression covers the matching and no-match states and checks the live-region flag. It is authored but unrun; actual announcement timing and verbosity still need screen-reader review.
+
+
+### Phase 3 — contextual saved-item action labels — 2026-10-22
+
+- Saved-item overflow menus now use an item-specific tooltip (“Actions for [title]”) rather than the same generic label on every card. This helps distinguish action menus when browsing a long library with assistive technology.
+- A widget regression checks the contextual tooltip and that the menu exposes “Add to favorites” and “View details”. The test is authored but unrun; TalkBack and web screen-reader checks remain pending.

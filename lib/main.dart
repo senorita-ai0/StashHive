@@ -1116,7 +1116,7 @@ class SavedItemTile extends StatelessWidget {
                 ),
               ),
               PopupMenuButton<String>(
-                tooltip: 'Item actions',
+                tooltip: 'Actions for ${item.title}',
                 icon: const Icon(Icons.more_horiz_rounded, color: kMuted),
                 onSelected: (action) async {
                   if (action == 'favorite') {

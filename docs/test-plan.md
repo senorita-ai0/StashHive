@@ -158,3 +158,9 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed a saved item, search for a matching term, then change the query to a no-match term.
 - Confirm the result count exposes “1 result” and then “0 results” as a live semantic status without duplicate text announcements.
 - Widget regression source is authored but not run. Verify announcement clarity and avoid excessive chatter during rapid typing using TalkBack and a supported web screen reader; status remains NOT STARTED.
+
+
+### TC-027 — Saved-item action menu context
+
+- Render a saved-item card, confirm its action-menu tooltip identifies that item's title, open the menu, and verify “Add to favorites” and “View details” are exposed.
+- Widget regression is authored but not run. Confirm tooltip verbosity and menu operation using keyboard/pointer and screen readers on web and Android; status remains NOT STARTED.
