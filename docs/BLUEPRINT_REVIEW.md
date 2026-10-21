@@ -1,44 +1,38 @@
-# StashHive — Blueprint Review Summary
+# StashHive — Blueprint and Implementation Status
 
-**Status: APPROVED FOR IMPLEMENTATION — Phase 1 in progress.**  
-**Blueprint and UI reference prepared:** 2026-10-21. **Owner approved implementation:** 2026-10-21.
+**Blueprint:** Approved for implementation on 21 October 2026.  
+**Current phase:** Phase 1 — Core local library.  
+**Current verification:** CI is in progress/being corrected; no successful build should be assumed.
 
-## What we propose to build
+## Product
 
-StashHive is a personal library that saves links/websites, screenshots/images, copied text/notes, PDFs and documents in one place and helps users find them later. It is a direct-to-user product; no service-provider marketplace or customer onboarding is required.
+StashHive is a local-first personal library for links, images/screenshots, notes/snippets, PDFs and documents, searchable from one place.
 
-## Core MVP
+## MVP direction
 
-- Manual saving/editing of links and notes.
-- User-selected images/documents, distinguishing local attachment copies from external references.
-- Unified library, content type filters, favorites, tags, collections, item details and metadata search.
-- Android share intake for supported text/URLs/images/files if the proof of concept succeeds.
-- Local/offline core behavior; portable export/restore and privacy/data-loss explanations.
-- Proposed Flutter Android-first implementation and a Flutter web companion, but web ships only if persistence and backup tests pass.
+- Android primary; Flutter web companion only after browser persistence/backup validation.
+- Manual saving/editing; typed library; local metadata search; tags, collections, favorites and item detail.
+- User-selected image/document attachments.
+- Versioned export/restore and clear privacy/data-loss warnings.
+- No required account, server, paid AI API or cloud sync.
 
-## UI design reference
+## Design baseline
 
-The complete seven-screen set is in [Premium Screen Reference](design/screen-reference.md), with editable SVGs under `design/screens/`: Library, Quick Save, Search Results, Item Details, Collections & Tags, Backup & Privacy, and Settings. The requested screen layouts are the visual baseline for eventual implementation. The build must also include documented empty/loading/error/permission/unsupported states. The static mockups are not app screenshots and do not prove functionality.
+Seven primary screen mockups live at `docs/design/screens/scr-001-library.svg` through `scr-007-settings.svg`; the behavior specification is [Premium Screen Reference](design/screen-reference.md). Implement visible hierarchy plus empty/loading/error/permission/unsupported states.
 
-## Deliberately excluded from MVP
+## Explicit MVP exclusions
 
-Cloud sync/accounts, social/public collections, AI summarization, paid API calls, full website mirroring/offline archive, browser extensions, automatic background scraping, notification/reminder system, ads/billing implementation, and iOS/desktop parity before technical validation.
+Cloud sync/accounts, public sharing/social feeds, AI summaries/semantic search, automatic full website archiving, browser extension, ads/subscriptions, and promised OCR/Urdu-Nastaleeq OCR. iOS/desktop parity is deferred pending validation.
 
-## Recommended technology direction
+## Phase 1 source status
 
-Flutter + Dart; repository abstractions around platform-specific local storage/file handling. The metadata database remains provisional until Android/web proof-of-concept tests pass. No hosted backend, account service, paid AI API or remote OCR for core use. Metadata search first; OCR/PDF extraction waits until accuracy, offline execution and package-size costs are evidenced.
+The first Flutter source increment contains the app shell, local repository/model, add/edit, metadata search, item detail, favorites/delete, collections/tags, settings, file selection and versioned JSON backup/restore. Unit tests and GitHub Actions checks are present. This is source implementation—not a claim that build or tests have passed.
 
-## Main risks
+## Remaining verification and scope gates
 
-1. OCR may be too large or inaccurate for Urdu/Nastaleeq.
-2. Android share/import and browser storage behave differently.
-3. Local data can be lost through uninstall or cleared browser data; backup/restore is critical.
-4. Name/store availability and product differentiation remain unverified.
-
-## Approval gate
-
-Review the scope, assumptions and [Premium Screen Reference](design/screen-reference.md). To authorize implementation, reply with a clear statement such as:
-
-> **I approve the StashHive blueprint. Start implementation.**
-
-This authorizes implementation, not public deployment or spending. The UI pack does not silently settle database/OCR choices or waive feasibility/security tests.
+- Run analyzer, tests, web release build and Android debug build; fix issues based on CI logs.
+- Validate on a real Android device and in a browser.
+- Test backup handling, local-storage loss scenarios and import errors.
+- Implement Android share-intent receiver after manual-save/search flow is verified.
+- OCR dependencies remain unselected until a separate feasibility report.
+- Owner approval authorizes implementation only—not deployment, purchases, store publishing, paid services or monetization.

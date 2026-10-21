@@ -59,3 +59,14 @@ See [`competitor-gap-hypotheses.md`](competitor-gap-hypotheses.md) for a summary
 - External links: https://pub.dev/packages/url_launcher (used for opening validated HTTP/HTTPS links in the external browser).
 
 Dependency versions are declared in `pubspec.yaml`; a lockfile has not yet been generated from a successful `flutter pub get`. CI resolution is the first verification gate.
+
+
+## Phase 1 packages
+
+- Hive CE: https://pub.dev/packages/hive_ce
+- Hive CE Flutter integration: https://pub.dev/packages/hive_ce_flutter
+- File picker: https://pub.dev/packages/file_picker — version 11 uses the static `FilePicker.pickFiles()` API; see https://pub.dev/packages/file_picker/changelog.
+- Share Plus: https://pub.dev/packages/share_plus
+- URL Launcher: https://pub.dev/packages/url_launcher
+
+Dependencies are declared in `pubspec.yaml`. CI has resolved dependencies successfully; a committed lockfile/build verification is still outstanding.

@@ -34,3 +34,8 @@ A POC demonstrates a candidate clearly meets the criteria. Pin exact versions on
 ## Implementation update — 2026-10-21
 
 The first code slice uses `hive_ce` + `hive_ce_flutter` behind `LibraryRepository`, with separate local boxes for metadata, attachment bytes and preferences. This is a provisional implementation choice, not yet a passed platform POC. Keep the repository boundary so the backing store can change without rewriting screens if CI, migration, browser persistence or backup tests fail.
+
+
+## Implementation update — 2026-10-21
+
+The first code slice uses `hive_ce` and `hive_ce_flutter` behind `LibraryRepository`, with separate local boxes for metadata, attachment bytes and preferences. This is not yet a passed platform POC. Keep the repository boundary so the storage backend can change without rewriting screens if CI, migration, browser persistence or backup tests fail.

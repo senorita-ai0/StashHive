@@ -37,3 +37,8 @@
 ## Screen IDs
 
 See `docs/design/screen-inventory.md`. The current mockup is a concept board for library, search results, and item details; it is not implemented UI and is not yet approved.
+
+
+## Phase 1 note — 2026-10-21
+
+FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial implementations and unit tests; set each row to DONE only after CI/device evidence supports its acceptance criteria. Image/document import is source-only until platform tests pass. FR-009 (Android share receiver), FR-015 platform validation and FR-016 extraction remain not implemented or blocked as described in `docs/implementation-progress.md`.

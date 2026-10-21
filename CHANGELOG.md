@@ -16,3 +16,10 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 - Added the Hive CE repository and versioned backup codec with payload size and content validation.
 - Added pure unit tests for the saved-item model and backup codec plus GitHub Actions checks.
 - Verification pending: no Flutter/Dart SDK is installed in the authoring environment. Do not interpret source added as a passed build or tested platform behavior.
+
+
+### Phase 1 implementation — 2026-10-21
+
+- Added the first Flutter app shell, saved-item model, local Hive CE repository, add/edit form, local metadata search, item detail, favorites, collections/tags and settings.
+- Added manual file selection, JSON backup/restore validation, model/codec unit tests and GitHub Actions format/analyze/test/web/Android build checks.
+- Verification still pending: the first CI run found analyzer errors which have been corrected; tests and builds must finish before being marked passed.

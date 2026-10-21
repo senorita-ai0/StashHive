@@ -2,62 +2,73 @@
 
 **Save everything. Find it anytime.**
 
-StashHive is a personal digital library for people who want to save useful things from apps, websites, and their own device—and reliably find them later. Planned item types include screenshots and images, website/article/video links, text snippets, notes, PDFs, and documents.
+StashHive is a personal digital library for saving links, notes, screenshots, images, PDFs and documents and finding them later from one local library.
 
-> **Current status: Blueprint review — product implementation has not started.** The repository contains planning and design artifacts. Read the [Premium Screen Reference](docs/design/screen-reference.md) to see the seven proposed UI screens. Do not create the Flutter app or add runtime dependencies until the blueprint is approved.
+> **Current status: Phase 1 implementation in progress.** A first Flutter increment is in `main`: local persistence, add/edit, metadata search, collections/tags, item details, file selection, backup/restore and settings. The first CI run caught analyzer issues; the latest workflow update distinguishes style-level info lints from errors/warnings. Do not claim the app is verified until the current CI run completes successfully.
 
 ## Product principles
 
-- **One personal library:** useful content from different sources can be saved and found in one place.
-- **Local-first and private by default:** no sign-in, cloud database, or paid AI API is required for the initial core experience.
-- **Search before folders:** titles, URLs, notes, tags, and available extracted text should be searchable from one place.
-- **Fast capture:** provide manual save and investigate Android share-to-StashHive flows for links, text, images, and selected files.
-- **Honest content states:** a saved URL is a bookmark, not an offline website copy. Actual files, previews, and offline snapshots must be labeled separately.
-- **Portable user data:** provide a documented export/restore path before calling the local-first MVP complete.
-- **No hidden collection:** never upload or log saved content unless a later, explicit, opt-in feature is approved.
+- **Local-first:** core use does not require sign-in, a hosted backend or paid AI API.
+- **One searchable library:** titles, URLs, notes, tags and collection names are searchable.
+- **Fast capture:** manual links and notes first; image/document selection is implemented in the first source slice.
+- **Honest content states:** a bookmark is not an offline webpage. A copied attachment is distinct from metadata preview.
+- **Portable user data:** export and restore a versioned backup; do not assume local browser/app storage is permanent.
+- **Privacy by default:** do not upload or log saved content.
 
-## Proposed initial platforms
+## Proposed platforms
 
-1. **Android:** primary target for the first useful release, including share/import workflows.
-2. **Web:** companion experience built from Flutter for browser use and static hosting. It will have its own browser-local library; cross-device sync is not part of the MVP.
-3. **iOS/desktop:** future candidates, not promised until platform-specific storage, imports, and share flows are validated.
+1. **Android:** primary target, including share/import support after its technical implementation and device verification.
+2. **Web:** companion target using browser-local storage. Browser data is separate from Android; there is no automatic cross-device sync.
+3. **iOS/desktop:** not promised until platform-specific storage/import behavior has been validated.
 
-Flutter supports browser deployment, but web has different filesystem and browser-storage constraints. Platform differences are called out in the architecture and assumptions documents.
+## First implementation slice
 
-## MVP direction (proposed, not yet approved)
+- Four destinations: Library, Search, Collections, Settings.
+- Save/edit links and notes; pick image/document files.
+- Local metadata search, item details, open links externally, preview images, favorite/delete.
+- Collections and tags.
+- Versioned JSON backup/restore (15 MB per attachment, 100 MB combined attachment bytes).
+- Dark appearance toggle.
 
-- Add and edit links, text/notes, images, and document references/files.
-- Browse a unified library, open details, filter by content type, and use favorites, tags, and collections.
-- Search local metadata and text entered by the user.
-- Open saved URLs in the browser and files in supported viewers.
-- Export and restore a versioned user-controlled backup.
-- Use Android share intents for supported incoming text, URLs, images, and selected files after a technical proof of concept.
-- Evaluate offline text extraction/OCR separately. English and Urdu/Nastaleeq OCR are not promised until accuracy, package size, platform support, and offline execution are tested.
+OCR/PDF text extraction, Android share-receiver intents, in-app PDF rendering, cloud sync, accounts, public sharing, AI summaries, subscriptions, ads and deployment are not part of the first slice. Search currently covers metadata and user-entered text only.
 
-## Documentation map
+## Documentation
 
 - [Project intake](docs/PROJECT_INTAKE.md)
 - [Requirements and acceptance criteria](docs/requirements.md)
 - [Architecture](docs/architecture.md)
 - [Assumptions](docs/assumptions.md)
-- [Roadmap and task plan](docs/roadmap.md)
+- [Roadmap](docs/roadmap.md)
 - [Test plan](docs/test-plan.md)
 - [Traceability matrix](docs/traceability-matrix.md)
 - [Risk register](docs/risk-register.md)
 - [Security and privacy](docs/security-privacy.md)
-- [**Premium Screen Reference — all seven screens**](docs/design/screen-reference.md)
-- [Design overview and individual SVGs](docs/design/README.md)
-- [Technical source review](docs/research/official-sources.md)
-- [Competitor scan and differentiation hypotheses](docs/research/competitor-gap-hypotheses.md)
-- [Cost and monetization plan](docs/cost-and-monetization.md)
-- [AI workflow for this repository](docs/AI_WORKFLOW.md)
-- [Approval summary](docs/BLUEPRINT_REVIEW.md)
+- [Premium Screen Reference — all seven screens](docs/design/screen-reference.md)
+- [Design pack](docs/design/README.md)
+- [Technical sources](docs/research/official-sources.md)
+- [Competitor hypotheses](docs/research/competitor-gap-hypotheses.md)
+- [Cost and monetization](docs/cost-and-monetization.md)
+- [AI workflow](docs/AI_WORKFLOW.md)
+- [Blueprint review](docs/BLUEPRINT_REVIEW.md)
 - [Implementation progress](docs/implementation-progress.md)
 
-## Before implementation
+## Run locally
 
-Read `AGENTS.md` and the files linked above. The screen reference is the proposed visual baseline: implement its layout and labels plus all documented error/empty/loading/permission states. Review open assumptions and the proposed storage/share/OCR proofs of concept. Product implementation remains paused until the user explicitly approves the blueprint.
+Install the stable Flutter SDK and Android tooling. If the checkout has no platform runners, generate them once:
+
+```bash
+flutter create --project-name stashhive --platforms=android,web .
+flutter pub get
+dart format lib test
+flutter analyze --no-fatal-infos
+flutter test
+flutter run -d chrome
+```
+
+For Android, attach an emulator/device and run `flutter run -d android`. CI generates an Android runner in its workspace when missing, resolves dependencies, formats, analyzes, tests, and builds web plus a debug APK. Check the actual CI result linked from GitHub Actions; no local build is claimed here.
+
+**Data warning:** Android app-private data can disappear on uninstall; browser data can disappear when site data is cleared. Save backups somewhere you control. The Android and browser libraries do not sync.
 
 ## License
 
-No license has been selected. Do not add a license file or assume reuse permissions until the owner chooses one.
+No repository license has been selected. Do not assume redistribution permissions until the owner chooses one.

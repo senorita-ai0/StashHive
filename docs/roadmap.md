@@ -69,3 +69,12 @@ MVP must not be described as ready until create/edit/delete, link open, supporte
 The owner approved BUILD mode. TSK-001 (blueprint approval) is now **DONE**. Initial Phase 1 code has been authored for the app shell, local repository, manual save/edit, metadata search, collections/tags, item detail, selected-file imports and version-1 JSON backup/restore. TSK-101 and TSK-102 are **IN PROGRESS — verification pending** because the authoring environment has no Flutter/Dart executable. GitHub Actions is configured to run format, analysis, unit tests and a web build; check its actual run before claiming success.
 
 Next: resolve CI findings, run on a real Android device and Chrome, validate storage/backup edge cases, then wire Android share-intent intake. OCR remains gated; do not promise search inside images/PDFs until tested.
+
+
+## Current implementation progress — 2026-10-21
+
+- **DONE:** Owner approved the blueprint and visual reference.
+- **IN PROGRESS:** Initial Flutter app shell, local persistence, save/edit, metadata search, collections/tags, item detail, file selection and backup/restore are in source; CI is diagnosing the first compile/analyzer issues.
+- **IN PROGRESS:** Static tests cover model round-trip, metadata query/Unicode, and versioned backup validation.
+- **NOT VERIFIED:** All unit tests, Android build/device run, web release build, actual file import/share behavior, backup recovery under interruption.
+- **NEXT:** Finish CI, fix actual failures, manually verify Android and web, then implement Android share-receiver intake.

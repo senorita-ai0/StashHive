@@ -1,37 +1,29 @@
-# StashHive — Tailored AI Project Workflow
+# StashHive — AI Project Workflow
 
-This file adapts the supplied AI Project Master Prompt to StashHive. `AGENTS.md` is the persistent entry point; this document records the phase gates.
+Implementation was explicitly approved by the owner on 21 October 2026. BUILD mode is active for Phase 1; don't ask for the same approval again.
 
-## Working modes
+## Modes
 
-- **PLAN / REVIEW:** read project docs, inspect changes, improve requirements, architecture, screens, assumptions, risks, and tests. No product implementation.
-- **REVISE:** update affected planning documents; return to approval if behavior/platform/cost/privacy changes materially.
-- **BUILD:** allowed only after explicit approval of `docs/BLUEPRINT_REVIEW.md`. Work in small, tested vertical slices, update traceability/docs, and report commands actually run.
-- **TEST:** run checks, fix in-scope defects, and label anything not executed. Do not describe a docs-only repository as an app that builds.
-- **RELEASE:** prepare readiness steps, policies, store assets, rollback and smoke tests. Public release/deployment needs separate explicit approval.
-- **AUDIT:** report findings by severity and propose remediation; do not rewrite everything without approval.
+- **PLAN / REVIEW:** understand existing code/spec, identify risks, update design, architecture, tests or backlog.
+- **REVISE:** incorporate feedback and update related docs/requirements.
+- **BUILD:** implement the next approved vertical slice, preserving working behavior and the seven-screen references.
+- **TEST:** run real format/analyze/unit/integration/build checks; fix failures based on actual output.
+- **RELEASE:** prepare readiness, rollback and store/deploy documentation. Publishing/deployment requires separate explicit approval.
+- **AUDIT:** report findings by severity before performing broad rewrites.
 
-## StashHive rules
+## StashHive implementation rules
 
-1. This repository currently holds planning/docs/assets only. Explicit blueprint approval is required before product source code, dependencies, CI implementation, production infrastructure or deployment.
-2. Treat Android as proposed primary platform and Flutter web as a companion with distinct storage/import constraints; do not promise iOS/desktop parity.
-3. Core product must work without an account, cloud backend, paid AI API or remote OCR.
-4. A link, webpage preview, attachment copy and offline webpage snapshot are different states.
-5. Metadata search comes first; OCR/PDF text search is gated by an offline proof of concept, app size, language quality (Urdu/Nastaleeq risk), latency and offline execution.
-6. Test backup/restore and local-data loss scenarios before release. Never commit user libraries/backups.
-7. Keep user content out of logs and network calls. Treat imported files, URLs, extracted text and backup archives as untrusted input.
-8. Avoid feature creep: accounts/sync, public sharing, social feed, browser extension, full-site mirroring, AI summaries and billing are outside the proposed MVP.
-9. After approval, implement the seven primary screens from `docs/design/screen-reference.md` as the visual baseline. Add all documented empty/loading/error/permission/unsupported states and keep traceability up to date.
-10. Do not claim a repository change, remote push, CI run, APK or deployment succeeded without verified evidence.
+1. Follow `docs/design/screen-reference.md` as the UI visual baseline; its mockups are static specs, not running app screenshots.
+2. First slice uses Hive CE behind `LibraryRepository`, but do not lock the persistence choice until CI and Android/web tests pass.
+3. No core cloud account/sync/server or paid AI service.
+4. Keep separate semantics for bookmark, preview metadata, locally copied file and true offline snapshot.
+5. Metadata search first; OCR remains gated on accuracy, app-size, language, platform and offline proof-of-concept evidence.
+6. Backup/restore and data-loss messaging are core trust features; never commit real personal libraries.
+7. Treat URLs, files, extracted text, and backup archives as untrusted input.
+8. No unnecessary permissions, content logging or telemetry.
+9. Keep `docs/traceability-matrix.md` and `docs/implementation-progress.md` up to date as requirements are implemented.
+10. Do not claim any run, commit, push, app package or deployment succeeded without confirmation from a command/tool result.
 
-## Standard increment report after approval
+## Verification notes
 
-- Task IDs and approved requirement IDs addressed.
-- Files changed and user-visible behavior added.
-- Commands executed and results, with platform/version notes.
-- Tests not run and why.
-- Known issues, risks, docs updated, next approved task.
-
-## Approval language
-
-Implementation may begin only after a clear instruction such as: **“I approve the StashHive blueprint. Start implementation.”** A screen-design request sets the requested visual direction but does not by itself resolve all open scope/architecture approval gates.
+The current GitHub Actions run is the first executable verification because this author's environment does not have Flutter/Dart installed. Format, analyzer, tests, web build and Android debug build must all report their actual outcome.

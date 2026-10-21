@@ -1,8 +1,8 @@
 # StashHive — AI Coding Instructions
 
-## Current gate
+## Current state
 
-**Status: BLUEPRINT REVIEW / IMPLEMENTATION NOT APPROVED.** This repository currently contains planning and design artifacts only. Do not create or modify product source code, add runtime packages, initialize the Flutter application, configure production infrastructure, or deploy until the user explicitly approves `docs/BLUEPRINT_REVIEW.md`.
+**Implementation approved; Phase 1 is in progress (2026-10-21).** Continue using small, testable vertical slices on `main`. Never claim a build/test passed without its actual result. Public deployment, publishing, spending and paid services require separate approval.
 
 ## Read first
 
@@ -15,32 +15,29 @@
 7. `docs/traceability-matrix.md`
 8. `docs/security-privacy.md`
 9. `docs/design/screen-reference.md`
-10. `docs/design/README.md`
 
 ## Product constraints
 
-- StashHive is a personal save-and-find library for links/websites, screenshots/images, text snippets/notes, PDFs, and documents.
-- Android is the proposed primary platform; Flutter web is a proposed companion. iOS/desktop support is not promised until validated.
-- Core use must not require an account, hosted backend, paid AI API, or ongoing infrastructure spend.
-- Local-first does not mean browser storage is indestructible, app-private files survive uninstall, or two devices sync automatically. Backup and restore are core trust features.
-- A saved URL, fetched metadata preview, copied local file and full offline page are different states. Never represent a URL as an offline page unless its content is actually available offline.
-- OCR/PDF text extraction, particularly Urdu/Nastaleeq, is a risk to validate—not a promise.
-- Do not log users' saved content. Avoid unrelated permissions and telemetry.
-- No auth/cloud sync/social feed/browser extension/payment system is part of the proposed MVP.
-- The first slice uses Hive CE behind the repository interface; database/package compatibility remains subject to CI and platform verification.
-- The first slice enforces a 15 MB imported attachment limit and a 100 MB combined attachment limit for version-1 JSON backups.
-- After blueprint approval, use the seven screen references in `docs/design/screen-reference.md` as the UI baseline. Preserve IDs, visible hierarchy, navigation, interactions and all required states.
+- Personal library for links, text, images/screenshots, PDFs and documents.
+- Android is primary; Flutter web is a companion with a separate local library. Do not imply automatic sync.
+- No account, cloud backend, paid AI API, public feed, browser extension or billing in the MVP.
+- Bookmark, fetched metadata preview, copied attachment and offline website snapshot are separate states.
+- Search currently covers metadata and user-entered text. OCR/PDF extraction (especially Urdu/Nastaleeq) is not implemented or promised.
+- Do not log saved URLs, notes, filenames, or extracted text; avoid unrelated permissions.
+- Use the seven screen mockups in `docs/design/screen-reference.md` as the visual baseline; implement their specified loading/empty/error/permission states too.
+- First source slice uses Hive CE behind `LibraryRepository`; compatibility remains subject to CI and platform testing.
+- Current import cap is 15 MB per attachment; backup v1 caps attachments at 100 MB combined.
 
-## Engineering rules after approval
+## Engineering requirements
 
-- Inspect repository status and current files before edits; never discard unrelated work.
-- Keep requirements, implementation tasks, screen specs, tests, and documentation traceable by stable IDs.
-- Use small changes; add tests with behavior; run and report commands actually executed.
-- Keep platform-specific storage/import behavior behind interfaces. Do not assume Flutter mobile and web have identical filesystem/share APIs.
-- Do not commit secrets, exported personal libraries, sample private data, signing files, build output, or machine-local configuration.
-- Do not make remote commits, push, open a PR, publish a release, enable paid services, or deploy without verified access and required authorization.
-- Do not add a license without an owner decision.
+- Inspect the current tree and tests before edits; preserve unrelated work.
+- Keep model, storage, UI, backup and platform I/O boundaries explicit.
+- Keep requirement IDs, task IDs, tests and docs aligned.
+- Add tests with behavior changes. Run formatter/analyzer/tests/builds when available and report exact results.
+- Do not commit secrets, personal library backups, signing files, generated build output or machine-specific config.
+- Do not force-push or rewrite shared history. Commit changes directly to `main` as requested by the owner.
+- Do not add a license without the owner's decision.
 
-## Status reporting
+## Status labels
 
-Use `DONE`, `IN PROGRESS`, `BLOCKED`, `NOT STARTED`, or `NOT APPLICABLE`. State what was actually tested and what remains a hypothesis. Do not claim the app builds before an app project exists and build checks pass.
+Use `DONE`, `IN PROGRESS`, `BLOCKED`, `NOT STARTED`, or `NOT APPLICABLE`. Label unverified platform behavior and residual risks clearly.
