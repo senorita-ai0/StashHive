@@ -25,7 +25,9 @@
 - Search currently covers metadata and user-entered text. OCR/PDF extraction (especially Urdu/Nastaleeq) is not implemented or promised.
 - Do not log saved URLs, notes, filenames, or extracted text; avoid unrelated permissions.
 - Use the seven screen mockups in `docs/design/screen-reference.md` as the visual baseline; implement their specified loading/empty/error/permission states too.
-- First source slice uses Hive CE behind `LibraryRepository`; compatibility remains subject to CI and platform testing.
+- Local storage uses Hive CE behind `LibraryRepository`; compatibility remains subject to tests and platform testing.
+- Android share intake uses `receive_sharing_intent` and an idempotent manifest configurator. Incoming content must open Quick Save for user review; never save external content automatically.
+- CI is manual-only (`workflow_dispatch`). Do not trigger a build unless the owner asks for a build checkpoint.
 - Current import cap is 15 MB per attachment; backup v1 caps attachments at 100 MB combined.
 
 ## Engineering requirements

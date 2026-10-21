@@ -4,13 +4,13 @@
 
 StashHive is a personal digital library for saving links, notes, screenshots, images, PDFs and documents and finding them later from one local library.
 
-> **Current status: Phase 1 implementation in progress.** A first Flutter increment is in `main`: local persistence, add/edit, metadata search, collections/tags, item details, file selection, backup/restore and settings. The first CI run caught analyzer issues; the latest workflow update distinguishes style-level info lints from errors/warnings. Do not claim the app is verified until the current CI run completes successfully.
+> **Current status: Phase 2 source is in progress.** Before Phase 2, dependency resolution, formatting, analysis, unit tests and the web release build passed in GitHub Actions; the Android debug build had not yet finished when CI was switched to manual-only. Phase 2 adds Android incoming-share intake and repository regression tests. Those new changes have not been built/tested yet, by design: builds run only when manually dispatched.
 
 ## Product principles
 
 - **Local-first:** core use does not require sign-in, a hosted backend or paid AI API.
 - **One searchable library:** titles, URLs, notes, tags and collection names are searchable.
-- **Fast capture:** manual links and notes first; image/document selection is implemented in the first source slice.
+- **Fast capture:** manual links and notes, image/document selection, plus Android incoming-share drafts for supported links, text, images and documents.
 - **Honest content states:** a bookmark is not an offline webpage. A copied attachment is distinct from metadata preview.
 - **Portable user data:** export and restore a versioned backup; do not assume local browser/app storage is permanent.
 - **Privacy by default:** do not upload or log saved content.
@@ -30,7 +30,7 @@ StashHive is a personal digital library for saving links, notes, screenshots, im
 - Versioned JSON backup/restore (15 MB per attachment, 100 MB combined attachment bytes).
 - Dark appearance toggle.
 
-OCR/PDF text extraction, Android share-receiver intents, in-app PDF rendering, cloud sync, accounts, public sharing, AI summaries, subscriptions, ads and deployment are not part of the first slice. Search currently covers metadata and user-entered text only.
+OCR/PDF text extraction, in-app PDF rendering, cloud sync, accounts, public sharing, AI summaries, subscriptions, ads and deployment remain out of scope. Android incoming shares are now in Phase 2 source but still need device verification. Search currently covers metadata and user-entered text only.
 
 ## Documentation
 
@@ -65,9 +65,23 @@ flutter test
 flutter run -d chrome
 ```
 
-For Android, attach an emulator/device and run `flutter run -d android`. CI generates an Android runner in its workspace when missing, resolves dependencies, formats, analyzes, tests, and builds web plus a debug APK. Check the actual CI result linked from GitHub Actions; no local build is claimed here.
+For Android, attach an emulator/device and run `flutter run -d android`. The Android share filters are applied by `python3 tool/configure_android_share_intents.py` after a runner is generated. The validation workflow is manual-only; dispatch it from GitHub Actions at a deliberate build checkpoint.
 
 **Data warning:** Android app-private data can disappear on uninstall; browser data can disappear when site data is cleared. Save backups somewhere you control. The Android and browser libraries do not sync.
+
+
+## Incoming Android shares
+
+The Android share target is included in Phase 2 source, but this repository keeps generated platform runners out of source control. Once Flutter is installed, generate the Android runner if absent and configure the generated manifest:
+
+```bash
+flutter create --project-name stashhive --platforms=android,web .
+python3 tool/configure_android_share_intents.py
+flutter pub get
+flutter run -d android
+```
+
+The configurator is idempotent and only registers the supported link/text/image/document share types. Incoming items open Quick Save for review; StashHive does not silently save external content. It currently prepares one item per share action. To run verification, open **Actions → Manual Flutter validation → Run workflow**. Pushes to `main` do not start CI.
 
 ## License
 

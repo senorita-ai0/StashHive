@@ -55,26 +55,27 @@
 | TSK-403 | Store/domain/trademark/package ID and release checklist | Release gate | NOT STARTED | Public brand is checked; build/sign/store requirements are verified for target platform. |
 | TSK-404 | Release candidate build and smoke tests | All Musts | NOT STARTED | Real Android device and web browser test results recorded; no hidden critical blockers. |
 
-## Suggested development order
 
-The first coding increment should be a thin vertical slice: launch app → save a text note/link → persist locally → restart → search and retrieve. Then prove attachment import and storage. Do not start OCR or visual polish before persistence/retrieval fundamentals are proven.
+## Suggested development order (updated 2026-10-21)
+
+1. **Phase 1 — Core local library:** source is in main; prior CI verified analyzer/tests/web build, but the Android build result was not confirmed.
+2. **Phase 2 — Capture and recovery:** validate Android URL/text/image/document share intake; add repository persistence, attachment, restore and manifest tests.
+3. **Phase 3 — Platform assurance:** compare screens against the SVGs; validate browser persistence and real-device file/share flows; improve accessibility, backup recovery and performance.
+4. **Later phases:** consider OCR only after an offline feasibility study, then run the full manual validation workflow at the owner's release checkpoint.
 
 ## Release gate
 
 MVP must not be described as ready until create/edit/delete, link open, supported attachment import, metadata search, restart persistence, backup/restore, platform limitations, privacy, and target-device/browser smoke tests have evidence recorded in the traceability matrix.
 
 
-## Implementation status update — 2026-10-21
 
-The owner approved BUILD mode. TSK-001 (blueprint approval) is now **DONE**. Initial Phase 1 code has been authored for the app shell, local repository, manual save/edit, metadata search, collections/tags, item detail, selected-file imports and version-1 JSON backup/restore. TSK-101 and TSK-102 are **IN PROGRESS — verification pending** because the authoring environment has no Flutter/Dart executable. GitHub Actions is configured to run format, analysis, unit tests and a web build; check its actual run before claiming success.
+## Phase 2 — capture from other Android apps (started 2026-10-21)
 
-Next: resolve CI findings, run on a real Android device and Chrome, validate storage/backup edge cases, then wire Android share-intent intake. OCR remains gated; do not promise search inside images/PDFs until tested.
+| Task | Scope | Status | Exit criteria |
+|---|---|---|---|
+| TSK-204 | Register supported Android share intents; receive incoming URL/text/image/document and prefill Quick Save | IN PROGRESS — source added, device test pending | Share from browser/text app/files app; edit/save once; unsupported/oversized input explains outcome. |
+| TSK-306 | Repository persistence and attachment restore regression tests | IN PROGRESS — tests added, manual run pending | Saved data survives Hive reopen; attachment survives restore with an ID collision; collection deletion keeps its items. |
+| TSK-307 | Idempotent Android manifest configurator and tests | IN PROGRESS — source added, Python test pending | Adds supported MIME filters once, sets singleTask, and fails clearly if MainActivity is missing. |
+| TSK-308 | Manual-only validation workflow | DONE | Workflow only has workflow_dispatch; commits/pushes do not trigger builds. |
 
-
-## Current implementation progress — 2026-10-21
-
-- **DONE:** Owner approved the blueprint and visual reference.
-- **IN PROGRESS:** Initial Flutter app shell, local persistence, save/edit, metadata search, collections/tags, item detail, file selection and backup/restore are in source; CI is diagnosing the first compile/analyzer issues.
-- **IN PROGRESS:** Static tests cover model round-trip, metadata query/Unicode, and versioned backup validation.
-- **NOT VERIFIED:** All unit tests, Android build/device run, web release build, actual file import/share behavior, backup recovery under interruption.
-- **NEXT:** Finish CI, fix actual failures, manually verify Android and web, then implement Android share-receiver intake.
+The owner requested development first and builds at the final checkpoint. Do not dispatch GitHub Actions unless the owner explicitly asks for validation.

@@ -41,4 +41,11 @@ See `docs/design/screen-inventory.md`. The current mockup is a concept board for
 
 ## Phase 1 note — 2026-10-21
 
-FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial implementations and unit tests; set each row to DONE only after CI/device evidence supports its acceptance criteria. Image/document import is source-only until platform tests pass. FR-009 (Android share receiver), FR-015 platform validation and FR-016 extraction remain not implemented or blocked as described in `docs/implementation-progress.md`.
+FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial implementations and unit tests; set each row to DONE only after CI/device evidence supports its acceptance criteria. Image/document import is source-only until platform tests pass. FR-009 now has Phase 2 source for supported Android shares but remains IN PROGRESS until device/build validation; FR-015 platform validation and FR-016 extraction remain blocked or not implemented as described in the implementation progress file.
+
+
+
+## Phase 2 status — 2026-10-21
+
+- **FR-009:** source added for supported Android shared URL/text/image/document content. Manifest configuration is scripted because the Android runner is generated. Device verification pending.
+- **FR-001, FR-008, FR-012–013:** persistence and attachment/restore regression tests added. Results remain pending because CI is manual-only.

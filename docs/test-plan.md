@@ -50,19 +50,11 @@
 **Not yet available:** no Flutter `pubspec.yaml`, `lib/`, or test suite has been created because implementation is gated. After approval, verify the environment first, then record the exact successful commands for format, analyze, unit/widget/integration tests, Android release build, and web release build. Do not claim these checks pass before they have run.
 
 
-## Phase 1 verification setup — 2026-10-21
 
-The repository now contains unit tests for saved-item map round trips, metadata search, Unicode content, nullable-field clearing, backup encode/decode, attachment round trips, unsupported versions, unsafe URLs and missing attachment data. The configured workflow runs:
+## Phase 2 test additions — 2026-10-21
 
-- `dart format lib test` (formats sources in the CI working copy)
-- `flutter analyze --no-fatal-infos`
-- `flutter test --reporter expanded`
-- `flutter build web --release`
-- Android debug build after CI has generated the Android platform folder.
+- test/share_intake_test.dart: URL, mixed text-and-URL, Unicode text, unsafe scheme and unsupported video.
+- test/library_repository_test.dart: persistence across Hive reopen, attachment bytes after restore with ID collision, safe collection deletion, and missing-attachment rejection.
+- tool/test_configure_android_share_intents.py: install supported filters, idempotency, and missing MainActivity error.
 
-These checks are **not reported as passed yet** because the workflow must run against the pushed commit. Manual platform validation remains necessary for file pickers, share sheet, browser storage quotas and real device lifecycle behavior.
-
-
-## Phase 1 implementation status — 2026-10-21
-
-Model and backup-codec unit tests are now present. CI has installed dependencies and passed Dart formatting on the first attempts, but analyzer was initially blocked by two actual API errors. Those were fixed; remaining style info lints are non-fatal for the current workflow. The latest CI still needs to complete unit tests plus web and Android builds before they can be marked passed.
+**Execution status:** tests are present but have not been run for Phase 2. The Flutter workflow is manual-only; no build or test result is claimed until the owner requests a validation checkpoint.

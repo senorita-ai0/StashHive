@@ -1,8 +1,6 @@
-name: Flutter checks
+name: Manual Flutter validation
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -33,6 +31,12 @@ jobs:
             fi
             rm -rf "$temp_dir"
           fi
+
+      - name: Register Android incoming share targets
+        run: python3 tool/configure_android_share_intents.py
+
+      - name: Test Android share manifest configurator
+        run: python3 -m unittest tool.test_configure_android_share_intents
 
       - name: Resolve packages
         run: flutter pub get

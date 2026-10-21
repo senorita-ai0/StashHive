@@ -31,9 +31,20 @@ class LibraryRepository {
 
   static Future<LibraryRepository> open() async {
     await Hive.initFlutter();
+    return _openBoxes();
+  }
+
+  @visibleForTesting
+  static Future<LibraryRepository> openInitializedForTesting() async {
+    return _openBoxes();
+  }
+
+  static Future<LibraryRepository> _openBoxes() async {
     final itemsBox = await Hive.openBox<dynamic>('stashhive_items_v1');
-    final attachmentsBox = await Hive.openBox<dynamic>('stashhive_attachments_v1');
-    final preferencesBox = await Hive.openBox<dynamic>('stashhive_preferences_v1');
+    final attachmentsBox =
+        await Hive.openBox<dynamic>('stashhive_attachments_v1');
+    final preferencesBox =
+        await Hive.openBox<dynamic>('stashhive_preferences_v1');
     return LibraryRepository._(
       itemsBox: itemsBox,
       attachmentsBox: attachmentsBox,

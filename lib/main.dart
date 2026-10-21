@@ -1,13 +1,19 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'data/library_repository.dart';
 import 'models/saved_item.dart';
+import 'services/share_intake.dart';
 
 const Color kBrand = Color(0xFF5B5CE2);
 const Color kInk = Color(0xFF1B2340);
@@ -261,6 +267,151 @@ class _HomeShellState extends State<HomeShell> {
   int _selectedTab = 0;
   String _searchSeed = '';
   int _searchRevision = 0;
+
+  StreamSubscription<List<SharedMediaFile>>? _shareSubscription;
+  final List<({List<SharedMediaFile> media, Completer<void> done})>
+      _pendingShareBatches = [];
+  final Set<int> _seenShareFingerprints = <int>{};
+  bool _processingShareBatches = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Incoming share intents are configured for Android only in this phase.
+    // The browser build and unsupported platforms never invoke the native plugin.
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _startShareIntake();
+      });
+    }
+  }
+
+  void _startShareIntake() {
+    _shareSubscription = ReceiveSharingIntent.instance.getMediaStream().listen(
+      (media) {
+        unawaited(_enqueueShareBatch(media));
+      },
+      onError: (Object _) {
+        _showShareMessage(
+          'Could not receive that share. You can still add the item manually.',
+        );
+      },
+    );
+    unawaited(_readInitialShare());
+  }
+
+  Future<void> _readInitialShare() async {
+    try {
+      final media = await ReceiveSharingIntent.instance.getInitialMedia();
+      if (media.isNotEmpty) {
+        await _enqueueShareBatch(media);
+      }
+      await ReceiveSharingIntent.instance.reset();
+    } catch (_) {
+      if (mounted) {
+        _showShareMessage(
+          'Could not read the incoming share. You can add it manually.',
+        );
+      }
+    }
+  }
+
+  Future<void> _enqueueShareBatch(List<SharedMediaFile> media) async {
+    if (media.isEmpty) return;
+    final done = Completer<void>();
+    _pendingShareBatches.add((
+      media: List<SharedMediaFile>.unmodifiable(media),
+      done: done,
+    ));
+    unawaited(_drainShareQueue());
+    await done.future;
+  }
+
+  Future<void> _drainShareQueue() async {
+    if (_processingShareBatches) return;
+    _processingShareBatches = true;
+    try {
+      while (_pendingShareBatches.isNotEmpty && mounted) {
+        final batch = _pendingShareBatches.removeAt(0);
+        try {
+          await _presentSharedItem(batch.media);
+        } catch (_) {
+          _showShareMessage(
+            'That item could not be prepared. Try adding it manually.',
+          );
+        } finally {
+          if (!batch.done.isCompleted) batch.done.complete();
+        }
+      }
+    } finally {
+      _processingShareBatches = false;
+      if (_pendingShareBatches.isNotEmpty && mounted) {
+        unawaited(_drainShareQueue());
+      }
+    }
+  }
+
+  Future<void> _presentSharedItem(List<SharedMediaFile> media) async {
+    if (!mounted || media.isEmpty) return;
+    final first = media.first;
+    // The plugin may report the initial intent on both the stream and the
+    // cold-start API. A bounded in-memory fingerprint prevents duplicate forms.
+    final fingerprint = Object.hash(
+      first.type.value,
+      first.path.hashCode,
+      first.mimeType,
+      media.length,
+    );
+    if (_seenShareFingerprints.contains(fingerprint)) return;
+    if (_seenShareFingerprints.length >= 64) _seenShareFingerprints.clear();
+    _seenShareFingerprints.add(fingerprint);
+
+    try {
+      final incoming = await ShareIntake.fromSharedMedia(first);
+      if (!mounted) return;
+      if (incoming == null) {
+        _showShareMessage(
+          'This type of shared content is not supported yet. Try a link, text, image or document.',
+        );
+        return;
+      }
+      final prepared = incoming.withAdditionalItemCount(media.length - 1);
+      await Navigator.of(context).push<bool>(
+        MaterialPageRoute(
+          builder: (_) => QuickSavePage(
+            repository: widget.repository,
+            initialKind: prepared.kind,
+            initialShare: prepared,
+          ),
+        ),
+      );
+      if (mounted) setState(() => _selectedTab = 0);
+    } on FormatException catch (error) {
+      _showShareMessage(error.message.toString());
+    } catch (_) {
+      _showShareMessage(
+        'That share could not be opened. Try saving it from inside StashHive.',
+      );
+    }
+  }
+
+  void _showShareMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  @override
+  void dispose() {
+    unawaited(_shareSubscription?.cancel() ?? Future<void>.value());
+    for (final batch in _pendingShareBatches) {
+      if (!batch.done.isCompleted) batch.done.complete();
+    }
+    _pendingShareBatches.clear();
+    super.dispose();
+  }
+
 
   Future<void> _openAdd(ItemKind? kind) async {
     await Navigator.of(context).push<bool>(
@@ -1040,12 +1191,14 @@ class QuickSavePage extends StatefulWidget {
     required this.repository,
     this.initialKind = ItemKind.link,
     this.existingItem,
+    this.initialShare,
     super.key,
   });
 
   final LibraryRepository repository;
   final ItemKind initialKind;
   final SavedItem? existingItem;
+  final IncomingShare? initialShare;
 
   @override
   State<QuickSavePage> createState() => _QuickSavePageState();
@@ -1053,13 +1206,17 @@ class QuickSavePage extends StatefulWidget {
 
 class _QuickSavePageState extends State<QuickSavePage> {
   final _formKey = GlobalKey<FormState>();
-  late ItemKind _kind = widget.existingItem?.kind ?? widget.initialKind;
-  late final TextEditingController _titleController =
-      TextEditingController(text: widget.existingItem?.title ?? '');
-  late final TextEditingController _urlController =
-      TextEditingController(text: widget.existingItem?.url ?? '');
-  late final TextEditingController _contentController =
-      TextEditingController(text: widget.existingItem?.content ?? '');
+  late ItemKind _kind =
+      widget.existingItem?.kind ?? widget.initialShare?.kind ?? widget.initialKind;
+  late final TextEditingController _titleController = TextEditingController(
+    text: widget.existingItem?.title ?? widget.initialShare?.title ?? '',
+  );
+  late final TextEditingController _urlController = TextEditingController(
+    text: widget.existingItem?.url ?? widget.initialShare?.url ?? '',
+  );
+  late final TextEditingController _contentController = TextEditingController(
+    text: widget.existingItem?.content ?? widget.initialShare?.content ?? '',
+  );
   late final TextEditingController _tagsController =
       TextEditingController(text: widget.existingItem?.tags.join(', ') ?? '');
   late String? _collection = widget.existingItem?.collection;
@@ -1071,6 +1228,9 @@ class _QuickSavePageState extends State<QuickSavePage> {
   @override
   void initState() {
     super.initState();
+    _selectedBytes = widget.initialShare?.bytes;
+    _selectedName = widget.initialShare?.fileName;
+    _selectedMimeType = widget.initialShare?.mimeType;
     if (_collection != null &&
         !widget.repository.collections.value.contains(_collection)) {
       _collection = null;
@@ -1264,6 +1424,22 @@ class _QuickSavePageState extends State<QuickSavePage> {
                     'Keep the things you want to find again.',
                     style: TextStyle(color: kMuted),
                   ),
+                  if ((widget.initialShare?.additionalItemCount ?? 0) > 0) ...[
+                    const SizedBox(height: 14),
+                    Container(
+                      padding: const EdgeInsets.all(13),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF2DF),
+                        borderRadius: BorderRadius.circular(13),
+                      ),
+                      child: Text(
+                        'This share contained ' +
+                            ((widget.initialShare!.additionalItemCount + 1).toString()) +
+                            ' items. The first item is ready to save; share other items separately.',
+                        style: const TextStyle(fontSize: 12, height: 1.4),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 20),
                   if (!isEditing) _buildKindPicker(),
                   if (!isEditing) const SizedBox(height: 20),

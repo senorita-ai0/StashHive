@@ -1,45 +1,59 @@
 # StashHive — Implementation Progress
 
 **As of:** 2026-10-21  
-**Phase:** 1 — Core local library  
-**Owner approval:** Received 2026-10-21  
-**Verification:** First CI compile/analyze/test run is underway. The previous analyzer run caught and fixed code/API errors; the latest analyzer run had only style-level info findings, so CI now uses `flutter analyze --no-fatal-infos`. A successful final run is not confirmed yet.
+**Active phase:** Phase 2 — Capture from other Android apps  
+**Owner direction:** Develop features first; run CI/builds only when manually requested.
 
-## Source implemented (verification pending)
+## Previously verified (before Phase 2 changes)
 
-- Flutter app shell and premium light theme, plus dark appearance preference.
-- Four main tabs: Library, Search, Collections, Settings.
-- Saved-item model for links, notes, images and documents.
-- Hive CE repository abstraction for items, attachment bytes, collection names and preferences.
-- Save/edit link and note forms with HTTP/HTTPS validation, tags and collection assignment.
-- User-selected image/document import with a 15 MB per-file cap.
-- Case-insensitive local metadata search across title, URL, note/text, tags and collection name; Unicode content is retained.
-- Item details, external link opening, in-app image preview, platform file share, favorite and confirmed delete.
-- Collection create/rename/delete; deleting a collection unassigns its items.
-- Version 1 JSON backup/restore, with schema/version/ID/URL/size/attachment checks, merge semantics and collision ID remapping.
-- Tests for model serialization/search/Unicode/copy behavior and backup codec.
-- CI workflow for package resolution, Dart format, analyzer, tests, Flutter web release build and Android debug APK build.
+The last completed CI run before Phase 2 reported dependency resolution, Dart formatting, static analysis, unit tests and the Flutter web release build as passed. The Android debug APK was still running at the last observed status, so it is **not marked passed**. Those results apply to the previous commit, not the new Phase 2 code.
 
-## CI status
+## Phase 1 source
 
-- First run: dependencies resolved and formatter passed; analyzer failed on the callback signature and old `FilePicker.platform` API. Tests/builds skipped.
-- Second run: those code issues are fixed. It reported style-level info lints only; default Flutter analyzer treats infos as fatal, so the workflow and run instructions now use `flutter analyze --no-fatal-infos`.
-- Current run after the analyzer flag adjustment: not yet confirmed complete at the time this document was prepared.
+- [x] Flutter shell with Library, Search, Collections and Settings.
+- [x] Saved-item model for links, notes, images and documents.
+- [x] Hive CE repository for local records, attachment bytes, collections and preferences.
+- [x] Save/edit form, URL validation, metadata search and item details.
+- [x] User-selected image/document imports, with 15 MB per-file cap.
+- [x] Favorites, collection/tag browsing, URL opening, image preview and confirmed deletion.
+- [x] Versioned JSON backup/restore with validation and merge semantics.
+- [x] Model and backup-codec tests.
 
-## Not implemented / not verified
+## Phase 2 source added (verification intentionally pending)
 
-- No OCR or PDF text extraction. Search is metadata/user-entered text only.
-- No Android share receiver from other apps yet; manual file selection is in source.
-- PDF/document contents are shared to a platform app instead of rendered internally.
-- Real Android device, browser persistence, storage quotas and file/share behavior require testing.
-- Accessibility pass and pixel comparison against SVG mockups remain.
-- Backup rollback under interrupted storage failures requires further tests.
-- No public deployment or release.
+- [x] Changed the GitHub Actions workflow to **manual-only** (workflow_dispatch). Pushes to main no longer start builds.
+- [x] Added receive_sharing_intent and ShareIntake for Android shared URLs, text, images and supported documents.
+- [x] Incoming content prefills Quick Save for user review; it is never saved silently.
+- [x] Added bounded in-memory suppression for duplicate initial/stream share events.
+- [x] Multiple items in a share are not silently treated as saved; the form explains that only the first item is prepared in this increment.
+- [x] Added tool/configure_android_share_intents.py to configure the generated Android manifest idempotently.
+- [x] Added tests for share parsing, local persistence across Hive box reopening, attachment restore with ID collision, collection deletion and manifest configuration.
+- [x] Updated roadmap, test plan, traceability and progress documentation.
 
-## Next tasks
+## Not yet verified
 
-1. Finish CI: analyzer, tests, web build, Android debug build.
-2. Fix all real errors from new CI logs; don't hide compiler errors.
-3. Test save/edit/search/delete and backup/restore in Chrome and on a real Android device.
-4. Add Android share receiver and repository integration tests.
-5. Evaluate OCR separately; no OCR promise before proof of concept.
+- [ ] Run Dart analysis and unit tests after Phase 2 changes.
+- [ ] Run the Python manifest configurator unit tests.
+- [ ] Build the web release and Android debug APK after Phase 2 changes.
+- [ ] Test sharing a browser URL, plain text, image and PDF/document on a real Android device.
+- [ ] Validate cold-start vs warm-start share delivery and confirm one share opens one draft.
+- [ ] Confirm manifest configuration on an actual generated Android runner.
+- [ ] Accessibility and visual comparison against the seven SVG screen references.
+- [ ] Larger backup, malformed-file and storage-interruption recovery scenarios.
+
+## Current limitations
+
+- OCR/PDF text extraction is not implemented; search covers stored metadata and user-entered text.
+- PDF/document content is not rendered inside StashHive; files are handed off through the platform share flow.
+- Multi-item shares prepare the first item only and tell the user to share the rest separately.
+- Android runner files are generated rather than committed. After generating them locally, run python3 tool/configure_android_share_intents.py.
+- Web and Android libraries remain separate; cloud sync is not present.
+- No build runs automatically. When ready for a validation checkpoint, manually run Actions → Manual Flutter validation → Run workflow.
+
+## Next Phase 2 tasks
+
+1. Run the manual workflow only when the owner requests validation; fix failures from actual logs.
+2. Test Android share intent delivery from browsers, messaging apps and file providers.
+3. Add regression cases for observed provider MIME types and share-event ordering.
+4. Compare the running UI against docs/design/screens SVGs and fix layout/accessibility differences.
+5. Keep OCR gated on its separate offline feasibility report.

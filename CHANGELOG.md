@@ -23,3 +23,12 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 - Added the first Flutter app shell, saved-item model, local Hive CE repository, add/edit form, local metadata search, item detail, favorites, collections/tags and settings.
 - Added manual file selection, JSON backup/restore validation, model/codec unit tests and GitHub Actions format/analyze/test/web/Android build checks.
 - Verification still pending: the first CI run found analyzer errors which have been corrected; tests and builds must finish before being marked passed.
+
+
+
+### Phase 2 — Android share intake and manual-only CI — 2026-10-21
+
+- Made GitHub Actions manual-only using workflow_dispatch.
+- Added Android URL/text/image/document share intake that prefills Quick Save; saving remains an explicit user action.
+- Added an idempotent Android manifest configurator and fixture tests.
+- Added share-intake and repository persistence/restore regression tests; execution is pending a manual validation checkpoint.

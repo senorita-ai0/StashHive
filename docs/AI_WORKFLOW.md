@@ -26,4 +26,4 @@ Implementation was explicitly approved by the owner on 21 October 2026. BUILD mo
 
 ## Verification notes
 
-The current GitHub Actions run is the first executable verification because this author's environment does not have Flutter/Dart installed. Format, analyzer, tests, web build and Android debug build must all report their actual outcome.
+GitHub Actions is now manual-only (`workflow_dispatch`) at the owner's request. Phase 2 changes are not yet built or tested. Run the workflow only when the owner calls for a build checkpoint; report actual format/analyzer/test/web/Android results.
