@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'data/library_repository.dart';
 import 'models/saved_item.dart';
 import 'services/share_intake.dart';
+import 'ui/layout_metrics.dart';
 
 const Color kBrand = Color(0xFF5B5CE2);
 const Color kInk = Color(0xFF1B2340);
@@ -678,7 +679,9 @@ class _LibraryPageState extends State<LibraryPage> {
                             padding: const EdgeInsets.fromLTRB(0, 2, 0, 22),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: columns,
-                              mainAxisExtent: 104,
+                              mainAxisExtent: savedItemCardExtentForTextScale(
+                                MediaQuery.textScalerOf(context).scale(1.0),
+                              ),
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 10,
                             ),
@@ -925,7 +928,9 @@ class _SearchPageState extends State<SearchPage> {
                                         padding: const EdgeInsets.only(bottom: 20),
                                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: columns,
-                                          mainAxisExtent: 112,
+                                          mainAxisExtent: savedItemCardExtentForTextScale(
+                                            MediaQuery.textScalerOf(context).scale(1.0),
+                                          ),
                                           crossAxisSpacing: 12,
                                           mainAxisSpacing: 10,
                                         ),

@@ -90,3 +90,9 @@ The save path now snapshots the prior item map and attachment value before write
 - Backup & Privacy now distinguishes storage in a browser profile from storage in the Android/device app, and gives platform-specific data-loss warnings.
 - The restore action enters a busy state before opening the file picker, preventing repeated taps from starting multiple overlapping restore flows. The busy indicator exposes a live-region label for assistive technology.
 - This is source-level work only. Web reload/quota behavior, keyboard/screen-reader review and platform flows remain pending manual verification; CI was not run.
+
+## Phase 3 — text-scaling-aware card layout (2026-10-21)
+
+- Added a shared layout metric for saved-item card height that expands with the active text scale, keeping two-line titles and metadata from competing for a fixed-height row on accessibility text sizes.
+- Applied the helper to Library and Search grids and added pure unit tests for the default size, scaled sizes, the upper cap and invalid scale input.
+- The source and tests are committed as authored; they have not been run. Screen-reader, mobile-width and actual large-text checks remain pending.

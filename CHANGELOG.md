@@ -84,3 +84,8 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 - Updated saved-item cards to show titles across up to two lines before truncation, aligning with the SCR-001 long-title requirement.
 - Updated phase tracking to reflect that Phase 3 source work has started while Phase 2 build and Android device validation remain outstanding.
 - No UI tests, screenshots or builds were run.
+
+### Phase 3 accessibility layout increment — 2026-10-21
+
+- Added a shared text-scale-aware height metric for Library and Search cards. Result cards grow with accessibility text size while staying within a defined maximum.
+- Added pure unit test source for the card-height metric; tests and visual checks remain unrun.

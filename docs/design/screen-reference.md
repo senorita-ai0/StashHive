@@ -122,3 +122,7 @@ Traceability: FR-018, NFR-002–006.
 ## Phase 3 refinement — responsive saved-item titles
 
 Library item cards now allow titles to wrap to two lines before truncating, improving retrieval of long saved titles on narrow screens. Manually verify 320–360 px mobile widths, large system text and desktop layouts against SCR-001. This is a source-level adjustment, not a visual test result.
+
+## Phase 3 refinement — large text and saved-item cards
+
+Library and Search card heights now adapt to the active text scaler so two-line titles and the metadata row have more vertical room at larger system text sizes. This is a responsive safeguard, not a claim that every screen-reader or large-text layout has passed verification.

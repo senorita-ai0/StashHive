@@ -69,3 +69,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-004, NFR-006.
 - Behavior: saved-item titles may occupy two lines before ellipsis, reducing premature loss of identifying text.
 - Verification: source reviewed; narrow-width and large-text visual checks remain pending.
+
+### TSK-317 — Text-scaling-aware result cards
+
+- Implementation: `lib/ui/layout_metrics.dart`, consumed by `lib/main.dart` in Library and Search grids.
+- Requirements: FR-004, FR-005, NFR-006.
+- Test: `test/layout_metrics_test.dart` covers baseline, scaled, bounded and invalid text-scale values.
+- Verification: authored but not executed; actual UI layout checks remain pending.

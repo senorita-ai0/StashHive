@@ -126,3 +126,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - At narrow mobile widths, confirm a title can wrap to a second line without overlapping favorite or overflow actions.
 - Increase system text scaling and verify actions remain reachable and cards scroll without horizontal overflow.
 - Compare with SCR-001; status remains NOT STARTED until a real UI run is inspected.
+
+### TC-022 — Text-scaling-aware result cards
+
+- Verify the shared card extent returns a 120 logical-pixel baseline at default text scale and increases at larger scale factors.
+- Verify extreme or invalid scale values are bounded to prevent unbounded card growth.
+- On web and Android, manually inspect Library and Search at 100%, 150% and 200% text scale; long titles should remain readable and action controls must not overlap.
+- Automated unit test source is added but execution remains pending the manual validation checkpoint.

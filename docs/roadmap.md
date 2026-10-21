@@ -86,6 +86,7 @@ MVP must not be described as ready until create/edit/delete, link open, supporte
 | TSK-314 | Roll back save errors reported after storage writes | IN PROGRESS — item/attachment rollback and fault-injection test added; manual run pending | A failed save attempts to restore the previous saved-item map and attachment values even when a write may already have taken effect. |
 | TSK-315 | Platform-aware backup storage messaging and single-flight restore UI | IN PROGRESS — source added; platform verification pending | Browser users see browser-profile/site-data warnings; Android users see app/device warnings; restore cannot be started twice and busy states are accessible. |
 | TSK-316 | Match Library title wrapping to the approved responsive reference | IN PROGRESS — source adjusted; visual check pending | Long titles wrap to two lines on item cards without obscuring actions at narrow widths or large text scaling. |
+| TSK-317 | Scale Library/Search result cards with system text settings | IN PROGRESS — shared layout helper and unit tests added; run pending | Card heights grow with system text scaling for two-line titles and metadata, remain bounded for invalid/extreme scales, and pass visual checks on web and Android. |
 
 The owner requested development first and builds at the final checkpoint. Do not dispatch GitHub Actions unless the owner explicitly asks for validation. A successful manual workflow will retain the web build and Android debug APK artifacts for 14 days.
 
@@ -134,3 +135,7 @@ TSK-315 begins source-level platform hardening. Backup & Privacy communicates br
 ### Phase 3 responsive Library card refinement — 2026-10-21
 
 TSK-316 adjusts saved-item titles to wrap onto two lines before truncating, following the SCR-001 required long-title state. The responsive result still needs visual inspection at narrow widths and with enlarged text; no screenshot comparison has been marked passed.
+
+### Phase 3 — text scale-aware result layout (2026-10-21)
+
+TSK-317 introduces `savedItemCardExtentForTextScale` and applies it consistently to Library and Search result grids. At the default scale, cards use a 120 logical-pixel extent; larger text scales increase the extent within a fixed upper bound. Helper tests are authored but unrun. Actual large-text and responsive visual inspection remains pending.
