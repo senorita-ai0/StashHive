@@ -41,6 +41,10 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function(int index)? collectionBeforeItemWriteForTesting;
 
+  /// Fault-injection seam for a delete failure after attachment removal.
+  @visibleForTesting
+  static Future<void> Function()? deleteAfterAttachmentDeleteForTesting;
+
   bool get darkMode => _preferencesBox.get('darkMode') == true;
 
   static Future<LibraryRepository> open() async {
@@ -158,12 +162,69 @@ class LibraryRepository {
   }
 
   Future<void> delete(String id) async {
+    final hadItemKey = _itemsBox.containsKey(id);
+    if (!hadItemKey) return;
+
+    final previousItemValue = _itemsBox.get(id);
     final item = findById(id);
-    await _itemsBox.delete(id);
-    if (item?.attachmentKey != null) {
-      await _attachmentsBox.delete(item!.attachmentKey);
+    final attachmentKey = item?.attachmentKey;
+    final hadAttachment = attachmentKey != null &&
+        _attachmentsBox.containsKey(attachmentKey);
+    final previousAttachment =
+        hadAttachment ? _attachmentsBox.get(attachmentKey) : null;
+    var itemDeleteAttempted = false;
+    var attachmentDeleteAttempted = false;
+
+    try {
+      // Mark each operation before awaiting it: a storage future can fail after
+      // the underlying write has already taken effect.
+      itemDeleteAttempted = true;
+      await _itemsBox.delete(id);
+
+      if (attachmentKey != null &&
+          hadAttachment &&
+          !_hasAttachmentReference(attachmentKey)) {
+        attachmentDeleteAttempted = true;
+        await _attachmentsBox.delete(attachmentKey);
+        final afterAttachmentDelete = deleteAfterAttachmentDeleteForTesting;
+        if (afterAttachmentDelete != null) await afterAttachmentDelete();
+      }
+    } catch (_) {
+      // Restore in reverse order so a failed deletion cannot leave the item
+      // pointing at attachment bytes that were successfully removed.
+      if (attachmentDeleteAttempted &&
+          attachmentKey != null &&
+          hadAttachment) {
+        try {
+          await _attachmentsBox.put(attachmentKey, previousAttachment);
+        } catch (_) {
+          // Best-effort recovery; continue restoring the item record.
+        }
+      }
+      if (itemDeleteAttempted) {
+        try {
+          await _itemsBox.put(id, previousItemValue);
+        } catch (_) {
+          // Preserve the original delete error.
+        }
+      }
+      _refreshItems();
+      rethrow;
     }
+
     _refreshItems();
+  }
+
+  bool _hasAttachmentReference(String attachmentKey) {
+    // Scan raw records as well as parsed notifier values so a legacy or
+    // unreadable item still protects an attachment that it references.
+    for (final key in _itemsBox.keys) {
+      final value = _itemsBox.get(key);
+      if (value is Map && value['attachmentKey'] == attachmentKey) {
+        return true;
+      }
+    }
+    return false;
   }
 
   Future<void> toggleFavorite(String id) async {

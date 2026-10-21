@@ -76,3 +76,7 @@ A follow-up source review found two stale references to undeclared `writtenAttac
 ## Collection mutation rollback — 2026-10-21
 
 Collection rename and deletion now stage affected item records before committing the collection list, and attempt to restore previously stored item values and collection preferences if a write fails. Added a fault-injection regression for a rename interrupted after one item has been written. Rollback is best-effort and the test is authored but not run; the manual-only workflow remains untouched.
+
+## Item deletion integrity — 2026-10-21
+
+Delete now snapshots the item and attachment values, then attempts best-effort rollback if deletion fails after a record or attachment may already have been removed. Attachment bytes are retained while any other raw saved-item record references the same key. Fault-injection coverage for post-attachment-delete failure and shared references has been added, but not run; manual validation remains pending.

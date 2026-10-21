@@ -61,3 +61,9 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 
 - Made collection rename/delete update affected item records before committing collection preferences, with best-effort rollback if a write fails.
 - Added a fault-injection regression for a rename interrupted during item updates. Test/build execution remains pending.
+
+### Item deletion recovery — 2026-10-21
+
+- Added best-effort recovery for item/attachment delete failures.
+- Retained attachment bytes when another raw saved-item record still references the same key.
+- Added rollback and shared-attachment regression tests; execution remains pending.

@@ -101,3 +101,9 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - A fault-injection regression checks that a failed collection rename does not leave only some saved items assigned to the new collection.
 - Rename/delete rollback is best-effort; storage interruption behavior requires the owner's manual validation checkpoint and platform-level testing.
+
+### Delete rollback and attachment-reference tests — 2026-10-21
+
+- A fault-injection test simulates an error after an attachment has been deleted and expects both its item record and original bytes to be restored.
+- A shared-reference test ensures deleting one item does not remove bytes still referenced by another item.
+- These tests are authored, not executed. Rollback remains best-effort if the storage layer rejects the recovery writes too.

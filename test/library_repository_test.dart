@@ -29,19 +29,22 @@ SavedItem buildLink({
   );
 }
 
-SavedItem buildImage() {
-  return const SavedItem(
-    id: 'image-1',
+SavedItem buildImage({
+  String id = 'image-1',
+  String? attachmentKey,
+}) {
+  return SavedItem(
+    id: id,
     kind: ItemKind.image,
     title: 'Reference image',
     content: 'Design inspiration',
     url: null,
-    tags: ['Design'],
+    tags: const ['Design'],
     collection: 'Ideas',
     isFavorite: false,
     createdAtMs: 1000,
     updatedAtMs: 2000,
-    attachmentKey: 'image-1',
+    attachmentKey: attachmentKey ?? id,
     attachmentName: 'reference.png',
     attachmentMimeType: 'image/png',
   );
@@ -248,6 +251,48 @@ void main() {
     expect(
       repository.items.value.map((item) => item.collection),
       everyElement('Learning'),
+    );
+  });
+
+  test('restores item and attachment when delete fails after attachment removal', () async {
+    final originalBytes = Uint8List.fromList([9, 8, 7, 6]);
+    final image = buildImage();
+    await repository.save(image, attachmentBytes: originalBytes);
+
+    LibraryRepository.deleteAfterAttachmentDeleteForTesting = () async {
+      throw StateError('simulated post-delete failure');
+    };
+    try {
+      await expectLater(
+        repository.delete(image.id),
+        throwsA(isA<StateError>()),
+      );
+    } finally {
+      LibraryRepository.deleteAfterAttachmentDeleteForTesting = null;
+    }
+
+    expect(repository.findById(image.id)?.title, image.title);
+    expect(repository.items.value, hasLength(1));
+    expect(
+      await repository.readAttachment(image.attachmentKey!),
+      orderedEquals(originalBytes),
+    );
+  });
+
+  test('keeps attachment bytes while another item still references them', () async {
+    final originalBytes = Uint8List.fromList([4, 5, 6, 7]);
+    await repository.save(buildImage(), attachmentBytes: originalBytes);
+    await repository.save(
+      buildImage(id: 'image-2', attachmentKey: 'image-1'),
+    );
+
+    await repository.delete('image-1');
+
+    expect(repository.findById('image-1'), isNull);
+    expect(repository.findById('image-2')?.hasAttachment, isTrue);
+    expect(
+      await repository.readAttachment('image-1'),
+      orderedEquals(originalBytes),
     );
   });
 
