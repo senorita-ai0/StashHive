@@ -68,3 +68,7 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 3. Add regression cases for observed provider MIME types and share-event ordering; manually verify multi-item share save/cancel/skip behavior on Android.
 4. Compare the running UI against docs/design/screens SVGs and fix layout/accessibility differences.
 5. Keep OCR gated on its separate offline feasibility report.
+
+## Restore source-review correction — 2026-10-21
+
+A follow-up source review found two stale references to undeclared `writtenAttachments` and `writtenItems` in `restoreBackup()`. They were redundant because rollback already walks every uniquely staged record. The references have been removed to unblock Dart compilation. The manual-only workflow has not been run; formatting, analysis, tests and both platform builds remain unverified.

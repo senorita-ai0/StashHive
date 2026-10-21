@@ -91,3 +91,8 @@ The previous Android debug build failed when the generated plugin registrant cou
 - test/library_repository_test.dart injects a failure after replacement attachment bytes are written but before the saved-item map commits.
 - Expected: the original item title and attachment bytes remain intact, and the original save error is returned. The test hook must be reset even if the assertion fails.
 - Source/test added, execution pending. Real disk-full, process-death and filesystem failure behavior is still unverified.
+
+### Restore compile-blocker correction — 2026-10-21
+
+- Removed redundant references to undeclared restore bookkeeping variables; rollback continues to clean up every staged item/attachment entry.
+- Dart analyzer, unit tests, web build and Android APK build remain pending the owner's manual validation checkpoint.

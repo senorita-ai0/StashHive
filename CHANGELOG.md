@@ -52,3 +52,7 @@ Changes worth noting are recorded here. This project is still in blueprint revie
 
 - Upgraded file_picker from 11.0.3 to 12.3.0 after inspecting the historical Android build logs and the upstream AGP 9 Kotlin-plugin-registration issue.
 - Not build-verified yet; CI remains manual-only as requested.
+
+### Restore compile-blocker correction — 2026-10-21
+
+- Removed stale, undeclared restore bookkeeping references that would prevent Dart compilation. No tests or builds were run; CI remains manual-only.

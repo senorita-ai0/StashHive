@@ -301,10 +301,8 @@ class LibraryRepository {
         final key = entry.item.attachmentKey;
         if (key != null && entry.bytes != null) {
           await _attachmentsBox.put(key, entry.bytes);
-          writtenAttachments.add(key);
         }
         await _itemsBox.put(entry.item.id, entry.item.toMap());
-        writtenItems.add(entry.item.id);
       }
       final merged = List<String>.from(collections.value);
       for (final name in decoded.collections) {
