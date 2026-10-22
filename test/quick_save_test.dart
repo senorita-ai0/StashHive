@@ -167,6 +167,25 @@ void main() {
     expect(Uri.parse(repository.items.value.single.url!).scheme, 'https');
   });
 
+  testWidgets('shows an inline error for overlong URLs', (tester) async {
+    await openNewLink(tester);
+    final url = 'https://example.com/' +
+        List<String>.filled(
+          app.maxSavedItemUrlCharacters,
+          'a',
+        ).join();
+    await tester.enterText(find.byType(TextFormField).at(0), url);
+    await tester.ensureVisible(find.text('Save to StashHive'));
+    await tester.tap(find.text('Save to StashHive'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Website URLs must be 4,096 characters or shorter.'),
+      findsOneWidget,
+    );
+    expect(repository.items.value, isEmpty);
+  });
+
   testWidgets('rejects an explicit non-web scheme in URL input', (tester) async {
     await openNewLink(tester);
     await tester.enterText(
