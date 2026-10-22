@@ -648,3 +648,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (validate before mutation and limit peak memory).
 - Test: TC-096 references existing cases in `test/backup_codec_test.dart` and `test/library_repository_test.dart`.
 - Verification: source committed; test execution and memory profiling remain pending.
+
+
+### TSK-390 — UTF-8 backup size parity
+
+- Implementation: `BackupCodec.utf8ByteLength`, export/decode size checks and `BackupPrivacyPage._restore` using `maxBackupBytes`.
+- Requirements: FR-012–013 and NFR-003 (portable backup and bounded restore memory).
+- Test: TC-097 in `test/backup_codec_test.dart`.
+- Verification: source/test committed but unrun.
