@@ -3108,11 +3108,19 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
       final skippedRecords = widget.repository.skippedRecordCount.value;
       final skippedCollections =
           widget.repository.skippedCollectionCount.value;
-      if (skippedRecords > 0 || skippedCollections > 0) {
+      final unexportableRecords = widget.repository.unexportableRecordCount;
+      if (skippedRecords > 0 ||
+          skippedCollections > 0 ||
+          unexportableRecords > 0) {
         final omissions = <String>[];
         if (skippedRecords > 0) {
           omissions.add(
             '$skippedRecords saved record(s) could not be read and will be omitted.',
+          );
+        }
+        if (unexportableRecords > 0) {
+          omissions.add(
+            '$unexportableRecords readable legacy item(s) have invalid fields, missing/damaged attachments, or exceed the combined backup attachment limit and will be omitted.',
           );
         }
         if (skippedCollections > 0) {
@@ -3128,7 +3136,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
           builder: (context) => AlertDialog(
             title: const Text('This backup may be incomplete'),
             content: Text(
-              '${omissions.join(' ')} The raw local entries will not be deleted. Continue exporting the readable items and valid collection names?',
+              '${omissions.join(' ')} Original local entries will not be deleted. You can repair omitted items after exporting. Continue with a partial backup?',
             ),
             actions: [
               TextButton(
@@ -3227,6 +3235,12 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         final count = decodedBackup.omittedCollectionEntryCount;
         omissionNotes.add(
           '$count legacy collection name(s) or assignment(s) were normalized or omitted; this backup contains only the valid portable collection list.',
+        );
+      }
+      if (decodedBackup.omittedUnexportableRecordCount > 0) {
+        final count = decodedBackup.omittedUnexportableRecordCount;
+        omissionNotes.add(
+          '$count readable legacy item(s) with invalid fields or unavailable attachments were omitted during export and cannot be recovered from this file.',
         );
       }
       final confirmed = await showDialog<bool>(
