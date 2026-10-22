@@ -752,3 +752,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-010, FR-012–013 and NFR-003 (portable backups and transparent recovery).
 - Test: TC-109 in `test/library_repository_test.dart` and `test/accessibility_widgets_test.dart`.
 - Verification: source/tests committed but unrun.
+
+
+### TSK-406 — Carry partial-backup omission counts through restore
+
+- Implementation: `BackupCodec.encode/decode`, `LibraryRepository.createBackup`, and `BackupPrivacyPage._restore`.
+- Requirements: FR-012–013 and NFR-003 (transparent backup completeness and recovery).
+- Test: TC-110 in `test/backup_codec_test.dart` and `test/library_repository_test.dart`.
+- Verification: source/tests committed but unrun; restore interaction remains unverified on device.
