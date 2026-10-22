@@ -351,6 +351,12 @@ class LibraryRepository {
       }
     }
 
+    // Take ownership of the bytes after validation and before the first
+    // storage await. Callers may retain/mutate their input list; that must not
+    // change a saved payload behind the repository's back.
+    final attachmentSnapshot = attachmentBytes == null
+        ? null
+        : Uint8List.fromList(attachmentBytes);
     final hadPreviousAttachment =
         key != null && _attachmentsBox.containsKey(key);
     final previousAttachment =
@@ -359,11 +365,11 @@ class LibraryRepository {
     var itemWriteAttempted = false;
 
     try {
-      if (key != null && attachmentBytes != null) {
+      if (key != null && attachmentSnapshot != null) {
         // Set the flag before awaiting: the storage call may take effect and
         // then report an error, in which case rollback still needs to run.
         attachmentWriteAttempted = true;
-        await _attachmentsBox.put(key, attachmentBytes);
+        await _attachmentsBox.put(key, attachmentSnapshot);
       }
       final beforeItemCommit = saveBeforeItemCommitForTesting;
       if (beforeItemCommit != null) await beforeItemCommit();
