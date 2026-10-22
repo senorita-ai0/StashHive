@@ -392,3 +392,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-002 and FR-009 (valid web links and consistent size limits).
 - Test: TC-064 in `test/quick_save_test.dart`.
 - Verification: source/test committed; execution remains pending.
+
+
+### TSK-358 — Saved-item tag integrity
+
+- Implementation: `BackupCodec.validateSavedItem`, used by repository save and backup encode/decode.
+- Requirements: FR-002, FR-005–006, FR-010 (consistent tags/search metadata).
+- Test: TC-065 in `test/library_repository_test.dart` and `test/backup_codec_test.dart`.
+- Verification: source/tests committed but unrun.
