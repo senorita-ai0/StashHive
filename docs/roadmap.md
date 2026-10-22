@@ -556,3 +556,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-383:** Shared-file intake now retains the buffer returned by `XFile.readAsBytes()`; Quick Save passes its picked `Uint8List` directly to the repository; restore staging reuses decoded attachment buffers rather than copying each payload again. This lowers peak allocation pressure near the 15 MiB per-file / 100 MiB combined limits.
 - Existing intake, repository and backup round-trip tests already assert byte-for-byte preservation; source is committed but those tests remain unrun.
+
+
+### Phase 2 — restore reachability of item-assigned collections (2026-10-22)
+
+- **TSK-384:** Collection reload now merges valid collection names assigned on visible saved items with the preference list, deduplicating case-insensitively and preserving the 500-name cap. Legacy collection strings are trimmed in model deserialization; whitespace-only assignments normalize to unassigned. Save/delete refresh both item and collection notifiers so navigation stays current.
+- Added model and repository regressions for collection normalization, preference-less assignments and backup portability. Test source is committed but unrun.
