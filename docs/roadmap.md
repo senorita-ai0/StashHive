@@ -758,7 +758,7 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 3 — Search result sorting parity (2026-10-22)
 
-- **TSK-410:** Search Results now has the sort control specified by SCR-003 and mirrors Library's three options: Recently saved (most recently updated first), Oldest first (creation timestamp ascending), and Title A–Z (case-insensitive). The result count and sort control use a wrapping layout so they can separate cleanly at narrow widths or enlarged text.
+- **TSK-411:** Search Results now has the sort control specified by SCR-003 and mirrors Library's three options: Recently saved (most recently updated first), Oldest first (creation timestamp ascending), and Title A–Z (case-insensitive). The result count and sort control use a wrapping layout so they can separate cleanly at narrow widths or enlarged text.
 - Added widget regression source for all three ordering modes. Source/test are committed but unrun; visual comparison, large-text checks and screen-reader review remain pending. CI stays manual-only.
 
 
@@ -771,5 +771,5 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 3 — metadata performance baseline harness (2026-10-22)
 
-- **TSK-411:** Added `tool/benchmark_library_repository.dart` and `docs/performance-benchmark.md` to establish a repeatable, non-gating baseline for metadata-only libraries of 100, 1,000 and 10,000 items. The harness reports repository open/validation, repeated search and favorite filtering, one existing-item edit, and metadata backup encoding.
+- **TSK-412:** Added `tool/benchmark_library_repository.dart` and `docs/performance-benchmark.md` to establish a repeatable, non-gating baseline for metadata-only libraries of 100, 1,000 and 10,000 items. The harness reports repository open/validation, repeated search and favorite filtering, one existing-item edit, and metadata backup encoding.
 - **Status:** Harness and run instructions are committed; no measurements have been taken. TSK-305 remains IN PROGRESS until the output is recorded and recovery/platform verification is completed. No arbitrary latency threshold or CI timing gate is introduced.
