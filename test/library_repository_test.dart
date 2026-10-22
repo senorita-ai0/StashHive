@@ -90,6 +90,19 @@ void main() {
     expect(repository.findById('link-1')!.tags, contains('Reading'));
   });
 
+  test('storage reminder acknowledgement persists across box reopen', () async {
+    expect(repository.hasSeenStorageReminder, isFalse);
+    await repository.markStorageReminderSeen();
+    expect(repository.hasSeenStorageReminder, isTrue);
+
+    repository.dispose();
+    await Hive.close();
+    Hive.init(testDirectory.path);
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.hasSeenStorageReminder, isTrue);
+  });
+
   test('copied attachment survives backup restore when its ID collides', () async {
     final originalBytes = Uint8List.fromList([0, 1, 2, 3, 255]);
     await repository.save(buildImage(), attachmentBytes: originalBytes);
