@@ -3120,7 +3120,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         }
         if (unexportableRecords > 0) {
           omissions.add(
-            '$unexportableRecords readable legacy item(s) have invalid fields, missing/damaged attachments, or exceed the combined backup attachment limit and will be omitted.',
+            '$unexportableRecords readable legacy item(s) cannot be represented within portable backup limits (invalid fields, unavailable attachments, item count, or combined attachment size) and will be omitted.',
           );
         }
         if (skippedCollections > 0) {
@@ -3240,7 +3240,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
       if (decodedBackup.omittedUnexportableRecordCount > 0) {
         final count = decodedBackup.omittedUnexportableRecordCount;
         omissionNotes.add(
-          '$count readable legacy item(s) with invalid fields or unavailable attachments were omitted during export and cannot be recovered from this file.',
+          '$count readable legacy item(s) could not fit within portable backup item/attachment limits and were omitted during export; they cannot be recovered from this file.',
         );
       }
       final confirmed = await showDialog<bool>(
