@@ -1,4 +1,4 @@
-# StashHive — Test Plan
+# StashTrail — Test Plan
 
 **Status:** Implementation and test sources exist. Phase 2 tests have not yet run; the GitHub Actions workflow is manual-only by owner request.
 
@@ -949,3 +949,17 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Create items with equal updated timestamps, equal creation timestamps and duplicate case-insensitive titles but distinct IDs.
 - Sort with Recently saved, Oldest first and Title A–Z; confirm each mode follows documented primary ordering and the same deterministic secondary ordering on repeated runs.
 - The model comparator regression is committed but unrun; widget parity and narrow/enlarged-text sort controls remain pending manual checks.
+
+
+### TC-125 — Current StashTrail brand is visible in the Library
+
+- Open the Library and confirm the visible header says `StashTrail`.
+- Confirm the widget builds without layout exceptions; review the web-installed name and Android launcher label after the manual runner/build checkpoint.
+- Widget regression source is committed but unrun.
+
+
+### TC-126 — Version-1 backup identifier remains backward compatible
+
+- Decode a valid version-1 backup whose `app` field is `StashHive`, then encode it again.
+- Confirm the marker remains `StashHive` and the backup remains readable; do not rename that schema marker as part of UI branding.
+- Codec regression source is committed but unrun; old files must remain importable after the StashTrail rename.
