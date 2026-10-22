@@ -193,3 +193,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-324:** Replaced integer-only share fingerprints with canonical JSON serialization of each ordered event's type, path and MIME type. This prevents an integer hash collision (or ambiguous delimiter encoding) from suppressing a distinct user share.
 - Added regression coverage for two distinct batches whose values could alias under a simple delimiter scheme. Source and test are committed but unrun; device delivery checks remain pending and Phase 2 is still open.
+
+
+### Phase 3 — nonlinear text-scale layout factor (2026-10-22)
+
+- **TSK-325:** Library and Search result-card extents now derive their layout scale from the system-scaled 14 logical-pixel body font instead of sampling at 1 pixel. This better reflects accessibility scaling when the platform uses nonlinear text scaling.
+- Added unit coverage for normalizing scaled sizes and safe fallback values. Source and tests are committed but unrun; large-text visual inspection on Android and web remains pending.
