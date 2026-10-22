@@ -367,3 +367,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm `javascript:`, `file:`, `mailto:`, hostless URLs, whitespace-bearing input and malformed values are rejected.
 - Verify Item Details does not invoke the platform launcher for an invalid URL record that predates current repository validation.
 - Unit source is authored but unrun. External browser launch and legacy-record behavior remain pending the manual validation checkpoint.
+
+
+### TC-055 — Reject empty attachment payloads
+
+- Attempt to save an image with no bytes, with a byte value outside 0–255, and with an existing stored attachment record that is empty; all must be rejected before the item record is written.
+- Attempt to export and restore an image/document with an empty attachment payload; both paths must reject it rather than treating it as a valid saved file.
+- Regression source is committed but unrun; also verify rollback behavior when the underlying storage fails during byte writes.
