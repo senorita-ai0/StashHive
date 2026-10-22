@@ -175,7 +175,7 @@ class ShareIntake {
       throw const FormatException('The shared text is empty.');
     }
     if (text.length > maxIncomingTextCharacters) {
-      throw const FormatException('Shared text is over the 1 MB limit.');
+      throw const FormatException('Shared text is over the 1,000,000-character limit.');
     }
 
     final standalone = _parseWebUrl(text.trim());
