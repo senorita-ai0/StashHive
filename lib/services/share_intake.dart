@@ -192,8 +192,7 @@ class ShareIntake {
       caseSensitive: false,
     ).firstMatch(text);
     if (match != null) {
-      var rawUrl = match.group(0) ?? '';
-      rawUrl = rawUrl.replaceFirst(RegExp(r'[.,;:!?]+$'), '');
+      final rawUrl = _trimTrailingShareUrlPunctuation(match.group(0) ?? '');
       final uri = _parseWebUrl(rawUrl);
       if (uri != null) {
         final before = text.substring(0, match.start).trim();
@@ -282,6 +281,74 @@ class ShareIntake {
       fileName: fileName,
       mimeType: mimeType,
     );
+  }
+
+  /// Removes punctuation that surrounds a shared URL without removing
+  /// balanced parentheses/brackets that are legitimately part of its path.
+  static String _trimTrailingShareUrlPunctuation(String value) {
+    var result = value.replaceFirst(RegExp(r'[.,;:!?]+
+    final text = value.trim();
+    if (text.isEmpty || text.contains(RegExp(r'\s'))) return null;
+    final explicitScheme =
+        RegExp(r'^[a-zA-Z][a-zA-Z0-9+.-]*:').hasMatch(text);
+    if (explicitScheme &&
+        !text.toLowerCase().startsWith('http://') &&
+        !text.toLowerCase().startsWith('https://')) {
+      return null;
+    }
+    final candidate = text.contains('://') ? text : 'https://' + text;
+    final uri = Uri.tryParse(candidate);
+    if (uri == null ||
+        (uri.scheme.toLowerCase() != 'http' &&
+            uri.scheme.toLowerCase() != 'https') ||
+        uri.host.isEmpty) {
+      return null;
+    }
+    return uri;
+  }
+
+  static String _basename(String path) {
+    final normalized = path.replaceAll('\\', '/');
+    final parts = normalized.split('/').where((part) => part.isNotEmpty);
+    return parts.isEmpty ? '' : parts.last;
+  }
+
+  static String _guessMimeType(String extension) {
+    return switch (extension) {
+      'jpg' || 'jpeg' => 'image/jpeg',
+      'png' => 'image/png',
+      'gif' => 'image/gif',
+      'webp' => 'image/webp',
+      'bmp' => 'image/bmp',
+      'heic' => 'image/heic',
+      'heif' => 'image/heif',
+      'pdf' => 'application/pdf',
+      'txt' => 'text/plain',
+      'csv' => 'text/csv',
+      'doc' => 'application/msword',
+      'docx' =>
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'rtf' => 'application/rtf',
+      _ => 'application/octet-stream',
+    };
+  }
+}
+), '');
+    const pairs = <String, String>{')': '(', ']': '[', '}': '{'};
+    while (result.isNotEmpty) {
+      final closing = result.substring(result.length - 1);
+      final opening = pairs[closing];
+      if (opening == null) break;
+      var openCount = 0;
+      var closeCount = 0;
+      for (final character in result.split('')) {
+        if (character == opening) openCount++;
+        if (character == closing) closeCount++;
+      }
+      if (closeCount <= openCount) break;
+      result = result.substring(0, result.length - 1);
+    }
+    return result;
   }
 
   static Uri? _parseWebUrl(String value) {
