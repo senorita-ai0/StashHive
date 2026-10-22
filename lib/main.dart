@@ -2283,7 +2283,12 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
       ),
     );
     if (confirmed != true || !mounted) return;
-    await widget.repository.delete(item.id);
+    try {
+      await widget.repository.delete(item.id);
+    } catch (error) {
+      _message('Could not delete this item. ' + error.toString());
+      return;
+    }
     if (mounted) Navigator.of(context).pop();
   }
 
