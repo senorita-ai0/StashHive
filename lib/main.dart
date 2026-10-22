@@ -1778,9 +1778,11 @@ class _QuickSavePageState extends State<QuickSavePage> {
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
-                                color: _kind == kind
+                                color: _kind == kind ||
+                                        Theme.of(context).brightness ==
+                                            Brightness.light
                                     ? kind.readableTextAccent
-                                    : kind.accent,
+                                    : kind.softAccent,
                               ),
                             ),
                           ],
