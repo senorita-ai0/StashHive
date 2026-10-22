@@ -428,6 +428,8 @@ class LibraryRepository {
       ..._attachmentsBox.keys.whereType<String>(),
     };
     final seenImportedIds = <String>{};
+    final mappedAttachmentKeys = <String, String>{};
+    final stagedAttachmentKeys = <String>{};
     for (final item in decoded.items) {
       var newId = item.id;
       if (reserved.contains(newId) || !seenImportedIds.add(newId)) {
@@ -439,7 +441,16 @@ class LibraryRepository {
       }
       final oldKey = item.attachmentKey;
       final attachment = oldKey == null ? null : decoded.attachments[oldKey];
-      final mappedKey = attachment == null ? null : newId;
+      String? mappedKey;
+      List<int>? bytesToWrite;
+      if (oldKey != null && attachment != null) {
+        // Preserve intentional shared-attachment relationships across restore.
+        // Use one collision-safe new key and stage the bytes only once.
+        mappedKey = mappedAttachmentKeys.putIfAbsent(oldKey, () => newId);
+        if (stagedAttachmentKeys.add(oldKey)) {
+          bytesToWrite = attachment.bytes.toList(growable: false);
+        }
+      }
       final restored = SavedItem(
         id: newId,
         kind: item.kind,
@@ -455,7 +466,7 @@ class LibraryRepository {
         attachmentName: attachment?.name ?? item.attachmentName,
         attachmentMimeType: attachment?.mimeType ?? item.attachmentMimeType,
       );
-      staged.add((item: restored, bytes: attachment?.bytes.toList(growable: false)));
+      staged.add((item: restored, bytes: bytesToWrite));
       reserved.add(newId);
     }
 
