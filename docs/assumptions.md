@@ -1,4 +1,4 @@
-# StashHive — Assumptions and Open Decisions
+# StashTrail — Assumptions and Open Decisions
 
 Review this file whenever product scope changes. Confidence reflects how strongly the assumption is supported today, not whether it has been implemented.
 
@@ -17,7 +17,7 @@ Review this file whenever product scope changes. Confidence reflects how strongl
 | ASM-011 | First release may be English UI with Unicode-safe user data. | Medium | Medium | Confirm language priority; verify RTL/locale if Urdu UI is added later. Product owner | OPEN |
 | ASM-012 | Monetization can wait until first-run save/search and retention are validated. | High | Medium | Conduct opt-in tests; add ads or one-time unlock only after separate decision. Product owner | PROPOSED |
 | ASM-013 | A single metadata store can serve Android and web. Hive CE is a leading candidate, not yet selected. | Medium | High | POC with records, tags/collections, migration, export, web persistence and 10k search benchmark. Developer | OPEN |
-| ASM-014 | App package/domain/trademark availability for StashHive is not legally verified. | High | Medium | Check official stores, registrar, and relevant trademark database before public release. Owner | OPEN |
+| ASM-014 | App package/domain/trademark availability for StashTrail is not legally verified. | High | Medium | Check official stores, registrar, and relevant trademark database before public release. Owner | OPEN |
 | ASM-015 | No license has been chosen for the repository. | High | Medium | Owner decides before public release/open-source distribution. Owner | OPEN |
 
 ## Blocking decisions before build approval
