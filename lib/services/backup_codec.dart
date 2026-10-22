@@ -91,6 +91,80 @@ class BackupCodec {
   }
   static const int maxSupportedTimestampMs = 8640000000000000;
 
+  /// Revalidates an in-memory decoded backup at the mutation boundary.
+  ///
+  /// DecodedBackup is publicly constructible and its lists/maps can be mutable,
+  /// so callers must not be able to bypass JSON decoder limits by constructing
+  /// an instance directly or modifying one after decode.
+  static void validateDecodedBackup(DecodedBackup backup) {
+    if (backup.items.length > maxItems) {
+      throw const FormatException('The backup contains too many items.');
+    }
+    if (backup.collections.length > maxCollections) {
+      throw const FormatException('The backup contains too many collections.');
+    }
+    if (backup.omittedUnreadableRecordCount < 0 ||
+        backup.omittedCollectionEntryCount < 0) {
+      throw const FormatException('The backup omission metadata is invalid.');
+    }
+
+    final ids = <String>{};
+    for (final item in backup.items) {
+      validateSavedItem(item);
+      if (!ids.add(item.id)) {
+        throw const FormatException('The backup contains duplicate item IDs.');
+      }
+      final key = item.attachmentKey;
+      if (key != null && !backup.attachments.containsKey(key)) {
+        throw const FormatException(
+          'The backup is missing bytes for an image or document attachment.',
+        );
+      }
+    }
+
+    final collectionKeys = <String>{};
+    for (final rawName in backup.collections) {
+      final name = rawName.trim();
+      if (name.isEmpty || name != rawName || name.length > 80) {
+        throw const FormatException(
+          'A collection name must be between 1 and 80 characters.',
+        );
+      }
+      if (!collectionKeys.add(name.toLowerCase())) {
+        throw const FormatException(
+          'The backup contains duplicate collection names.',
+        );
+      }
+    }
+
+    var totalBytes = 0;
+    for (final entry in backup.attachments.entries) {
+      final key = entry.key;
+      final attachment = entry.value;
+      if (key.trim().isEmpty || key.length > 128) {
+        throw const FormatException('An attachment key is invalid.');
+      }
+      if (attachment.name.trim().isEmpty ||
+          attachment.name.length > 255 ||
+          attachment.mimeType.trim().isEmpty ||
+          attachment.mimeType.length > 128) {
+        throw const FormatException('An attachment has invalid metadata.');
+      }
+      if (attachment.bytes.isEmpty) {
+        throw const FormatException('An attachment payload is empty.');
+      }
+      if (attachment.bytes.length > maxAttachmentBytes) {
+        throw const FormatException('An attachment exceeds the 15 MB backup limit.');
+      }
+      totalBytes += attachment.bytes.length;
+      if (totalBytes > maxTotalAttachmentBytes) {
+        throw const FormatException(
+          'The combined attachment data exceeds 100 MB.',
+        );
+      }
+    }
+  }
+
   /// Validates item fields shared by repository saves and backup export/import.
   /// Keeping these constraints aligned prevents StashHive from exporting a
   /// backup that its own decoder would later reject.
