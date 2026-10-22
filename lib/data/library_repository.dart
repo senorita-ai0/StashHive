@@ -562,6 +562,20 @@ class LibraryRepository {
 
   Future<int> restoreBackup(String source) async {
     final decoded = BackupCodec.decode(source);
+    final mergedCollections = List<String>.from(collections.value);
+    for (final name in decoded.collections) {
+      if (!mergedCollections.any(
+        (existing) => existing.toLowerCase() == name.toLowerCase(),
+      )) {
+        mergedCollections.add(name);
+      }
+    }
+    if (mergedCollections.length > BackupCodec.maxCollections) {
+      throw const FormatException(
+        'Restore would exceed StashHive’s 500-collection limit. '
+        'Remove some collections before restoring this backup.',
+      );
+    }
     final staged = <({SavedItem item, List<int>? bytes})>[];
     // Reserve raw box keys too, including keys belonging to unreadable records
     // or orphaned attachments, so rollback can safely delete every staged ID.
@@ -622,17 +636,11 @@ class LibraryRepository {
         }
         await _itemsBox.put(entry.item.id, entry.item.toMap());
       }
-      final merged = List<String>.from(collections.value);
-      for (final name in decoded.collections) {
-        if (!merged.any((value) => value.toLowerCase() == name.toLowerCase())) {
-          merged.add(name);
-        }
-      }
       final beforeCollectionsCommit = restoreBeforeCollectionsCommitForTesting;
       if (beforeCollectionsCommit != null) {
         await beforeCollectionsCommit();
       }
-      await _preferencesBox.put('collections', merged);
+      await _preferencesBox.put('collections', mergedCollections);
     } catch (_) {
       // Every staged ID is guaranteed not to have existed before this restore.
       // Attempt cleanup item-by-item so one rollback failure does not prevent
