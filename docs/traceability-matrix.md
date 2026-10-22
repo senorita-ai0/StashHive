@@ -936,3 +936,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008 and NFR-003 (stable imported attachment data after save and recoverable local persistence).
 - Test: TC-122 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun; actual Android/web picker and storage behavior remains pending.
+
+
+### TSK-418 — Reject unreferenced attachment payloads
+
+- Implementation: `BackupCodec.decode` performs a raw-key reference preflight before base64 allocation; `validateDecodedBackup` enforces the same invariant for in-memory inputs.
+- Requirements: FR-012–013 and NFR-003 (bounded, portable backup restore).
+- Test: TC-123 in `test/backup_codec_test.dart`.
+- Verification: source/test committed but unrun.
