@@ -268,7 +268,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] TSK-421: deleting an unreadable legacy item now checks its raw string attachment reference and removes the payload only when no remaining raw record references it.
 - [x] Added TC-127 for reclaiming an orphan payload and TC-128 to prove bytes shared with a valid item are preserved.
 - [x] Added TC-129 to verify a failed delete restores both the unreadable raw record and its attachment bytes.
-- [ ] Run TC-127/TC-128 during the manual validation checkpoint; rollback behavior and legacy-store recovery remain unverified on target platforms.
+- [ ] Run TC-127–TC-129 during the manual validation checkpoint; rollback behavior and legacy-store recovery remain unverified on target platforms.
 
 ## Current validation state — 2026-10-22
 
