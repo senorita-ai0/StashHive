@@ -110,7 +110,16 @@ class _StashHiveAppState extends State<StashHiveApp> {
 
   Future<void> _setDarkMode(bool value) async {
     setState(() => _darkMode = value);
-    await widget.repository.setDarkMode(value);
+    try {
+      await widget.repository.setDarkMode(value);
+    } catch (_) {
+      // The repository attempts to roll back a failed preference write. Keep
+      // the visible theme aligned with whatever value remains persisted, and
+      // do not leak an unhandled async exception from the Switch callback.
+      if (mounted) {
+        setState(() => _darkMode = widget.repository.darkMode);
+      }
+    }
   }
 
   @override
