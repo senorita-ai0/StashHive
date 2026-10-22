@@ -374,6 +374,12 @@ void main() {
       repository.save(buildImage().copyWith(clearAttachment: true)),
       throwsFormatException,
     );
+    final overlongUrl = 'https://example.com/' +
+        List<String>.filled(4096, 'a').join();
+    await expectLater(
+      repository.save(buildLink(id: 'overlong-url').copyWith(url: overlongUrl)),
+      throwsFormatException,
+    );
     expect(repository.items.value, isEmpty);
   });
 
