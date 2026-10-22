@@ -150,6 +150,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Partial backup snapshots now cap export at 10,000 items for over-limit legacy libraries and retain all omitted items locally.
 - [x] Backup encoding now rejects duplicate item identifiers so exported JSON obeys the same uniqueness rule as restore.
 - [x] Backup encoding now preflights aggregate item JSON and attachment/base64 output size before allocating the final JSON string.
+- [x] Repository save snapshots caller-owned mutable attachment buffers before awaiting storage, preventing post-call mutations from changing saved bytes.
 - [x] Raw legacy created/updated timestamps are now bounded before reload/direct lookup so malformed dates do not break date-dependent UI.
 - [x] Library card and Item Details favorite actions now show repair guidance when strict saves reject a recoverable but invalid legacy record.
 - [x] Backup restore now uses the file_picker single-file API, rejects oversized/unknown-size backups before bulk reads, and repeats the cap check after loading bytes.
