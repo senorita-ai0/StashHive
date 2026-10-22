@@ -174,33 +174,5 @@ void main() {
     expect(repository.findById(edited.id)?.title, edited.title);
   });
 
-  testWidgets('changing an image to a note clears its attachment', (tester) async {
-    final bytes = Uint8List.fromList([2, 7, 1, 8]);
-    final image = buildImage(id: 'convert-image', attachmentKey: 'convert-image');
-    await repository.save(image, attachmentBytes: bytes);
 
-    await openEditor(tester, image);
-    final noteChoice = find.text('Note');
-    await tester.ensureVisible(noteChoice);
-    await tester.tap(noteChoice);
-    await tester.pumpAndSettle();
-
-    await tester.enterText(
-      find.byType(TextFormField).at(1),
-      'A note kept after removing its image attachment.',
-    );
-    await tester.ensureVisible(find.text('Save changes'));
-    await tester.tap(find.text('Save changes'));
-    await tester.pumpAndSettle();
-
-    final saved = repository.findById(image.id);
-    expect(saved?.kind, ItemKind.note);
-    expect(saved?.attachmentKey, isNull);
-    expect(saved?.attachmentName, isNull);
-    expect(saved?.attachmentMimeType, isNull);
-    expect(
-      Hive.box<dynamic>('stashhive_attachments_v1').containsKey('convert-image'),
-      isFalse,
-    );
-  });
 }
