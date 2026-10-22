@@ -658,21 +658,27 @@ class LibraryRepository {
     _refreshCollections();
   }
 
-  Future<String> createBackup() async {
+  int get unrepresentedCollectionAssignmentCount {
     final exportableCollections = <String>{
       for (final name in collections.value) name.toLowerCase(),
     };
-    final unrepresentedAssignments = items.value.where((item) {
+    return items.value.where((item) {
       final assigned = item.collection;
       return assigned != null &&
           !exportableCollections.contains(assigned.toLowerCase());
-    }).toList(growable: false);
-    if (unrepresentedAssignments.isNotEmpty) {
-      throw const FormatException(
-        'Some saved items are assigned to collection names that cannot be '
-        'included within the 500-collection backup limit. Edit those items '
-        'and move them to an available collection or choose No collection '
-        'before exporting.',
+    }).length;
+  }
+
+  Future<String> createBackup() async {
+    final unrepresentedAssignments = unrepresentedCollectionAssignmentCount;
+    if (unrepresentedAssignments > 0) {
+      final itemLabel = unrepresentedAssignments == 1
+          ? '1 saved item is'
+          : '$unrepresentedAssignments saved items are';
+      throw FormatException(
+        '$itemLabel assigned to collection names that cannot be included '
+        'within the 500-collection backup limit. Edit those items and move '
+        'them to an available collection or choose No collection before exporting.',
       );
     }
 
