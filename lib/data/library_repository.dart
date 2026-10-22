@@ -225,6 +225,13 @@ class LibraryRepository {
         'The selected attachment is empty or contains invalid byte values.',
       );
     }
+    if (key != null &&
+        attachmentBytes != null &&
+        isAttachmentReferencedByOtherItem(item.id, key)) {
+      throw const FormatException(
+        'This attachment is shared with another item. Use a new attachment key when replacing its bytes.',
+      );
+    }
     if (key != null && attachmentBytes == null) {
       final stored = _attachmentsBox.get(key);
       if (!_isValidAttachmentBytes(stored)) {
