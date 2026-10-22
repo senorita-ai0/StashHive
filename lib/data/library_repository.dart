@@ -355,6 +355,7 @@ class LibraryRepository {
         }
       }
       _refreshItems();
+      _refreshCollections();
       rethrow;
     }
     // If an edit removed/replaced its attachment reference, reclaim the old
@@ -371,6 +372,7 @@ class LibraryRepository {
       }
     }
     _refreshItems();
+    _refreshCollections();
   }
 
   Future<void> delete(String id) async {
@@ -421,10 +423,12 @@ class LibraryRepository {
         }
       }
       _refreshItems();
+      _refreshCollections();
       rethrow;
     }
 
     _refreshItems();
+    _refreshCollections();
   }
 
   bool _hasAttachmentReference(String attachmentKey) {
