@@ -3028,7 +3028,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         _message('That backup is too large to import in this version.');
         return;
       }
-      final bytes = await file.readAsBytes();
+      var bytes = await file.readAsBytes();
       if (!mounted) return;
       if (bytes.isEmpty) {
         _message('Could not read the selected backup file.');
@@ -3038,12 +3038,12 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         _message('That backup is too large to import in this version.');
         return;
       }
-      final source = utf8.decode(bytes, allowMalformed: false);
-      final decoded = jsonDecode(source);
-      if (decoded is! Map || decoded['app'] != 'StashHive') {
-        _message('This does not appear to be a StashHive backup.');
-        return;
-      }
+      var source = utf8.decode(bytes, allowMalformed: false);
+      // Fully validate before asking for confirmation, then release the raw
+      // JSON/base64 buffers so restore does not hold both representations.
+      final decodedBackup = BackupCodec.decode(source);
+      source = '';
+      bytes = Uint8List(0);
       if (!mounted) return;
       final confirmed = await showDialog<bool>(
         context: context,
@@ -3063,7 +3063,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         _choosingBackup = false;
         _restoring = true;
       });
-      final imported = await widget.repository.restoreBackup(source);
+      final imported = await widget.repository.restoreDecodedBackup(decodedBackup);
       _message('Restored ' + imported.toString() + (imported == 1 ? ' item.' : ' items.'));
     } on FormatException catch (error) {
       _message('Backup not imported: ' + error.message.toString());
