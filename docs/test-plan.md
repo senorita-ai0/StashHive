@@ -730,3 +730,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Open Backup & Privacy and confirm it displays the skipped-record count and states that an export will omit unreadable records.
 - Start export; confirm the partial-export dialog appears. Cancel and confirm the dialog closes without invoking the share sheet or creating the backup.
 - Widget source is committed but unrun; verify the affirmative path exports only after explicit acknowledgement.
+
+
+### TC-105 — Confirm before exporting normalized legacy collections
+
+- Seed an unreadable local record plus collection preferences with a case-only duplicate and an invalid blank entry.
+- Open Backup & Privacy and confirm the recovery banner includes both skipped-record and skipped-collection counts.
+- Start export; confirm the dialog describes both omission types and explains raw entries are not deleted. Cancel and confirm it closes without starting the share flow.
+- Widget test source is committed but unrun; confirm the affirmative path remains functional at the manual checkpoint.
