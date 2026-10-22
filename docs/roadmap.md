@@ -303,3 +303,10 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **TSK-341:** Quick Save now preserves an existing attachment only when the edited item keeps the same attachment-bearing kind. Switching an image/document to a note or link clears attachment key/name/MIME metadata; switching between image/document requires an explicitly chosen compatible file.
 - `LibraryRepository.save` independently enforces that only image/document kinds may carry attachment references, that both kinds require a valid key, and that provided bytes respect the 15 MiB cap. After a successful edit it best-effort deletes a no-longer-referenced old payload, but keeps bytes if another readable or unreadable raw item still references them.
 - Added repository regressions for kind/reference invariants, orphan cleanup and shared-reference preservation. Tests are authored but unrun; filesystem interruption behavior remains pending.
+
+
+### Phase 2 — shared saved-item validation across save/export/restore (2026-10-22)
+
+- **TSK-342:** Added a single saved-item validator used by repository saves and backup encoding/decoding. URL length, title/content/tags, collection metadata, attachment metadata and item-kind/attachment consistency are checked before data is committed or exported, so StashHive no longer intentionally emits backups its own decoder would reject for these field rules.
+- Quick Save now gives a clear 4,096-character URL limit message, and the saved URL limit is defined once in the model and reused by incoming-share handling and backup validation.
+- Added regressions for overlong saved URLs and attachment metadata that would fail restore. Tests are committed but unrun; validate the full save/export/restore path at the manual checkpoint.
