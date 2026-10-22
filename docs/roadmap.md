@@ -310,3 +310,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **TSK-342:** Added a single saved-item validator used by repository saves and backup encoding/decoding. URL length, title/content/tags, collection metadata, attachment metadata and item-kind/attachment consistency are checked before data is committed or exported, so StashHive no longer intentionally emits backups its own decoder would reject for these field rules.
 - Quick Save now gives a clear 4,096-character URL limit message, and the saved URL limit is defined once in the model and reused by incoming-share handling and backup validation.
 - Added regressions for overlong saved URLs and attachment metadata that would fail restore. Tests are committed but unrun; validate the full save/export/restore path at the manual checkpoint.
+
+
+### Phase 2 — Quick Save shared-attachment edit regression (2026-10-22)
+
+- **TSK-343:** Quick Save now keeps an item's existing attachment key for metadata-only edits, including when the key belongs to another item that owns shared bytes. Choosing replacement bytes still writes a new per-item key, avoiding unintended overwrite of another item's shared payload.
+- Added widget regressions for editing a shared-attachment item without replacing bytes and converting an image into a note with the attachment reference/unused bytes removed. Tests are committed but unrun.
