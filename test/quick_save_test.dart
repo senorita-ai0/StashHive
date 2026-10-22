@@ -171,7 +171,7 @@ void main() {
     await openNewLink(tester);
     final url = 'https://example.com/' +
         List<String>.filled(
-          app.maxSavedItemUrlCharacters,
+          maxSavedItemUrlCharacters,
           'a',
         ).join();
     await tester.enterText(find.byType(TextFormField).at(0), url);
