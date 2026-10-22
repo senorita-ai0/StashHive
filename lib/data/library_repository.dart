@@ -93,13 +93,25 @@ class LibraryRepository {
 
   void _refreshItems() {
     final result = <SavedItem>[];
-    for (final value in _itemsBox.values) {
-      if (value is Map) {
-        try {
-          result.add(SavedItem.fromMap(value));
-        } on FormatException {
-          // An unreadable record is skipped rather than crashing the whole library.
+    for (final entry in _itemsBox.toMap().entries) {
+      final value = entry.value;
+      if (value is! Map) continue;
+      try {
+        // Validate the raw shape first; SavedItem.fromMap intentionally
+        // normalizes some fields for model convenience and could otherwise
+        // hide malformed persisted values.
+        BackupCodec.validateSavedItemMap(value);
+        final item = SavedItem.fromMap(value);
+        BackupCodec.validateSavedItem(item);
+        if (entry.key is! String || entry.key != item.id) {
+          throw const FormatException(
+            'A saved item key does not match its item identifier.',
+          );
         }
+        result.add(item);
+      } catch (_) {
+        // Keep the usable library open; damaged records are skipped rather
+        // than preventing valid saved items from loading.
       }
     }
     result.sort((a, b) => b.updatedAtMs.compareTo(a.updatedAtMs));
