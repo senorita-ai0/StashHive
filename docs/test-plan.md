@@ -907,7 +907,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Regression source is committed but unrun. Full widget search testing and target-device/browser text-entry behavior remain part of the manual validation checkpoint.
 
 
-### TC-116 — Backup encoder rejects duplicate item IDs
+### TC-119 — Backup encoder rejects duplicate item IDs
 
 - Pass two otherwise valid item records with the same ID but different titles/timestamps to the encoder.
 - Confirm export rejects the input before JSON output; the decoder's unique-ID rule and encoder rule must agree.
