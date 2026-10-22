@@ -146,6 +146,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Restore collision preflight now reserves dangling attachment-key references from raw records so imported bytes cannot silently repair or reassign another record's missing payload.
 - [x] Direct repository lookups now apply the same raw type/size and box-key/embedded-ID checks as refresh, while retaining recoverable parseable legacy records.
 - [x] Collection row counts now use the same case-insensitive assignment matching as Collection Contents.
+- [x] Backup export now distinguishes unreadable raw records from visible but unexportable legacy items, asks for confirmation, filters them from the portable snapshot, and carries their omission count through restore warnings.
 - [x] Raw legacy created/updated timestamps are now bounded before reload/direct lookup so malformed dates do not break date-dependent UI.
 - [x] Library card and Item Details favorite actions now show repair guidance when strict saves reject a recoverable but invalid legacy record.
 - [x] Backup restore now uses the file_picker single-file API, rejects oversized/unknown-size backups before bulk reads, and repeats the cap check after loading bytes.
