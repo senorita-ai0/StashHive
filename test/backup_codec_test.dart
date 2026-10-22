@@ -390,6 +390,29 @@ void main() {
       );
     });
 
+    test('export rejects an empty or whitespace-only note', () {
+      final emptyNote = SavedItem(
+        id: 'empty-note',
+        kind: ItemKind.note,
+        title: 'Blank note',
+        content: '   ',
+        tags: const [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 1000,
+      );
+
+      expect(
+        () => BackupCodec.encode(
+          items: [emptyNote],
+          attachmentBytes: const {},
+          collections: const [],
+        ),
+        throwsFormatException,
+      );
+    });
+
     test('rejects files which are not StashHive backups', () {
       expect(
         () => BackupCodec.decode(jsonEncode({'app': 'OtherApp', 'formatVersion': 1})),
