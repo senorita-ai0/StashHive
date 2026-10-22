@@ -175,3 +175,12 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009 (shared URL/text intake).
 - Test: TC-037 in `test/share_intake_test.dart`.
 - Verification: source and test committed; unit execution and real Android source-app checks remain pending.
+
+
+### TSK-331 — Attachment payload integrity checksums
+
+- Implementation: `lib/services/backup_codec.dart`, SHA-256 metadata for exported attachment payloads and optional checksum verification on decode.
+- Requirements: FR-012–013 (export/restore integrity).
+- Test: TC-038 in `test/backup_codec_test.dart`.
+- Compatibility: checksum remains optional when reading older version-1 backups; current exports always include it.
+- Verification: implementation and regression source committed; tests remain pending manual validation.
