@@ -608,3 +608,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed a parseable saved link with a non-web URL, open Item Details and activate Favorite.
 - Confirm the repository rejects the invalid record update safely, the favorite flag remains unchanged, repair guidance appears, and no widget exception escapes.
 - Widget regression source is committed but unrun; test the equivalent Library card menu on Android/web during the manual checkpoint.
+
+
+### TC-088 — Backup restore picker compatibility and size guard
+
+- Select a valid JSON backup on Android and web; confirm the single-file picker yields readable bytes and restore proceeds.
+- Select an empty/unknown-size file and a backup over 145 MiB; confirm each is rejected before full byte loading.
+- Confirm no old `FilePickerResult.files` wrapper is used for the pinned file_picker API and that the post-read cap remains.
+- Manual test pending; no plugin/device result is claimed.
