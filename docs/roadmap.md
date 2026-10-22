@@ -688,3 +688,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-408:** The Quick Save attachment tile is now one named semantic button. It announces the current filename (or “Choose an image/document”) and explains whether it selects a first file or a replacement, including the 15 MB cap.
 - Added a semantics widget regression for its accessible label, tap action and hint. Test source is committed but unrun; TalkBack/browser screen-reader confirmation remains pending.
+
+
+### Phase 2 — bound legacy timestamps during local recovery (2026-10-22)
+
+- **TSK-386:** Local-record shape validation now checks created/updated timestamps against the supported date range before making the record available to date formatting and detail views. Records with unrepresentable timestamps are skipped and included in the recovery banner rather than risking a later date-conversion exception.
+- Extended the existing malformed-record regression to assert the bad timestamp is excluded from direct lookup too. Test source is committed but unrun.
