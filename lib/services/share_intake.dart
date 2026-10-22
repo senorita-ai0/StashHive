@@ -286,7 +286,38 @@ class ShareIntake {
   /// Removes punctuation that surrounds a shared URL without removing
   /// balanced parentheses/brackets that are legitimately part of its path.
   static String _trimTrailingShareUrlPunctuation(String value) {
-    var result = value.replaceFirst(RegExp(r'[.,;:!?]+
+    var end = value.length;
+    const trailingPunctuation = '.,;:!?';
+    while (end > 0 && trailingPunctuation.contains(value[end - 1])) {
+      end--;
+    }
+    final result = value.substring(0, end);
+    const pairs = <String, String>{')': '(', ']': '[', '}': '{'};
+    final openCounts = <String, int>{'(': 0, '[': 0, '{': 0};
+    final closeCounts = <String, int>{')': 0, ']': 0, '}': 0};
+    for (var index = 0; index < result.length; index++) {
+      final character = result[index];
+      if (openCounts.containsKey(character)) {
+        openCounts[character] = openCounts[character]! + 1;
+      }
+      if (closeCounts.containsKey(character)) {
+        closeCounts[character] = closeCounts[character]! + 1;
+      }
+    }
+    end = result.length;
+    while (end > 0) {
+      final closing = result[end - 1];
+      final opening = pairs[closing];
+      if (opening == null || closeCounts[closing]! <= openCounts[opening]!) {
+        break;
+      }
+      closeCounts[closing] = closeCounts[closing]! - 1;
+      end--;
+    }
+    return result.substring(0, end);
+  }
+
+  static Uri? _parseWebUrl(String value) {
     final text = value.trim();
     if (text.isEmpty || text.contains(RegExp(r'\s'))) return null;
     final explicitScheme =
@@ -306,7 +337,6 @@ class ShareIntake {
     }
     return uri;
   }
-
   static String _basename(String path) {
     final normalized = path.replaceAll('\\', '/');
     final parts = normalized.split('/').where((part) => part.isNotEmpty);
