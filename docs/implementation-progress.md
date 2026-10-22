@@ -124,7 +124,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
 - [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
 - [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
-- [x] Progress/test docs updated through TSK-409 and TC-113.
+- [x] Progress/test docs updated through TSK-410 and TC-114.
 
 ## Phase 2/3 latest source increments — 2026-10-22
 
@@ -197,6 +197,15 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Backup restore now preflights the merged collection count and rejects any import that would exceed the portable 500-collection cap before writing records.
 - [x] Added credential-bearing URL, URL boundary, tag integrity, collision-safe ID and responsive kind-selector regression source.
 
+## Phase 3 — Search result sorting parity (2026-10-22)
+
+- [x] Added Search sort state and the three options already supported in Library: Recently saved, Oldest first and Title A–Z.
+- [x] Kept filtering and sort operations separate from persistence; changing sort order does not mutate saved items.
+- [x] Wrapped the result count/live status and sort control so they can reflow on narrow screens and at enlarged text sizes.
+- [x] Added TC-114 widget regression source for all three sort modes.
+- [ ] Execute TC-114 and review narrow-width/large-text layout at the manual validation checkpoint.
+- [ ] Complete keyboard and screen-reader checks; no visual or assistive-technology pass is claimed.
+
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All new regression cases are source-authored, not passed. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All new regression cases, including TC-114, are source-authored, not passed. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
