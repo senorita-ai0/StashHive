@@ -1,11 +1,11 @@
-# StashHive — Project Intake Summary
+# StashTrail — Project Intake Summary
 
 **Status:** Phase 0 complete as a working draft; blueprint approval pending.  
 **Prepared:** 2026-10-21
 
 ## Problem statement
 
-People save useful digital items across different apps and locations—screenshots, website links, articles, social/video links, copied text, notes, PDFs, and documents. Later they forget which app/source contained the item or cannot search inside the content. StashHive aims to make saving, organizing, and retrieving those items feel like one personal library.
+People save useful digital items across different apps and locations—screenshots, website links, articles, social/video links, copied text, notes, PDFs, and documents. Later they forget which app/source contained the item or cannot search inside the content. StashTrail aims to make saving, organizing, and retrieving those items feel like one personal library.
 
 ## Intended users
 
@@ -20,12 +20,16 @@ A polished, reliable Android-first app with a companion web experience. A user c
 
 ## Confirmed direction
 
-- Product name: **StashHive** (working brand; domain/trademark clearance remains separate).
+- Product name: **StashTrail** (current user-facing brand; domain/trademark clearance remains separate).
 - Broad purpose: more than screenshot management; links, websites, notes, snippets, PDFs, and documents are in scope for product planning.
 - Product model: direct-to-user app; no external service providers or customer marketplace are required.
 - Cost constraint: prefer free tools and local processing; avoid recurring backend and paid-API costs for the core product.
 - Framework preference: Flutter, based on the user's established app workflow.
 - Workflow: create initial product/blueprint files first and stop for approval before implementation.
+
+## Identity compatibility
+
+StashTrail is the current visible product name. Preserve the existing `stashhive` Dart package and Hive box identifiers, and keep the version-1 JSON backup marker as `StashHive` so existing local data and backup files remain compatible. Renaming those internal identifiers requires a separate migration plan.
 
 ## Proposed defaults (not yet approved)
 
