@@ -334,3 +334,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-346:** Quick Save disables eager file-byte loading in file_picker 12.x, checks the selected file's length against the 15 MiB limit, and only then reads the byte buffer. It rejects zero/unknown-size selections with a clear recoverable message and performs a second post-read size check.
 - This reduces unnecessary allocation for oversized local/web selections. Source is committed but unrun; verify web picker behavior with `withData: false`, Android gallery/SAF reads, cancellation and cloud-backed files during the manual platform checkpoint.
+
+
+### Phase 2/3 — guard external navigation for legacy saved URLs (2026-10-22)
+
+- **TSK-347:** Added a shared `parseHttpUrl` boundary that accepts only HTTP/HTTPS URLs with a host and normalizes scheme casing. Quick Save, backup item validation and Item Details external navigation use it; a malformed legacy record can no longer send `javascript:`, `file:` or other non-web schemes to the platform launcher.
+- Added unit coverage for uppercase schemes, invalid/hostless URLs, whitespace-bearing values and dangerous schemes. Test source is committed but unrun; end-to-end external-launch behavior remains part of manual verification.
