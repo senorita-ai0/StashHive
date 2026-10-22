@@ -90,6 +90,27 @@ void main() {
     expect(repository.findById('link-1')!.tags, contains('Reading'));
   });
 
+  test('rolls back dark-mode preference after a late write failure', () async {
+    expect(repository.darkMode, isFalse);
+    LibraryRepository.setDarkModeAfterWriteForTesting = () async {
+      throw StateError('simulated dark-mode preference failure');
+    };
+    try {
+      await expectLater(
+        repository.setDarkMode(true),
+        throwsA(isA<StateError>()),
+      );
+    } finally {
+      LibraryRepository.setDarkModeAfterWriteForTesting = null;
+    }
+
+    expect(repository.darkMode, isFalse);
+    expect(
+      Hive.box<dynamic>('stashhive_preferences_v1').containsKey('darkMode'),
+      isFalse,
+    );
+  });
+
   test('storage reminder acknowledgement persists across box reopen', () async {
     expect(repository.hasSeenStorageReminder, isFalse);
     await repository.markStorageReminderSeen();
