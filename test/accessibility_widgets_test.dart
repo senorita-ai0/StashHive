@@ -46,6 +46,32 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Library reminder explains local storage and offers a backup action', (tester) async {
+    var dismissed = false;
+    var backupRequested = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.LibraryPage(
+          repository: repository,
+          onAdd: (_) {},
+          onSearch: (_) {},
+          onOpenItem: (_) {},
+          showStorageReminder: true,
+          onDismissStorageReminder: () => dismissed = true,
+          onCreateBackup: () => backupRequested = true,
+        ),
+      ),
+    );
+
+    expect(find.text('Keep your library safe'), findsOneWidget);
+    expect(find.textContaining('Uninstalling the app or clearing app data'), findsOneWidget);
+    await tester.tap(find.text('Create backup'));
+    expect(backupRequested, isTrue);
+    await tester.tap(find.text('Got it'));
+    expect(dismissed, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Library and Search avoid layout exceptions at narrow width with large text', (tester) async {
     await tester.binding.setSurfaceSize(const Size(320, 568));
     addTearDown(() => tester.binding.setSurfaceSize(null));
