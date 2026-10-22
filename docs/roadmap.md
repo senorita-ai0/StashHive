@@ -526,3 +526,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-378:** Backup restore now reserves attachment keys referenced by raw local records, even when the referenced payload is missing. Imported image/document IDs and their mapped attachment keys cannot accidentally populate a broken legacy item's missing file.
 - Added a repository regression that restores an image whose original ID matches a dangling legacy attachment reference and confirms both the imported payload and the broken legacy reference remain separate. Test source is committed but unrun.
+
+
+### Phase 2 — keep direct lookup consistent with recovery filtering (2026-10-22)
+
+- **TSK-379:** `findById` now validates raw record field types/size and confirms the requested Hive key matches the embedded ID before returning a model. Malformed or mismatched raw entries cannot bypass `_refreshItems` by being queried directly, while parseable legacy records with unsafe URLs/missing payloads remain available for recovery feedback.
+- The existing malformed-record repository regression now covers this lookup boundary too. Tests are committed but unrun.
