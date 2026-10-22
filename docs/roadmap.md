@@ -574,3 +574,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-386:** The Library brand title now obeys the available row width and uses a single-line ellipsis, preventing the logo/title/filter controls from forcing a horizontal overflow at narrow widths with enlarged text.
 - Added a widget regression for Library and Search at 320×568 with 2× text scaling. Test source is committed but unrun; visual review remains part of the manual accessibility checkpoint.
+
+
+### Phase 2 — align forced-image share MIME metadata (2026-10-22)
+
+- **TSK-387:** When the operating system delivers an image share intent with a contradictory non-image MIME header and an unrecognized extension, intake keeps the intent's image classification but normalizes the MIME metadata to an image MIME when known, otherwise `application/octet-stream`.
+- Added a file-based regression for an extensionless image share labelled `text/plain`. Test source is committed but unrun; real provider MIME behavior remains a manual Android check.
