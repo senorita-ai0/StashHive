@@ -502,3 +502,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-374:** Repository save now refuses to write new bytes to an attachment key that already contains a payload unless that key is already the item's own current attachment key. Shared-reference checks still prevent in-place changes to shared bytes. This protects orphaned/corrupt payloads even when callers bypass Quick Save's safe-key helper.
 - Added a direct repository regression proving a rejected save leaves both the new record absent and the orphan bytes unchanged. Test source is committed but unrun.
+
+
+### Phase 2 — keep collection count within the portable backup limit (2026-10-22)
+
+- **TSK-375:** The backup codec exposes a single 500-collection maximum and repository collection creation now enforces it. The UI can no longer grow the collection preference list beyond the portable-backup format's declared limit.
+- Added a repository regression that reloads a full collection list, rejects collection 501, and confirms the list still round-trips through the backup codec. Test source is committed but unrun.
