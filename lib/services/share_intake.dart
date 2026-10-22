@@ -300,11 +300,19 @@ class ShareIntake {
     // Known supported extensions determine the stored type when the share
     // source provides a conflicting MIME header. Otherwise an incorrect header
     // can classify a text file as an image (or vice versa).
-    final mimeType = hasRecognizedExtension
+    final inferredMime = hasRecognizedExtension
         ? guessedMime
         : sharedMime.isEmpty || sharedMime == defaultBinaryMimeType
             ? guessedMime
             : sharedMime;
+    // Some source apps identify the intent as an image while attaching a
+    // generic/text MIME header. Keep the image classification from the intent,
+    // but never persist that contradictory non-image MIME metadata.
+    final mimeType = forceImage && !inferredMime.startsWith('image/')
+        ? sharedMime.startsWith('image/')
+            ? sharedMime
+            : defaultBinaryMimeType
+        : inferredMime;
 
     final isImage = forceImage ||
         mimeType.startsWith('image/') ||
