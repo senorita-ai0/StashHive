@@ -970,6 +970,52 @@ void main() {
     expect(repository.items.value.single.isFavorite, isTrue);
   });
 
+  testWidgets('Item deletion failure keeps details open and reports an error', (tester) async {
+    final bytes = Uint8List.fromList([1, 3, 3, 7]);
+    const item = SavedItem(
+      id: 'image-delete-failure',
+      kind: ItemKind.image,
+      title: 'Keep this image',
+      content: '',
+      tags: [],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1,
+      updatedAtMs: 2,
+      attachmentKey: 'image-delete-failure',
+      attachmentName: 'reference.png',
+      attachmentMimeType: 'image/png',
+    );
+    await repository.save(item, attachmentBytes: bytes);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.ItemDetailsPage(
+          repository: repository,
+          itemId: item.id,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    LibraryRepository.deleteAfterAttachmentDeleteForTesting = () async {
+      throw StateError('simulated item delete failure');
+    };
+    try {
+      await tester.tap(find.text('Delete saved item'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Delete'));
+      await tester.pumpAndSettle();
+    } finally {
+      LibraryRepository.deleteAfterAttachmentDeleteForTesting = null;
+    }
+
+    expect(find.text('Item details'), findsOneWidget);
+    expect(find.textContaining('simulated item delete failure'), findsOneWidget);
+    expect(repository.findById(item.id)?.title, item.title);
+    expect(await repository.readAttachment(item.attachmentKey!), orderedEquals(bytes));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('favorite state is exposed with a meaningful semantic label', (tester) async {
     final semantics = tester.ensureSemantics();
     addTearDown(semantics.dispose);
