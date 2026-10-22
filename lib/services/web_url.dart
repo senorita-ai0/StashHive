@@ -35,7 +35,9 @@ Uri? parseHttpUrl(String? value) {
   final text = value?.trim() ?? '';
   if (text.isEmpty || text.contains(RegExp(r'\s'))) return null;
   final uri = Uri.tryParse(text);
-  if (uri == null || uri.host.isEmpty) return null;
+  if (uri == null || uri.host.isEmpty || uri.userInfo.isNotEmpty) {
+    return null;
+  }
 
   final scheme = uri.scheme.toLowerCase();
   if (scheme != 'http' && scheme != 'https') return null;
