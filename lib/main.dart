@@ -1177,7 +1177,19 @@ class SavedItemTile extends StatelessWidget {
                 icon: Icon(Icons.more_horiz_rounded, color: mutedTextColor(context)),
                 onSelected: (action) async {
                   if (action == 'favorite') {
-                    await repository.toggleFavorite(item.id);
+                    try {
+                      await repository.toggleFavorite(item.id);
+                    } catch (_) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'This item needs repair before it can be updated. Edit it to correct its URL or reselect a missing file.',
+                            ),
+                          ),
+                        );
+                      }
+                    }
                   } else if (action == 'open') {
                     onTap();
                   }
@@ -1977,6 +1989,17 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     if (mounted) setState(_reload);
   }
 
+  Future<void> _toggleFavorite(SavedItem item) async {
+    try {
+      await widget.repository.toggleFavorite(item.id);
+      if (mounted) setState(_reload);
+    } catch (_) {
+      _message(
+        'This item needs repair before it can be updated. Edit it to correct its URL or reselect a missing file.',
+      );
+    }
+  }
+
   Future<void> _delete() async {
     final item = _item;
     if (item == null) return;
@@ -2135,10 +2158,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                       label: const Text('Edit'),
                     ),
                     OutlinedButton.icon(
-                      onPressed: () async {
-                        await widget.repository.toggleFavorite(item.id);
-                        if (mounted) setState(_reload);
-                      },
+                      onPressed: () => _toggleFavorite(item),
                       icon: Icon(
                         item.isFavorite
                             ? Icons.star_rounded
