@@ -929,7 +929,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Source committed but unrun; keep CI manual-only.
 
 
-### TC-118 — Caller cannot mutate bytes after passing them to save
+### TC-122 — Caller cannot mutate bytes after passing them to save
 
 - Pass a mutable `Uint8List` to repository save.
 - Mutate the caller's input buffer during the post-attachment/pre-item-commit hook.
