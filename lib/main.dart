@@ -1374,16 +1374,13 @@ class _QuickSavePageState extends State<QuickSavePage> {
       if (_kind == ItemKind.link) {
         final entered = _urlController.text.trim();
         final candidate = entered.contains('://') ? entered : 'https://' + entered;
-        final uri = Uri.tryParse(candidate);
-        final scheme = uri?.scheme.toLowerCase() ?? '';
-        if (uri == null ||
-            (scheme != 'http' && scheme != 'https') ||
-            uri.host.isEmpty) {
+        final uri = parseHttpUrl(candidate);
+        if (uri == null) {
           _showMessage('Enter a valid http or https website URL.');
           setState(() => _saving = false);
           return;
         }
-        url = uri.replace(scheme: scheme).toString();
+        url = uri.toString();
         if (url.length > maxSavedItemUrlCharacters) {
           _showMessage('Website URLs must be 4,096 characters or shorter.');
           setState(() => _saving = false);
