@@ -302,6 +302,12 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added repository and widget regression source plus manual case **TC-134**.
 - [ ] Run TC-134 and verify theme preference persistence on web and Android at the manual checkpoint.
 
+## Phase 3 — accurate search scope and platform wording (2026-10-22)
+
+- [x] Settings now names collection names as searchable and uses browser-specific wording for web rather than calling every installation a device.
+- [x] Added a widget regression for the native subtitle and the disclosed search fields, plus manual case **TC-135** for web wording and no-OCR/no-sync clarity.
+- [ ] Run TC-135 and review the Settings wording on web and Android at the manual checkpoint.
+
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-134 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-134 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-135 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-135 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
