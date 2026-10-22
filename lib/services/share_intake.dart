@@ -97,6 +97,24 @@ class ShareEventDeduplicator {
     return inferred;
   }
 
+  List<Object?> _textFingerprint(String path, String message) {
+    final effectiveText = message.isNotEmpty ? message : path;
+    final urlCandidate =
+        ShareIntake._trimTrailingShareUrlPunctuation(effectiveText.trim());
+    final uri = parseUserWebUrl(urlCandidate);
+    if (uri != null) return <Object?>['web-url', uri.toString(), ''];
+    return <Object?>['text', effectiveText];
+  }
+
+  List<Object?> _urlFingerprint(String path, String message) {
+    final uri = parseUserWebUrl(path);
+    return <Object?>[
+      'web-url',
+      uri?.toString() ?? path,
+      message,
+    ];
+  }
+
   bool shouldAccept(
     List<SharedMediaFile> media, {
     DateTime? now,
@@ -118,20 +136,25 @@ class ShareEventDeduplicator {
         return switch (item.type) {
           // Text intake selects exactly one effective text field; ignore the
           // unused path/message representation to match the actual draft.
-          SharedMediaType.text => <Object?>[
-              item.type.name,
-              message.isNotEmpty ? message : path,
-            ],
-          // URL intake uses the path plus accompanying draft context; MIME
-          // metadata does not change the user-visible URL draft.
-          SharedMediaType.url => <Object?>[
-              item.type.name,
-              path,
-              message,
-            ],
-          // File/image/video intake does not use the platform message field.
+          SharedMediaType.text => _textFingerprint(path, message),
+          // URL and standalone-text URL shares should deduplicate when their
+          // normalized web destination/context produces the same draft.
+          SharedMediaType.url => _urlFingerprint(path, message),
+          // Image-intent and generic-file events can produce the same image
+          // draft for the same path. Fingerprint that effective category rather
+          // than the provider's raw type label.
           SharedMediaType.image ||
-          SharedMediaType.file ||
+          SharedMediaType.file =>
+            <Object?>[
+              item.type == SharedMediaType.image ||
+                      _effectiveFileMime(item).startsWith('image/')
+                  ? 'image'
+                  : 'document',
+              path,
+              _effectiveFileMime(item),
+            ],
+          // Videos are currently skipped by intake, but keep their events
+          // distinct from supported image/document drafts.
           SharedMediaType.video =>
             <Object?>[item.type.name, path, _effectiveFileMime(item)],
         };
