@@ -546,6 +546,43 @@ void main() {
       }
     });
 
+    test('rejects oversized aggregate item JSON before full backup serialization', () {
+      // Reuse one moderate input string across many records: after JSON
+      // escaping, the combined export exceeds the portable byte cap without
+      // requiring a huge fixture allocation.
+      final largeContent = ''.padRight(750000, '\n');
+      final items = List<SavedItem>.generate(
+        105,
+        (index) => SavedItem(
+          id: 'large-content-$index',
+          kind: ItemKind.link,
+          title: 'Large content $index',
+          content: largeContent,
+          url: 'https://example.com/$index',
+          tags: const [],
+          collection: null,
+          isFavorite: false,
+          createdAtMs: 1000,
+          updatedAtMs: index + 1000,
+        ),
+      );
+
+      expect(
+        () => BackupCodec.encode(
+          items: items,
+          attachmentBytes: const {},
+          collections: const [],
+        ),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            contains('too large to share or restore'),
+          ),
+        ),
+      );
+    });
+
     test('export rejects duplicate saved-item IDs', () {
       final original = sampleLink();
       final conflicting = original.copyWith(
