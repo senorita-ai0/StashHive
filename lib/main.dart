@@ -1295,6 +1295,9 @@ class _QuickSavePageState extends State<QuickSavePage> {
             ? null
             : const ['pdf', 'txt', 'doc', 'docx', 'rtf', 'csv'],
         allowMultiple: false,
+        // In file_picker 12.x, web may default this to true; disable eager
+        // loading so the byte limit can be checked before allocating data.
+        withData: false,
       );
       if (!mounted || result == null || result.files.isEmpty) return;
       final file = result.files.first;
@@ -1304,7 +1307,9 @@ class _QuickSavePageState extends State<QuickSavePage> {
       final length = await file.length();
       if (!mounted) return;
       if (length == 0) {
-        _showMessage('That file is empty. Choose a non-empty file.');
+        _showMessage(
+          'That file is empty or its size could not be determined. Choose another file.',
+        );
         return;
       }
       if (length > kMaxAttachmentBytes) {
