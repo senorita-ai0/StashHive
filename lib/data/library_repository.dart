@@ -662,7 +662,9 @@ class LibraryRepository {
     final exportableCollections = <String>{
       for (final name in collections.value) name.toLowerCase(),
     };
-    return items.value.where((item) {
+    final snapshotItems =
+        _buildBackupSnapshot(copyAttachmentBytes: false).items;
+    return snapshotItems.where((item) {
       final assigned = item.collection;
       return assigned != null &&
           !exportableCollections.contains(assigned.toLowerCase());
@@ -688,6 +690,13 @@ class LibraryRepository {
     var omitted = 0;
 
     for (final item in items.value) {
+      // Legacy boxes can predate the portable count limit. Keep the first
+      // MAX_ITEMS exportable records rather than letting one extra old record
+      // make every backup fail after the partial-export confirmation.
+      if (exportableItems.length >= BackupCodec.maxItems) {
+        omitted++;
+        continue;
+      }
       try {
         BackupCodec.validateSavedItem(item);
       } catch (_) {
