@@ -897,3 +897,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm repository state retains all 10,001 records, export produces a valid backup with 10,000 items, and metadata reports one omitted unexportable record.
 - Confirm the repository's collection-overflow gate is computed from items that will actually be exported, not records omitted by the portable item/attachment checks.
 - Test source is committed but unrun.
+
+
+### TC-118 — Unicode search coverage
+
+- Create a note with English words, Urdu-script text, Roman Urdu, an accented title/collection, an emoji, and punctuation including a hash token and square brackets.
+- Confirm the model finds each exact stored script/emoji/punctuation token and matches uppercase/lowercase accented text where Dart lowercase conversion applies.
+- Confirm punctuation is preserved as literal substring content (for example, `release#42` matches and `release 42` does not). Do not infer OCR behavior or canonical-equivalence matching for differently normalized Unicode sequences.
+- Regression source is committed but unrun. Full widget search testing and target-device/browser text-entry behavior remain part of the manual validation checkpoint.
