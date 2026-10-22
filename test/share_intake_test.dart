@@ -435,6 +435,32 @@ void main() {
       );
     });
 
+    test('deduplicates recognized files despite conflicting raw MIME headers', () {
+      final deduplicator = ShareEventDeduplicator();
+      final start = DateTime.utc(2026, 10, 22, 18);
+      SharedMediaFile imageWithMime(String mimeType) => SharedMediaFile(
+            path: '/provider/cache/reference.png',
+            type: SharedMediaType.file,
+            mimeType: mimeType,
+          );
+
+      expect(
+        deduplicator.shouldAccept(
+          [imageWithMime('text/plain')],
+          now: start,
+        ),
+        isTrue,
+      );
+      expect(
+        deduplicator.shouldAccept(
+          [imageWithMime('image/png')],
+          now: start.add(const Duration(milliseconds: 100)),
+        ),
+        isFalse,
+        reason: 'The recognized .png extension determines both drafts’ MIME.',
+      );
+    });
+
     test('distinguishes batch order and respects the bounded fingerprint cache', () {
       final deduplicator = ShareEventDeduplicator(
         window: const Duration(seconds: 3),
