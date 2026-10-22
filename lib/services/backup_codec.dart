@@ -122,7 +122,6 @@ class BackupCodec {
       }
     }
 
-    final collectionKeys = <String>{};
     for (final rawName in backup.collections) {
       final name = rawName.trim();
       if (name.isEmpty || name != rawName || name.length > 80) {
@@ -130,11 +129,9 @@ class BackupCodec {
           'A collection name must be between 1 and 80 characters.',
         );
       }
-      if (!collectionKeys.add(name.toLowerCase())) {
-        throw const FormatException(
-          'The backup contains duplicate collection names.',
-        );
-      }
+      // Older version-1 exports could contain case-only duplicate names.
+      // Restore merges collection labels case-insensitively, so keep those
+      // backups recoverable rather than rejecting otherwise valid item data.
     }
 
     var totalBytes = 0;
