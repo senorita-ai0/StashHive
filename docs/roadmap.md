@@ -760,3 +760,10 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-410:** Search Results now has the sort control specified by SCR-003 and mirrors Library's three options: Recently saved (most recently updated first), Oldest first (creation timestamp ascending), and Title A–Z (case-insensitive). The result count and sort control use a wrapping layout so they can separate cleanly at narrow widths or enlarged text.
 - Added widget regression source for all three ordering modes. Source/test are committed but unrun; visual comparison, large-text checks and screen-reader review remain pending. CI stays manual-only.
+
+
+### Phase 2 — confirm and preserve omissions for unexportable legacy items (2026-10-22)
+
+- **TSK-410:** Backup planning now separates structurally unreadable records from visible legacy items that cannot be safely exported. Invalid URLs, empty legacy notes, missing/damaged attachments and attachments that exceed the combined 100 MiB budget are omitted from the portable snapshot only after an explicit partial-export confirmation.
+- The version-1 backup metadata includes an optional `omittedUnexportableRecordCount`; old backups default it to zero. Restore confirmation explains those items cannot be recovered from that file, and the original local records remain in place.
+- Added codec metadata round-trip/validation tests, repository partial-export tests and a widget regression for the confirmation/cancel path. Tests are committed but unrun.
