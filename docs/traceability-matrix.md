@@ -888,3 +888,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: NFR-007 (measured baseline for realistic local-library sizes), with NFR-003 platform/recovery verification still tracked separately.
 - Test/measurement: TC-116 in `docs/test-plan.md`; execute deliberately on a representative machine and record environment details with JSON output.
 - Verification: harness is source only; no benchmark measurements have been run and no performance pass is claimed.
+
+
+### TSK-411 — Partial export within the portable item cap
+
+- Implementation: `LibraryRepository._buildBackupSnapshot` and `unrepresentedCollectionAssignmentCount`.
+- Requirements: FR-012–013 and NFR-003 (portable bounded backups without local data deletion).
+- Test: TC-115 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
