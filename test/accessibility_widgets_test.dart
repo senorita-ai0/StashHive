@@ -409,6 +409,57 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Backup export blocks hidden collection assignments with repair guidance', (tester) async {
+    await Hive.box<dynamic>('stashhive_preferences_v1').put(
+      'collections',
+      List<String>.generate(
+        500,
+        (index) => 'Portable collection $index',
+      ),
+    );
+    final overflowItem = SavedItem(
+      id: 'hidden-collection-assignment',
+      kind: ItemKind.link,
+      title: 'Assigned beyond the collection cap',
+      content: '',
+      url: 'https://example.com/overflow',
+      tags: const [],
+      collection: 'Unrepresented collection',
+      isFavorite: false,
+      createdAtMs: 1,
+      updatedAtMs: 2,
+    );
+    await Hive.box<dynamic>('stashhive_items_v1')
+        .put(overflowItem.id, overflowItem.toMap());
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.unrepresentedCollectionAssignmentCount, 1);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.BackupPrivacyPage(repository: repository),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final exportButton = find.widgetWithText(FilledButton, 'Create backup');
+    await tester.ensureVisible(exportButton);
+    await tester.tap(exportButton);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.textContaining('1 saved item uses a collection name beyond the backup limit.'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('choose an available collection or No collection'),
+      findsOneWidget,
+    );
+    expect(find.text('This backup may be incomplete'), findsNothing);
+    expect(repository.findById(overflowItem.id), isNotNull);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Collection row actions have contextual tooltips', (tester) async {
     await repository.addCollection('Learning');
     await repository.save(
