@@ -449,6 +449,25 @@ void main() {
     );
   });
 
+  test('rejects empty or invalid attachment bytes on save', () async {
+    final item = buildImage();
+    await expectLater(
+      repository.save(item, attachmentBytes: const []),
+      throwsFormatException,
+    );
+    await expectLater(
+      repository.save(item, attachmentBytes: const [1, 256]),
+      throwsFormatException,
+    );
+
+    await Hive.box<dynamic>('stashhive_attachments_v1').put(item.id, <int>[]);
+    await expectLater(
+      repository.save(item),
+      throwsA(isA<StateError>()),
+    );
+    expect(repository.items.value, isEmpty);
+  });
+
   test('a missing attachment cannot be saved as though it were local', () async {
     final item = buildImage();
     await expectLater(
