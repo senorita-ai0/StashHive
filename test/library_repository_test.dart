@@ -552,6 +552,33 @@ void main() {
     );
   });
 
+  test('repository refuses in-place writes to a shared attachment key', () async {
+    const sharedKey = 'shared-direct-save';
+    final originalBytes = Uint8List.fromList([10, 20, 30, 40]);
+    final owner = buildImage(id: 'direct-owner', attachmentKey: sharedKey);
+    final dependent = buildImage(id: 'direct-dependent', attachmentKey: sharedKey);
+    await repository.save(owner, attachmentBytes: originalBytes);
+    await repository.save(dependent);
+
+    await expectLater(
+      repository.save(
+        owner.copyWith(
+          title: 'Should not commit',
+          updatedAtMs: owner.updatedAtMs + 1,
+        ),
+        attachmentBytes: Uint8List.fromList([40, 30, 20, 10]),
+      ),
+      throwsFormatException,
+    );
+
+    expect(repository.findById(owner.id)?.title, owner.title);
+    expect(repository.findById(dependent.id)?.attachmentKey, sharedKey);
+    expect(
+      await repository.readAttachment(sharedKey),
+      orderedEquals(originalBytes),
+    );
+  });
+
   test('replacement key avoids overwriting bytes shared by other items', () async {
     const sharedKey = 'owner-image';
     final bytes = Uint8List.fromList([11, 22, 33, 44]);
