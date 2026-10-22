@@ -18,7 +18,7 @@
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415 | TC-012, TC-117, TC-119, TC-120 | IN PROGRESS — bounded-size source added; execution and platform export pending |
 | FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415 | TC-013, TC-117, TC-119, TC-120 | IN PROGRESS — codec/source added; restore tests pending |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | NOT STARTED |
-| FR-015 | SCR-006 | TSK-003, TSK-303 | TC-015 | NOT STARTED |
+| FR-015 | SCR-006, SCR-001 | TSK-003, TSK-303, TSK-422 | TC-015, TC-130 | IN PROGRESS — local-storage reminder source added; browser restart/storage verification pending |
 | FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205 | TC-016 | BLOCKED pending POC |
 | FR-017 | SCR-004 | TSK-203 | TC-017 | NOT STARTED |
 | FR-018 | SCR-006 | TSK-304 | TC-018 | IN PROGRESS — local-only UI/source added; privacy checks pending |
@@ -968,3 +968,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008, FR-012–013 and NFR-003 (attachment integrity, local-storage hygiene and recoverability from malformed records).
 - Tests: TC-127, TC-128 and TC-129 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun. Manual recovery/platform validation remains pending.
+
+
+### TSK-422 — First-launch local-storage safety reminder
+
+- Implementation: `lib/main.dart`, `LibraryPage` and `lib/data/library_repository.dart`.
+- Requirement: FR-015; the reminder uses platform-specific wording and does not imply cloud sync.
+- Tests: repository preference persistence in `test/library_repository_test.dart`; reminder content/actions in `test/accessibility_widgets_test.dart`; manual acceptance TC-130.
+- Verification: source and regression cases are authored; they remain unrun. Web profile persistence, Android restart behavior and responsive visual review remain pending.
