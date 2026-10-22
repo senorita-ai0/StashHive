@@ -384,3 +384,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-002, FR-009, FR-017–018 (URL safety and external navigation).
 - Test: TC-063 in `test/web_url_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-357 — Inline URL length validation
+
+- Implementation: `lib/main.dart`, Quick Save URL `TextFormField.validator`.
+- Requirements: FR-002 and FR-009 (valid web links and consistent size limits).
+- Test: TC-064 in `test/quick_save_test.dart`.
+- Verification: source/test committed; execution remains pending.
