@@ -266,3 +266,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-335:** Added a `SEND_MULTIPLE` `*/*` manifest filter because Android may use the wildcard MIME type for mixed file batches. The intake queue still validates each item individually and skips unsupported entries with feedback.
 - Updated the manifest regression to require wildcard coverage as well as all supported single-share MIME families. Python regression source is committed but unrun; verify chooser visibility and per-file MIME resolution on a real Android device.
+
+
+### Phase 3 — contrast-safe item-type badges (2026-10-22)
+
+- **TSK-336:** Added a separate darker `readableTextAccent` for small item-type labels while preserving the original accents for icons and borders on other surfaces. Link, note, image and document labels now exceed 4.5:1 contrast against their pastel badge fills.
+- Library, Quick Save and Item Details use the readable label accent. Added a regression across every `ItemKind`; tests are authored but unrun, and visual theme checks remain pending.
