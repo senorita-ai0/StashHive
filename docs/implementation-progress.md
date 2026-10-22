@@ -124,7 +124,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
 - [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
 - [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
-- [x] Progress/test docs updated through TSK-376 and TC-083.
+- [x] Progress/test docs updated through TSK-388 and TC-095.
 
 ## Phase 2/3 latest source increments — 2026-10-22
 
@@ -137,6 +137,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added repository/Library widget regression source for the count and visible recovery warning.
 - [x] Added a repository-level guard preventing any caller from writing replacement bytes to a key still referenced by another raw item, plus collision-safe IDs that avoid item/attachment keys and missing-payload legacy references.
 - [x] Expanded item-type label contrast coverage to include unselected states on light and dark surfaces; Quick Save now chooses readable foregrounds for all four types.
+- [x] Added timestamp range checks for recovered local records, revalidated decoded backup objects before restore writes, included item-only collection assignments in restore capacity checks, and kept case-only duplicate collection names in old v1 backups importable.
 - [x] Applied and tested state-aware contrast for Quick Save item-kind icons in selected/unselected light/dark states.
 - [x] Centralized attachment byte-list validation, including a pre-iteration length cap for oversized legacy payloads.
 - [x] Bound raw local record field sizes during recovery so oversized records are skipped and counted while parseable legacy records with safe-to-display field sizes remain visible.
