@@ -8,6 +8,7 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import '../models/saved_item.dart';
 
 const int maxIncomingAttachmentBytes = 15 * 1024 * 1024;
+const int maxIncomingUrlCharacters = 4096;
 const int maxIncomingTextCharacters = 1000000;
 
 /// A user-selected or OS-shared item ready to prefill StashHive's save form.
@@ -151,6 +152,17 @@ class ShareIntake {
 
     switch (media.type) {
       case SharedMediaType.url:
+        if (path.length > maxIncomingUrlCharacters) {
+          throw const FormatException(
+            'Shared URLs must be 4,096 characters or shorter.',
+          );
+        }
+        final sharedContext = media.message?.trim() ?? '';
+        if (sharedContext.length > maxIncomingTextCharacters) {
+          throw const FormatException(
+            'Shared text is over the 1,000,000-character limit.',
+          );
+        }
         final uri = _parseWebUrl(path);
         if (uri == null) {
           throw const FormatException('Only http and https links can be saved.');
@@ -159,7 +171,7 @@ class ShareIntake {
           kind: ItemKind.link,
           title: uri.host,
           url: uri.toString(),
-          content: media.message?.trim() ?? '',
+          content: sharedContext,
         );
       case SharedMediaType.text:
         final text = (media.message?.trim().isNotEmpty ?? false)
@@ -183,10 +195,15 @@ class ShareIntake {
       throw const FormatException('Shared text is over the 1,000,000-character limit.');
     }
 
-    final standalone = _parseWebUrl(
-      _trimTrailingShareUrlPunctuation(text.trim()),
-    );
+    final standaloneText =
+        _trimTrailingShareUrlPunctuation(text.trim());
+    final standalone = _parseWebUrl(standaloneText);
     if (standalone != null) {
+      if (standalone.toString().length > maxIncomingUrlCharacters) {
+        throw const FormatException(
+          'Shared URLs must be 4,096 characters or shorter.',
+        );
+      }
       return IncomingShare(
         kind: ItemKind.link,
         title: standalone.host,
@@ -200,6 +217,11 @@ class ShareIntake {
     ).firstMatch(text);
     if (match != null) {
       final rawUrl = _trimTrailingShareUrlPunctuation(match.group(0) ?? '');
+      if (rawUrl.length > maxIncomingUrlCharacters) {
+        throw const FormatException(
+          'Shared URLs must be 4,096 characters or shorter.',
+        );
+      }
       final uri = _parseWebUrl(rawUrl);
       if (uri != null) {
         final before = text.substring(0, match.start).trim();
