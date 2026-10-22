@@ -53,6 +53,19 @@ void main() {
       expect(item.matchesQuery('  '), isTrue);
     });
 
+    test('normalizes duplicate tags without regard to case', () {
+      final legacy = makeItem(tags: const [
+        'Reading',
+        'reading',
+        'Work',
+        'Reading ',
+        '',
+      ]);
+      final restored = SavedItem.fromMap(legacy.toMap());
+
+      expect(restored.tags, ['Reading', 'Work']);
+    });
+
     test('preserves Unicode text in note content and search', () {
       final item = makeItem(
         kind: ItemKind.note,
