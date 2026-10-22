@@ -421,6 +421,19 @@ void main() {
         'updatedAtMs': 1000,
       },
     );
+    await Hive.box<dynamic>('stashhive_items_v1').put(
+      'out-of-range-timestamp',
+      <String, Object?>{
+        'id': 'out-of-range-timestamp',
+        'kind': 'note',
+        'title': 'Bad timestamp',
+        'content': 'Legacy record with unformattable date.',
+        'tags': <String>[],
+        'isFavorite': false,
+        'createdAtMs': 1000,
+        'updatedAtMs': 9000000000000000,
+      },
+    );
 
     await repository.save(buildLink(id: 'valid-record'));
 
@@ -430,7 +443,7 @@ void main() {
     );
     expect(repository.findById('unknown-kind'), isNull);
     expect(repository.findById('wrong-box-key'), isNull);
-    expect(repository.skippedRecordCount.value, 3);
+    expect(repository.skippedRecordCount.value, 4);
   });
 
   test('keeps parseable legacy records visible for recovery actions', () async {
