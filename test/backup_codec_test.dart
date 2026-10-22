@@ -267,11 +267,12 @@ void main() {
       );
     });
 
-    test('export rejects empty or untrimmed tags', () {
+    test('export rejects empty, untrimmed or case-duplicate tags', () {
       for (final tags in <List<String>>[
         const [''],
         const ['   '],
         const ['Reading '],
+        const ['Reading', 'reading'],
       ]) {
         expect(
           () => BackupCodec.encode(
