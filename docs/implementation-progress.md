@@ -124,8 +124,17 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
 - [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
 - [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
-- [x] Progress/test docs updated through TSK-357 and TC-064.
+- [x] Progress/test docs updated through TSK-360 and TC-067.
+
+## Phase 2/3 latest source increments — 2026-10-22
+
+- [x] Strict URL parsing now separates user-entered bare-domain normalization from the strict persisted/open URL guard, rejects embedded credentials and explicit non-web schemes, and gives an inline error for overlong URLs.
+- [x] Tag validation rejects empty and untrimmed tags before repository write/backup export.
+- [x] New saved-item IDs and replacement attachment keys are allocated against both item IDs and attachment keys, including orphaned or still-referenced-but-missing payloads.
+- [x] Local reload validates raw field types and tag bounds before model parsing, then verifies the Hive key matches the embedded item ID. It keeps parseable legacy records with unsafe URLs or missing attachments visible so safe feedback and repair remain possible; truly malformed raw shapes are skipped without crashing the rest of the library.
+- [x] Added repository regression source for keeping parseable legacy records visible while skipping unknown kinds and key/ID mismatches.
+- [x] Added credential-bearing URL, URL boundary, tag integrity, collision-safe ID and responsive kind-selector regression source.
 
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for this increment. GitHub Actions remains `workflow_dispatch`-only. All new regression cases are source-authored, not passed. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All new regression cases are source-authored, not passed. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
