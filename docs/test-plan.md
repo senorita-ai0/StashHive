@@ -404,3 +404,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Activate “Open link” and confirm the page reports that only HTTP/HTTPS links are allowed.
 - Confirm the external-launch error message is not shown, proving the URL was rejected before the platform launcher was called.
 - Widget test source is committed but unrun; verify valid HTTPS links still open correctly on Android and web.
+
+
+### TC-060 — Shared MIME header versus filename consistency
+
+- Share a PNG file whose source app reports `text/plain`; verify it is treated as an image with `image/png` metadata.
+- Share a TXT file whose source app reports `image/png`; verify it remains a document with `text/plain` metadata.
+- Confirm bytes and filenames remain intact. Regression source is committed but unrun; gather real MIME-header samples from Android source apps during device verification.
