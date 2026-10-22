@@ -1273,14 +1273,14 @@ class _ItemThumbnail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (item.kind == ItemKind.image && item.attachmentKey != null) {
-      return FutureBuilder<List<int>?>(
+      return FutureBuilder<Uint8List?>(
         future: repository.readAttachment(item.attachmentKey!),
         builder: (context, snapshot) {
           if (snapshot.data != null && snapshot.data!.isNotEmpty) {
             return ClipRRect(
               borderRadius: BorderRadius.circular(13),
               child: Image.memory(
-                Uint8List.fromList(snapshot.data!),
+                snapshot.data!,
                 semanticLabel: 'Image preview: ${item.title}',
                 width: size,
                 height: size,
@@ -1919,7 +1919,7 @@ class ItemDetailsPage extends StatefulWidget {
 
 class _ItemDetailsPageState extends State<ItemDetailsPage> {
   SavedItem? _item;
-  Future<List<int>?>? _attachmentFuture;
+  Future<Uint8List?>? _attachmentFuture;
 
   @override
   void initState() {
@@ -1931,7 +1931,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     final current = widget.repository.findById(widget.itemId);
     _item = current;
     _attachmentFuture = current?.attachmentKey == null
-        ? Future<List<int>?>.value(null)
+        ? Future<Uint8List?>.value(null)
         : widget.repository.readAttachment(current!.attachmentKey!);
   }
 
@@ -1966,7 +1966,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
           insetPadding: const EdgeInsets.all(16),
           child: Padding(
             padding: const EdgeInsets.all(12),
-            child: FutureBuilder<List<int>?>(
+            child: FutureBuilder<Uint8List?>(
               future: _attachmentFuture,
               builder: (context, snapshot) {
                 if (snapshot.data == null || snapshot.data!.isEmpty) {
@@ -1977,7 +1977,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                 }
                 return InteractiveViewer(
                   child: Image.memory(
-                    Uint8List.fromList(snapshot.data!),
+                    snapshot.data!,
                     semanticLabel: 'Image: ${item.title}',
                   ),
                 );
@@ -2004,7 +2004,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
           title: item.title,
           files: [
             XFile.fromData(
-              Uint8List.fromList(data),
+              data,
               name: item.attachmentName ?? 'attachment',
               mimeType: item.attachmentMimeType ?? 'application/octet-stream',
             ),
