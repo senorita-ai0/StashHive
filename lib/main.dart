@@ -1290,7 +1290,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
 
   Future<void> _pickAttachment() async {
     try {
-      final result = await FilePicker.pickFiles(
+      final files = await FilePicker.pickFiles(
         type: _kind == ItemKind.image ? FileType.image : FileType.custom,
         allowedExtensions: _kind == ItemKind.image
             ? null
@@ -1300,8 +1300,8 @@ class _QuickSavePageState extends State<QuickSavePage> {
         // loading so the byte limit can be checked before allocating data.
         withData: false,
       );
-      if (!mounted || result == null || result.files.isEmpty) return;
-      final file = result.files.first;
+      if (!mounted || files.isEmpty) return;
+      final file = files.first;
 
       // Inspect file length before allocating the full byte buffer. On web and
       // mobile this keeps oversized selections from consuming unbounded memory.
