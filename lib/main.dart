@@ -1686,58 +1686,68 @@ class _QuickSavePageState extends State<QuickSavePage> {
     ];
     return LayoutBuilder(
       builder: (context, constraints) {
-        final width = (constraints.maxWidth - 3 * 8) / 4;
-        return Row(
+        final scaledLabelFontSize =
+            MediaQuery.textScalerOf(context).scale(11);
+        // Keep four compact options on roomy desktop layouts, but wrap to two
+        // columns when the available width or system text scale needs room.
+        final columns = constraints.maxWidth >= 560 &&
+                scaledLabelFontSize < 18
+            ? 4
+            : 2;
+        final width =
+            (constraints.maxWidth - 8 * (columns - 1)) / columns;
+
+        return Wrap(
+          spacing: 8,
+          runSpacing: 8,
           children: [
             for (final kind in options)
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(right: kind == options.last ? 0 : 8),
-                  child: Semantics(
-                    button: true,
-                    selected: _kind == kind,
-                    label: kind.label,
-                    onTap: () => _selectKind(kind),
-                    child: ExcludeSemantics(
-                      child: InkWell(
-                        onTap: () => _selectKind(kind),
-                        borderRadius: BorderRadius.circular(14),
-                        child: Container(
-                          width: width,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 4,
-                          ),
-                          decoration: BoxDecoration(
+              SizedBox(
+                width: width,
+                child: Semantics(
+                  button: true,
+                  selected: _kind == kind,
+                  label: kind.label,
+                  onTap: () => _selectKind(kind),
+                  child: ExcludeSemantics(
+                    child: InkWell(
+                      onTap: () => _selectKind(kind),
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _kind == kind
+                              ? kind.softAccent
+                              : Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
                             color: _kind == kind
-                                ? kind.softAccent
-                                : Theme.of(context).colorScheme.surface,
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
-                              color: _kind == kind
-                                  ? kind.accent
-                                  : Theme.of(context).dividerColor,
-                              width: _kind == kind ? 1.4 : 1,
-                            ),
+                                ? kind.accent
+                                : Theme.of(context).dividerColor,
+                            width: _kind == kind ? 1.4 : 1,
                           ),
-                          child: Column(
-                            children: [
-                              Icon(kind.icon, color: kind.accent, size: 21),
-                              const SizedBox(height: 6),
-                              Text(
-                                kind.label,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: _kind == kind
-                                      ? kind.readableTextAccent
-                                      : kind.accent,
-                                ),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(kind.icon, color: kind.accent, size: 21),
+                            const SizedBox(height: 6),
+                            Text(
+                              kind.label,
+                              maxLines: 2,
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: _kind == kind
+                                    ? kind.readableTextAccent
+                                    : kind.accent,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
