@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
+
 import '../models/saved_item.dart';
 
 class BackupAttachment {
@@ -92,6 +94,7 @@ class BackupCodec {
         'name': item.attachmentName ?? 'attachment',
         'mimeType': item.attachmentMimeType ?? 'application/octet-stream',
         'base64': base64Encode(bytes),
+        'sha256': sha256.convert(bytes).toString(),
       };
     }
     final output = jsonEncode(<String, Object?>{
@@ -222,6 +225,7 @@ class BackupCodec {
       final name = value['name'];
       final mimeType = value['mimeType'];
       final encoded = value['base64'];
+      final checksum = value['sha256'];
       if (key.trim().isEmpty ||
           key.length > 128 ||
           name is! String ||
@@ -231,7 +235,11 @@ class BackupCodec {
           mimeType.trim().isEmpty ||
           mimeType.length > 128 ||
           encoded is! String ||
-          encoded.length > ((maxAttachmentBytes * 4 ~/ 3) + 8)) {
+          encoded.length > ((maxAttachmentBytes * 4 ~/ 3) + 8) ||
+          (checksum != null &&
+              (checksum is! String ||
+                  checksum.length != 64 ||
+                  !RegExp(r'^[0-9a-fA-F]{64}').hasMatch(checksum)))) {
         throw const FormatException('An attachment entry exceeds supported limits.');
       }
       final Uint8List bytes;
@@ -242,6 +250,12 @@ class BackupCodec {
       }
       if (bytes.length > maxAttachmentBytes) {
         throw const FormatException('An attachment exceeds 15 MB.');
+      }
+      if (checksum is String &&
+          sha256.convert(bytes).toString() != checksum.toLowerCase()) {
+        throw const FormatException(
+          'An attachment failed its integrity check. The backup may be damaged.',
+        );
       }
       totalBytes += bytes.length;
       if (totalBytes > maxTotalAttachmentBytes) {
