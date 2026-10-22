@@ -230,6 +230,38 @@ void main() {
     );
   });
 
+  test('backup gives repair guidance for item assignments beyond collection cap', () async {
+    await Hive.box<dynamic>('stashhive_preferences_v1').put(
+      'collections',
+      List<String>.generate(
+        BackupCodec.maxCollections,
+        (index) => 'Collection $index',
+      ),
+    );
+    final overflowItem = buildLink(
+      id: 'overflow-assigned-collection',
+      collection: 'Collection beyond limit',
+    );
+    await Hive.box<dynamic>('stashhive_items_v1')
+        .put(overflowItem.id, overflowItem.toMap());
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.findById(overflowItem.id), isNotNull);
+    expect(repository.skippedCollectionCount.value, 1);
+    await expectLater(
+      repository.createBackup(),
+      throwsA(
+        isA<FormatException>().having(
+          (error) => error.message,
+          'message',
+          contains('move them to an available collection'),
+        ),
+      ),
+    );
+    expect(repository.findById(overflowItem.id), isNotNull);
+  });
+
   test('collection creation stops at the portable backup limit', () async {
     await Hive.box<dynamic>('stashhive_preferences_v1').put(
       'collections',
