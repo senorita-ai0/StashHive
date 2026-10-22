@@ -1000,3 +1000,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Create a collection and assign a saved item to it. Start collection deletion and confirm the action.
 - Inject a failure during the repository's collection mutation. Confirm the UI shows a recoverable error instead of an uncaught framework exception, the collection remains listed, and the item's assignment remains intact after rollback.
 - Regression source is committed but unrun. Real storage-write interruption and rollback success still need the manual validation checkpoint.
+
+
+### TC-132 — Item deletion storage failure is recoverable
+
+- Save an image with local attachment bytes, open Item Details, choose Delete saved item, and confirm.
+- Inject a failure after the repository has attempted to remove the attachment. Confirm the screen remains open, a recoverable error is shown, and rollback preserves the saved record and original attachment bytes.
+- Regression source is committed but unrun; actual storage-write interruption recovery remains pending the manual validation checkpoint.
