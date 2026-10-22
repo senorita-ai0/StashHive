@@ -424,3 +424,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (transparent recovery/data-loss handling).
 - Test: TC-068 in `test/library_repository_test.dart` and `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-362 — Repository-level shared-payload write guard
+
+- Implementation: `LibraryRepository.save`, with `isAttachmentReferencedByOtherItem`.
+- Requirements: FR-003, FR-008, FR-011–013 and NFR-003 (preserve shared attachment integrity).
+- Test: TC-069 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
