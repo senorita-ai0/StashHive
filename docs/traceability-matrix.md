@@ -920,3 +920,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (portable backup bounds and predictable memory use).
 - Test: TC-117 in `test/backup_codec_test.dart`.
 - Verification: source/test committed but unrun; memory profiling remains pending.
+
+
+### TSK-414 — Snapshot caller-owned attachment bytes
+
+- Implementation: `LibraryRepository.save`, after item/payload validation and before the first storage await.
+- Requirements: FR-008, FR-011–013 and NFR-003 (attachment integrity and rollback consistency).
+- Test: TC-118 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
