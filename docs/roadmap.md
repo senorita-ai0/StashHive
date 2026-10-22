@@ -730,3 +730,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-392:** Quick Save and share intake now reference `BackupCodec.maxAttachmentBytes` rather than repeating the 15 MiB literal. The bounded byte reader uses the same cap and backup export/restore validates against that value.
 - This prevents intake from accepting payloads that the portable backup layer would reject after a future limit change. Source committed; validation remains manual-only.
+
+
+### Phase 2 — preflight base64 sizes against remaining backup budget (2026-10-22)
+
+- **TSK-393:** Backup decode now estimates the maximum encoded length for the remaining combined attachment budget before calling `base64Decode`. Payloads that cannot fit under the 100 MiB combined attachment limit are rejected before allocating their decoded buffer.
+- Added helper boundary tests for base64 quanta and negative inputs. Test source is committed but unrun; full-size backup memory profiling remains pending.
