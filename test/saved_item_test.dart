@@ -66,6 +66,18 @@ void main() {
       expect(restored.tags, ['Reading', 'Work']);
     });
 
+    test('trims legacy collection names and treats whitespace-only as unassigned', () {
+      final padded = SavedItem.fromMap(
+        makeItem(collection: '  Research  ').toMap(),
+      );
+      final blank = SavedItem.fromMap(
+        makeItem(collection: '   ').toMap(),
+      );
+
+      expect(padded.collection, 'Research');
+      expect(blank.collection, isNull);
+    });
+
     test('preserves Unicode text in note content and search', () {
       final item = makeItem(
         kind: ItemKind.note,
