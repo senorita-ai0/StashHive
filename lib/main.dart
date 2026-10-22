@@ -1348,9 +1348,13 @@ class _QuickSavePageState extends State<QuickSavePage> {
     _selectedBytes = widget.initialShare?.bytes;
     _selectedName = widget.initialShare?.fileName;
     _selectedMimeType = widget.initialShare?.mimeType;
-    if (_collection != null &&
-        !widget.repository.collections.value.contains(_collection)) {
-      _collection = null;
+    final existingCollection = _collection;
+    if (existingCollection != null) {
+      _collection = widget.repository.collections.value
+          .where(
+            (name) => name.toLowerCase() == existingCollection.toLowerCase(),
+          )
+          .firstOrNull;
     }
   }
 
