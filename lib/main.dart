@@ -3023,7 +3023,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         _message('The selected backup is empty or its size is unavailable.');
         return;
       }
-      const maxBackupBytes = BackupCodec.maxJsonCharacters;
+      const maxBackupBytes = BackupCodec.maxBackupBytes;
       if (length > maxBackupBytes) {
         _message('That backup is too large to import in this version.');
         return;
