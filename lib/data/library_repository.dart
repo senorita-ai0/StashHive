@@ -700,6 +700,7 @@ class LibraryRepository {
       attachmentBytes: byteMap,
       collections: List<String>.from(collections.value),
       omittedUnreadableRecordCount: skippedRecordCount.value,
+      omittedCollectionEntryCount: skippedCollectionCount.value,
     );
   }
 
