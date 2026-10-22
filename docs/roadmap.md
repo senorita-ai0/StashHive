@@ -199,3 +199,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-325:** Library and Search result-card extents now derive their layout scale from the system-scaled 14 logical-pixel body font instead of sampling at 1 pixel. This better reflects accessibility scaling when the platform uses nonlinear text scaling.
 - Added unit coverage for normalizing scaled sizes and safe fallback values. Source and tests are committed but unrun; large-text visual inspection on Android and web remains pending.
+
+
+### Phase 2 — multi-select MIME coverage (2026-10-22)
+
+- **TSK-326:** Expanded the generated Android manifest configurator so SEND_MULTIPLE offers every MIME family supported by single-share intake, not only images. Added test assertions that generated action/MIME pairs are exact and that multi-select coverage mirrors single-share coverage.
+- This enables supported homogeneous text, URL, and document batches to reach the existing sequential Quick Save flow. Python regression tests and Android chooser/device behavior are committed but unrun; Phase 2 remains open pending manual validation.
