@@ -776,3 +776,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: NFR-006 (named, usable controls for assistive technology).
 - Test: TC-112 in `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun; real assistive-technology check remains pending.
+
+
+### TSK-386 — Legacy timestamp range validation
+
+- Implementation: `BackupCodec.validateStoredRecordMap`, reused by `LibraryRepository._refreshItems` and `findById`.
+- Requirements: FR-001–003 and NFR-003 (safe recovery from malformed local records).
+- Test: TC-093 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
