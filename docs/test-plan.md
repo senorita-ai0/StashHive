@@ -745,3 +745,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Open Collections with at least one collection; confirm its overflow menu exposes a contextual name such as `Actions for Learning collection` and reveals Rename/Delete actions.
 - Open Item Details; confirm the overflow menu exposes `Item actions` and reveals Edit/Delete actions.
 - Widget test source is committed but unrun; verify spoken labels and keyboard activation with TalkBack and browser screen readers.
+
+
+### TC-107 — Collection assignment casing consistency
+
+- Seed the preference list with `Learning` and a legacy raw saved item assigned to `learning`; reopen the repository and confirm direct lookup and the visible item model use `Learning`.
+- Save a new item assigned to `learning`; confirm the Hive record itself stores `Learning` and it remains selectable/filterable in the existing collection.
+- Repository regression source is committed but unrun.
