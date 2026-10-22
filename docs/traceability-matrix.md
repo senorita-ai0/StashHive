@@ -464,3 +464,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008, FR-011–013 and NFR-003 (recovery from missing local files).
 - Test: TC-073 in `test/external_navigation_test.dart`.
 - Verification: regression source committed but unrun.
+
+
+### TSK-367 — Theme-aware item-kind icon contrast
+
+- Implementation: `lib/main.dart`, Quick Save `_buildKindPicker` state-aware icon foreground.
+- Requirement: NFR-006 (non-text contrast and visual state indication).
+- Test: TC-074 in `test/accessibility_widgets_test.dart`.
+- Verification: source/test committed but unrun.
