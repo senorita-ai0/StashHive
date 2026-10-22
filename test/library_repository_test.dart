@@ -715,6 +715,28 @@ void main() {
     );
   });
 
+  test('snapshots caller-owned attachment bytes before storage awaits', () async {
+    final callerBuffer = Uint8List.fromList([1, 2, 3, 4, 250]);
+    final expected = Uint8List.fromList(callerBuffer);
+    final image = buildImage(id: 'caller-buffer-snapshot');
+
+    LibraryRepository.saveBeforeItemCommitForTesting = () async {
+      callerBuffer[0] = 99;
+      callerBuffer[4] = 0;
+    };
+    try {
+      await repository.save(image, attachmentBytes: callerBuffer);
+    } finally {
+      LibraryRepository.saveBeforeItemCommitForTesting = null;
+    }
+
+    expect(
+      await repository.readAttachment(image.attachmentKey!),
+      orderedEquals(expected),
+    );
+    expect(callerBuffer, isNot(orderedEquals(expected)));
+  });
+
   test('rolls back staged items and attachments when restore is interrupted', () async {
     await repository.addCollection('Existing');
     await repository.save(buildLink(id: 'existing-1', collection: 'Existing'));
