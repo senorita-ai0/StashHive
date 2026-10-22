@@ -2646,7 +2646,19 @@ class _CollectionsPageState extends State<CollectionsPage> {
         ],
       ),
     );
-    if (confirmed == true) await widget.repository.deleteCollection(name);
+    if (confirmed != true || !mounted) return;
+    try {
+      await widget.repository.deleteCollection(name);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            error.toString().replaceFirst('FormatException: ', ''),
+          ),
+        ),
+      );
+    }
   }
 
   @override
