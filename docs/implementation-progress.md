@@ -124,7 +124,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
 - [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
 - [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
-- [x] Progress/test docs updated through TSK-414 and TC-118.
+- [x] Progress/test docs updated through TSK-416 and TC-120.
 
 ## Phase 2/3 latest source increments — 2026-10-22
 
@@ -229,6 +229,12 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added an encoder-boundary guard rejecting duplicate saved-item IDs, keeping direct encode calls consistent with decoder/restore identity validation.
 - [x] Added TC-119 and traced the behavior to backup portability requirements.
 - [ ] Run TC-119 at the manual validation checkpoint; no backup test execution is claimed.
+
+## Phase 2 — portable backup size preflight (2026-10-22)
+
+- [x] Added incremental UTF-8 byte estimation for item JSON and attachment entries before allocating their base64 strings, with a final exact-size guard retained.
+- [x] Added TC-120 for multibyte/escaped metadata, base64 boundary lengths, output byte-count parity and attachment byte round-trip coverage.
+- [ ] Run TC-120 and validate over-limit export rejection plus peak-memory behavior at the manual checkpoint.
 
 ## Current validation state — 2026-10-22
 
