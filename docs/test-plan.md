@@ -335,3 +335,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Edit the second item without choosing replacement bytes; save and confirm it retains the shared key and the original bytes remain readable.
 - Edit an image into a note; enter note text, save, and confirm the new record clears attachment key/name/MIME and the now-unreferenced payload is removed.
 - Widget regression source is committed but unrun; repeat on Android/web after the manual build checkpoint.
+
+
+### TC-051 — Consistent MIME inference between picker and share intake
+
+- Verify the shared filename/MIME helper maps common image and document extensions consistently, including BMP, HEIC/HEIF and TIFF.
+- Share a TIFF file with generic `application/octet-stream` metadata and confirm intake infers `image/tiff` rather than treating it as an unsupported binary file.
+- Unit regressions are committed but unrun; actual decoding/preview capability for each image format needs Android/web device coverage.
