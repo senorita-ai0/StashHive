@@ -490,3 +490,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-372:** The shared saved-item validator now rejects empty or whitespace-only note content, matching Quick Save's existing form rule. Invalid programmatic saves and backup exports can no longer introduce blank-note records.
 - Added repository and backup-codec regressions. Tests are committed but unrun.
+
+
+### Phase 2 — timestamp bounds for safe local recovery (2026-10-22)
+
+- **TSK-373:** Raw local-record reload, repository saves and backup encode/decode now share the DateTime-supported timestamp bounds. Out-of-range legacy records are skipped and counted instead of reaching date formatting with unusable values.
+- Added reload, save and backup-codec regression source. Tests are committed but unrun.
