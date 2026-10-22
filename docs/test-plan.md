@@ -389,3 +389,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Request a replacement key for the owner; it must not equal the shared key, and the original bytes must remain unchanged for the dependent item.
 - Verify an unshared item may keep its own key and an existing orphan payload is never silently overwritten by an unrelated new attachment.
 - Repository regression source is committed but unrun; perform actual replacement-file workflow on Android and web.
+
+
+### TC-058 — Quick Save item-kind semantics
+
+- Open Quick Save and confirm Link/Note/Image/Document each expose a named button with a selected state.
+- Confirm only the active type is selected, then activate a different type through `SemanticsAction.tap` and confirm selection moves to that option.
+- Widget test source is committed but unrun. Verify announcements with TalkBack and a browser screen reader; ensure decorative icon/label children are not double-announced.
