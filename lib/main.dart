@@ -55,14 +55,12 @@ Future<void> main() async {
       initialDarkMode: repository.darkMode,
     ));
   } catch (error) {
-    runApp(StartupFailureApp(message: error.toString()));
+    runApp(const StartupFailureApp());
   }
 }
 
 class StartupFailureApp extends StatelessWidget {
-  const StartupFailureApp({required this.message, super.key});
-
-  final String message;
+  const StartupFailureApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -84,13 +82,12 @@ class StartupFailureApp extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleLarge,
                       textAlign: TextAlign.center),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Your library was not reset. Check the app storage and restart StashTrail.',
+                  Text(
+                    kIsWeb
+                        ? 'Your existing data was not intentionally reset. Check this browser profile’s storage, reload the page and try again. Technical details are hidden because they may include local paths.'
+                        : 'Your existing data was not intentionally reset. Check available device storage, restart StashTrail and try again. Technical details are hidden because they may include local paths.',
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 12),
-                  SelectableText(message,
-                      style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ),
