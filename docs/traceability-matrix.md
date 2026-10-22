@@ -119,3 +119,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 - The widget regression now seeds an item, opens “View details” and checks its callback, then marks the item favorite and checks repository state. This covers actual action behavior in addition to tooltip/choice visibility.
 - Test execution and platform accessibility verification remain pending.
+
+
+### TSK-325 — Representative-font text scaling
+
+- Implementation: `lib/ui/layout_metrics.dart` and Library/Search grid extents in `lib/main.dart`.
+- Requirements: NFR-006 (accessibility and large-text layout).
+- Test: TC-032; `test/layout_metrics_test.dart` covers factor normalization and fallback behavior.
+- Verification: source and tests committed; test execution and Android/web enlarged-text visual inspection remain pending.
