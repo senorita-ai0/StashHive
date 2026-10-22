@@ -640,3 +640,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-397:** Backup & Privacy now surfaces the skipped-record warning itself and asks for explicit confirmation before exporting a backup when malformed local records will be omitted. Canceling the dialog exits without sharing/exporting the partial file.
 - Added a widget regression covering the visible warning, confirmation text and safe cancellation. Test source is committed but unrun.
+
+
+### Phase 2 — confirm collection normalization omissions before backup export (2026-10-22)
+
+- **TSK-398:** Backup & Privacy now includes invalid, duplicate and over-limit legacy collection entries in both its recovery banner and pre-export confirmation. The dialog explains that the export uses normalized valid names and that the raw local preferences remain untouched; canceling prevents the share flow.
+- Added a widget regression that seeds both an unreadable record and malformed collection preferences, checks both counts/messages, and cancels the export. Test source is committed but unrun.
