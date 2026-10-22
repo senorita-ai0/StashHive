@@ -169,6 +169,11 @@ class ShareIntake {
         if (uri == null) {
           throw const FormatException('Only http and https links can be saved.');
         }
+        if (uri.toString().length > maxIncomingUrlCharacters) {
+          throw const FormatException(
+            'Shared URLs must be 4,096 characters or shorter.',
+          );
+        }
         return IncomingShare(
           kind: ItemKind.link,
           title: uri.host,
