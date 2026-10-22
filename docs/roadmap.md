@@ -260,3 +260,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-334:** Share-event fingerprints now trim path/message whitespace and normalize MIME types to lowercase before canonical JSON serialization and SHA-256 hashing. This suppresses harmless representation differences between equivalent intake payloads while retaining meaningful message differences and ordered batch boundaries.
 - Added a regression for path padding, MIME case and message whitespace. Test source is committed but unrun; real initial-intent/stream payload parity still needs Android verification.
+
+
+### Phase 2 — mixed-MIME Android share batches (2026-10-22)
+
+- **TSK-335:** Added a `SEND_MULTIPLE` `*/*` manifest filter because Android may use the wildcard MIME type for mixed file batches. The intake queue still validates each item individually and skips unsupported entries with feedback.
+- Updated the manifest regression to require wildcard coverage as well as all supported single-share MIME families. Python regression source is committed but unrun; verify chooser visibility and per-file MIME resolution on a real Android device.
