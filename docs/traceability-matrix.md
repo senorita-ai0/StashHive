@@ -816,3 +816,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003, FR-008–009 and FR-012–013 (consistent metadata across load/edit/share/backup).
 - Test: TC-097 in `test/saved_item_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-391 — Bound file-picker reads while streaming
+
+- Implementation: `lib/main.dart`, Quick Save and `BackupPrivacyPage._restore`; common reader in `lib/services/bounded_bytes_reader.dart`.
+- Requirements: FR-008, FR-013 and NFR-003 (bounded attachment/backup memory).
+- Test: TC-098 and helper regressions in `test/attachment_bytes_test.dart`.
+- Verification: source/test committed but unrun; Android/web provider memory behavior remains pending.
