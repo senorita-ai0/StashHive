@@ -616,3 +616,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Select an empty/unknown-size file and a backup over 145 MiB; confirm each is rejected before full byte loading.
 - Confirm no old `FilePickerResult.files` wrapper is used for the pinned file_picker API and that the post-read cap remains.
 - Manual test pending; no plugin/device result is claimed.
+
+
+### TC-089 — Legacy collection preference recovery
+
+- Seed preferences with case-only duplicates, an empty name, a non-string value, and an overlong name; confirm one canonical instance remains and skipped entries are counted.
+- Seed 501 unique collection names; confirm only 500 are exposed and the remainder is reported.
+- Confirm the Library warning announces collection normalization/rejection and recovery guidance without throwing. Regression source is committed but unrun.
