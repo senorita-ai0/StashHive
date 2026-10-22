@@ -610,3 +610,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-392:** Quick Save now rejects blank or over-255-character picker filenames before calling file length/byte reads, with specific guidance to rename invalid files. This aligns local picker intake with the repository/backup attachment-name limit.
 - The real picker path requires Android/web manual verification; no build or test was run.
+
+
+### Phase 2 — fingerprint normalized MIME for recognized file shares (2026-10-22)
+
+- **TSK-393:** Share-event fingerprints now infer MIME from the filename first, mirroring intake when the extension is recognized. A `.png` delivered with `text/plain` and the same `.png` delivered with `image/png` therefore share the same fingerprint instead of opening duplicate drafts.
+- Added a regression for equivalent extension-first file MIME metadata. Test source is committed but unrun; initial-intent/stream parity on actual Android apps remains pending.
