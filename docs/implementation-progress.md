@@ -154,6 +154,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Restore revalidates publicly constructible decoded-backup objects and counts item-assigned collection names during capacity preflight before writes.
 - [x] OS-shared file bytes are now accumulated through a capped stream reader that cancels before crossing 15 MiB, even if provider length metadata is stale.
 - [x] Legacy item deserialization now trims title/URL/filename metadata and lowercases MIME type values, with model regression coverage.
+- [x] Quick Save and backup restore now consume picker byte streams through the shared hard-capped reader, complementing bounded OS-share reads.
 - [x] Kept older version-1 backups with case-only duplicate collection labels importable; restore normalizes the names during merge.
 - [x] Collection creation now rolls back preference writes when the storage future reports a late failure; a fault-injection regression covers the no-prior-key case.
 - [x] Backup restore now fully validates once before showing confirmation, retains only the decoded backup for the accepted restore, and removes the second full JSON decode.
