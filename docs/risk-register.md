@@ -1,4 +1,4 @@
-# StashHive — Risk Register
+# StashTrail — Risk Register
 
 Scale: Probability and impact are Low / Medium / High qualitative estimates. Review before each milestone.
 
