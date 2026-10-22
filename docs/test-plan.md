@@ -447,3 +447,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Attempt to save/export tags that are empty, whitespace-only, or have leading/trailing whitespace.
 - Confirm the repository and backup encoder reject malformed tags before persistence/export, while Quick Save's comma-separated input continues to trim entries and ignore empty separators.
 - Regression source is committed but unrun.
+
+
+### TC-066 — Generated ID collision avoidance
+
+- Seed the local item and attachment stores with known keys.
+- Request a new item ID and verify it is absent from both stores, including orphaned attachment keys.
+- Repository test source is committed but unrun; concurrent multi-window writes still need platform-level consideration.
