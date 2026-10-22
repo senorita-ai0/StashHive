@@ -624,3 +624,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: NFR-006 (responsive large-text layout).
 - Test: TC-093 in `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun; actual device/browser visual inspection remains pending.
+
+
+### TSK-387 — Forced-image MIME consistency
+
+- Implementation: `ShareIntake._fromFile`, when handling `SharedMediaType.image`.
+- Requirement: FR-008–009 (consistent incoming file classification and metadata).
+- Test: TC-094 in `test/share_intake_test.dart`.
+- Verification: source/test committed but unrun; device-level source metadata remains unverified.
