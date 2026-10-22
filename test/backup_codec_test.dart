@@ -108,6 +108,38 @@ void main() {
       );
     });
 
+    test('counts shared attachment bytes only once against the backup limit', () {
+      final bytes = Uint8List(13 * 1024 * 1024);
+      final items = List<SavedItem>.generate(
+        8,
+        (index) => SavedItem(
+          id: 'shared-large-$index',
+          kind: ItemKind.image,
+          title: 'View $index',
+          content: '',
+          tags: const [],
+          collection: null,
+          isFavorite: false,
+          createdAtMs: 1000,
+          updatedAtMs: 1000,
+          attachmentKey: 'shared-large',
+          attachmentName: 'large.png',
+          attachmentMimeType: 'image/png',
+        ),
+      );
+
+      final json = BackupCodec.encode(
+        items: items,
+        attachmentBytes: {'shared-large': bytes},
+        collections: const [],
+      );
+
+      final decoded = BackupCodec.decode(json);
+      expect(decoded.items, hasLength(8));
+      expect(decoded.attachments.keys, ['shared-large']);
+      expect(decoded.attachments['shared-large']!.bytes, hasLength(bytes.length));
+    });
+
     test('rejects image exports without a valid attachment key', () {
       SavedItem image({String? attachmentKey}) => SavedItem(
             id: 'image',
