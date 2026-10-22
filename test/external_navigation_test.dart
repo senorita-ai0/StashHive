@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -134,6 +135,49 @@ void main() {
     );
     expect(repository.findById(legacyId)?.isFavorite, isFalse);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('unsupported image encoding shows safe preview fallback', (tester) async {
+    const itemId = 'unsupported-image-preview';
+    final item = SavedItem(
+      id: itemId,
+      kind: ItemKind.image,
+      title: 'Image with unsupported encoding',
+      content: '',
+      tags: const [],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 2000,
+      attachmentKey: itemId,
+      attachmentName: 'reference.tiff',
+      attachmentMimeType: 'image/tiff',
+    );
+    await repository.save(
+      item,
+      attachmentBytes: Uint8List.fromList([0, 1, 2, 3, 4]),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.ItemDetailsPage(
+          repository: repository,
+          itemId: itemId,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('View image'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'Preview unavailable. The original attachment is still saved and can be shared.',
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    expect(repository.findById(itemId), isNotNull);
   });
 
   testWidgets('legacy non-web URL is rejected before external launch', (tester) async {
