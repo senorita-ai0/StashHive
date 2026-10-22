@@ -2993,8 +2993,11 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
           );
         }
         if (skippedCollections > 0) {
+          final entryLabel = skippedCollections == 1
+              ? 'collection preference entry was'
+              : 'collection preference entries were';
           omissions.add(
-            '$skippedCollections collection preference entr(y/ies) were invalid, duplicated, or beyond the limit; the export will include only normalized, valid collection names.',
+            '$skippedCollections $entryLabel invalid, duplicated, or beyond the limit; the export will include only normalized, valid collection names.',
           );
         }
         final confirmed = await showDialog<bool>(
@@ -3167,8 +3170,11 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                           );
                         }
                         if (skippedCollections > 0) {
+                          final entryLabel = skippedCollections == 1
+                              ? 'collection entry was'
+                              : 'collection entries were';
                           warnings.add(
-                            '$skippedCollections collection entr(y/ies) were invalid, duplicated, or beyond the backup limit.',
+                            '$skippedCollections $entryLabel invalid, duplicated, or beyond the backup limit.',
                           );
                         }
                         return Semantics(
