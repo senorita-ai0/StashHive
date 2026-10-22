@@ -966,5 +966,5 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 - Implementation: `LibraryRepository.delete` recovers a raw attachment key only when `findById` cannot decode the item; existing raw-record reference scanning still protects any shared payload.
 - Requirements: FR-008, FR-012–013 and NFR-003 (attachment integrity, local-storage hygiene and recoverability from malformed records).
-- Tests: TC-127 and TC-128 in `test/library_repository_test.dart`.
+- Tests: TC-127, TC-128 and TC-129 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun. Manual recovery/platform validation remains pending.
