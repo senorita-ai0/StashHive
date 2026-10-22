@@ -644,3 +644,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed 500 valid collections, then attempt to save an otherwise valid item assigned to a new, unlisted collection.
 - Confirm the repository rejects the save with the collection limit message, the item remains absent, and the existing collection list is unchanged.
 - Repository regression source is committed but unrun.
+
+
+### TC-093 — Narrow Library/Search layout at 2× text
+
+- Render Library and Search at 320×568 with system text scaling set to 2× and a saved item with a long title/summary.
+- Confirm neither screen reports a layout exception; the Library brand row should not overflow and the card grid should remain scrollable.
+- Widget regression source is committed but unrun; verify visually on an actual narrow Android device and browser viewport.
