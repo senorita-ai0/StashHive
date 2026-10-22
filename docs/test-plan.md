@@ -818,3 +818,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Feed a chunk stream whose total equals the cap and confirm bytes are returned intact.
 - Feed a stream whose next chunk would exceed the cap; confirm a clear format error and that the reader does not consume subsequent chunks.
 - Existing share-intake tests still cover an oversized local file. Test source is committed but unrun; validate Android content providers with unreliable length reporting during device verification.
+
+
+### TC-097 — Legacy item metadata normalization
+
+- Deserialize a stored item with whitespace around its title, URL and attachment filename, plus uppercase MIME metadata.
+- Confirm the loaded model contains trimmed strings and a lowercase MIME type, while note/content text remains unchanged.
+- Model regression source is committed but unrun; confirm the normalized values persist after edit/export/restore.
