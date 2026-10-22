@@ -158,6 +158,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Forced-image share intents now avoid persisting a contradictory non-image MIME header; a regression covers an extensionless image with a text MIME header.
 - [x] Quick Save checks picked filename presence/length before file I/O, aligning local picker behavior with attachment metadata limits.
 - [x] File-share deduplication uses the same extension-first MIME result as intake, suppressing duplicates when platform MIME headers conflict with a recognized filename.
+- [x] Share fingerprints canonicalize standalone URL drafts across text/URL media types and image drafts across file/image intents when their normalized target is identical.
 - [x] Share-event canonicalization now follows each media type's effective draft fields; regressions cover equivalent text payloads and ignored file-message metadata.
 - [x] Aligned tag normalization/validation across saved-item deserialization, repository writes and backup encode/decode, with case-insensitive duplicate regressions.
 - [x] Incoming file shares now bound filename/MIME metadata before file I/O; regressions cover the oversize cases.
