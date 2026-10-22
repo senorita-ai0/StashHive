@@ -335,6 +335,15 @@ class ShareIntake {
         uri.host.isEmpty) {
       return null;
     }
+    final hasHttpScheme = text.toLowerCase().startsWith('http://') ||
+        text.toLowerCase().startsWith('https://');
+    if (!hasHttpScheme &&
+        uri.host.toLowerCase() != 'localhost' &&
+        !uri.host.contains('.')) {
+      // A plain word such as "remember" is note text, not a web address.
+      // Continue accepting bare domains like "example.com/path".
+      return null;
+    }
     return uri;
   }
   static String _basename(String path) {
