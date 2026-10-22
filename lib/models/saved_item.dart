@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const int maxSavedItemUrlCharacters = 4096;
+
 enum ItemKind {
   link,
   note,
