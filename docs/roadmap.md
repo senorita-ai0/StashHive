@@ -544,3 +544,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-381:** Backup & Privacy now uses the pinned file_picker single-file API and checks file length against the 145 MiB backup limit before reading bytes, then checks the actual byte buffer again. Empty/unknown-size and oversized selections receive explicit feedback instead of being eagerly loaded.
 - This also removes the old `FilePickerResult.files` access left behind by the dependency API migration. Source is committed but unrun; web and Android provider behavior remains a manual check.
+
+
+### Phase 2 — normalize and report legacy collection preferences (2026-10-22)
+
+- **TSK-382:** Collection reload now trims names, de-duplicates them case-insensitively, rejects malformed/oversized entries, and caps the visible list at the 500-collection backup limit. It exposes a skipped-entry count and shares the Library's live-region recovery banner with malformed saved records.
+- Added repository tests for duplicate/malformed entries and a 501st legacy collection, plus a widget regression for the warning. Source/tests are committed but unrun.
