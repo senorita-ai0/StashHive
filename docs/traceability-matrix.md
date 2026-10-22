@@ -1,6 +1,6 @@
 # StashHive — Requirement Traceability Matrix
 
-**Status:** Design-level mapping; implementation and tests are not started. Update this file alongside every approved behavior change.
+**Status:** Implementation in progress; Phase 2/3 source and regression tests exist, but execution and platform evidence remain pending. Do not mark a requirement DONE without supporting validation evidence.
 
 | Requirement | Design / screen | Planned task | Test | Implementation status |
 |---|---|---|---|---|
@@ -28,7 +28,7 @@
 | NFR-003 | SCR-006 | TSK-006, TSK-301–305 | TC-012–015 | NOT STARTED |
 | NFR-004 | SCR-004 | TSK-203 | TC-006, TC-017 | NOT STARTED |
 | NFR-005 | SCR-001, SCR-003 | TSK-202 | TC-005, TC-016 | NOT STARTED |
-| NFR-006 | All screens | TSK-103, TSK-304 | UI/accessibility checklist | NOT STARTED |
+| NFR-006 | All screens | TSK-103, TSK-304 | UI/accessibility checklist | IN PROGRESS — text scaling, semantics and contrast source/tests added; execution and platform checks pending |
 | NFR-007 | Search/list | TSK-003, TSK-305 | Performance benchmark | NOT STARTED |
 | NFR-008 | Attachments / OCR | TSK-005, TSK-305 | Package-size benchmark | NOT STARTED |
 | NFR-009 | Architecture | TSK-002, TSK-101 | Static checks/build | NOT STARTED |
