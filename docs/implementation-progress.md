@@ -124,7 +124,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
 - [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
 - [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
-- [x] Progress/test docs updated through TSK-360 and TC-067.
+- [x] Progress/test docs updated through TSK-361 and TC-068.
 
 ## Phase 2/3 latest source increments — 2026-10-22
 
@@ -133,6 +133,8 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] New saved-item IDs and replacement attachment keys are allocated against both item IDs and attachment keys, including orphaned or still-referenced-but-missing payloads.
 - [x] Local reload validates raw field types and tag bounds before model parsing, then verifies the Hive key matches the embedded item ID. It keeps parseable legacy records with unsafe URLs or missing attachments visible so safe feedback and repair remain possible; truly malformed raw shapes are skipped without crashing the rest of the library.
 - [x] Added repository regression source for keeping parseable legacy records visible while skipping unknown kinds and key/ID mismatches.
+- [x] Added a skipped-record counter and a Library live-region warning that explains recovery implications when malformed raw entries are not shown.
+- [x] Added repository/Library widget regression source for the count and visible recovery warning.
 - [x] Added credential-bearing URL, URL boundary, tag integrity, collision-safe ID and responsive kind-selector regression source.
 
 ## Current validation state — 2026-10-22
