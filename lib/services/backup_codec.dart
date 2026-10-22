@@ -97,6 +97,9 @@ class BackupCodec {
     if (items.length > maxItems) {
       throw const FormatException('The library contains too many items to export.');
     }
+    for (final item in items) {
+      validateSavedItem(item);
+    }
     final safeCollections = _normalizeCollectionNames(
       collections,
       items.map((item) => item.collection),
