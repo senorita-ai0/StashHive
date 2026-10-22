@@ -484,3 +484,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-371:** Strict saved-item validation now requires filename/MIME metadata to have an attachment key. This prevents stale fields from surviving through direct repository saves or being included in a portable backup after an attachment reference was removed.
 - Added repository and backup-codec regressions. Tests are committed but unrun.
+
+
+### Phase 2 — enforce non-empty note content at the shared boundary (2026-10-22)
+
+- **TSK-372:** The shared saved-item validator now rejects empty or whitespace-only note content, matching Quick Save's existing form rule. Invalid programmatic saves and backup exports can no longer introduce blank-note records.
+- Added repository and backup-codec regressions. Tests are committed but unrun.
