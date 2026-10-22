@@ -128,15 +128,27 @@ class BackupCodec {
     }
 
     final ids = <String>{};
+    final referencedAttachmentKeys = <String>{};
     for (final item in backup.items) {
       validateSavedItem(item);
       if (!ids.add(item.id)) {
         throw const FormatException('The backup contains duplicate item IDs.');
       }
       final key = item.attachmentKey;
-      if (key != null && !backup.attachments.containsKey(key)) {
+      if (key != null) {
+        referencedAttachmentKeys.add(key);
+        if (!backup.attachments.containsKey(key)) {
+          throw const FormatException(
+            'The backup is missing bytes for an image or document attachment.',
+          );
+        }
+      }
+    }
+
+    for (final key in backup.attachments.keys) {
+      if (!referencedAttachmentKeys.contains(key)) {
         throw const FormatException(
-          'The backup is missing bytes for an image or document attachment.',
+          'The backup contains attachment bytes that no saved item references.',
         );
       }
     }
@@ -475,6 +487,24 @@ class BackupCodec {
         throw const FormatException('The backup contains duplicate item IDs.');
       }
       items.add(item);
+    }
+
+    // Reject unused payloads before base64 decoding them. The encoder only
+    // writes attachments referenced by an item; accepting orphan payloads
+    // would spend memory on data that restore can never attach to a record.
+    final referencedAttachmentKeys = <String>{
+      for (final item in items)
+        if (item.attachmentKey != null) item.attachmentKey!,
+    };
+    for (final rawKey in attachmentsValue.keys) {
+      if (rawKey is! String) {
+        throw const FormatException('An attachment entry is invalid.');
+      }
+      if (!referencedAttachmentKeys.contains(rawKey)) {
+        throw const FormatException(
+          'The backup contains attachment bytes that no saved item references.',
+        );
+      }
     }
 
     final attachments = <String, BackupAttachment>{};
