@@ -676,3 +676,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-406:** Backup export now writes both unreadable-record and legacy collection-entry omission counts into optional version-1 metadata. Decode validates those values and defaults either to zero for older backups. Restore confirmation explains both missing records and normalized/omitted collection data.
 - Added codec round-trip/backward-compatibility coverage and repository coverage proving `createBackup()` populates both counts. Tests are committed but unrun.
+
+
+### Phase 3 — case-insensitive Collection Contents filter (2026-10-22)
+
+- **TSK-407:** Collection Contents now matches item collection assignments case-insensitively, so a legacy/in-memory `learning` assignment still appears under the visible `Learning` collection.
+- Added a widget regression with a differently cased assignment. Test source is committed but unrun.
