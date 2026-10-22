@@ -227,47 +227,9 @@ class BackupCodec {
       }
       _validateSavedItemMap(value);
       final item = SavedItem.fromMap(value);
-      if (item.id.isEmpty || item.id.length > 128) {
-        throw const FormatException('A saved item has an invalid identifier.');
-      }
-      if (item.title.trim().isEmpty || item.title.length > 500) {
-        throw const FormatException('A saved item has an invalid title.');
-      }
+      validateSavedItem(item);
       if (!ids.add(item.id)) {
         throw const FormatException('The backup contains duplicate item IDs.');
-      }
-      if (item.content.length > 1000000 ||
-          (item.url?.length ?? 0) > maxSavedItemUrlCharacters ||
-          item.tags.length > 100 ||
-          item.tags.any((tag) => tag.length > 100)) {
-        throw const FormatException('A saved item exceeds supported limits.');
-      }
-      if (item.collection != null &&
-          (item.collection!.trim().isEmpty ||
-              item.collection!.trim() != item.collection ||
-              item.collection!.length > 80)) {
-        throw const FormatException('A saved item has an invalid collection name.');
-      }
-      if (item.hasAttachment &&
-          item.kind != ItemKind.image &&
-          item.kind != ItemKind.document) {
-        throw const FormatException(
-          'Only image and document items can contain an attachment.',
-        );
-      }
-      if (item.kind == ItemKind.link) {
-        final uri = Uri.tryParse(item.url ?? '');
-        if (uri == null ||
-            (uri.scheme != 'https' && uri.scheme != 'http') ||
-            uri.host.isEmpty) {
-          throw const FormatException('A saved link in the backup is invalid.');
-        }
-      }
-      if ((item.kind == ItemKind.image || item.kind == ItemKind.document) &&
-          !item.hasAttachment) {
-        throw const FormatException(
-          'An image or document item has no local attachment reference.',
-        );
       }
       items.add(item);
     }
