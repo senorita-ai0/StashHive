@@ -651,3 +651,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Render Library and Search at 320×568 with system text scaling set to 2× and a saved item with a long title/summary.
 - Confirm neither screen reports a layout exception; the Library brand row should not overflow and the card grid should remain scrollable.
 - Widget regression source is committed but unrun; verify visually on an actual narrow Android device and browser viewport.
+
+
+### TC-094 — Forced image share with contradictory MIME
+
+- Share an extensionless binary image via the OS image-share intent with `text/plain` MIME metadata.
+- Confirm the draft remains an image, its MIME is not falsely stored as `text/plain`, and bytes are preserved.
+- Regression source is committed but unrun; validate against real image-source apps on Android.
