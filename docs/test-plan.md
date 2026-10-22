@@ -342,3 +342,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Verify the shared filename/MIME helper maps common image and document extensions consistently, including BMP, HEIC/HEIF and TIFF.
 - Share a TIFF file with generic `application/octet-stream` metadata and confirm intake infers `image/tiff` rather than treating it as an unsupported binary file.
 - Unit regressions are committed but unrun; actual decoding/preview capability for each image format needs Android/web device coverage.
+
+
+### TC-052 — Quick Save URL scheme and tag limits
+
+- Enter an uppercase `HTTPS://` URL and confirm it saves with a normalized lowercase HTTP scheme.
+- Enter 101 unique tags; Quick Save should explain the 100-tag limit and save nothing.
+- Enter a tag containing 101 characters; Quick Save should explain the per-tag limit and save nothing.
+- Widget regression source is committed but unrun; verify the messages are understandable at narrow widths and enlarged text.
