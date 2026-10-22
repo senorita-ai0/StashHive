@@ -792,3 +792,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-415:** The backup encoder now checks item-ID uniqueness before writing JSON, matching the decoder's rule. A direct encoder caller can no longer create a backup with duplicate IDs that StashHive will later reject during restore.
 - Added a codec regression using two different records with the same ID. Test source is committed but unrun.
+
+
+### Phase 2 — preflight backup JSON size before full serialization (2026-10-22)
+
+- **TSK-413:** The encoder now measures per-item JSON and attachment-entry/base64 sizes against the 145 MiB portable cap before constructing the full backup JSON or allocating each base64 string. This catches large aggregate note metadata early instead of allocating an oversized JSON string and only then rejecting it.
+- Added a boundary regression with shared large source text across many items so escaped JSON exceeds the cap without requiring a huge input fixture. Test source is committed but unrun; peak-memory profiling remains pending.
