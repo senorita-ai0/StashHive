@@ -284,3 +284,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-338:** Standalone shared URLs now pass through the same punctuation cleanup as URLs extracted from longer text. A trailing sentence period no longer becomes part of the saved URL; balanced parentheses in URL paths remain supported.
 - Added a standalone URL regression. Test source is committed but unrun; real chat/browser share payloads still need Android verification.
+
+
+### Phase 2 — incoming URL and context size parity (2026-10-22)
+
+- **TSK-339:** Incoming URL shares and URLs embedded in shared text now enforce the backup format's 4,096-character URL maximum. Typed URL shares also enforce the existing 1,000,000-character limit on accompanying message/context text, preventing drafts that would later be rejected by backup validation.
+- Added boundary coverage for a 4,096-character URL, an over-limit URL, and oversized context attached to a URL share. Test source is committed but unrun.
