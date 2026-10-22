@@ -659,6 +659,23 @@ class LibraryRepository {
   }
 
   Future<String> createBackup() async {
+    final exportableCollections = <String>{
+      for (final name in collections.value) name.toLowerCase(),
+    };
+    final unrepresentedAssignments = items.value.where((item) {
+      final assigned = item.collection;
+      return assigned != null &&
+          !exportableCollections.contains(assigned.toLowerCase());
+    }).toList(growable: false);
+    if (unrepresentedAssignments.isNotEmpty) {
+      throw const FormatException(
+        'Some saved items are assigned to collection names that cannot be '
+        'included within the 500-collection backup limit. Edit those items '
+        'and move them to an available collection or choose No collection '
+        'before exporting.',
+      );
+    }
+
     final byteMap = <String, Uint8List>{};
     for (final item in items.value) {
       final key = item.attachmentKey;
