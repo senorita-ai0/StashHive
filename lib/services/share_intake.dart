@@ -97,6 +97,15 @@ class ShareEventDeduplicator {
     return inferred;
   }
 
+  List<Object?> _fileFingerprint(SharedMediaFile item, String path) {
+    final mimeType = _effectiveFileMime(item);
+    final category = item.type == SharedMediaType.image ||
+            mimeType.startsWith('image/')
+        ? 'image'
+        : 'document';
+    return <Object?>[category, path, mimeType];
+  }
+
   List<Object?> _textFingerprint(String path, String message) {
     final effectiveText = message.isNotEmpty ? message : path;
     final urlCandidate =
@@ -145,14 +154,7 @@ class ShareEventDeduplicator {
           // than the provider's raw type label.
           SharedMediaType.image ||
           SharedMediaType.file =>
-            <Object?>[
-              item.type == SharedMediaType.image ||
-                      _effectiveFileMime(item).startsWith('image/')
-                  ? 'image'
-                  : 'document',
-              path,
-              _effectiveFileMime(item),
-            ],
+            _fileFingerprint(item, path),
           // Videos are currently skipped by intake, but keep their events
           // distinct from supported image/document drafts.
           SharedMediaType.video =>
