@@ -355,7 +355,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 ### TC-053 — Size-first file-picker intake
 
-- Pick a valid small image/document on Android and web; confirm length is checked before bytes are read and the attachment can be saved.
+- Pick a valid small image/document on Android and web; confirm length is checked first, then bytes arrive via the bounded `readAsByteStream()` reader and the attachment can be saved.
 - Pick a file above 15 MiB; confirm it is rejected before calling the full-byte read path.
 - Try an empty file and a cloud/provider file whose size cannot be determined; confirm a clear recoverable error and no saved item.
 - Test source for share-file size checks exists, but picker plugin behavior requires manual platform verification. Status remains NOT STARTED.
@@ -612,7 +612,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 ### TC-088 — Backup restore picker compatibility and size guard
 
-- Select a valid JSON backup on Android and web; confirm the single-file picker yields readable bytes and restore proceeds.
+- Select a valid JSON backup on Android and web; confirm the single-file picker yields a byte stream within the 145 MiB cap and restore proceeds.
 - Select an empty/unknown-size file and a backup over 145 MiB; confirm each is rejected before full byte loading.
 - Confirm no old `FilePickerResult.files` wrapper is used for the pinned file_picker API and that the post-read cap remains.
 - Manual test pending; no plugin/device result is claimed.
@@ -825,3 +825,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Deserialize a stored item with whitespace around its title, URL and attachment filename, plus uppercase MIME metadata.
 - Confirm the loaded model contains trimmed strings and a lowercase MIME type, while note/content text remains unchanged.
 - Model regression source is committed but unrun; confirm the normalized values persist after edit/export/restore.
+
+
+### TC-098 — Picker imports stay bounded while streaming
+
+- Confirm Quick Save uses `PlatformFile.readAsByteStream()` and the shared byte reader for the 15 MiB cap.
+- Confirm Backup & Privacy uses the same reader with the 145 MiB cap and still releases the raw byte buffer after decode/validation.
+- Run stream-reader boundary tests, then verify actual Android SAF, browser and cloud-backed files with unreliable length metadata. Source changes/tests are committed but unrun; platform validation remains NOT STARTED.
