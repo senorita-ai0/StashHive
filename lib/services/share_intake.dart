@@ -75,6 +75,30 @@ class ShareEventDeduplicator {
   final int maxEntries;
   final Map<String, DateTime> _seen = <String, DateTime>{};
 
+  String _effectiveFileMime(SharedMediaFile item) {
+    final rawPath = item.path.trim();
+    final parsedPath = Uri.tryParse(rawPath);
+    final localPath =
+        parsedPath?.scheme == 'file' ? parsedPath!.toFilePath() : rawPath;
+    final normalizedPath = localPath.replaceAll('\\', '/');
+    final fileName = normalizedPath.split('/').where((part) => part.isNotEmpty).lastOrNull ?? '';
+    final extension = guessMimeTypeFromFilename(fileName);
+    final sharedMime = item.mimeType?.trim().toLowerCase() ?? '';
+    final inferred = extension != defaultBinaryMimeType
+        ? extension
+        : sharedMime.isEmpty || sharedMime == defaultBinaryMimeType
+            ? defaultBinaryMimeType
+            : sharedMime;
+
+    if (item.type == SharedMediaType.image &&
+        !inferred.startsWith('image/')) {
+      return sharedMime.startsWith('image/')
+          ? sharedMime
+          : defaultBinaryMimeType;
+    }
+    return inferred;
+  }
+
   bool shouldAccept(
     List<SharedMediaFile> media, {
     DateTime? now,
@@ -92,8 +116,8 @@ class ShareEventDeduplicator {
     final canonical = jsonEncode(
       media.map((item) {
         final path = item.path.trim();
-        final mimeType = item.mimeType?.trim().toLowerCase() ?? '';
         final message = item.message?.trim() ?? '';
+        final mimeType = _effectiveFileMime(item);
         return switch (item.type) {
           // Text intake selects exactly one effective text field; ignore the
           // unused path/message representation to match the actual draft.
