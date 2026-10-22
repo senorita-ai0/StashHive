@@ -424,3 +424,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-361:** The repository now tracks the count of raw local records skipped during refresh. The Library shows a live-region warning with the count, explains that raw entries were not intentionally deleted, clarifies that new backups may omit unreadable records, and recommends using a previous backup for recovery.
 - Added repository and Library widget regressions for the count and warning. Source/tests are committed but unrun; confirm recovery wording and behavior against real corrupted storage before release.
+
+
+### Phase 2 — repository-level shared-payload write protection (2026-10-22)
+
+- **TSK-362:** `LibraryRepository.save` now rejects an attachment-byte write when another raw saved-item record references the same attachment key. The guard protects shared data even if a caller bypasses Quick Save's copy-on-write key selection.
+- Added a repository regression proving the attempted write is rejected, the record remains unchanged, and shared bytes remain intact. Test source is committed but unrun.
