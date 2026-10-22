@@ -70,12 +70,12 @@ class StartupFailureApp extends StatelessWidget {
                 children: [
                   const Icon(Icons.hive_rounded, size: 52, color: kBrand),
                   const SizedBox(height: 18),
-                  Text('StashHive could not open its local library',
+                  Text('StashTrail could not open its local library',
                       style: Theme.of(context).textTheme.titleLarge,
                       textAlign: TextAlign.center),
                   const SizedBox(height: 12),
                   const Text(
-                    'Your library was not reset. Check the app storage and restart StashHive.',
+                    'Your library was not reset. Check the app storage and restart StashTrail.',
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
@@ -116,7 +116,7 @@ class _StashHiveAppState extends State<StashHiveApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'StashHive',
+      title: 'StashTrail',
       debugShowCheckedModeBanner: false,
       theme: buildLightTheme(),
       darkTheme: buildDarkTheme(),
@@ -580,7 +580,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     const SizedBox(width: 10),
                     Flexible(
                       child: Text(
-                        'StashHive',
+                        'StashTrail',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -1803,7 +1803,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
                         : const Icon(Icons.check_rounded),
-                    label: Text(_saving ? 'Saving…' : isEditing ? 'Save changes' : 'Save to StashHive'),
+                    label: Text(_saving ? 'Saving…' : isEditing ? 'Save changes' : 'Save to StashTrail'),
                   ),
                   const SizedBox(height: 8),
                   TextButton(
@@ -2154,8 +2154,8 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
         title: const Text('Delete this item?'),
         content: Text(
           item.hasAttachment
-              ? 'This removes the saved record and the copy stored inside StashHive. It does not delete an original file in another app.'
-              : 'This removes the saved record from your StashHive library.',
+              ? 'This removes the saved record and the copy stored inside StashTrail. It does not delete an original file in another app.'
+              : 'This removes the saved record from your StashTrail library.',
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
@@ -2365,7 +2365,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                     ),
                     leading: Icon(item.kind.icon, color: item.kind.accent),
                     title: Text(item.attachmentName!, maxLines: 2, overflow: TextOverflow.ellipsis),
-                    subtitle: const Text('Stored inside StashHive on this device'),
+                    subtitle: const Text('Stored inside StashTrail on this device'),
                     trailing: const Icon(Icons.more_horiz_rounded),
                   ),
                 ],
@@ -2898,7 +2898,7 @@ class SettingsPage extends StatelessWidget {
                         letterSpacing: -0.7,
                       )),
               const SizedBox(height: 5),
-              Text('Make StashHive feel like yours.', style: TextStyle(color: mutedTextColor(context))),
+              Text('Make StashTrail feel like yours.', style: TextStyle(color: mutedTextColor(context))),
               const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -2960,7 +2960,7 @@ class SettingsPage extends StatelessWidget {
                 background: const Color(0xFFFFF2DF),
                 onTap: () => _showInfo(
                   context,
-                  'What can StashHive search?',
+                  'What can StashTrail search?',
                   'This first version searches titles, URLs, notes and tags stored in your local library. OCR and PDF text extraction are not enabled yet, so text found only inside an image or PDF is not searchable unless you add it to the notes.',
                 ),
               ),
@@ -2982,14 +2982,14 @@ class SettingsPage extends StatelessWidget {
               const SizedBox(height: 8),
               SettingsRow(
                 icon: Icons.info_outline_rounded,
-                title: 'About StashHive',
+                title: 'About StashTrail',
                 subtitle: 'Version 0.1.0 · Local-first personal library',
                 color: kBrand,
                 background: const Color(0xFFEEF0FF),
                 onTap: () => _showInfo(
                   context,
-                  'StashHive',
-                  'A personal save-and-find library.\n\nVersion 0.1.0 — first development increment.\n\nYour library is stored locally. There is no StashHive cloud account or automatic cross-device sync in this release.',
+                  'StashTrail',
+                  'A personal save-and-find library.\n\nVersion 0.1.0 — first development increment.\n\nYour library is stored locally. There is no StashTrail cloud account or automatic cross-device sync in this release.',
                 ),
               ),
               const SizedBox(height: 22),
@@ -3150,12 +3150,12 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
       }
 
       final json = await widget.repository.createBackup();
-      final name = 'stashhive-backup-' + DateTime.now().toUtc().toIso8601String().substring(0, 10) + '.json';
+      final name = 'stashtrail-backup-' + DateTime.now().toUtc().toIso8601String().substring(0, 10) + '.json';
       final bytes = utf8.encode(json);
       final result = await SharePlus.instance.share(
         ShareParams(
-          title: 'StashHive backup',
-          subject: 'StashHive personal library backup',
+          title: 'StashTrail backup',
+          subject: 'StashTrail personal library backup',
           files: [
             XFile.fromData(
               bytes,
@@ -3367,7 +3367,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                             Text(
                               kIsWeb
                                   ? 'Your library stays in this browser profile; it is not synced to the cloud.'
-                                  : 'StashHive does not sync your library to the cloud.',
+                                  : 'StashTrail does not sync your library to the cloud.',
                               style: TextStyle(color: mutedTextColor(context), fontSize: 12),
                             ),
                           ],
@@ -3396,13 +3396,13 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 const SizedBox(height: 24),
                 Text('Restore', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 5),
-                Text('Bring a previous StashHive backup into this library.',
+                Text('Bring a previous StashTrail or StashHive backup into this library.',
                     style: TextStyle(color: mutedTextColor(context))),
                 const SizedBox(height: 12),
                 _BackupCard(
                   icon: Icons.file_upload_outlined,
                   title: 'Restore from backup',
-                  subtitle: 'Choose a StashHive .json backup file. Current items are preserved.',
+                  subtitle: 'Choose a StashTrail or StashHive .json backup file. Current items are preserved.',
                   buttonText: _restoring
                       ? 'Restoring…'
                       : _choosingBackup
