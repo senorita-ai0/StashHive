@@ -107,6 +107,59 @@ void main() {
     );
   });
 
+  test('restore avoids attachment keys referenced by missing legacy payloads', () async {
+    const incomingId = 'incoming-image-key';
+    final legacyBrokenImage = buildImage(
+      id: 'legacy-missing-image-owner',
+      attachmentKey: incomingId,
+    );
+    await Hive.box<dynamic>('stashhive_items_v1')
+        .put(legacyBrokenImage.id, legacyBrokenImage.toMap());
+
+    final incomingBytes = Uint8List.fromList([19, 29, 39, 49]);
+    final incomingImage = SavedItem(
+      id: incomingId,
+      kind: ItemKind.image,
+      title: 'Image from backup',
+      content: '',
+      tags: const ['Backup'],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 2000,
+      attachmentKey: incomingId,
+      attachmentName: 'backup.png',
+      attachmentMimeType: 'image/png',
+    );
+    final source = BackupCodec.encode(
+      items: [incomingImage],
+      attachmentBytes: {incomingId: incomingBytes},
+      collections: const [],
+    );
+
+    final count = await repository.restoreBackup(source);
+    final restored = repository.items.value.singleWhere(
+      (item) => item.title == 'Image from backup',
+    );
+
+    expect(count, 1);
+    expect(restored.id, isNot(incomingId));
+    expect(restored.attachmentKey, restored.id);
+    expect(
+      await repository.readAttachment(restored.attachmentKey!),
+      orderedEquals(incomingBytes),
+    );
+    expect(
+      await repository.readAttachment(incomingId),
+      isNull,
+      reason: 'The legacy missing payload must not be accidentally repaired by another import.',
+    );
+    expect(
+      repository.findById(legacyBrokenImage.id)?.attachmentKey,
+      incomingId,
+    );
+  });
+
   test('restore rejects a merged collection count over the backup limit before writes', () async {
     await Hive.box<dynamic>('stashhive_preferences_v1').put(
       'collections',
