@@ -124,7 +124,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
 - [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
 - [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
-- [x] Progress/test docs updated through TSK-395 and TC-102.
+- [x] Progress/test docs updated through TSK-409 and TC-113.
 
 ## Phase 2/3 latest source increments — 2026-10-22
 
@@ -145,6 +145,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added a common 10,000-item cap enforced before new saves and restore writes, keeping local data representable in the versioned backup format.
 - [x] Restore collision preflight now reserves dangling attachment-key references from raw records so imported bytes cannot silently repair or reassign another record's missing payload.
 - [x] Direct repository lookups now apply the same raw type/size and box-key/embedded-ID checks as refresh, while retaining recoverable parseable legacy records.
+- [x] Collection row counts now use the same case-insensitive assignment matching as Collection Contents.
 - [x] Raw legacy created/updated timestamps are now bounded before reload/direct lookup so malformed dates do not break date-dependent UI.
 - [x] Library card and Item Details favorite actions now show repair guidance when strict saves reject a recoverable but invalid legacy record.
 - [x] Backup restore now uses the file_picker single-file API, rejects oversized/unknown-size backups before bulk reads, and repeats the cap check after loading bytes.
