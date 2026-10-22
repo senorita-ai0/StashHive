@@ -259,3 +259,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Share a plain single word (for example, `remember`) and confirm it becomes a note rather than a fabricated `https://remember` link.
 - Share `example.com/guide` and `example.com:8443/guide`; confirm both become link drafts with the HTTPS scheme and path/port retained.
 - Unit regressions are authored but unrun. Verify against real Android browser/chat share payloads; status remains NOT STARTED.
+
+
+### TC-041 — Equivalent share payload normalization
+
+- Submit a share event with surrounding whitespace in its path/message and mixed-case MIME metadata, then resubmit the same user-visible event with normalized fields.
+- Confirm the first event is accepted and the normalized equivalent is suppressed inside the de-duplication window.
+- Unit regression source is authored but unrun; verify field consistency for actual initial-intent and stream events on Android; status remains NOT STARTED.
