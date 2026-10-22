@@ -839,3 +839,11 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **Source:** A first-launch Library reminder now distinguishes browser-profile storage from Android app/device storage. It explains that clearing local data may erase the library and that StashTrail does not sync; users can dismiss it or open Backup & privacy directly.
 - **Persistence:** Dismissal is saved in the existing `stashhive_preferences_v1` box so it is scoped to the current app/browser store and does not require a backend.
 - **Tests:** TC-130 plus repository/widget regression source added. Status is **IN PROGRESS** until source checks are run and the first-launch/restart paths are manually reviewed on web and Android. No test/build/CI was run for this change.
+
+
+### TSK-423 — Recoverable collection deletion errors — 2026-10-22
+
+- **Requirement:** FR-010 (collection relationship consistency and understandable failure behavior).
+- **Source:** Collection deletion now catches repository/storage exceptions and displays a SnackBar; the app does not intentionally crash out of the delete handler.
+- **Regression:** TC-131 uses the existing collection-mutation fault seam to verify feedback and that the collection plus item assignment remain after rollback.
+- **Status:** Source/test authored, unrun. Platform-level persistence interruption testing remains pending.
