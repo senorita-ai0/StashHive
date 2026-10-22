@@ -359,40 +359,8 @@ class ShareIntake {
     return result.substring(0, end);
   }
 
-  static Uri? _parseWebUrl(String value) {
-    final text = value.trim();
-    if (text.isEmpty || text.contains(RegExp(r'\s'))) return null;
-    final hostPort = RegExp(r'^([a-zA-Z0-9.-]+):[0-9]+').firstMatch(text);
-    final hostPortName = hostPort?.group(1)?.toLowerCase();
-    final hasBareHostPort = hostPortName != null &&
-        (hostPortName.contains('.') || hostPortName == 'localhost');
-    final explicitScheme =
-        RegExp(r'^[a-zA-Z][a-zA-Z0-9+.-]*:').hasMatch(text) &&
-            !hasBareHostPort;
-    if (explicitScheme &&
-        !text.toLowerCase().startsWith('http://') &&
-        !text.toLowerCase().startsWith('https://')) {
-      return null;
-    }
-    final candidate = text.contains('://') ? text : 'https://' + text;
-    final uri = Uri.tryParse(candidate);
-    if (uri == null ||
-        (uri.scheme.toLowerCase() != 'http' &&
-            uri.scheme.toLowerCase() != 'https') ||
-        uri.host.isEmpty) {
-      return null;
-    }
-    final hasHttpScheme = text.toLowerCase().startsWith('http://') ||
-        text.toLowerCase().startsWith('https://');
-    if (!hasHttpScheme &&
-        uri.host.toLowerCase() != 'localhost' &&
-        !uri.host.contains('.')) {
-      // A plain word such as "remember" is note text, not a web address.
-      // Continue accepting bare domains like "example.com/path".
-      return null;
-    }
-    return parseHttpUrl(uri.toString());
-  }
+  static Uri? _parseWebUrl(String value) => parseUserWebUrl(value);
+
   static String _basename(String path) {
     final normalized = path.replaceAll('\\', '/');
     final parts = normalized.split('/').where((part) => part.isNotEmpty);
