@@ -58,10 +58,14 @@ class ConfigureAndroidShareIntentsTests(unittest.TestCase):
         multiple_types = {
             mime for action, mime in actual_pairs if action == SEND_MULTIPLE
         }
-        self.assertEqual(
-            multiple_types,
-            single_types,
+        self.assertTrue(
+            single_types.issubset(multiple_types),
             "All supported single-share MIME families must also support multi-select.",
+        )
+        self.assertIn(
+            "*/*",
+            multiple_types,
+            "Mixed-MIME ACTION_SEND_MULTIPLE batches use the wildcard MIME type.",
         )
 
     def test_is_idempotent(self):
