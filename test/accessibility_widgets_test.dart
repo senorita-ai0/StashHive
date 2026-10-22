@@ -401,7 +401,7 @@ void main() {
     expect(find.text('This backup may be incomplete'), findsOneWidget);
     expect(
       find.textContaining(
-        '1 readable legacy item(s) have invalid fields',
+        '1 readable legacy item(s) cannot be represented within portable backup limits',
       ),
       findsOneWidget,
     );
