@@ -449,6 +449,28 @@ void main() {
     );
   });
 
+  test('damaged legacy attachment bytes are not silently filtered', () async {
+    final item = buildImage(id: 'damaged-legacy-image');
+    await repository.save(
+      item,
+      attachmentBytes: Uint8List.fromList([1, 2, 3]),
+    );
+    await Hive.box<dynamic>('stashhive_attachments_v1')
+        .put(item.attachmentKey, <dynamic>[1, 'not-a-byte', 3]);
+
+    expect(await repository.readAttachment(item.attachmentKey!), isNull);
+    await expectLater(
+      repository.createBackup(),
+      throwsA(
+        isA<FormatException>().having(
+          (error) => error.message,
+          'message',
+          contains('missing or damaged'),
+        ),
+      ),
+    );
+  });
+
   test('rejects empty or invalid attachment bytes on save', () async {
     final item = buildImage();
     await expectLater(
