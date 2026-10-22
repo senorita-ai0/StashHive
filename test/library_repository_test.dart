@@ -107,6 +107,42 @@ void main() {
     );
   });
 
+  test('collection creation stops at the portable backup limit', () async {
+    await Hive.box<dynamic>('stashhive_preferences_v1').put(
+      'collections',
+      List<String>.generate(
+        BackupCodec.maxCollections,
+        (index) => 'Collection $index',
+      ),
+    );
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(
+      repository.collections.value,
+      hasLength(BackupCodec.maxCollections),
+    );
+    await expectLater(
+      repository.addCollection('One too many'),
+      throwsA(
+        isA<FormatException>().having(
+          (error) => error.message,
+          'message',
+          contains('up to 500 collections'),
+        ),
+      ),
+    );
+    expect(
+      repository.collections.value,
+      hasLength(BackupCodec.maxCollections),
+    );
+    final backup = await repository.createBackup();
+    expect(
+      BackupCodec.decode(backup).collections,
+      hasLength(BackupCodec.maxCollections),
+    );
+  });
+
   test('deleting a collection unassigns but does not delete its items', () async {
     await repository.addCollection('Learning');
     await repository.save(buildLink(collection: 'Learning'));
