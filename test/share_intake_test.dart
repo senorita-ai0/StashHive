@@ -501,6 +501,31 @@ void main() {
       }
     });
 
+    test('uses the common MIME map for less common image extensions', () async {
+      final directory =
+          await Directory.systemTemp.createTemp('stashhive_share_tiff_test_');
+      try {
+        final file = File('${directory.path}/archive.TIFF');
+        final bytes = [73, 73, 42, 0];
+        await file.writeAsBytes(bytes);
+
+        final result = await ShareIntake.fromSharedMedia(
+          SharedMediaFile(
+            path: file.path,
+            type: SharedMediaType.file,
+            mimeType: 'application/octet-stream',
+          ),
+        );
+
+        expect(result, isNotNull);
+        expect(result!.kind, ItemKind.image);
+        expect(result.mimeType, 'image/tiff');
+        expect(result.bytes, orderedEquals(bytes));
+      } finally {
+        await directory.delete(recursive: true);
+      }
+    });
+
     test('rejects an unsupported shared file extension', () async {
       final directory =
           await Directory.systemTemp.createTemp('stashhive_share_unsupported_test_');
