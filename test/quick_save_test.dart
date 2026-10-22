@@ -60,9 +60,18 @@ Future<void> openEditor(WidgetTester tester, SavedItem item) async {
   await tester.pumpAndSettle();
 }
 
-Future<void> openNewLink(WidgetTester tester) async {
+Future<void> openNewLink(
+  WidgetTester tester, {
+  double textScale = 1,
+}) async {
   await tester.pumpWidget(
     MaterialApp(
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          textScaler: TextScaler.linear(textScale),
+        ),
+        child: child!,
+      ),
       home: Builder(
         builder: (context) => Scaffold(
           body: Center(
@@ -101,6 +110,25 @@ void main() {
     repository.dispose();
     await Hive.close();
     await testDirectory.delete(recursive: true);
+  });
+
+  testWidgets('item-kind options wrap for enlarged text', (tester) async {
+    await openNewLink(tester, textScale: 2);
+    final linkChoice = find.bySemanticsLabel('Link');
+    final noteChoice = find.bySemanticsLabel('Note');
+    final imageChoice = find.bySemanticsLabel('Image');
+    final documentChoice = find.bySemanticsLabel('Document');
+
+    expect(linkChoice, findsOneWidget);
+    expect(noteChoice, findsOneWidget);
+    expect(imageChoice, findsOneWidget);
+    expect(documentChoice, findsOneWidget);
+    expect(
+      tester.getTopLeft(imageChoice).dy,
+      greaterThan(tester.getTopLeft(noteChoice).dy),
+      reason: 'The image/document options should wrap below the first row.',
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('item-kind choices expose selected state semantically', (tester) async {
