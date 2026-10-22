@@ -608,3 +608,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-010, FR-012–013 and NFR-003 (consistent collection navigation and backup metadata).
 - Tests: TC-091 in `test/library_repository_test.dart` and `test/saved_item_test.dart`.
 - Verification: source/tests committed but unrun.
+
+
+### TSK-385 — Enforce collection cap on item save
+
+- Implementation: `LibraryRepository.save`, using the normalized collection notifier and `BackupCodec.maxCollections`.
+- Requirements: FR-010, FR-012–013 and NFR-003 (collection portability consistency).
+- Test: TC-092 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
