@@ -184,3 +184,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Test: TC-038 in `test/backup_codec_test.dart`.
 - Compatibility: checksum remains optional when reading older version-1 backups; current exports always include it.
 - Verification: implementation and regression source committed; tests remain pending manual validation.
+
+
+### TSK-332 — Shared-text limit units
+
+- Implementation: `lib/services/share_intake.dart`, character-count validation message.
+- Requirement: FR-009 (incoming text shares).
+- Test: `test/share_intake_test.dart`; asserts the 1,000,000-character error wording.
+- Verification: source/test committed but not executed.
