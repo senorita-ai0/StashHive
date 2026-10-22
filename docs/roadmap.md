@@ -466,3 +466,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-368:** The share-event fingerprint now reflects the fields actually consumed for each media type: effective text for text shares, URL plus context for URL shares, and path/MIME for file/image/video shares. Meaningful URL context still distinguishes intentional shares, while irrelevant provider metadata no longer creates duplicates.
 - Added regressions for text path/message variation and unused file-message metadata. Test source is committed but unrun; verify actual plugin payloads on Android.
+
+
+### Phase 2 — consistent case-insensitive tag identity (2026-10-22)
+
+- **TSK-369:** Model deserialization now removes duplicate tags case-insensitively while preserving the first spelling. Strict repository saves and backup exports reject case-insensitive duplicate tags, matching Quick Save's existing behavior.
+- Added model, repository and backup regression source. Tests are committed but unrun.
