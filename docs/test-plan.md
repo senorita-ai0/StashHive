@@ -212,7 +212,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 ### TC-034 — Shared attachment backup and restore
 
 - Save two image/document items that point to the same attachment key; export and decode the backup.
-- Verify the backup contains one payload for the shared key and both item records preserve that reference.
+- Verify the backup contains one payload for the shared key and both item records preserve that reference. Also reference one 13 MiB attachment from eight items and confirm export stays within the unique-attachment budget instead of counting the bytes eight times.
 - Restore into a library where the original IDs and attachment key already exist; confirm the restored items still share one newly mapped key, bytes remain readable, the shared payload is written only once, and each item's saved attachment filename/MIME metadata is preserved.
 - Verify export rejects image/document items with missing or empty attachment keys and rejects unsupported item kinds carrying attachments.
 - Unit/repository regression source is authored but unrun; manual storage interruption and device persistence checks remain NOT STARTED.
