@@ -411,3 +411,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Share a PNG file whose source app reports `text/plain`; verify it is treated as an image with `image/png` metadata.
 - Share a TXT file whose source app reports `image/png`; verify it remains a document with `text/plain` metadata.
 - Confirm bytes and filenames remain intact. Regression source is committed but unrun; gather real MIME-header samples from Android source apps during device verification.
+
+
+### TC-061 — Quick Save selector at enlarged text scale
+
+- Render Quick Save with text scaling at 2×.
+- Confirm Link/Note/Image/Document remain separately named and visible, with Image/Document wrapping into a second row rather than clipping in four narrow columns.
+- Confirm the frame has no layout exception. Widget test source is committed but unrun; manually check common phone widths and system accessibility text settings.
