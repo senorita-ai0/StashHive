@@ -598,3 +598,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-390:** Export and decode now enforce the portable backup cap in UTF-8 bytes as well as the in-memory character guard. The restore picker uses the same `BackupCodec.maxBackupBytes` constant, preventing Unicode-heavy backups from passing export but being rejected by file-size preflight.
 - Added UTF-8 byte-count regressions for ASCII, Urdu/Arabic-script text and supplementary Unicode characters. Test source is committed but unrun.
+
+
+### Phase 2 — release parsed base64 copies during backup decoding (2026-10-22)
+
+- **TSK-391:** After each backup attachment is base64-decoded and its length/checksum are validated, the codec removes the encoded field from the temporary parsed JSON map. The returned `DecodedBackup` retains only the validated byte buffers and metadata, reducing memory held by a large restore.
+- Existing backup checksum, byte-integrity and restore regressions cover the affected behavior. Test source is committed but unrun; peak-memory profiling remains pending.
