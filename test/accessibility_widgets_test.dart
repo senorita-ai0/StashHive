@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
@@ -69,6 +71,51 @@ void main() {
     expect(backupRequested, isTrue);
     await tester.tap(find.text('Got it'));
     expect(dismissed, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('HomeShell remembers dismissal of its first-launch reminder', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.HomeShell(
+          repository: repository,
+          darkMode: false,
+          onDarkModeChanged: (_) {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Keep your library safe'), findsOneWidget);
+    await tester.tap(find.text('Got it'));
+    await tester.pumpAndSettle();
+    expect(find.text('Keep your library safe'), findsNothing);
+    expect(repository.hasSeenStorageReminder, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('HomeShell opens Backup & privacy from the first-launch reminder', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.HomeShell(
+          repository: repository,
+          darkMode: false,
+          onDarkModeChanged: (_) {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Backup options'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Backup & privacy'), findsOneWidget);
+    expect(repository.hasSeenStorageReminder, isTrue);
     expect(tester.takeException(), isNull);
   });
 
