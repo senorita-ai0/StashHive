@@ -93,6 +93,85 @@ void main() {
       expect(blank.collection, isNull);
     });
 
+    test('sort comparators use deterministic tie-breakers', () {
+      SavedItem sortable({
+        required String id,
+        required String title,
+        required int createdAtMs,
+        required int updatedAtMs,
+      }) =>
+          SavedItem(
+            id: id,
+            kind: ItemKind.link,
+            title: title,
+            content: '',
+            url: 'https://example.com/$id',
+            tags: const [],
+            collection: null,
+            isFavorite: false,
+            createdAtMs: createdAtMs,
+            updatedAtMs: updatedAtMs,
+          );
+
+      final idZ = sortable(
+        id: 'item-z',
+        title: 'Twin',
+        createdAtMs: 10,
+        updatedAtMs: 100,
+      );
+      final idA = sortable(
+        id: 'item-a',
+        title: 'Twin',
+        createdAtMs: 10,
+        updatedAtMs: 100,
+      );
+      final newerCreated = sortable(
+        id: 'item-newer-created',
+        title: 'Zulu',
+        createdAtMs: 20,
+        updatedAtMs: 100,
+      );
+      final olderUpdated = sortable(
+        id: 'item-older-updated',
+        title: 'Alpha',
+        createdAtMs: 1,
+        updatedAtMs: 50,
+      );
+
+      final recentlySaved = [idZ, idA, olderUpdated, newerCreated]
+        ..sort((a, b) => compareSavedItemsForSort(
+              a,
+              b,
+              SavedItemSort.recentlySaved,
+            ));
+      expect(
+        recentlySaved.map((item) => item.id),
+        ['item-newer-created', 'item-a', 'item-z', 'item-older-updated'],
+      );
+
+      final oldestFirst = [newerCreated, idZ, olderUpdated, idA]
+        ..sort((a, b) => compareSavedItemsForSort(
+              a,
+              b,
+              SavedItemSort.oldestFirst,
+            ));
+      expect(
+        oldestFirst.map((item) => item.id),
+        ['item-older-updated', 'item-a', 'item-z', 'item-newer-created'],
+      );
+
+      final titleAZ = [idZ, newerCreated, idA, olderUpdated]
+        ..sort((a, b) => compareSavedItemsForSort(
+              a,
+              b,
+              SavedItemSort.titleAZ,
+            ));
+      expect(
+        titleAZ.map((item) => item.id),
+        ['item-older-updated', 'item-a', 'item-z', 'item-newer-created'],
+      );
+    });
+
     test('preserves Unicode text in note content and search', () {
       final item = makeItem(
         kind: ItemKind.note,
