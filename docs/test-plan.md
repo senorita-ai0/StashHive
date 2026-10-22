@@ -782,3 +782,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Provide a saved-item model whose collection assignment is `learning`.
 - Open Collection Contents for `Learning` and confirm the item appears rather than showing an empty state.
 - Confirm no layout/widget exception. Test source is committed but unrun; restart and backup/restore behavior remain part of manual persistence checks.
+
+
+### TC-112 — Quick Save attachment picker semantics
+
+- Open Quick Save for an image without a selected file.
+- Confirm the picker is exposed as one button named `Choose an image`, with a tap action and a hint that a file up to 15 MB can be selected.
+- For an existing attachment, confirm the spoken label uses the filename and the hint announces replacement behavior. Widget source is committed but unrun; verify with TalkBack and a browser screen reader.
