@@ -325,6 +325,36 @@ void main() {
     );
   });
 
+  test('backup restore preserves shared attachment references', () async {
+    final originalBytes = Uint8List.fromList([7, 8, 9, 10]);
+    final first = buildImage(id: 'shared-image-1', attachmentKey: 'shared-bytes');
+    final second = buildImage(id: 'shared-image-2', attachmentKey: 'shared-bytes');
+    await repository.save(first, attachmentBytes: originalBytes);
+    await repository.save(second);
+
+    final backup = await repository.createBackup();
+    final restoredCount = await repository.restoreBackup(backup);
+
+    expect(restoredCount, 2);
+    final restoredItems = repository.items.value
+        .where((item) => item.id != first.id && item.id != second.id)
+        .toList(growable: false);
+    expect(restoredItems, hasLength(2));
+    final restoredKeys = restoredItems.map((item) => item.attachmentKey).toSet();
+    expect(restoredKeys, hasLength(1));
+
+    final restoredKey = restoredKeys.single!;
+    expect(
+      await repository.readAttachment(restoredKey),
+      orderedEquals(originalBytes),
+    );
+    expect(
+      Hive.box<dynamic>('stashhive_attachments_v1').length,
+      2,
+      reason: 'The original shared payload and one restored copy should exist.',
+    );
+  });
+
   test('a missing attachment cannot be saved as though it were local', () async {
     final item = buildImage();
     await expectLater(
