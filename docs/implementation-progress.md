@@ -295,6 +295,13 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added a widget regression for native attachment-location wording and manual case **TC-133** for both web and Android.
 - [ ] Run the regression and inspect the platform-specific copy on real web/native builds at the manual checkpoint.
 
+## Phase 3 — dark-mode preference write recovery (2026-10-22)
+
+- [x] `LibraryRepository.setDarkMode` now attempts to restore the prior preference if a write reports an error after it may have committed.
+- [x] The app catches persistence errors and re-syncs the visible theme to the persisted value instead of leaking an unhandled async exception.
+- [x] Added repository and widget regression source plus manual case **TC-134**.
+- [ ] Run TC-134 and verify theme preference persistence on web and Android at the manual checkpoint.
+
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-133 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-133 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-134 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-134 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
