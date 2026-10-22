@@ -18,7 +18,7 @@ SEND_MULTIPLE = "android.intent.action.SEND_MULTIPLE"
 ET.register_namespace("android", ANDROID_NS)
 ET.register_namespace("tools", TOOLS_NS)
 
-# We advertise only the file types StashHive can currently capture.
+# Advertise supported types directly plus */* for mixed batches; the receiver validates each item.
 FILTERS = (
     (SEND, "text/*"),
     (SEND, "text/uri-list"),
