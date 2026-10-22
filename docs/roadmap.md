@@ -278,3 +278,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-337:** The saved-favorite star now uses a theme-aware foreground: a deeper amber on light surfaces and a brighter gold on dark surfaces. This improves contrast without forcing the gold into an unsuitable shade for both themes.
 - Added contrast checks for the star color against theme surfaces, canvas and input fill. Regression source is committed but unrun; manual visual review remains pending.
+
+
+### Phase 2 — standalone URL punctuation cleanup (2026-10-22)
+
+- **TSK-338:** Standalone shared URLs now pass through the same punctuation cleanup as URLs extracted from longer text. A trailing sentence period no longer becomes part of the saved URL; balanced parentheses in URL paths remain supported.
+- Added a standalone URL regression. Test source is committed but unrun; real chat/browser share payloads still need Android verification.
