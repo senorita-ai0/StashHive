@@ -592,3 +592,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-010, FR-012–013 and NFR-003/NFR-006 (portable collections and recovery feedback).
 - Tests: TC-089 in `test/library_repository_test.dart` and `test/accessibility_widgets_test.dart`.
 - Verification: source/tests committed but unrun.
+
+
+### TSK-383 — Reduce redundant attachment-buffer copies
+
+- Implementation: `ShareIntake._fromFile`, Quick Save `_save`, and `LibraryRepository.restoreBackup`.
+- Requirements: FR-008–009, FR-012–013 and NFR-003 (bounded import/restore memory and data integrity).
+- Test: TC-090 references existing byte-integrity assertions in share-intake, repository and codec tests.
+- Verification: source committed; byte regression execution and memory profiling remain pending.
