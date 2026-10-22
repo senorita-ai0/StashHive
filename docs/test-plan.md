@@ -498,3 +498,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm null, empty, non-integer, negative and above-255 byte entries are rejected.
 - Supply a lazy list reporting a length above the cap; validation must reject it before iterating over elements.
 - Unit source is committed but unrun; actual memory profile and storage-corruption recovery remain pending.
+
+
+### TC-073 — Missing image/document payload feedback
+
+- Seed a legacy image record whose attachment key has no payload; open/view it and confirm the missing-image message appears.
+- Seed a legacy document record with a missing payload; activate Open/share and confirm StashHive advises restoring a backup.
+- Confirm the page remains responsive and the item remains in the library. Widget tests are committed but unrun.
