@@ -2983,13 +2983,26 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
     setState(() => _exporting = true);
     try {
       final skippedRecords = widget.repository.skippedRecordCount.value;
-      if (skippedRecords > 0) {
+      final skippedCollections =
+          widget.repository.skippedCollectionCount.value;
+      if (skippedRecords > 0 || skippedCollections > 0) {
+        final omissions = <String>[];
+        if (skippedRecords > 0) {
+          omissions.add(
+            '$skippedRecords saved record(s) could not be read and will be omitted.',
+          );
+        }
+        if (skippedCollections > 0) {
+          omissions.add(
+            '$skippedCollections collection preference entr(y/ies) were invalid, duplicated, or beyond the limit; the export will include only normalized, valid collection names.',
+          );
+        }
         final confirmed = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('This backup may be incomplete'),
             content: Text(
-              '$skippedRecords saved record(s) could not be read. They will be omitted from this export; the original raw entries will not be deleted. Continue exporting only the readable items?',
+              '${omissions.join(' ')} The raw local entries will not be deleted. Continue exporting the readable items and valid collection names?',
             ),
             actions: [
               TextButton(
