@@ -490,3 +490,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Check all four item-type labels when selected and unselected in light and dark themes.
 - Require at least 4.5:1 contrast for normal-sized label text against the corresponding light surface, selected pastel fill, or dark surface.
 - Unit regression source is committed but unrun; confirm visual consistency and icon distinction during manual theme review.
+
+
+### TC-072 — Stored attachment byte-list bounds
+
+- Confirm non-empty byte arrays within 15 MiB are accepted.
+- Confirm null, empty, non-integer, negative and above-255 byte entries are rejected.
+- Supply a lazy list reporting a length above the cap; validation must reject it before iterating over elements.
+- Unit source is committed but unrun; actual memory profile and storage-corruption recovery remain pending.
