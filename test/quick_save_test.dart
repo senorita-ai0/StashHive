@@ -60,6 +60,35 @@ Future<void> openEditor(WidgetTester tester, SavedItem item) async {
   await tester.pumpAndSettle();
 }
 
+Future<void> openNewLink(WidgetTester tester) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Builder(
+        builder: (context) => Scaffold(
+          body: Center(
+            child: TextButton(
+              key: const ValueKey('open-new-link'),
+              onPressed: () {
+                Navigator.of(context).push<void>(
+                  MaterialPageRoute<void>(
+                    builder: (_) => app.QuickSavePage(
+                      repository: repository,
+                      initialKind: ItemKind.link,
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Add link'),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.tap(find.byKey(const ValueKey('open-new-link')));
+  await tester.pumpAndSettle();
+}
+
 void main() {
   setUp(() async {
     testDirectory =
@@ -72,6 +101,56 @@ void main() {
     repository.dispose();
     await Hive.close();
     await testDirectory.delete(recursive: true);
+  });
+
+  testWidgets('normalizes uppercase URL schemes before saving', (tester) async {
+    await openNewLink(tester);
+    await tester.enterText(
+      find.byType(TextFormField).at(1),
+      'HTTPS://EXAMPLE.COM/Guide',
+    );
+    await tester.ensureVisible(find.text('Save to StashHive'));
+    await tester.tap(find.text('Save to StashHive'));
+    await tester.pumpAndSettle();
+
+    expect(repository.items.value, hasLength(1));
+    expect(Uri.parse(repository.items.value.single.url!).scheme, 'https');
+  });
+
+  testWidgets('shows a clear error when too many tags are entered', (tester) async {
+    await openNewLink(tester);
+    await tester.enterText(
+      find.byType(TextFormField).at(1),
+      'https://example.com/',
+    );
+    await tester.enterText(
+      find.byType(TextFormField).at(3),
+      List<String>.generate(101, (index) => 'tag$index').join(', '),
+    );
+    await tester.ensureVisible(find.text('Save to StashHive'));
+    await tester.tap(find.text('Save to StashHive'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Use 100 tags or fewer for each saved item.'), findsOneWidget);
+    expect(repository.items.value, isEmpty);
+  });
+
+  testWidgets('shows a clear error when a tag exceeds 100 characters', (tester) async {
+    await openNewLink(tester);
+    await tester.enterText(
+      find.byType(TextFormField).at(1),
+      'https://example.com/',
+    );
+    await tester.enterText(
+      find.byType(TextFormField).at(3),
+      List<String>.filled(101, 'x').join(),
+    );
+    await tester.ensureVisible(find.text('Save to StashHive'));
+    await tester.tap(find.text('Save to StashHive'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Tags must be 100 characters or shorter.'), findsOneWidget);
+    expect(repository.items.value, isEmpty);
   });
 
   testWidgets('metadata-only edit preserves a shared attachment key', (tester) async {
