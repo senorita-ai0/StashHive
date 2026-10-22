@@ -63,6 +63,14 @@ class LibraryRepository {
 
   bool get darkMode => _preferencesBox.get('darkMode') == true;
 
+  /// Whether the one-time local-storage safety reminder has been dismissed.
+  bool get hasSeenStorageReminder =>
+      _preferencesBox.get('storageReminderSeen') == true;
+
+  /// Persists the reminder acknowledgement in this local app/browser profile.
+  Future<void> markStorageReminderSeen() =>
+      _preferencesBox.put('storageReminderSeen', true);
+
   static Future<LibraryRepository> open() async {
     await Hive.initFlutter();
     return _openBoxes();
