@@ -630,8 +630,8 @@ class _LibraryPageState extends State<LibraryPage> {
                         if (skippedCollections > 0) {
                           messages.add(
                             skippedCollections == 1
-                                ? '1 collection entry was invalid, duplicated, or beyond the 500-collection limit.'
-                                : '$skippedCollections collection entries were invalid, duplicated, or beyond the 500-collection limit.',
+                                ? '1 collection name or assignment was invalid, duplicated, or beyond the 500-collection limit.'
+                                : '$skippedCollections collection names or assignments were invalid, duplicated, or beyond the 500-collection limit.',
                           );
                         }
                         return Padding(
