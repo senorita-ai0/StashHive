@@ -401,6 +401,19 @@ void main() {
       'wrong-box-key',
       buildLink(id: 'different-record-id').toMap(),
     );
+    await Hive.box<dynamic>('stashhive_items_v1').put(
+      'oversized-legacy-content',
+      <String, Object?>{
+        'id': 'oversized-legacy-content',
+        'kind': 'note',
+        'title': 'Oversized legacy record',
+        'content': List<String>.filled(1000001, 'x').join(),
+        'tags': <String>[],
+        'isFavorite': false,
+        'createdAtMs': 1000,
+        'updatedAtMs': 1000,
+      },
+    );
 
     await repository.save(buildLink(id: 'valid-record'));
 
@@ -410,7 +423,7 @@ void main() {
     );
     expect(repository.findById('unknown-kind'), isNull);
     expect(repository.findById('wrong-box-key'), isNull);
-    expect(repository.skippedRecordCount.value, 2);
+    expect(repository.skippedRecordCount.value, 3);
   });
 
   test('keeps parseable legacy records visible for recovery actions', () async {
