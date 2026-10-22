@@ -488,3 +488,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-002, FR-005–006 and FR-010 (consistent tag metadata and retrieval).
 - Test: TC-076 in `test/saved_item_test.dart`, `test/library_repository_test.dart`, and `test/backup_codec_test.dart`.
 - Verification: source/tests committed but unrun.
+
+
+### TSK-370 — Incoming attachment metadata bounds
+
+- Implementation: `ShareIntake._fromFile` in `lib/services/share_intake.dart`.
+- Requirements: FR-008–009 and NFR-003 (bounded file import and recoverable validation).
+- Test: TC-077 in `test/share_intake_test.dart`.
+- Verification: source/test committed but unrun.
