@@ -2945,7 +2945,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 const SizedBox(height: 24),
                 Text('Restore', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 5),
-                Text('Bring a previous StashHive backup into this library',
+                Text('Bring a previous StashHive backup into this library.',
                     style: TextStyle(color: mutedTextColor(context))),
                 const SizedBox(height: 12),
                 _BackupCard(
