@@ -476,3 +476,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Attempt to save replacement bytes through the repository using that shared key.
 - Confirm the write is rejected before record or payload mutation, and both items retain their prior relationship and original bytes.
 - Repository regression source is committed but unrun.
+
+
+### TC-070 — Oversized local record recovery bound
+
+- Seed the local store with a structurally valid record whose note content exceeds the one-million-character storage limit, alongside a valid item.
+- Trigger repository refresh and confirm the oversized record is skipped, the valid item stays available, and the skipped-record warning count increases.
+- Test source is committed but unrun.
