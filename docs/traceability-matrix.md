@@ -143,3 +143,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009 (incoming shared content).
 - Test: TC-031 in `test/share_intake_test.dart`, including batch-content boundary cases.
 - Verification: source is committed; dependency resolution and test execution are pending the manual validation checkpoint.
+
+
+### TSK-327 — Shared attachment backup/restore integrity
+
+- Implementation: `lib/services/backup_codec.dart` and `LibraryRepository.restoreBackup`.
+- Requirements: FR-012–013 (backup and restore), NFR-003 (storage efficiency and recovery).
+- Tests: TC-034, `test/backup_codec_test.dart`, and `test/library_repository_test.dart`.
+- Verification: regression source committed; execution and platform interruption checks remain pending.
