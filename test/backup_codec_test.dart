@@ -141,7 +141,7 @@ void main() {
       expect(decoded.attachments['shared-large']!.bytes, hasLength(bytes.length));
     });
 
-    test('rejects image exports without a valid attachment key', () {
+    test('rejects invalid attachment references on export', () {
       SavedItem image({String? attachmentKey}) => SavedItem(
             id: 'image',
             kind: ItemKind.image,
@@ -156,6 +156,20 @@ void main() {
             attachmentName: 'image.png',
             attachmentMimeType: 'image/png',
           );
+      final noteWithAttachment = SavedItem(
+        id: 'note-with-attachment',
+        kind: ItemKind.note,
+        title: 'Invalid note',
+        content: 'This kind must not reference image/file bytes.',
+        tags: const [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 1000,
+        attachmentKey: 'unexpected',
+        attachmentName: 'unexpected.bin',
+        attachmentMimeType: 'application/octet-stream',
+      );
 
       expect(
         () => BackupCodec.encode(
@@ -169,6 +183,16 @@ void main() {
         () => BackupCodec.encode(
           items: [image(attachmentKey: '')],
           attachmentBytes: const {},
+          collections: const [],
+        ),
+        throwsFormatException,
+      );
+      expect(
+        () => BackupCodec.encode(
+          items: [noteWithAttachment],
+          attachmentBytes: {
+            'unexpected': Uint8List.fromList([1, 2, 3]),
+          },
           collections: const [],
         ),
         throwsFormatException,
