@@ -42,6 +42,20 @@ void main() {
         'https://en.wikipedia.org/wiki/Function_(mathematics)',
       );
     });
+    test('trims sentence punctuation from a standalone shared URL', () async {
+      final result = await ShareIntake.fromSharedMedia(
+        SharedMediaFile(
+          path: 'https://example.com/guide.',
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      );
+
+      expect(result, isNotNull);
+      expect(result!.kind, ItemKind.link);
+      expect(result.url, 'https://example.com/guide');
+    });
+
     test('keeps a single shared word as a note instead of inventing a URL', () async {
       final result = await ShareIntake.fromSharedMedia(
         SharedMediaFile(
