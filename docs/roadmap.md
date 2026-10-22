@@ -863,3 +863,11 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **Source:** Item Details reports browser-profile storage on web and device-local storage on Android rather than using the native phrase on every platform.
 - **Regression/manual check:** Widget source checks the native label; TC-133 requires checking both web and Android.
 - **Status:** Source committed; automated and manual verification pending.
+
+
+### TSK-426 — Dark-mode preference write recovery — 2026-10-22
+
+- **Requirement:** NFR-003 (local preference persistence and recoverability).
+- **Source:** The repository stages and best-effort rolls back the prior dark-mode preference if a write reports failure; the app catches that failure and synchronizes the visible theme back to the repository's persisted value.
+- **Regression:** TC-134 covers both repository rollback and UI switch reversion with an injected late-write error.
+- **Status:** Source/test authored, unrun; actual device/browser preference persistence remains pending.
