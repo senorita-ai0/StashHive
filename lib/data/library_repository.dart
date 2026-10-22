@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
@@ -469,10 +470,10 @@ class LibraryRepository {
     ));
   }
 
-  Future<List<int>?> readAttachment(String key) async {
+  Future<Uint8List?> readAttachment(String key) async {
     final value = _attachmentsBox.get(key);
     if (!isValidAttachmentByteList(value)) return null;
-    return List<int>.unmodifiable((value as List).cast<int>());
+    return Uint8List.fromList((value as List).cast<int>());
   }
 
   Future<void> setDarkMode(bool value) async {
