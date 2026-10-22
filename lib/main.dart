@@ -2982,6 +2982,30 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
     if (_exporting) return;
     setState(() => _exporting = true);
     try {
+      final skippedRecords = widget.repository.skippedRecordCount.value;
+      if (skippedRecords > 0) {
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('This backup may be incomplete'),
+            content: Text(
+              '$skippedRecords saved record(s) could not be read. They will be omitted from this export; the original raw entries will not be deleted. Continue exporting only the readable items?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Export readable items'),
+              ),
+            ],
+          ),
+        );
+        if (confirmed != true || !mounted) return;
+      }
+
       final json = await widget.repository.createBackup();
       final name = 'stashhive-backup-' + DateTime.now().toUtc().toIso8601String().substring(0, 10) + '.json';
       final bytes = utf8.encode(json);
@@ -3108,6 +3132,31 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
                 const SizedBox(height: 7),
                 Text('Keep a safe copy you can restore later.', style: TextStyle(color: mutedTextColor(context))),
+                const SizedBox(height: 14),
+                ValueListenableBuilder<int>(
+                  valueListenable: widget.repository.skippedRecordCount,
+                  builder: (context, skippedCount, _) {
+                    if (skippedCount == 0) return const SizedBox.shrink();
+                    return Semantics(
+                      liveRegion: true,
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.errorContainer,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Text(
+                          '$skippedCount saved record(s) could not be read. Any backup will omit them unless you recover the records first. Use a previous known-good backup if you need those entries.',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onErrorContainer,
+                            height: 1.35,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 const SizedBox(height: 20),
                 Container(
                   padding: const EdgeInsets.all(15),
