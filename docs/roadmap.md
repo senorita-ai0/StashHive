@@ -314,8 +314,8 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — Quick Save shared-attachment edit regression (2026-10-22)
 
-- **TSK-343:** Quick Save now keeps an item's existing attachment key for metadata-only edits, including when the key belongs to another item that owns shared bytes. Choosing replacement bytes still writes a new per-item key, avoiding unintended overwrite of another item's shared payload.
-- Added widget regressions for editing a shared-attachment item without replacing bytes and converting an image into a note with the attachment reference/unused bytes removed. Tests are committed but unrun.
+- **TSK-343:** Quick Save now keeps an item's existing attachment key for metadata-only edits, including when the key belongs to another item that owns shared bytes. Choosing replacement bytes asks the repository for a collision-safe key so another item's shared payload is not overwritten.
+- The Quick Save widget regression covers metadata-only edits. Direct repository tests in TC-048 cover removing attachment references, reclaiming orphaned bytes and preserving payloads still referenced by another item. All tests are committed but unrun.
 
 
 ### Phase 2 — shared MIME mapping for selected and shared files (2026-10-22)
