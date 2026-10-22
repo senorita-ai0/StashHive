@@ -171,6 +171,25 @@ class LibraryRepository {
       skipped++;
     }
 
+    // Some older records can have a collection assignment even if its name
+    // was absent from the preference list. Include those valid assignments so
+    // they remain reachable in Collections and selectable when editing.
+    for (final item in items.value) {
+      final rawName = item.collection;
+      if (rawName == null) continue;
+      final name = rawName.trim();
+      if (name.isEmpty || name.length > 80) {
+        skipped++;
+        continue;
+      }
+      if (!seen.add(name.toLowerCase())) continue;
+      if (names.length >= BackupCodec.maxCollections) {
+        skipped++;
+        continue;
+      }
+      names.add(name);
+    }
+
     names.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
     skippedCollectionCount.value = skipped;
     collections.value = List<String>.unmodifiable(names);
