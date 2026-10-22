@@ -124,7 +124,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
 - [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
 - [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
-- [x] Progress/test docs updated through TSK-373 and TC-080.
+- [x] Progress/test docs updated through TSK-374 and TC-081.
 
 ## Phase 2/3 latest source increments — 2026-10-22
 
@@ -151,6 +151,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Shared incoming file metadata is bounded to the persisted filename/MIME limits before file I/O.
 - [x] Saved-item validation rejects attachment filename/MIME values without an attachment key.
 - [x] Shared validation rejects empty note content and timestamps outside the supported DateTime range; raw out-of-range legacy records are skipped and counted.
+- [x] Repository save refuses replacement writes to existing orphan keys unless the key belongs to that same item's current attachment, complementing the shared-reference guard.
 - [x] Added credential-bearing URL, URL boundary, tag integrity, collision-safe ID and responsive kind-selector regression source.
 
 ## Current validation state — 2026-10-22
