@@ -216,7 +216,7 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 ### Phase 2 — shared attachment backup/restore integrity (2026-10-22)
 
 - **TSK-327:** Backup export now counts a shared attachment key only once toward the attachment budget, rather than counting the same byte payload for every saved-item reference. Export also rejects image/document records without a valid attachment key and rejects attachment keys on unsupported item types instead of emitting a backup that cannot be restored.
-- Restore now maps each original attachment key to one collision-safe key and stages its bytes only once, preserving relationships between items that intentionally share a stored attachment.
+- Restore now maps each original attachment key to one collision-safe key and stages its bytes only once, preserving relationships between items that intentionally share a stored attachment. Per-item filename/MIME metadata takes precedence when present, with payload metadata used as a fallback.
 - Added codec and repository regressions for shared references and invalid export references. Tests are authored but unrun; source-level rollback does not claim crash-atomic storage behavior.
 
 
