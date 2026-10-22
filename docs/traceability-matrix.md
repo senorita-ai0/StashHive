@@ -15,8 +15,8 @@
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204 | TC-009 | IN PROGRESS — source added, build/device test pending |
 | FR-010 | SCR-005 | TSK-203 | TC-010 | IN PROGRESS — source added; build/test pending |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
-| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-415 | TC-012, TC-119 | IN PROGRESS — codec/source added; tests/platform export pending |
-| FR-013 | SCR-006 | TSK-006, TSK-302, TSK-415 | TC-013, TC-119 | IN PROGRESS — codec/source added; restore tests pending |
+| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-415, TSK-416 | TC-012, TC-119, TC-120 | IN PROGRESS — bounded-size source added; execution and platform export pending |
+| FR-013 | SCR-006 | TSK-006, TSK-302, TSK-415, TSK-416 | TC-013, TC-119, TC-120 | IN PROGRESS — codec/source added; restore tests pending |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | NOT STARTED |
 | FR-015 | SCR-006 | TSK-003, TSK-303 | TC-015 | NOT STARTED |
 | FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205 | TC-016 | BLOCKED pending POC |
@@ -25,7 +25,7 @@
 | FR-019 | SCR-001, SCR-002 | Later if approved | TC-019 | NOT STARTED / Could |
 | NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | NOT STARTED |
 | NFR-002 | SCR-006 | TSK-304 | TC-018 | NOT STARTED |
-| NFR-003 | SCR-006 | TSK-006, TSK-301–305 | TC-012–015 | NOT STARTED |
+| NFR-003 | SCR-006 | TSK-006, TSK-301–305, TSK-416 | TC-012–015, TC-120 | IN PROGRESS — backup byte-limit source/test added; memory/platform verification pending |
 | NFR-004 | SCR-004 | TSK-203 | TC-006, TC-017 | NOT STARTED |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
 | NFR-006 | All screens | TSK-103, TSK-304 | UI/accessibility checklist | IN PROGRESS — text scaling, semantics and contrast source/tests added; execution and platform checks pending |
@@ -920,3 +920,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (portable backup bounds and predictable memory use).
 - Test: TC-117 in `test/backup_codec_test.dart`.
 - Verification: source/test committed but unrun; memory profiling remains pending.
+
+
+### TSK-416 — Portable backup size preflight
+
+- Implementation: `BackupCodec.encode` estimates UTF-8 bytes before base64 payload allocation and final JSON encoding, then retains an exact final-size check.
+- Requirements: FR-012–013 and NFR-003 (bounded portable backup size and recoverable export).
+- Test: TC-120 in `test/backup_codec_test.dart`.
+- Verification: happy-path size/accounting regression source added but unrun; an over-limit stress test and peak-memory measurement remain pending.
