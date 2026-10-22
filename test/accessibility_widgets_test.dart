@@ -212,6 +212,61 @@ void main() {
     expect(_contrastRatio(muted, field), greaterThanOrEqualTo(4.5));
   });
 
+  testWidgets('Backup page warns and confirms before partial export', (tester) async {
+    await Hive.box<dynamic>('stashhive_items_v1').put(
+      'unreadable-before-backup',
+      <String, Object?>{
+        'id': 'unreadable-before-backup',
+        'kind': 'unknown-kind',
+        'title': 'Unreadable legacy entry',
+        'content': '',
+        'tags': <String>[],
+        'isFavorite': false,
+        'createdAtMs': 1,
+        'updatedAtMs': 2,
+      },
+    );
+    await repository.save(
+      const SavedItem(
+        id: 'valid-before-backup',
+        kind: ItemKind.link,
+        title: 'Readable entry',
+        content: '',
+        url: 'https://example.com',
+        tags: [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 2,
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.BackupPrivacyPage(repository: repository),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(repository.skippedRecordCount.value, 1);
+    expect(
+      find.textContaining('Any backup will omit them'),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Create backup'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('This backup may be incomplete'), findsOneWidget);
+    expect(
+      find.textContaining('They will be omitted from this export'),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(find.text('This backup may be incomplete'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Library warns when malformed local records were skipped', (tester) async {
     await Hive.box<dynamic>('stashhive_items_v1').put(
       'unreadable-legacy-record',
