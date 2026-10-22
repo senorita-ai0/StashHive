@@ -318,10 +318,8 @@ class LibraryRepository {
 
   Future<List<int>?> readAttachment(String key) async {
     final value = _attachmentsBox.get(key);
-    if (value is List) {
-      return value.whereType<int>().toList(growable: false);
-    }
-    return null;
+    if (!_isValidAttachmentBytes(value)) return null;
+    return List<int>.unmodifiable((value as List).cast<int>());
   }
 
   Future<void> setDarkMode(bool value) async {
@@ -458,11 +456,15 @@ class LibraryRepository {
     final byteMap = <String, Uint8List>{};
     for (final item in items.value) {
       final key = item.attachmentKey;
-      if (key == null) continue;
+      if (key == null || byteMap.containsKey(key)) continue;
       final value = _attachmentsBox.get(key);
-      if (value is List) {
-        byteMap[key] = Uint8List.fromList(value.whereType<int>().toList(growable: false));
+      if (!_isValidAttachmentBytes(value)) {
+        throw FormatException(
+          'The local attachment for "${item.title}" is missing or damaged. '
+          'Select the file again or restore a backup before exporting.',
+        );
       }
+      byteMap[key] = Uint8List.fromList((value as List).cast<int>());
     }
     return BackupCodec.encode(
       items: List<SavedItem>.from(items.value),
