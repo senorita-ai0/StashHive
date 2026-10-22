@@ -152,6 +152,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Collection creation now rolls back preference writes when the storage future reports a late failure; a fault-injection regression covers the no-prior-key case.
 - [x] Backup restore now fully validates once before showing confirmation, retains only the decoded backup for the accepted restore, and removes the second full JSON decode.
 - [x] Unified backup export/decode and restore-picker limits in UTF-8 bytes, avoiding export/restore mismatch for Unicode-heavy content.
+- [x] Backup decode drops successfully validated base64 strings from its temporary parsed JSON tree to reduce duplicate memory retention.
 - [x] Added a narrow-width, 2× text widget regression and constrained the Library brand title to avoid fixed-row overflow.
 - [x] Removed redundant attachment byte-buffer copies during share intake, Quick Save save, and backup restore staging; existing byte-integrity assertions cover these paths.
 - [x] Forced-image share intents now avoid persisting a contradictory non-image MIME header; a regression covers an extensionless image with a text MIME header.
