@@ -88,7 +88,12 @@ class ShareEventDeduplicator {
     // Canonical JSON preserves field and batch boundaries before hashing.
     final canonical = jsonEncode(
       media
-          .map((item) => <Object?>[item.type.name, item.path, item.mimeType, item.message])
+          .map((item) => <Object?>[
+                item.type.name,
+                item.path.trim(),
+                item.mimeType?.trim().toLowerCase() ?? '',
+                item.message?.trim() ?? '',
+              ])
           .toList(growable: false),
     );
     final fingerprint = sha256.convert(utf8.encode(canonical)).toString();
