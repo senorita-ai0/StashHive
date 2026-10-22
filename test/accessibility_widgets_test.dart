@@ -546,6 +546,40 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('collection row counts legacy assignments case-insensitively', (tester) async {
+    await repository.addCollection('Learning');
+    repository.items.value = const [
+      SavedItem(
+        id: 'lowercase-collection-count',
+        kind: ItemKind.link,
+        title: 'Count this legacy item',
+        content: '',
+        url: 'https://example.com/collection-count',
+        tags: [],
+        collection: 'learning',
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 2,
+      ),
+    ];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: app.CollectionsPage(
+            repository: repository,
+            onOpenItem: (_) {},
+            onAdd: (_) {},
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('1 saved item'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Collection row actions have contextual tooltips', (tester) async {
     await repository.addCollection('Learning');
     await repository.save(
