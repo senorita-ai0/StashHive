@@ -280,3 +280,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Check each Link, Note, Image and Document badge's text accent against its pastel background.
 - Compute WCAG contrast and require at least 4.5:1 for the small type labels. Verify icons remain distinguishable on both light and dark surfaces.
 - Unit regression source is authored but unrun; manual visual review across themes remains NOT STARTED.
+
+
+### TC-044 — Favorite-state icon contrast
+
+- Render favorite indicators and the Item Details favorite action in light and dark themes.
+- Verify the active star has at least 3:1 contrast against the card/surface, canvas and relevant input surface.
+- Automated test source is authored but unrun; visually confirm the favorite status remains recognizable and does not rely on color alone (the semantic label/action text must remain exposed). Status remains NOT STARTED.
