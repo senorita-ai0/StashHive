@@ -260,6 +260,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Updated visible Flutter copy, web install metadata, README and current product/design references to StashTrail; the Android configurator sets the generated launcher label.
 - [x] Kept the `stashhive` package, `stashhive_*_v1` Hive box identifiers and the version-1 `StashHive` backup marker unchanged for existing-data compatibility.
 - [x] Added TC-125 for visible Library branding and TC-126 for a version-1 backup-marker round trip.
+- [x] Extended `tool/test_configure_android_share_intents.py` to assert the generated Android application label is StashTrail, including idempotent reconfiguration.
 - [ ] Execute TC-125 and TC-126 at the manual validation checkpoint; tests and builds are not claimed.
 
 ## Current validation state — 2026-10-22
