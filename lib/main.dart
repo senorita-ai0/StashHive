@@ -554,13 +554,12 @@ class _LibraryPageState extends State<LibraryPage> {
       result = result.where((item) => item.kind.pluralLabel == _filter).toList();
     }
     result = List<SavedItem>.from(result);
-    if (_sort == 'Title A–Z') {
-      result.sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
-    } else if (_sort == 'Oldest first') {
-      result.sort((a, b) => a.createdAtMs.compareTo(b.createdAtMs));
-    } else {
-      result.sort((a, b) => b.updatedAtMs.compareTo(a.updatedAtMs));
-    }
+    final sortMode = switch (_sort) {
+      'Title A–Z' => SavedItemSort.titleAZ,
+      'Oldest first' => SavedItemSort.oldestFirst,
+      _ => SavedItemSort.recentlySaved,
+    };
+    result.sort((a, b) => compareSavedItemsForSort(a, b, sortMode));
     return result;
   }
 
@@ -928,15 +927,12 @@ class _SearchPageState extends State<SearchPage> {
       return kindMatch && item.matchesQuery(query);
     }).toList();
 
-    if (_sort == 'Title A–Z') {
-      results.sort(
-        (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
-      );
-    } else if (_sort == 'Oldest first') {
-      results.sort((a, b) => a.createdAtMs.compareTo(b.createdAtMs));
-    } else {
-      results.sort((a, b) => b.updatedAtMs.compareTo(a.updatedAtMs));
-    }
+    final sortMode = switch (_sort) {
+      'Title A–Z' => SavedItemSort.titleAZ,
+      'Oldest first' => SavedItemSort.oldestFirst,
+      _ => SavedItemSort.recentlySaved,
+    };
+    results.sort((a, b) => compareSavedItemsForSort(a, b, sortMode));
     return results;
   }
 
