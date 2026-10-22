@@ -224,3 +224,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: NFR-006 (accessible contrast).
 - Test: TC-043 in `test/accessibility_widgets_test.dart`.
 - Verification: source and regression committed; unit execution and light/dark visual inspection remain pending.
+
+
+### TSK-337 — Favorite icon contrast
+
+- Implementation: `lib/main.dart`, `favoriteStarColor` used in Library and Item Details.
+- Requirement: NFR-006 (non-text contrast and accessible state indication).
+- Test: TC-044 in `test/accessibility_widgets_test.dart`.
+- Verification: source and regression committed; test execution and manual theme review remain pending.
