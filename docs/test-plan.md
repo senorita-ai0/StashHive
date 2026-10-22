@@ -252,3 +252,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Submit text at the supported 1,000,000-character boundary and confirm it remains eligible for intake.
 - Submit text one character above the limit and confirm rejection states the character limit explicitly instead of describing it as a byte-size limit.
 - Unit test source is authored but unrun; Unicode-heavy payload behavior remains pending validation.
+
+
+### TC-040 — Distinguish a single word from a bare web address
+
+- Share a plain single word (for example, `remember`) and confirm it becomes a note rather than a fabricated `https://remember` link.
+- Share `example.com/guide` and `example.com:8443/guide`; confirm both become link drafts with the HTTPS scheme and path/port retained.
+- Unit regressions are authored but unrun. Verify against real Android browser/chat share payloads; status remains NOT STARTED.
