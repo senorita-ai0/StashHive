@@ -768,6 +768,55 @@ void main() {
     expect(find.text('Delete'), findsOneWidget);
   });
 
+  testWidgets('Collection deletion failure shows recovery feedback', (tester) async {
+    await repository.addCollection('Learning');
+    await repository.save(
+      const SavedItem(
+        id: 'collection-delete-failure',
+        kind: ItemKind.link,
+        title: 'Keep this item assigned',
+        content: '',
+        url: 'https://example.com/keep-collection',
+        tags: [],
+        collection: 'Learning',
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 2,
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: app.CollectionsPage(
+            repository: repository,
+            onOpenItem: (_) {},
+            onAdd: (_) {},
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    LibraryRepository.collectionBeforeItemWriteForTesting = (_) async {
+      throw StateError('simulated collection delete failure');
+    };
+    try {
+      await tester.tap(find.byTooltip('Actions for Learning collection'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Delete'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Delete collection'));
+      await tester.pumpAndSettle();
+    } finally {
+      LibraryRepository.collectionBeforeItemWriteForTesting = null;
+    }
+
+    expect(find.textContaining('simulated collection delete failure'), findsOneWidget);
+    expect(repository.collections.value, contains('Learning'));
+    expect(repository.findById('collection-delete-failure')?.collection, 'Learning');
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Item Details overflow menu has an accessible name', (tester) async {
     await repository.save(
       const SavedItem(
