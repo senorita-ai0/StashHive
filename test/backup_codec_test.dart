@@ -492,6 +492,23 @@ void main() {
       }
     });
 
+    test('export rejects duplicate saved-item IDs', () {
+      final original = sampleLink();
+      final conflicting = original.copyWith(
+        title: 'Different title, same identifier',
+        updatedAtMs: original.updatedAtMs + 1,
+      );
+
+      expect(
+        () => BackupCodec.encode(
+          items: [original, conflicting],
+          attachmentBytes: const {},
+          collections: const ['Learning'],
+        ),
+        throwsFormatException,
+      );
+    });
+
     test('export rejects saved URLs the restore format cannot accept', () {
       final overlongUrl = 'https://example.com/' +
           List<String>.filled(maxSavedItemUrlCharacters, 'a').join();
