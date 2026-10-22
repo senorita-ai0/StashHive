@@ -216,3 +216,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009 (multi-item incoming share).
 - Test: TC-042 and `tool/test_configure_android_share_intents.py`.
 - Verification: source/regression committed; Android chooser and content URI behavior remain unverified.
+
+
+### TSK-336 — Item-type badge contrast
+
+- Implementation: `lib/models/saved_item.dart` (`readableTextAccent`) and text labels in Library, Quick Save and Item Details.
+- Requirement: NFR-006 (accessible contrast).
+- Test: TC-043 in `test/accessibility_widgets_test.dart`.
+- Verification: source and regression committed; unit execution and light/dark visual inspection remain pending.
