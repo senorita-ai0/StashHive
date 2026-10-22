@@ -6,6 +6,8 @@ from pathlib import Path
 from tool.configure_android_share_intents import (
     ANDROID,
     FILTERS,
+    SEND,
+    SEND_MULTIPLE,
     configure_manifest,
 )
 
@@ -38,10 +40,29 @@ class ConfigureAndroidShareIntentsTests(unittest.TestCase):
         self.assertEqual(activity.get(ANDROID + "launchMode"), "singleTask")
         filters = activity.findall("intent-filter")
         self.assertEqual(len(filters), len(FILTERS))
+        actual_pairs = set()
         for intent_filter in filters:
-            self.assertTrue(intent_filter.findall("action"))
-            self.assertTrue(intent_filter.findall("category"))
-            self.assertTrue(intent_filter.findall("data"))
+            actions = intent_filter.findall("action")
+            categories = intent_filter.findall("category")
+            data_elements = intent_filter.findall("data")
+            self.assertEqual(len(actions), 1)
+            self.assertEqual(len(categories), 1)
+            self.assertEqual(len(data_elements), 1)
+            actual_pairs.add(
+                (actions[0].get(ANDROID + "name"),
+                 data_elements[0].get(ANDROID + "mimeType"))
+            )
+
+        self.assertEqual(actual_pairs, set(FILTERS))
+        single_types = {mime for action, mime in actual_pairs if action == SEND}
+        multiple_types = {
+            mime for action, mime in actual_pairs if action == SEND_MULTIPLE
+        }
+        self.assertEqual(
+            multiple_types,
+            single_types,
+            "All supported single-share MIME families must also support multi-select.",
+        )
 
     def test_is_idempotent(self):
         first_added = configure_manifest(self.path)
