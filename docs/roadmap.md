@@ -454,3 +454,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-366:** Added widget regressions for parseable legacy image/document records whose referenced bytes are missing. Image details should show the missing-image state; document open/share should advise restoring a backup, without throwing or silently removing the record.
 - Test source is committed but unrun; actual corrupted storage and user recovery behavior remain pending.
+
+
+### Phase 3 — theme-aware Quick Save kind icon contrast (2026-10-22)
+
+- **TSK-367:** The item-kind selector now uses the readable dark accent for selected icons, the normal accent on light unselected surfaces, and the light pastel accent for unselected icons in dark mode. This aligns icon foregrounds with the tile background for each state.
+- Extended the per-kind contrast regression to include decorative icon contrast as well as label text. Test source is committed but unrun.
