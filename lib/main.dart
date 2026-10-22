@@ -2706,7 +2706,9 @@ class CollectionContentsPage extends StatelessWidget {
         valueListenable: repository.items,
         builder: (context, items, _) {
           final shown = items.where((item) {
-            if (collection != null) return item.collection == collection;
+            if (collection != null) {
+              return item.collection?.toLowerCase() == collection!.toLowerCase();
+            }
             return item.tags.any((value) => value.toLowerCase() == tag?.toLowerCase());
           }).toList();
           if (shown.isEmpty) {
