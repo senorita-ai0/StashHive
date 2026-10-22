@@ -57,6 +57,19 @@ void main() {
       expect(result.url, isNull);
     });
 
+    test('preserves a port on a bare domain', () async {
+      final result = await ShareIntake.fromSharedMedia(
+        SharedMediaFile(
+          path: 'example.com:8443/guide',
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      );
+
+      expect(result, isNotNull);
+      expect(result!.kind, ItemKind.link);
+      expect(result.url, 'https://example.com:8443/guide');
+    });
     test('normalizes a bare domain into a link draft', () async {
       final result = await ShareIntake.fromSharedMedia(
         SharedMediaFile(
