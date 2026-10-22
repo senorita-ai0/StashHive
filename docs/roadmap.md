@@ -604,3 +604,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-391:** After each backup attachment is base64-decoded and its length/checksum are validated, the codec removes the encoded field from the temporary parsed JSON map. The returned `DecodedBackup` retains only the validated byte buffers and metadata, reducing memory held by a large restore.
 - Existing backup checksum, byte-integrity and restore regressions cover the affected behavior. Test source is committed but unrun; peak-memory profiling remains pending.
+
+
+### Phase 2 — preflight local attachment filename metadata (2026-10-22)
+
+- **TSK-392:** Quick Save now rejects blank or over-255-character picker filenames before calling file length/byte reads, with specific guidance to rename invalid files. This aligns local picker intake with the repository/backup attachment-name limit.
+- The real picker path requires Android/web manual verification; no build or test was run.
