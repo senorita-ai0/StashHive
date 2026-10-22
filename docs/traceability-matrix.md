@@ -800,3 +800,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-010, FR-012–013 (portable collection metadata and backward-compatible restore).
 - Test: TC-095 in `test/backup_codec_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-389 — Bound streamed shared-file reads
+
+- Implementation: `lib/services/bounded_bytes_reader.dart`, used by `ShareIntake._fromFile`.
+- Requirements: FR-008–009 and NFR-003 (safe attachment import and bounded memory).
+- Test: TC-096 in `test/attachment_bytes_test.dart`, alongside file intake boundaries in `test/share_intake_test.dart`.
+- Verification: source/test committed but unrun; device/provider behavior remains pending.
