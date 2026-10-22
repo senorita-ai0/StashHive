@@ -432,7 +432,16 @@ class LibraryRepository {
 
     final previousItemValue = _itemsBox.get(id);
     final item = findById(id);
-    final attachmentKey = item?.attachmentKey;
+    // Unreadable legacy records are not present in the parsed item list, but
+    // a raw string attachment reference can still be reclaimed after delete.
+    // Only trust this fallback when the record could not be decoded; a valid
+    // record with no attachment must not accidentally delete an unrelated key.
+    final rawAttachmentKey = previousItemValue is Map &&
+            previousItemValue['attachmentKey'] is String
+        ? previousItemValue['attachmentKey'] as String
+        : null;
+    final attachmentKey = item?.attachmentKey ??
+        (item == null ? rawAttachmentKey : null);
     final hadAttachment = attachmentKey != null &&
         _attachmentsBox.containsKey(attachmentKey);
     final previousAttachment =
