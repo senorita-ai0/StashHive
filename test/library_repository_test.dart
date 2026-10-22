@@ -14,13 +14,14 @@ late LibraryRepository repository;
 SavedItem buildLink({
   String id = 'link-1',
   String? collection = 'Learning',
+  String url = 'https://flutter.dev',
 }) {
   return SavedItem(
     id: id,
     kind: ItemKind.link,
     title: 'Flutter documentation',
     content: 'Read about local persistence.',
-    url: 'https://flutter.dev',
+    url: url,
     tags: const ['Flutter', 'Reading'],
     collection: collection,
     isFavorite: true,
