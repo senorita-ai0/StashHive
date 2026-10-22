@@ -658,3 +658,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-400:** Repository reload canonicalizes item collection assignments to the visible collection's spelling when names match case-insensitively. Direct repository saves do the same before validation/persistence, so items assigned to `learning` remain visible inside the existing `Learning` collection.
 - Added a repository regression covering both a legacy raw record and a new save, including the stored representation. Test source is committed but unrun.
+
+
+### Phase 2 — canonicalize incoming collection casing during restore (2026-10-22)
+
+- **TSK-401:** Restore now maps incoming item collection assignments through the merged destination collection-name map before writing records. A backup assignment such as `learning` is persisted as the destination's existing `Learning`, not merely normalized in memory afterward.
+- Added a repository regression asserting both the live model and raw Hive record use the canonical spelling. Test source is committed but unrun.
