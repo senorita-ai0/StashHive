@@ -413,6 +413,21 @@ void main() {
       );
     });
 
+    test('export rejects timestamps outside the supported date range', () {
+      final invalidDate = sampleLink().copyWith(
+        updatedAtMs: 9000000000000000,
+      );
+
+      expect(
+        () => BackupCodec.encode(
+          items: [invalidDate],
+          attachmentBytes: const {},
+          collections: const ['Learning'],
+        ),
+        throwsFormatException,
+      );
+    });
+
     test('rejects files which are not StashHive backups', () {
       expect(
         () => BackupCodec.decode(jsonEncode({'app': 'OtherApp', 'formatVersion': 1})),
