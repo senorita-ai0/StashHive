@@ -634,3 +634,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-396:** Backup & Privacy now passes the byte list returned by `utf8.encode` directly to `XFile.fromData` instead of copying the entire backup into a second `Uint8List`. This reduces peak allocation pressure for exports near the 145 MiB cap.
 - Existing export/restore round-trip tests cover content integrity; source is committed but tests and large-backup memory profiling remain pending.
+
+
+### Phase 2 — prevent silent partial backup exports (2026-10-22)
+
+- **TSK-397:** Backup & Privacy now surfaces the skipped-record warning itself and asks for explicit confirmation before exporting a backup when malformed local records will be omitted. Canceling the dialog exits without sharing/exporting the partial file.
+- Added a widget regression covering the visible warning, confirmation text and safe cancellation. Test source is committed but unrun.
