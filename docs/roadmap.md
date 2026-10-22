@@ -736,3 +736,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-393:** Backup decode now estimates the maximum encoded length for the remaining combined attachment budget before calling `base64Decode`. Payloads that cannot fit under the 100 MiB combined attachment limit are rejected before allocating their decoded buffer.
 - Added helper boundary tests for base64 quanta and negative inputs. Test source is committed but unrun; full-size backup memory profiling remains pending.
+
+
+### Phase 3 — graceful fallback for image formats the platform cannot decode (2026-10-22)
+
+- **TSK-394:** The full-size image dialog now displays an accessible “Preview unavailable” message when Flutter cannot decode the stored bytes, while retaining the saved attachment for sharing. This prevents otherwise valid files in less-supported image formats from producing a broken preview surface.
+- Added an Item Details widget regression using invalid/unsupported encoded bytes; test source is committed but unrun.
