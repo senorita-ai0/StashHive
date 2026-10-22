@@ -3214,7 +3214,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Text(
-                              '${warnings.join(' ')} A backup may omit unreadable records or normalize collection names. The raw data has not been intentionally deleted. Move any item assignment that exceeds the cap to an available collection or choose No collection before exporting.',
+                              '${warnings.join(' ')} A backup may omit unreadable records or normalize collection names. The raw data has not been intentionally deleted. Use a previous known-good backup to recover unreadable records; move any item assignment that exceeds the cap to an available collection or choose No collection before exporting.',
                               style: TextStyle(
                                 color:
                                     Theme.of(context).colorScheme.onErrorContainer,
