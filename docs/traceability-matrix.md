@@ -688,3 +688,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009 (suppress duplicate initial/stream deliveries when provider type labels differ but the effective draft is equivalent).
 - Test: TC-101 in `test/share_intake_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-395 — Reuse validated attachment byte buffers
+
+- Implementation: `LibraryRepository.readAttachment` and Library/Item Details/file-sharing consumers in `lib/main.dart`.
+- Requirements: FR-008, FR-011–013 and NFR-003 (attachment integrity and bounded memory).
+- Test: TC-102 references byte-integrity assertions in `test/library_repository_test.dart`.
+- Verification: source committed; tests and memory profile remain pending.
