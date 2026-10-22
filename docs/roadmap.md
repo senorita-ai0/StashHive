@@ -340,3 +340,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-347:** Added a shared `parseHttpUrl` boundary that accepts only HTTP/HTTPS URLs with a host and normalizes scheme casing. Quick Save, backup item validation and Item Details external navigation use it; a malformed legacy record can no longer send `javascript:`, `file:` or other non-web schemes to the platform launcher.
 - Added unit coverage for uppercase schemes, invalid/hostless URLs, whitespace-bearing values and dangerous schemes. Test source is committed but unrun; end-to-end external-launch behavior remains part of manual verification.
+
+
+### Phase 2 — reject empty/corrupt attachment payloads (2026-10-22)
+
+- **TSK-348:** Repository saves now reject empty attachment bytes, non-byte integer values, and missing/empty/unreadable stored payloads. Backup encode and decode reject empty attachment payloads so an image/document cannot be marked as having a valid local attachment when no usable bytes exist.
+- Added repository and backup-codec regression tests. Source and test cases are committed but unrun; behavior for interrupted storage writes still requires the manual validation checkpoint.
