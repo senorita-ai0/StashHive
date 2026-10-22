@@ -801,4 +801,92 @@ void main() {
 
     expect(find.bySemanticsLabel('Saved as a favorite'), findsOneWidget);
   });
+  testWidgets('Search results support recency, oldest, and title sorting',
+      (tester) async {
+    await tester.binding.setSurfaceSize(const Size(390, 1000));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    const items = <SavedItem>[
+      SavedItem(
+        id: 'search-sort-cedar',
+        kind: ItemKind.link,
+        title: 'Cedar',
+        content: 'Cedar content',
+        url: 'https://example.com/cedar',
+        tags: [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 300,
+        updatedAtMs: 300,
+      ),
+      SavedItem(
+        id: 'search-sort-bravo',
+        kind: ItemKind.link,
+        title: 'Bravo',
+        content: 'Bravo content',
+        url: 'https://example.com/bravo',
+        tags: [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 100,
+        updatedAtMs: 200,
+      ),
+      SavedItem(
+        id: 'search-sort-alpha',
+        kind: ItemKind.link,
+        title: 'Alpha',
+        content: 'Alpha content',
+        url: 'https://example.com/alpha',
+        tags: [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 200,
+        updatedAtMs: 100,
+      ),
+    ];
+    for (final item in items) {
+      await repository.save(item);
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.SearchPage(
+          repository: repository,
+          initialQuery: '',
+          onOpenItem: (_) {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    double titleY(String title) => tester.getTopLeft(find.text(title)).dy;
+
+    expect(titleY('Cedar'), lessThan(titleY('Bravo')));
+    expect(titleY('Bravo'), lessThan(titleY('Alpha')));
+
+    await tester.tap(find.byTooltip('Sort search results'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Title A–Z'));
+    await tester.pumpAndSettle();
+
+    expect(titleY('Alpha'), lessThan(titleY('Bravo')));
+    expect(titleY('Bravo'), lessThan(titleY('Cedar')));
+
+    await tester.tap(find.byTooltip('Sort search results'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Oldest first'));
+    await tester.pumpAndSettle();
+
+    expect(titleY('Bravo'), lessThan(titleY('Alpha')));
+    expect(titleY('Alpha'), lessThan(titleY('Cedar')));
+
+    await tester.tap(find.byTooltip('Sort search results'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Recently saved'));
+    await tester.pumpAndSettle();
+
+    expect(titleY('Cedar'), lessThan(titleY('Bravo')));
+    expect(titleY('Bravo'), lessThan(titleY('Alpha')));
+  });
+
 }
