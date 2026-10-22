@@ -563,3 +563,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Attempt to save a new image using that key with different bytes.
 - Confirm the repository rejects the save, does not add the record, and preserves the original orphan payload byte-for-byte.
 - Test source is committed but unrun.
+
+
+### TC-082 — Collection count cannot exceed backup limit
+
+- Seed exactly 500 valid collections and reopen the repository.
+- Attempt to add one more; confirm a clear format-limit error and no preference mutation.
+- Export/decode the library backup and confirm all 500 collections are retained.
+- Regression source is committed but unrun.
