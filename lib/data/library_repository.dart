@@ -87,10 +87,20 @@ class LibraryRepository {
   /// Item IDs often double as attachment keys, so reserve against both boxes.
   String createUniqueId() {
     var id = createId();
-    while (_itemsBox.containsKey(id) || _attachmentsBox.containsKey(id)) {
+    while (_itemsBox.containsKey(id) ||
+        _attachmentsBox.containsKey(id) ||
+        _isAttachmentKeyReferencedByAnyItem(id)) {
       id = createId();
     }
     return id;
+  }
+
+  bool _isAttachmentKeyReferencedByAnyItem(String key) {
+    for (final storedId in _itemsBox.keys) {
+      final value = _itemsBox.get(storedId);
+      if (value is Map && value['attachmentKey'] == key) return true;
+    }
+    return false;
   }
 
   void _refreshItems() {
