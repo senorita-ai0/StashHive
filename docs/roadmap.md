@@ -412,3 +412,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-359:** Quick Save now requests a repository-generated ID that is absent from both the item and attachment stores. Replacement attachment keys reuse the same uniqueness check, preventing a newly generated item from accidentally overwriting an orphaned attachment payload.
 - Added repository coverage for generated ID uniqueness against existing record/payload keys. Test source is committed but unrun.
+
+
+### Phase 2 — strict validation while reloading local records (2026-10-22)
+
+- **TSK-360:** Repository reload now validates raw saved-item fields before the model can silently normalize bad data, checks the model against the shared save/backup constraints, and confirms each Hive key matches the record ID. Malformed records are skipped without preventing valid entries from loading.
+- Added a repository regression that seeds an unknown item kind and a box-key/record-ID mismatch, then verifies the valid record still loads. Test source is committed but unrun.
