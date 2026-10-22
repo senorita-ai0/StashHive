@@ -21,6 +21,37 @@ SavedItem sampleLink() => SavedItem(
 
 void main() {
   group('BackupCodec', () {
+    test('validates repository item counts against the backup limit', () {
+      expect(
+        () => BackupCodec.validateItemCount(
+          currentCount: BackupCodec.maxItems - 1,
+          incomingCount: 1,
+        ),
+        returnsNormally,
+      );
+      expect(
+        () => BackupCodec.validateItemCount(
+          currentCount: BackupCodec.maxItems,
+          incomingCount: 0,
+        ),
+        returnsNormally,
+      );
+      expect(
+        () => BackupCodec.validateItemCount(
+          currentCount: BackupCodec.maxItems,
+          incomingCount: 1,
+        ),
+        throwsFormatException,
+      );
+      expect(
+        () => BackupCodec.validateItemCount(
+          currentCount: -1,
+          incomingCount: 0,
+        ),
+        throwsFormatException,
+      );
+    });
+
     test('round-trips items and collection names', () {
       final json = BackupCodec.encode(
         items: [sampleLink()],
