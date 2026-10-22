@@ -344,3 +344,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: NFR-006 (accessible controls and announced state).
 - Test: TC-058 in `test/quick_save_test.dart`.
 - Verification: source/test committed; execution and assistive-technology verification remain pending.
+
+
+### TSK-352 — Legacy URL external-launch guard
+
+- Implementation under test: `lib/main.dart`, Item Details `_openOrShare`, with `parseHttpUrl`.
+- Requirements: FR-017–018 and NFR-006 (safe external actions and accessible feedback).
+- Test: TC-059 in `test/external_navigation_test.dart`; parser unit tests are in `test/web_url_test.dart`.
+- Verification: regression committed but unrun; platform launcher behavior remains pending.
