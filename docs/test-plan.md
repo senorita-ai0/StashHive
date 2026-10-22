@@ -687,3 +687,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Decode a backup containing one or more attachments and confirm byte content, metadata, checksum validation and restore output remain unchanged.
 - Review the temporary parsed attachment map to confirm its `base64` field is removed only after the corresponding byte payload has passed size and integrity validation.
 - Existing backup codec regression source covers the returned behavior but is unrun; measure memory use on a large backup during the manual performance checkpoint.
+
+
+### TC-099 — Picked attachment filename preflight
+
+- Select a file with a normal filename and confirm it continues to the size-first read flow.
+- With a platform/mocked picker fixture returning an empty or more-than-255-character name, confirm the specific filename message appears before `length()` or `readAsBytes()` is called.
+- Source is committed; exercise actual picker/provider behavior on Android and web during the manual validation checkpoint.
