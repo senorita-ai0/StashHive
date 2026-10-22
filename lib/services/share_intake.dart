@@ -15,7 +15,7 @@ const int maxIncomingAttachmentBytes = BackupCodec.maxAttachmentBytes;
 const int maxIncomingUrlCharacters = maxSavedItemUrlCharacters;
 const int maxIncomingTextCharacters = 1000000;
 
-/// A user-selected or OS-shared item ready to prefill StashHive's save form.
+/// A user-selected or OS-shared item ready to prefill StashTrail's save form.
 class IncomingShare {
   const IncomingShare({
     required this.kind,
@@ -369,7 +369,7 @@ class ShareIntake {
         !_documentExtensions.contains(extension) &&
         !_documentMimeTypes.contains(mimeType)) {
       throw const FormatException(
-        'StashHive currently accepts shared images and PDF, TXT, DOC/DOCX, RTF or CSV files.',
+        'StashTrail currently accepts shared images and PDF, TXT, DOC/DOCX, RTF or CSV files.',
       );
     }
     if (fileName.length > 255) {
