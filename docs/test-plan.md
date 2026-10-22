@@ -1035,3 +1035,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Inject a repository error during item deletion and collection deletion. Confirm the user sees a clear retry message, the underlying exception text is not displayed, and the rollback regression continues to preserve affected data.
 - Cause unexpected errors during file selection, save, backup export and restore. Confirm raw plugin/storage details are not rendered into normal operation messages. App-defined `FormatException` validation guidance should remain actionable (including file/backup limits and invalid fields).
 - The collection/item deletion widget regressions assert generic fallback text and that the injected exception is absent. Remaining error branches and platform-provided messages need manual review; test source is committed but unrun.
+
+
+### TC-137 — Startup storage errors do not expose raw diagnostics
+
+- Render the startup failure screen and confirm it gives platform-appropriate recovery instructions without a selectable/raw exception string.
+- Confirm web guidance refers to browser-profile storage and native guidance to device storage. Neither branch should display an exception that may include filesystem paths.
+- Widget regression source checks the fallback copy and absence of `SelectableText`; source is committed but unrun.
