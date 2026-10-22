@@ -25,6 +25,7 @@ class DecodedBackup {
     required this.collections,
     required this.exportedAt,
     this.omittedUnreadableRecordCount = 0,
+    this.omittedCollectionEntryCount = 0,
   });
 
   final List<SavedItem> items;
@@ -35,6 +36,10 @@ class DecodedBackup {
   /// Number of local records explicitly omitted by the exporter because their
   /// stored shape could not be decoded. Zero for old/complete backups.
   final int omittedUnreadableRecordCount;
+
+  /// Number of legacy collection entries/assignments omitted or normalized
+  /// during local collection recovery. Optional for backward compatibility.
+  final int omittedCollectionEntryCount;
 }
 
 class BackupCodec {
@@ -168,8 +173,10 @@ class BackupCodec {
     required Map<String, Uint8List> attachmentBytes,
     required List<String> collections,
     int omittedUnreadableRecordCount = 0,
+    int omittedCollectionEntryCount = 0,
   }) {
-    if (omittedUnreadableRecordCount < 0) {
+    if (omittedUnreadableRecordCount < 0 ||
+        omittedCollectionEntryCount < 0) {
       throw const FormatException('The backup omission count is invalid.');
     }
     if (items.length > maxItems) {
@@ -242,6 +249,8 @@ class BackupCodec {
       'attachments': attachments,
       if (omittedUnreadableRecordCount > 0)
         'omittedUnreadableRecordCount': omittedUnreadableRecordCount,
+      if (omittedCollectionEntryCount > 0)
+        'omittedCollectionEntryCount': omittedCollectionEntryCount,
     });
     if (output.length > maxJsonCharacters ||
         utf8ByteLength(output) > maxBackupBytes) {
@@ -275,8 +284,11 @@ class BackupCodec {
       );
     }
     final omittedRecordValue = decoded['omittedUnreadableRecordCount'];
-    if (omittedRecordValue != null &&
-        (omittedRecordValue is! int || omittedRecordValue < 0)) {
+    final omittedCollectionValue = decoded['omittedCollectionEntryCount'];
+    if ((omittedRecordValue != null &&
+            (omittedRecordValue is! int || omittedRecordValue < 0)) ||
+        (omittedCollectionValue != null &&
+            (omittedCollectionValue is! int || omittedCollectionValue < 0))) {
       throw const FormatException(
         'The backup omission metadata is invalid.',
       );
@@ -424,6 +436,8 @@ class BackupCodec {
       exportedAt: decoded['exportedAt'] is String ? decoded['exportedAt'] as String : '',
       omittedUnreadableRecordCount:
           omittedRecordValue is int ? omittedRecordValue : 0,
+      omittedCollectionEntryCount:
+          omittedCollectionValue is int ? omittedCollectionValue : 0,
     );
   }
   /// Validates only the on-disk field types and collection sizes needed to
