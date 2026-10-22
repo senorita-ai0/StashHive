@@ -1368,8 +1368,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
       final content = _contentController.text.trim();
       if (_kind == ItemKind.link) {
         final entered = _urlController.text.trim();
-        final candidate = entered.contains('://') ? entered : 'https://' + entered;
-        final uri = parseHttpUrl(candidate);
+        final uri = parseUserWebUrl(entered);
         if (uri == null) {
           _showMessage('Enter a valid http or https website URL.');
           setState(() => _saving = false);
@@ -1532,13 +1531,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                       ),
                       validator: (value) {
                         if ((value ?? '').trim().isEmpty) return 'Enter a website URL.';
-                        final input = value!.trim();
-                        final candidate = input.contains('://') ? input : 'https://' + input;
-                        final uri = Uri.tryParse(candidate);
-                        final scheme = uri?.scheme.toLowerCase() ?? '';
-                        if (uri == null ||
-                            (scheme != 'https' && scheme != 'http') ||
-                            uri.host.isEmpty) {
+                        if (parseUserWebUrl(value) == null) {
                           return 'Enter a valid http or https URL.';
                         }
                         return null;
