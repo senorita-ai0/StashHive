@@ -139,6 +139,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Expanded item-type label contrast coverage to include unselected states on light and dark surfaces; Quick Save now chooses readable foregrounds for all four types.
 - [x] Centralized attachment byte-list validation, including a pre-iteration length cap for oversized legacy payloads.
 - [x] Bound raw local record field sizes during recovery so oversized records are skipped and counted while parseable legacy records with safe-to-display field sizes remain visible.
+- [x] Added Item Details regression source for missing legacy image/document payloads and restore guidance.
 - [x] Added credential-bearing URL, URL boundary, tag integrity, collision-safe ID and responsive kind-selector regression source.
 
 ## Current validation state — 2026-10-22
