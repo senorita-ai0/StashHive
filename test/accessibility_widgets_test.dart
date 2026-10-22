@@ -460,6 +460,38 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Collection contents match assignments ignoring casing', (tester) async {
+    repository.items.value = const [
+      SavedItem(
+        id: 'lowercase-collection-content',
+        kind: ItemKind.link,
+        title: 'Case-insensitive collection result',
+        content: '',
+        url: 'https://example.com/case',
+        tags: [],
+        collection: 'learning',
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 2,
+      ),
+    ];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.CollectionContentsPage(
+          repository: repository,
+          collection: 'Learning',
+          onOpenItem: (_) {},
+          onAdd: (_) {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Case-insensitive collection result'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Collection row actions have contextual tooltips', (tester) async {
     await repository.addCollection('Learning');
     await repository.save(
