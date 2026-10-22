@@ -694,3 +694,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-386:** Local-record shape validation now checks created/updated timestamps against the supported date range before making the record available to date formatting and detail views. Records with unrepresentable timestamps are skipped and included in the recovery banner rather than risking a later date-conversion exception.
 - Extended the existing malformed-record regression to assert the bad timestamp is excluded from direct lookup too. Test source is committed but unrun.
+
+
+### Phase 2 — validate decoded objects at the restore mutation boundary (2026-10-22)
+
+- **TSK-387:** `restoreDecodedBackup` now revalidates in-memory objects before writing. The guard checks item fields/unique IDs, required attachment payloads and metadata, byte caps, omission counts, and collection name constraints; restore preflight also merges collection names assigned on items before enforcing the 500-name limit.
+- Added codec/repository regressions for missing payloads, invalid attachment metadata, duplicate IDs, item-only collection assignments and pre-write collection overflow. Test source is committed but unrun.
