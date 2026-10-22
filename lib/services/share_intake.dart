@@ -100,13 +100,12 @@ class ShareEventDeduplicator {
           SharedMediaType.text => <Object?>[
               item.type.name,
               message.isNotEmpty ? message : path,
-              mimeType,
             ],
-          // URL intake preserves the accompanying message as draft context.
+          // URL intake uses the path plus accompanying draft context; MIME
+          // metadata does not change the user-visible URL draft.
           SharedMediaType.url => <Object?>[
               item.type.name,
               path,
-              mimeType,
               message,
             ],
           // File/image/video intake does not use the platform message field.
