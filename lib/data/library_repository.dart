@@ -122,6 +122,42 @@ class LibraryRepository {
     return null;
   }
 
+  /// Selects a safe key for replacement bytes without overwriting another
+  /// item's shared payload or an orphaned/corrupt attachment record.
+  String attachmentKeyForReplacement(
+    String itemId, {
+    String? currentAttachmentKey,
+  }) {
+    final targetHasStoredPayload = _attachmentsBox.containsKey(itemId);
+    final targetIsCurrentKey = currentAttachmentKey == itemId;
+    final targetIsShared = targetIsCurrentKey &&
+        isAttachmentReferencedByOtherItem(itemId, itemId);
+
+    if (!targetHasStoredPayload || (targetIsCurrentKey && !targetIsShared)) {
+      return itemId;
+    }
+
+    var candidate = createId();
+    while (_itemsBox.containsKey(candidate) ||
+        _attachmentsBox.containsKey(candidate)) {
+      candidate = createId();
+    }
+    return candidate;
+  }
+
+  /// True if a raw item record other than [itemId] references [key].
+  ///
+  /// Inspect raw records, not only decoded items, so a malformed record does
+  /// not cause its shared payload to be overwritten by a replacement.
+  bool isAttachmentReferencedByOtherItem(String itemId, String key) {
+    for (final storedId in _itemsBox.keys) {
+      if (storedId == itemId) continue;
+      final value = _itemsBox.get(storedId);
+      if (value is Map && value['attachmentKey'] == key) return true;
+    }
+    return false;
+  }
+
   bool _isValidAttachmentBytes(Object? value) {
     if (value is! List || value.isEmpty) return false;
     return value.every(
