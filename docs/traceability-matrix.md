@@ -8,7 +8,7 @@
 | FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104 | TC-002 | IN PROGRESS — source added; build/test pending |
 | FR-003 | SCR-004 | TSK-102, TSK-105 | TC-003 | IN PROGRESS — source added; build/test pending |
 | FR-004 | SCR-001, SCR-003 | TSK-103, TSK-201, TSK-413 | TC-004, TC-117 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
-| FR-005 | SCR-001, SCR-003 | TSK-202 | TC-005 | IN PROGRESS — source added; build/test pending |
+| FR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-118 | IN PROGRESS — Unicode regression source added; execution/platform review pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105 | TC-008 | IN PROGRESS — source added; real platform test pending |
@@ -27,7 +27,7 @@
 | NFR-002 | SCR-006 | TSK-304 | TC-018 | NOT STARTED |
 | NFR-003 | SCR-006 | TSK-006, TSK-301–305 | TC-012–015 | NOT STARTED |
 | NFR-004 | SCR-004 | TSK-203 | TC-006, TC-017 | NOT STARTED |
-| NFR-005 | SCR-001, SCR-003 | TSK-202 | TC-005, TC-016 | NOT STARTED |
+| NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
 | NFR-006 | All screens | TSK-103, TSK-304 | UI/accessibility checklist | IN PROGRESS — text scaling, semantics and contrast source/tests added; execution and platform checks pending |
 | NFR-007 | Search/list | TSK-003, TSK-305, TSK-412 | TC-116 / Performance baseline | IN PROGRESS — non-gating harness added; measurements pending |
 | NFR-008 | Attachments / OCR | TSK-005, TSK-305 | Package-size benchmark | NOT STARTED |
@@ -896,3 +896,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (portable bounded backups without local data deletion).
 - Test: TC-115 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-414 — Expanded Unicode search coverage
+
+- Implementation: model-level `SavedItem.matchesQuery` behavior exercised by `test/saved_item_test.dart`.
+- Requirements: FR-005 and NFR-005 (preserve and find user-entered text across English, Urdu-script, Roman Urdu, emoji, accents and punctuation).
+- Test: TC-118 in `test/saved_item_test.dart`.
+- Verification: regression source committed but unrun; no OCR or canonical Unicode normalization guarantee is implied.
