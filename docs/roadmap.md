@@ -272,3 +272,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-336:** Added a separate darker `readableTextAccent` for small item-type labels while preserving the original accents for icons and borders on other surfaces. Link, note, image and document labels now exceed 4.5:1 contrast against their pastel badge fills.
 - Library, Quick Save and Item Details use the readable label accent. Added a regression across every `ItemKind`; tests are authored but unrun, and visual theme checks remain pending.
+
+
+### Phase 3 — favorite-state icon contrast (2026-10-22)
+
+- **TSK-337:** The saved-favorite star now uses a theme-aware foreground: a deeper amber on light surfaces and a brighter gold on dark surfaces. This improves contrast without forcing the gold into an unsuitable shade for both themes.
+- Added contrast checks for the star color against theme surfaces, canvas and input fill. Regression source is committed but unrun; manual visual review remains pending.
