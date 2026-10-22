@@ -65,7 +65,7 @@ void main() {
 
     expect(find.text('Keep your library safe'), findsOneWidget);
     expect(find.textContaining('does not sync'), findsOneWidget);
-    await tester.tap(find.text('Create backup'));
+    await tester.tap(find.text('Backup options'));
     expect(backupRequested, isTrue);
     await tester.tap(find.text('Got it'));
     expect(dismissed, isTrue);
