@@ -342,7 +342,7 @@ void main() {
 
     expect(repository.skippedCollectionCount.value, 2);
     expect(
-      find.textContaining('2 collection entries were invalid'),
+      find.textContaining('2 collection names or assignments were invalid'),
       findsOneWidget,
     );
     expect(
@@ -384,8 +384,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.textContaining('1 saved record(s) could not be read.'), findsOneWidget);
-    expect(find.textContaining('2 collection entries were invalid'), findsOneWidget);
-    expect(find.textContaining('previous known-good backup'), findsOneWidget);
+    expect(find.textContaining('2 collection names or assignments were invalid'), findsOneWidget);
+    expect(find.textContaining('Move any item assignment that exceeds the cap'), findsOneWidget);
 
     final exportButton = find.widgetWithText(FilledButton, 'Create backup');
     await tester.ensureVisible(exportButton);
@@ -398,7 +398,7 @@ void main() {
       findsOneWidget,
     );
     expect(
-      find.textContaining('2 collection preference entries were invalid'),
+      find.textContaining('2 collection names or assignments were invalid'),
       findsOneWidget,
     );
     expect(find.textContaining('raw local entries will not be deleted'), findsOneWidget);
