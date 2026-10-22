@@ -430,3 +430,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-362:** `LibraryRepository.save` now rejects an attachment-byte write when another raw saved-item record references the same attachment key. The guard protects shared data even if a caller bypasses Quick Save's copy-on-write key selection.
 - Added a repository regression proving the attempted write is rejected, the record remains unchanged, and shared bytes remain intact. Test source is committed but unrun.
+
+
+### Phase 2 — bound raw field sizes during recovery (2026-10-22)
+
+- **TSK-363:** Local reload now applies explicit size bounds to item ID, title, content, URL, collection and attachment metadata before presenting a stored record. Parseable legacy semantic issues (for example a non-web URL or missing attachment) stay visible; raw values that exceed structural limits are skipped and included in the recovery warning count.
+- Expanded the repository regression with an oversized legacy note payload. Test source is committed but unrun.
