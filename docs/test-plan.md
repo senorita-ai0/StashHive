@@ -985,3 +985,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Trigger the existing post-attachment-delete fault seam so the delete operation reports an error after removing the payload.
 - Confirm the raw item is restored, the original attachment bytes are restored, and the unreadable-record count reflects the record again.
 - Regression source is committed but unrun; recovery under actual storage interruption still needs platform validation.
+
+
+### TC-130 — First-launch local-storage safety reminder
+
+- Start with a fresh preferences box and launch StashTrail. Confirm the Library shows a dismissible reminder that the library is local-only, with wording specific to the browser profile on web or app/device storage on Android.
+- Confirm the message states that clearing local data can erase the library and that it does not sync automatically. Activate **Create backup** and verify Backup & privacy opens directly; return and test **Got it**.
+- Confirm dismissal is persisted in the same local preferences store and the reminder does not reappear after closing and reopening the boxes. With a fresh browser profile/device store, confirm the reminder appears again.
+- Repository and widget regression source is committed but unrun; web/Android first-launch behavior remains pending the manual validation checkpoint.
