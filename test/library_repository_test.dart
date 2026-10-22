@@ -850,6 +850,62 @@ void main() {
     );
   });
 
+  test('deleting an unreadable legacy item reclaims its unreferenced attachment', () async {
+    const itemId = 'unreadable-image-record';
+    const attachmentKey = 'unreadable-orphan-payload';
+    final storedItems = Hive.box<dynamic>('stashhive_items_v1');
+    final storedAttachments = Hive.box<dynamic>('stashhive_attachments_v1');
+    await storedItems.put(itemId, <String, Object?>{
+      'id': itemId,
+      'kind': 'unknown-kind',
+      'attachmentKey': attachmentKey,
+    });
+    await storedAttachments.put(
+      attachmentKey,
+      Uint8List.fromList([3, 1, 4, 1, 5]),
+    );
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.skippedRecordCount.value, 1);
+    await repository.delete(itemId);
+
+    expect(storedItems.containsKey(itemId), isFalse);
+    expect(storedAttachments.containsKey(attachmentKey), isFalse);
+    expect(repository.skippedRecordCount.value, 0);
+  });
+
+  test('deleting an unreadable record keeps bytes still referenced by another item', () async {
+    const itemId = 'unreadable-shared-record';
+    const attachmentKey = 'payload-shared-with-valid-item';
+    final bytes = Uint8List.fromList([2, 7, 1, 8]);
+    await repository.save(
+      buildImage(id: 'valid-shared-reference', attachmentKey: attachmentKey),
+      attachmentBytes: bytes,
+    );
+    await Hive.box<dynamic>('stashhive_items_v1').put(itemId, <String, Object?>{
+      'id': itemId,
+      'kind': 'unknown-kind',
+      'attachmentKey': attachmentKey,
+    });
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.skippedRecordCount.value, 1);
+    await repository.delete(itemId);
+
+    expect(
+      Hive.box<dynamic>('stashhive_attachments_v1').containsKey(attachmentKey),
+      isTrue,
+    );
+    expect(
+      await repository.readAttachment(attachmentKey),
+      orderedEquals(bytes),
+    );
+    expect(repository.findById('valid-shared-reference')?.hasAttachment, isTrue);
+    expect(repository.skippedRecordCount.value, 0);
+  });
+
   test('restores item and attachment when delete fails after attachment removal', () async {
     final originalBytes = Uint8List.fromList([9, 8, 7, 6]);
     final image = buildImage();
