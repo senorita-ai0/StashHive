@@ -1998,6 +1998,29 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                   child: Image.memory(
                     snapshot.data!,
                     semanticLabel: 'Image: ${item.title}',
+                    errorBuilder: (context, error, stackTrace) => SizedBox(
+                      height: 180,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.broken_image_outlined,
+                                size: 40,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                              const SizedBox(height: 10),
+                              const Text(
+                                'Preview unavailable. The original attachment is still saved and can be shared.',
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 );
               },
