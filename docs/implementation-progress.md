@@ -149,6 +149,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Legacy collection preferences are normalized case-insensitively and capped at 500 on reload; skipped entries share the accessible recovery warning.
 - [x] Valid collection names assigned on saved items are merged into collection navigation when absent from preferences; legacy collection strings are canonicalized on read.
 - [x] Repository save enforces the 500-collection limit even when a new name is introduced only by item metadata, not by Add Collection.
+- [x] Collection creation now rolls back preference writes when the storage future reports a late failure; a fault-injection regression covers the no-prior-key case.
 - [x] Added a narrow-width, 2× text widget regression and constrained the Library brand title to avoid fixed-row overflow.
 - [x] Removed redundant attachment byte-buffer copies during share intake, Quick Save save, and backup restore staging; existing byte-integrity assertions cover these paths.
 - [x] Forced-image share intents now avoid persisting a contradictory non-image MIME header; a regression covers an extensionless image with a text MIME header.
