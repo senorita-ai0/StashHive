@@ -248,3 +248,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009, aligned with backup URL limits in FR-012–013.
 - Test: TC-046 in `test/share_intake_test.dart`.
 - Verification: source/test committed, execution pending.
+
+
+### TSK-340 — Shared image/document intake regression suite
+
+- Implementation under test: `lib/services/share_intake.dart`.
+- Requirement: FR-008–009 (file import and incoming share intake).
+- Test: TC-047 in `test/share_intake_test.dart`.
+- Verification: tests are committed but unrun; real Android content URI permissions and persistence remain pending.
