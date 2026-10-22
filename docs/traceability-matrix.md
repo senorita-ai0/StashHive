@@ -151,3 +151,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 (backup and restore), NFR-003 (storage efficiency and recovery).
 - Tests: TC-034, `test/backup_codec_test.dart`, and `test/library_repository_test.dart`.
 - Verification: regression source committed; execution and platform interruption checks remain pending.
+
+
+### TSK-328 — Share message included in event fingerprint
+
+- Implementation: `lib/services/share_intake.dart`, canonical SHA-256 fingerprint includes `SharedMediaFile.message`.
+- Requirement: FR-009 (incoming shared content and user-supplied context).
+- Test: TC-035 in `test/share_intake_test.dart`.
+- Verification: source and regression committed; test and real Android delivery behavior remain unverified.
