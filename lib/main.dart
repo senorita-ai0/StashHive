@@ -649,7 +649,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
-                                      '${messages.join(' ')} The raw entries were not deleted, but this view or a new backup may omit invalid entries. Avoid clearing app/browser data; use a previous backup if you need to recover data.',
+                                      "${messages.join(' ')} The raw entries were not deleted, but this view or a new backup may omit invalid entries. Avoid clearing app/browser data; use a previous backup if you need to recover data.",
                                       style: TextStyle(
                                         color: Theme.of(context).colorScheme.onErrorContainer,
                                         height: 1.35,
