@@ -223,6 +223,12 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added TC-118 and traced it to FR-005/NFR-005; explicitly documented that this does not claim OCR or normalization-equivalence support.
 - [ ] Run TC-118 at the manual validation checkpoint and review end-to-end search with Urdu-script and emoji input on supported platforms.
 
+## Phase 2 — unique item IDs in exported backups (2026-10-22)
+
+- [x] Added an encoder-boundary guard rejecting duplicate saved-item IDs, keeping direct encode calls consistent with decoder/restore identity validation.
+- [x] Added TC-119 and traced the behavior to backup portability requirements.
+- [ ] Run TC-119 at the manual validation checkpoint; no backup test execution is claimed.
+
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-118 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-119 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
