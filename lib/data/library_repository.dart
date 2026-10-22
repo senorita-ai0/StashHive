@@ -97,12 +97,11 @@ class LibraryRepository {
       final value = entry.value;
       if (value is! Map) continue;
       try {
-        // Validate the raw shape first; SavedItem.fromMap intentionally
-        // normalizes some fields for model convenience and could otherwise
-        // hide malformed persisted values.
-        BackupCodec.validateSavedItemMap(value);
+        // Validate raw field types first. Keep parseable legacy records visible
+        // so missing attachments or unsafe URLs can show recovery feedback;
+        // strict save/export rules must not make such records disappear.
+        BackupCodec.validateStoredRecordMap(value);
         final item = SavedItem.fromMap(value);
-        BackupCodec.validateSavedItem(item);
         if (entry.key is! String || entry.key != item.id) {
           throw const FormatException(
             'A saved item key does not match its item identifier.',
