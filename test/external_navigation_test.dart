@@ -24,6 +24,79 @@ void main() {
     await testDirectory.delete(recursive: true);
   });
 
+  testWidgets('missing legacy image payload shows recovery feedback', (tester) async {
+    const legacyId = 'legacy-missing-image-detail';
+    final legacyItem = SavedItem(
+      id: legacyId,
+      kind: ItemKind.image,
+      title: 'Old image reference',
+      content: '',
+      tags: const [],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 1000,
+      attachmentKey: 'missing-image-payload',
+      attachmentName: 'reference.png',
+      attachmentMimeType: 'image/png',
+    );
+    await Hive.box<dynamic>('stashhive_items_v1')
+        .put(legacyId, legacyItem.toMap());
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.ItemDetailsPage(
+          repository: repository,
+          itemId: legacyId,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('View image'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('The local image is missing.'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('missing legacy document payload recommends restore', (tester) async {
+    const legacyId = 'legacy-missing-document-detail';
+    final legacyItem = SavedItem(
+      id: legacyId,
+      kind: ItemKind.document,
+      title: 'Old document reference',
+      content: '',
+      tags: const [],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 1000,
+      attachmentKey: 'missing-document-payload',
+      attachmentName: 'report.pdf',
+      attachmentMimeType: 'application/pdf',
+    );
+    await Hive.box<dynamic>('stashhive_items_v1')
+        .put(legacyId, legacyItem.toMap());
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.ItemDetailsPage(
+          repository: repository,
+          itemId: legacyId,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Open / share file'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('The local file is missing. Restore a backup if you have one.'),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('legacy non-web URL is rejected before external launch', (tester) async {
     const legacyId = 'legacy-malicious-link';
     final legacyItem = SavedItem(
