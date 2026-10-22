@@ -115,7 +115,6 @@ class ShareEventDeduplicator {
       media.map((item) {
         final path = item.path.trim();
         final message = item.message?.trim() ?? '';
-        final mimeType = _effectiveFileMime(item);
         return switch (item.type) {
           // Text intake selects exactly one effective text field; ignore the
           // unused path/message representation to match the actual draft.
@@ -134,7 +133,7 @@ class ShareEventDeduplicator {
           SharedMediaType.image ||
           SharedMediaType.file ||
           SharedMediaType.video =>
-            <Object?>[item.type.name, path, mimeType],
+            <Object?>[item.type.name, path, _effectiveFileMime(item)],
         };
       }).toList(growable: false),
     );
