@@ -672,3 +672,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008–009 and NFR-003 (bounded file intake and consistent metadata constraints).
 - Test: TC-099 manual/mocked picker case.
 - Verification: source committed; picker-specific behavior remains pending.
+
+
+### TSK-393 — Effective MIME share fingerprint
+
+- Implementation: `ShareEventDeduplicator._effectiveFileMime` in `lib/services/share_intake.dart`.
+- Requirement: FR-009 (avoid duplicate incoming drafts when provider metadata differs without changing the effective draft).
+- Test: TC-100 in `test/share_intake_test.dart`.
+- Verification: source/test committed but unrun.
