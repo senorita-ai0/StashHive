@@ -656,3 +656,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (portable backup and bounded restore memory).
 - Test: TC-097 in `test/backup_codec_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-391 — Release parsed base64 data after decode
+
+- Implementation: `BackupCodec.decode`, removing each successfully validated attachment's `base64` entry from the temporary JSON map.
+- Requirements: FR-012–013 and NFR-003 (bounded restore memory and validated attachment integrity).
+- Test: TC-098 references existing byte/checksum assertions in `test/backup_codec_test.dart` and `test/library_repository_test.dart`.
+- Verification: source committed; tests and memory profile remain pending.
