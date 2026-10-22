@@ -1,8 +1,8 @@
 # StashHive — Blueprint and Implementation Status
 
 **Blueprint:** Approved for implementation on 21 October 2026.  
-**Current phase:** Phase 1 — Core local library.  
-**Current verification:** CI is in progress/being corrected; no successful build should be assumed.
+**Current phase:** Phase 3 — platform assurance source development; Phase 2 Android share/recovery and build verification remains pending.  
+**Current verification:** GitHub Actions is manual-only by owner request; recent Phase 2/3 regressions are authored but unrun, and no current build success is claimed.
 
 ## Product
 
@@ -33,6 +33,6 @@ The first Flutter source increment contains the app shell, local repository/mode
 - Run analyzer, tests, web release build and Android debug build; fix issues based on CI logs.
 - Validate on a real Android device and in a browser.
 - Test backup handling, local-storage loss scenarios and import errors.
-- Implement Android share-intent receiver after manual-save/search flow is verified.
+- Verify the implemented Android share-intent receiver after the manual-save/search flow: supported MIME types, batch progression, cold-start/stream de-duplication, cancellation and unreadable-file recovery.
 - OCR dependencies remain unselected until a separate feasibility report.
 - Owner approval authorizes implementation only—not deployment, purchases, store publishing, paid services or monetization.
