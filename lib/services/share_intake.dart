@@ -7,6 +7,7 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 import '../models/saved_item.dart';
 import 'mime_types.dart';
+import 'web_url.dart';
 
 const int maxIncomingAttachmentBytes = 15 * 1024 * 1024;
 const int maxIncomingUrlCharacters = maxSavedItemUrlCharacters;
@@ -379,7 +380,7 @@ class ShareIntake {
       // Continue accepting bare domains like "example.com/path".
       return null;
     }
-    return uri;
+    return parseHttpUrl(uri.toString());
   }
   static String _basename(String path) {
     final normalized = path.replaceAll('\\', '/');
