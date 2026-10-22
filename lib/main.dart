@@ -32,6 +32,16 @@ Color favoriteStarColor(BuildContext context) =>
     Theme.of(context).brightness == Brightness.dark
         ? const Color(0xFFE1A52B)
         : const Color(0xFF996400);
+
+/// Preserve app-defined validation guidance without exposing raw plugin or
+storage exception details in normal user-facing messages.
+String _messageForOperationError(
+  Object error, {
+  required String fallback,
+}) {
+  if (error is FormatException) return error.message.toString();
+  return fallback;
+}
 const Color kCanvas = Color(0xFFF8F9FD);
 const Color kBorder = Color(0xFFE7E9F2);
 const int kMaxAttachmentBytes = BackupCodec.maxAttachmentBytes;
@@ -1611,7 +1621,12 @@ class _QuickSavePageState extends State<QuickSavePage> {
         _selectedMimeType = _mimeTypeFor(file.name);
       });
     } catch (error) {
-      _showMessage('The file could not be selected: ' + error.toString());
+      _showMessage(
+        _messageForOperationError(
+          error,
+          fallback: 'The file could not be selected. Try choosing it again.',
+        ),
+      );
     }
   }
 
@@ -2295,7 +2310,13 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     try {
       await widget.repository.delete(item.id);
     } catch (error) {
-      _message('Could not delete this item. ' + error.toString());
+      _message(
+        'Could not delete this item. ' +
+            _messageForOperationError(
+              error,
+              fallback: 'The item remains in your library. Please try again.',
+            ),
+      );
       return;
     }
     if (mounted) Navigator.of(context).pop();
@@ -2643,7 +2664,16 @@ class _CollectionsPageState extends State<CollectionsPage> {
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.toString().replaceFirst('FormatException: ', ''))),
+          SnackBar(
+            content: Text(
+              _messageForOperationError(
+                error,
+                fallback: oldName == null
+                    ? 'Could not create the collection. Please try again.'
+                    : 'Could not rename the collection. Please try again.',
+              ),
+            ),
+          ),
         );
       }
     }
@@ -2672,7 +2702,10 @@ class _CollectionsPageState extends State<CollectionsPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            error.toString().replaceFirst('FormatException: ', ''),
+            _messageForOperationError(
+              error,
+              fallback: 'Could not delete the collection. Please try again.',
+            ),
           ),
         ),
       );
@@ -3320,7 +3353,13 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         );
       }
     } catch (error) {
-      _message('Could not create a backup: ' + error.toString());
+      _message(
+        'Could not create a backup. ' +
+            _messageForOperationError(
+              error,
+              fallback: 'Check available storage and try again.',
+            ),
+      );
     } finally {
       if (mounted) setState(() => _exporting = false);
     }
@@ -3411,7 +3450,13 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
     } on FormatException catch (error) {
       _message('Backup not imported: ' + error.message.toString());
     } catch (error) {
-      _message('Could not restore the backup: ' + error.toString());
+      _message(
+        'Could not restore this backup. ' +
+            _messageForOperationError(
+              error,
+              fallback: 'Check the selected file and try again.',
+            ),
+      );
     } finally {
       if (mounted) {
         setState(() {
