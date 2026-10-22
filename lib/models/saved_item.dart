@@ -131,14 +131,19 @@ class SavedItem {
 
   factory SavedItem.fromMap(Map<dynamic, dynamic> raw) {
     final tagsValue = raw['tags'];
-    final tags = tagsValue is List
-        ? tagsValue
-            .whereType<String>()
-            .map((tag) => tag.trim())
-            .where((tag) => tag.isNotEmpty)
-            .toSet()
-            .toList()
-        : <String>[];
+    final seenTags = <String>{};
+    final tags = <String>[];
+    if (tagsValue is List) {
+      for (final value in tagsValue) {
+        if (value is! String) continue;
+        final tag = value.trim();
+        if (tag.isNotEmpty && seenTags.add(tag.toLowerCase())) {
+          // Preserve the spelling of the first occurrence while treating tags
+          // case-insensitively, consistent with Quick Save and tag filters.
+          tags.add(tag);
+        }
+      }
+    }
     return SavedItem(
       id: raw['id'] is String ? raw['id'] as String : '',
       kind: ItemKind.fromWire(raw['kind']),
