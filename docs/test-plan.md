@@ -935,3 +935,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Mutate the caller's input buffer during the post-attachment/pre-item-commit hook.
 - Confirm `readAttachment` returns the original byte sequence, independent of later caller mutations.
 - Repository regression source is committed but unrun.
+
+
+### TC-123 — Reject unreferenced backup attachment payloads
+
+- Decode a backup containing no items but one attachment entry with invalid base64; confirm the decoder rejects the orphan key with a reference error before reporting a base64 error.
+- Construct a `DecodedBackup` directly with an attachment not referenced by any item; confirm restore-boundary validation rejects it too.
+- Codec regression source is committed but unrun; confirm compatibility with valid version-1 backups on the manual checkpoint.
