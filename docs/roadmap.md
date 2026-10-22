@@ -364,3 +364,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-351:** Quick Save's Link/Note/Image/Document options now expose button semantics and the currently selected option through the selected state, while keeping the visual tiles and pointer interactions intact.
 - Added a widget regression that checks the selected state and activates another choice through the semantics action. Test source is committed but unrun; TalkBack and browser screen-reader confirmation remain pending.
+
+
+### Phase 2/3 — legacy URL launch guard widget coverage (2026-10-22)
+
+- **TSK-352:** Added a widget regression that injects a non-web URL into raw storage as if it were a legacy record, opens Item Details and verifies the safe rejection message appears instead of the external-launch failure message.
+- Test source is committed but unrun; external app/browser launch behavior remains pending the manual checkpoint.
