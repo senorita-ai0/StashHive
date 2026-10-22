@@ -365,6 +365,84 @@ void main() {
     );
   });
 
+  test('rejects attachment references inconsistent with an item kind', () async {
+    await expectLater(
+      repository.save(buildLink().copyWith(attachmentKey: 'wrong-kind')),
+      throwsFormatException,
+    );
+    await expectLater(
+      repository.save(buildImage().copyWith(clearAttachment: true)),
+      throwsFormatException,
+    );
+    expect(repository.items.value, isEmpty);
+  });
+
+  test('removing an item attachment reference reclaims unused bytes', () async {
+    final original = buildImage(id: 'convertible-image');
+    final originalBytes = Uint8List.fromList([1, 4, 9, 16]);
+    await repository.save(original, attachmentBytes: originalBytes);
+    expect(
+      await repository.readAttachment(original.attachmentKey!),
+      orderedEquals(originalBytes),
+    );
+
+    final note = SavedItem(
+      id: original.id,
+      kind: ItemKind.note,
+      title: 'Converted note',
+      content: 'The image is no longer attached.',
+      tags: const ['Converted'],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: original.createdAtMs,
+      updatedAtMs: original.updatedAtMs + 1,
+    );
+    await repository.save(note);
+
+    expect(repository.findById(original.id)?.kind, ItemKind.note);
+    expect(repository.findById(original.id)?.attachmentKey, isNull);
+    expect(
+      Hive.box<dynamic>('stashhive_attachments_v1')
+          .containsKey(original.attachmentKey),
+      isFalse,
+    );
+  });
+
+  test('keeps an old attachment when another saved item still references it', () async {
+    const attachmentKey = 'shared-during-kind-change';
+    final originalBytes = Uint8List.fromList([3, 1, 4, 1, 5]);
+    final original = buildImage(
+      id: 'owner-image',
+      attachmentKey: attachmentKey,
+    );
+    final dependent = buildImage(
+      id: 'dependent-image',
+      attachmentKey: attachmentKey,
+    );
+    await repository.save(original, attachmentBytes: originalBytes);
+    await repository.save(dependent);
+
+    final note = SavedItem(
+      id: original.id,
+      kind: ItemKind.note,
+      title: 'Image description',
+      content: 'This note still shares storage with another item.',
+      tags: const [],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: original.createdAtMs,
+      updatedAtMs: original.updatedAtMs + 1,
+    );
+    await repository.save(note);
+
+    expect(repository.findById(original.id)?.attachmentKey, isNull);
+    expect(repository.findById(dependent.id)?.attachmentKey, attachmentKey);
+    expect(
+      await repository.readAttachment(attachmentKey),
+      orderedEquals(originalBytes),
+    );
+  });
+
   test('a missing attachment cannot be saved as though it were local', () async {
     final item = buildImage();
     await expectLater(
