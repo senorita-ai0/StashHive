@@ -646,3 +646,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-398:** Backup & Privacy now includes invalid, duplicate and over-limit legacy collection entries in both its recovery banner and pre-export confirmation. The dialog explains that the export uses normalized valid names and that the raw local preferences remain untouched; canceling prevents the share flow.
 - Added a widget regression that seeds both an unreadable record and malformed collection preferences, checks both counts/messages, and cancels the export. Test source is committed but unrun.
+
+
+### Phase 3 — contextual names for collection and item-detail menus (2026-10-22)
+
+- **TSK-399:** Added explicit tooltips/accessible names to Collection row action menus and the Item Details overflow menu, matching the contextual labeling already used by saved-item cards and other icon buttons.
+- Added widget regressions that locate each menu by its accessible tooltip and activate it to reveal its actions. Test source is committed but unrun; screen-reader and keyboard validation remain open.
