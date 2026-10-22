@@ -328,3 +328,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-011–013 and NFR-003 (attachment integrity/recovery).
 - Test: TC-056 in `test/library_repository_test.dart`.
 - Verification: source/test committed; unit execution and recovery workflow remain pending.
+
+
+### TSK-350 — Copy-on-write attachment replacement keys
+
+- Implementation: `LibraryRepository.attachmentKeyForReplacement` and Quick Save replacement save flow.
+- Requirements: FR-008, FR-011–013, NFR-003 (preserve shared and recoverable payloads).
+- Test: TC-057 in `test/library_repository_test.dart`.
+- Verification: source/test committed; execution and on-platform replacement checks remain pending.
