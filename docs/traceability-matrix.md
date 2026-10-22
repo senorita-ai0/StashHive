@@ -336,3 +336,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008, FR-011–013, NFR-003 (preserve shared and recoverable payloads).
 - Test: TC-057 in `test/library_repository_test.dart`.
 - Verification: source/test committed; execution and on-platform replacement checks remain pending.
+
+
+### TSK-351 — Quick Save item-kind selection semantics
+
+- Implementation: `lib/main.dart`, `_buildKindPicker` and `_selectKind`.
+- Requirement: NFR-006 (accessible controls and announced state).
+- Test: TC-058 in `test/quick_save_test.dart`.
+- Verification: source/test committed; execution and assistive-technology verification remain pending.
