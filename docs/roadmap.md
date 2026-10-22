@@ -254,3 +254,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-333:** Scheme-less text is only inferred to be a web link when the parsed host looks domain-like (contains a dot) or is `localhost`. Plain text such as `remember` stays a note, while bare domains and domain-plus-port values continue to normalize to HTTPS links.
 - Added regressions for a single word, a bare domain and a bare domain with an explicit port. Tests are authored but unrun; Android-source-app behavior remains part of manual share validation.
+
+
+### Phase 2 — normalize event identity before share deduplication (2026-10-22)
+
+- **TSK-334:** Share-event fingerprints now trim path/message whitespace and normalize MIME types to lowercase before canonical JSON serialization and SHA-256 hashing. This suppresses harmless representation differences between equivalent intake payloads while retaining meaningful message differences and ordered batch boundaries.
+- Added a regression for path padding, MIME case and message whitespace. Test source is committed but unrun; real initial-intent/stream payload parity still needs Android verification.
