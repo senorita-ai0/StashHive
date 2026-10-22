@@ -53,6 +53,21 @@ void main() {
       expect(item.matchesQuery('  '), isTrue);
     });
 
+    test('trims padded legacy metadata without changing note content', () {
+      final raw = makeItem(attachmentKey: 'sample-key').toMap();
+      raw['title'] = '  A saved title  ';
+      raw['url'] = '  https://example.com/guide  ';
+      raw['attachmentName'] = '  sample.png  ';
+      raw['attachmentMimeType'] = ' IMAGE/PNG ';
+
+      final restored = SavedItem.fromMap(raw);
+
+      expect(restored.title, 'A saved title');
+      expect(restored.url, 'https://example.com/guide');
+      expect(restored.attachmentName, 'sample.png');
+      expect(restored.attachmentMimeType, 'image/png');
+    });
+
     test('normalizes duplicate tags without regard to case', () {
       final legacy = makeItem(tags: const [
         'Reading',
