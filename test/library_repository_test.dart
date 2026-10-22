@@ -230,6 +230,41 @@ void main() {
     );
   });
 
+  test('backup preserves skipped legacy record and collection counts', () async {
+    await Hive.box<dynamic>('stashhive_preferences_v1').put(
+      'collections',
+      <Object?>['Learning', 'learning', '   '],
+    );
+    await Hive.box<dynamic>('stashhive_items_v1').put(
+      'unreadable-omission-metadata-record',
+      <String, Object?>{
+        'id': 'unreadable-omission-metadata-record',
+        'kind': 'unsupported-kind',
+        'title': 'Unreadable legacy record',
+        'content': '',
+        'tags': <String>[],
+        'isFavorite': false,
+        'createdAtMs': 1,
+        'updatedAtMs': 2,
+      },
+    );
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+    await repository.save(
+      buildLink(
+        id: 'readable-record-in-partial-backup',
+        collection: 'Learning',
+      ),
+    );
+
+    final json = await repository.createBackup();
+    final decoded = BackupCodec.decode(json);
+
+    expect(decoded.items.map((item) => item.id), ['readable-record-in-partial-backup']);
+    expect(decoded.omittedUnreadableRecordCount, 1);
+    expect(decoded.omittedCollectionEntryCount, 2);
+  });
+
   test('backup gives repair guidance for item assignments beyond collection cap', () async {
     await Hive.box<dynamic>('stashhive_preferences_v1').put(
       'collections',
