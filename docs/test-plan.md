@@ -548,3 +548,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Attempt to save a note whose content is empty or whitespace-only; the repository must reject it before writing a record.
 - Attempt to export the same invalid note; backup validation must reject it.
 - Confirm ordinary non-empty Unicode notes still round-trip. Test source is committed but unrun.
+
+
+### TC-080 — Timestamp bounds on reload/save/export
+
+- Seed a raw local record whose update timestamp exceeds the supported date range; trigger refresh and confirm it is skipped, counted, and does not prevent valid records from loading.
+- Try to save and export records with out-of-range timestamps; both paths must reject them before persistence/export.
+- Regression source is committed but unrun; confirm ordinary current timestamps still render and round-trip.
