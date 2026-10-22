@@ -463,8 +463,8 @@ class LibraryRepository {
         createdAtMs: item.createdAtMs,
         updatedAtMs: DateTime.now().toUtc().millisecondsSinceEpoch,
         attachmentKey: mappedKey,
-        attachmentName: attachment?.name ?? item.attachmentName,
-        attachmentMimeType: attachment?.mimeType ?? item.attachmentMimeType,
+        attachmentName: item.attachmentName ?? attachment?.name,
+        attachmentMimeType: item.attachmentMimeType ?? attachment?.mimeType,
       );
       staged.add((item: restored, bytes: bytesToWrite));
       reserved.add(newId);
