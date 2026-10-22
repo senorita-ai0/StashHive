@@ -616,3 +616,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-393:** Share-event fingerprints now infer MIME from the filename first, mirroring intake when the extension is recognized. A `.png` delivered with `text/plain` and the same `.png` delivered with `image/png` therefore share the same fingerprint instead of opening duplicate drafts.
 - Added a regression for equivalent extension-first file MIME metadata. Test source is committed but unrun; initial-intent/stream parity on actual Android apps remains pending.
+
+
+### Phase 2 — canonicalize cross-type share fingerprints (2026-10-22)
+
+- **TSK-394:** Share deduplication now treats a standalone URL received as text and as a URL intent as the same normalized URL draft. It also treats generic-file and image intents for the same image as the same image draft, when extension-first MIME resolution agrees. URL context remains part of URL fingerprints, and unsupported video events remain a separate category.
+- Added cross-type URL/image deduplication regressions. Tests are committed but unrun; initial-intent/stream event behavior still needs Android verification.
