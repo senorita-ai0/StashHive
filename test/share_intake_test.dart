@@ -374,7 +374,7 @@ void main() {
       final normalized = SharedMediaFile(
         path: 'https://example.com/space',
         type: SharedMediaType.url,
-        mimeType: 'text/uri-list',
+        mimeType: 'application/octet-stream',
         message: 'Saved context',
       );
 
@@ -399,7 +399,7 @@ void main() {
       final fromMessage = SharedMediaFile(
         path: 'provider-placeholder',
         type: SharedMediaType.text,
-        mimeType: 'TEXT/PLAIN',
+        mimeType: 'text/html',
         message: ' Read this later ',
       );
 
