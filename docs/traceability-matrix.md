@@ -256,3 +256,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-008–009 (file import and incoming share intake).
 - Test: TC-047 in `test/share_intake_test.dart`.
 - Verification: tests are committed but unrun; real Android content URI permissions and persistence remain pending.
+
+
+### TSK-341 — Attachment state consistency during edits
+
+- Implementation: `lib/main.dart` Quick Save `_save`, `lib/data/library_repository.dart` `save`.
+- Requirements: FR-001–003, FR-008, NFR-003 (attachments and safe cleanup).
+- Test: TC-048 in `test/library_repository_test.dart`.
+- Verification: implementation/test committed; unit execution and platform storage behavior remain pending.
