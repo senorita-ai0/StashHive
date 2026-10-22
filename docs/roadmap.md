@@ -847,3 +847,11 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **Source:** Collection deletion now catches repository/storage exceptions and displays a SnackBar; the app does not intentionally crash out of the delete handler.
 - **Regression:** TC-131 uses the existing collection-mutation fault seam to verify feedback and that the collection plus item assignment remain after rollback.
 - **Status:** Source/test authored, unrun. Platform-level persistence interruption testing remains pending.
+
+
+### TSK-424 — Recoverable item deletion errors — 2026-10-22
+
+- **Requirement:** FR-003 (safe deletion with clear user feedback).
+- **Source:** Item Details catches a repository/storage failure during deletion, reports the error and leaves the details route open rather than attempting navigation away on a failed delete.
+- **Regression:** TC-132 injects a failure after attachment removal and confirms the saved item and attachment bytes are restored by repository rollback.
+- **Status:** Source/test authored, unrun. Tests and actual storage-interruption validation remain pending.
