@@ -456,3 +456,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008, FR-011–013 and NFR-003 (bounded, safe attachment recovery).
 - Test: TC-072 in `test/attachment_bytes_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-366 — Missing attachment recovery feedback
+
+- Implementation under test: `lib/main.dart`, Item Details `_openOrShare` and image preview state.
+- Requirements: FR-008, FR-011–013 and NFR-003 (recovery from missing local files).
+- Test: TC-073 in `test/external_navigation_test.dart`.
+- Verification: regression source committed but unrun.
