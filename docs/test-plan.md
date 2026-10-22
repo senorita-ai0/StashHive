@@ -775,3 +775,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Decode the generated backup and confirm both omission counts are preserved.
 - Confirm old version-1 backups without either optional field decode both counts as zero, and malformed negative/wrong-type counts are rejected.
 - Codec/repository regression source is committed but unrun; restore dialog display of both notices remains part of the manual picker validation.
+
+
+### TC-111 — Collection Contents casing tolerance
+
+- Provide a saved-item model whose collection assignment is `learning`.
+- Open Collection Contents for `Learning` and confirm the item appears rather than showing an empty state.
+- Confirm no layout/widget exception. Test source is committed but unrun; restart and backup/restore behavior remain part of manual persistence checks.
