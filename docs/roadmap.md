@@ -472,3 +472,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-369:** Model deserialization now removes duplicate tags case-insensitively while preserving the first spelling. Strict repository saves and backup exports reject case-insensitive duplicate tags, matching Quick Save's existing behavior.
 - Added model, repository and backup regression source. Tests are committed but unrun.
+
+
+### Phase 2 — validate shared filename and MIME bounds at intake (2026-10-22)
+
+- **TSK-370:** Incoming file shares now reject filenames over 255 characters and MIME metadata over 128 characters before attempting file reads. Empty basenames get a safe attachment-name fallback after supported type classification.
+- Added share-intake regressions for oversized filename and MIME values. Tests are committed but unrun; real source-app metadata remains part of Android validation.
