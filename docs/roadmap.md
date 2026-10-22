@@ -700,3 +700,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-387:** `restoreDecodedBackup` now revalidates in-memory objects before writing. The guard checks item fields/unique IDs, required attachment payloads and metadata, byte caps, omission counts, and collection name constraints; restore preflight also merges collection names assigned on items before enforcing the 500-name limit.
 - Added codec/repository regressions for missing payloads, invalid attachment metadata, duplicate IDs, item-only collection assignments and pre-write collection overflow. Test source is committed but unrun.
+
+
+### Phase 2 — preserve case-only collection duplicates in legacy backup restore (2026-10-22)
+
+- **TSK-388:** The decoded-object validator now allows case-only duplicate collection labels that older version-1 exports could contain. Restore still de-duplicates names case-insensitively while merging, so recoverable legacy item data is not rejected just because the old collection list used inconsistent casing.
+- Added a regression that mutates an otherwise valid v1 export to include `Learning` and `learning`, decodes it and confirms the restore preflight accepts it for normalization. Test source is committed but unrun.
