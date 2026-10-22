@@ -504,3 +504,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003, FR-008 and FR-012–013 (consistent attachment metadata and portability).
 - Test: TC-078 in `test/library_repository_test.dart` and `test/backup_codec_test.dart`.
 - Verification: source/tests committed but unrun.
+
+
+### TSK-372 — Non-empty note content
+
+- Implementation: `BackupCodec.validateSavedItem`, used by repository saves and backup encode/decode.
+- Requirements: FR-001–003, FR-010 and FR-012–013 (valid note capture and portable data).
+- Test: TC-079 in `test/library_repository_test.dart` and `test/backup_codec_test.dart`.
+- Verification: source/tests committed but unrun.
