@@ -273,7 +273,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 ## Phase 3 — first-launch local-storage safety reminder (2026-10-22)
 
 - [x] Added a one-time Library reminder that explains browser-profile storage on web and app/device storage on Android, including local data-loss and no-sync limitations.
-- [x] Added **Got it** and **Create backup** actions; the latter opens Backup & privacy directly.
+- [x] Added **Got it** and **Backup options** actions; the latter opens Backup & privacy directly.
 - [x] Persisted the acknowledgement in the existing local preferences box and added repository/widget regression source plus manual case **TC-130**.
 - [ ] Run the new regressions and inspect the reminder at narrow widths, enlarged text and on both target platforms during the manual checkpoint.
 
