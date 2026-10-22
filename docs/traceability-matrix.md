@@ -376,3 +376,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-002, FR-009 and FR-017–018 (URL validity and safe external action).
 - Tests: TC-062 in `test/web_url_test.dart`, `test/quick_save_test.dart`, and existing `test/share_intake_test.dart`.
 - Verification: source/test committed; execution and platform link flows remain pending.
+
+
+### TSK-356 — Reject embedded URL credentials
+
+- Implementation: `lib/services/web_url.dart`, `parseHttpUrl`.
+- Requirements: FR-002, FR-009, FR-017–018 (URL safety and external navigation).
+- Test: TC-063 in `test/web_url_test.dart`.
+- Verification: source/test committed but unrun.
