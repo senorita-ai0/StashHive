@@ -571,3 +571,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Attempt to add one more; confirm a clear format-limit error and no preference mutation.
 - Export/decode the library backup and confirm all 500 collections are retained.
 - Regression source is committed but unrun.
+
+
+### TC-083 — Restore must not exceed the collection portability cap
+
+- Seed a destination library with 500 collections and at least one valid saved record.
+- Restore a valid backup that introduces one additional distinct collection.
+- Confirm restore rejects before writes, destination items remain unchanged, and the collection list stays at 500.
+- Regression source is committed but unrun.
