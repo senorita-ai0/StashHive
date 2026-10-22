@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 
 import '../models/saved_item.dart';
+import 'web_url.dart';
 
 class BackupAttachment {
   const BackupAttachment({
@@ -78,14 +79,8 @@ class BackupCodec {
         'Only image and document items can contain an attachment.',
       );
     }
-    if (item.kind == ItemKind.link) {
-      final uri = Uri.tryParse(item.url ?? '');
-      if (uri == null ||
-          (uri.scheme.toLowerCase() != 'https' &&
-              uri.scheme.toLowerCase() != 'http') ||
-          uri.host.isEmpty) {
-        throw const FormatException('A saved link in the backup is invalid.');
-      }
+    if (item.kind == ItemKind.link && parseHttpUrl(item.url) == null) {
+      throw const FormatException('A saved link is not a valid HTTP or HTTPS URL.');
     }
     if ((item.kind == ItemKind.image || item.kind == ItemKind.document) &&
         !item.hasAttachment) {
