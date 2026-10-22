@@ -358,3 +358,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Pick a file above 15 MiB; confirm it is rejected before calling the full-byte read path.
 - Try an empty file and a cloud/provider file whose size cannot be determined; confirm a clear recoverable error and no saved item.
 - Test source for share-file size checks exists, but picker plugin behavior requires manual platform verification. Status remains NOT STARTED.
+
+
+### TC-054 — Strict URL validation before external navigation
+
+- Validate that HTTP/HTTPS URLs with a host are accepted and scheme casing normalizes.
+- Confirm `javascript:`, `file:`, `mailto:`, hostless URLs, whitespace-bearing input and malformed values are rejected.
+- Verify Item Details does not invoke the platform launcher for an invalid URL record that predates current repository validation.
+- Unit source is authored but unrun. External browser launch and legacy-record behavior remain pending the manual validation checkpoint.
