@@ -1,4 +1,4 @@
-import '../services/backup_codec.dart';
+import 'backup_codec.dart';
 
 /// Returns true only when [value] is a non-empty byte list within the
 /// attachment cap. Check length before iterating so an oversized legacy list
