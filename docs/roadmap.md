@@ -370,3 +370,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-352:** Added a widget regression that injects a non-web URL into raw storage as if it were a legacy record, opens Item Details and verifies the safe rejection message appears instead of the external-launch failure message.
 - Test source is committed but unrun; external app/browser launch behavior remains pending the manual checkpoint.
+
+
+### Phase 2 — resolve conflicting MIME headers from recognized extensions (2026-10-22)
+
+- **TSK-353:** Incoming share intake now prefers the inferred MIME type for recognized supported file extensions when the platform's MIME header conflicts. This keeps stored content type aligned with the filename-based classification and avoids saving a text document as a PNG (or vice versa).
+- Added a file-based regression for a PNG labelled `text/plain` and a TXT file labelled `image/png`. Test source is committed but unrun; real Android share metadata remains a manual validation item.
