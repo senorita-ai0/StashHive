@@ -300,8 +300,8 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — attachment invariants during item edits (2026-10-22)
 
-- **TSK-341:** Quick Save now preserves an existing attachment only when the edited item keeps the same attachment-bearing kind. Switching an image/document to a note or link clears attachment key/name/MIME metadata; switching between image/document requires an explicitly chosen compatible file.
-- `LibraryRepository.save` independently enforces that only image/document kinds may carry attachment references, that both kinds require a valid key, and that provided bytes respect the 15 MiB cap. After a successful edit it best-effort deletes a no-longer-referenced old payload, but keeps bytes if another readable or unreadable raw item still references them.
+- **TSK-341:** `LibraryRepository.save` independently enforces that only image/document kinds may carry attachment references, that both kinds require a valid key, and that provided bytes respect the 15 MiB cap. After a successful edit it best-effort deletes a no-longer-referenced old payload, but keeps bytes if another readable or unreadable raw item still references them.
+- Quick Save preserves an existing item's attachment key during metadata-only edits and does not reuse stale attachment metadata if an attachment-bearing kind is changed by a caller. The current edit screen keeps item kind fixed; changing kind through the UI is not part of this slice.
 - Added repository regressions for kind/reference invariants, orphan cleanup and shared-reference preservation. Tests are authored but unrun; filesystem interruption behavior remains pending.
 
 
