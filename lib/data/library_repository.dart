@@ -201,6 +201,11 @@ class LibraryRepository {
 
   Future<void> save(SavedItem item, {List<int>? attachmentBytes}) async {
     BackupCodec.validateSavedItem(item);
+    final alreadyVisible = items.value.any((saved) => saved.id == item.id);
+    BackupCodec.validateItemCount(
+      currentCount: items.value.length,
+      incomingCount: alreadyVisible ? 0 : 1,
+    );
     final key = item.attachmentKey;
     final hadPreviousItem = _itemsBox.containsKey(item.id);
     final previousItemValue = _itemsBox.get(item.id);
@@ -562,6 +567,10 @@ class LibraryRepository {
 
   Future<int> restoreBackup(String source) async {
     final decoded = BackupCodec.decode(source);
+    BackupCodec.validateItemCount(
+      currentCount: items.value.length,
+      incomingCount: decoded.items.length,
+    );
     final mergedCollections = List<String>.from(collections.value);
     for (final name in decoded.collections) {
       if (!mergedCollections.any(
@@ -589,9 +598,9 @@ class LibraryRepository {
     for (final item in decoded.items) {
       var newId = item.id;
       if (reserved.contains(newId) || !seenImportedIds.add(newId)) {
-        newId = createId();
+        newId = createUniqueId();
         while (reserved.contains(newId) || seenImportedIds.contains(newId)) {
-          newId = createId();
+          newId = createUniqueId();
         }
         seenImportedIds.add(newId);
       }
