@@ -64,6 +64,12 @@ class BackupCodec {
         'Tags must be non-empty and must not have surrounding whitespace.',
       );
     }
+    final seenTagKeys = <String>{};
+    if (item.tags.any((tag) => !seenTagKeys.add(tag.toLowerCase()))) {
+      throw const FormatException(
+        'Tags must be unique, ignoring case.',
+      );
+    }
     if ((item.attachmentName?.trim().isEmpty ?? false) ||
         (item.attachmentName?.length ?? 0) > 255 ||
         (item.attachmentMimeType?.trim().isEmpty ?? false) ||
