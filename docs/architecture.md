@@ -147,3 +147,8 @@ The incoming-share deduplicator serializes each ordered batch's type, path and M
 ## Phase 2/3 implementation status — 2026-10-22
 
 Core source now includes sequential incoming-share review, bounded/collision-resistant share-event fingerprints, backup/restore validation and rollback coverage, per-attachment SHA-256 integrity checks, text-scale-aware card sizing, theme-aware muted-text contrast, and accessible search/favorite/action semantics. These are source-level changes with regression tests authored; no claim is made that the tests, web/Android builds, Android chooser behavior, browser restart persistence, or screen-reader checks have passed. The manual validation workflow remains disabled for automatic push triggers by owner request.
+
+
+## Save/backup validation alignment — 2026-10-22
+
+`BackupCodec.validateSavedItem` is the shared item-level validation boundary used before repository writes and during backup encode/decode. The saved URL maximum is defined alongside the saved-item model and reused by incoming-share intake, Quick Save and backup validation. This keeps invalid item kinds, malformed attachment metadata and over-limit fields from being intentionally saved or exported only to fail later during restore. Attachment byte writes and orphan cleanup still use best-effort rollback; process death and underlying storage failures require the manual platform validation plan.
