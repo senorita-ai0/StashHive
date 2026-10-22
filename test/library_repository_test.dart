@@ -526,6 +526,34 @@ void main() {
     );
   });
 
+  test('replacement avoids a key referenced by damaged legacy records', () async {
+    const preferredKey = 'missing-shared-bytes';
+    final dependent = buildImage(
+      id: 'legacy-dependent',
+      attachmentKey: preferredKey,
+    );
+    // Seed a legacy record whose payload is missing; it bypasses current save
+    // validation to represent data written by an older version.
+    await Hive.box<dynamic>('stashhive_items_v1')
+        .put(dependent.id, dependent.toMap());
+
+    expect(
+      await repository.readAttachment(preferredKey),
+      isNull,
+    );
+    expect(
+      repository.isAttachmentReferencedByOtherItem(
+        'new-item',
+        preferredKey,
+      ),
+      isTrue,
+    );
+    expect(
+      repository.attachmentKeyForReplacement('new-item'),
+      isNot(preferredKey),
+    );
+  });
+
   test('replacement avoids overwriting an unrelated orphan payload', () async {
     const itemId = 'would-collide';
     final orphanBytes = Uint8List.fromList([7, 7, 7]);
