@@ -585,6 +585,30 @@ void main() {
       }
     });
 
+    test('forced image share does not keep a conflicting text MIME header', () async {
+      final directory =
+          await Directory.systemTemp.createTemp('stashhive_share_image_mime_');
+      try {
+        final file = File('${directory.path}/shared-content.bin');
+        final bytes = [137, 80, 78, 71, 13, 10, 26, 10];
+        await file.writeAsBytes(bytes);
+        final result = await ShareIntake.fromSharedMedia(
+          SharedMediaFile(
+            path: file.path,
+            type: SharedMediaType.image,
+            mimeType: 'text/plain',
+          ),
+        );
+
+        expect(result, isNotNull);
+        expect(result!.kind, ItemKind.image);
+        expect(result.mimeType, defaultBinaryMimeType);
+        expect(result.bytes, orderedEquals(bytes));
+      } finally {
+        await directory.delete(recursive: true);
+      }
+    });
+
     test('uses the common MIME map for less common image extensions', () async {
       final directory =
           await Directory.systemTemp.createTemp('stashhive_share_tiff_test_');
