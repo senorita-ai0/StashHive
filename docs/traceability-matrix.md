@@ -200,3 +200,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009 (incoming URL/text shares).
 - Test: TC-040 in `test/share_intake_test.dart`.
 - Verification: source and tests committed; no unit or Android device execution claimed.
+
+
+### TSK-334 — Normalize event identity before deduplication
+
+- Implementation: `lib/services/share_intake.dart`, normalized path/MIME/message fields before SHA-256.
+- Requirement: FR-009 (duplicate-free incoming-share handling).
+- Test: TC-041 in `test/share_intake_test.dart`.
+- Verification: source and test committed; test and Android device verification remain pending.
