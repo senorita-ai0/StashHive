@@ -30,6 +30,22 @@ void main() {
     await testDirectory.delete(recursive: true);
   });
 
+  testWidgets('Library header displays the StashTrail brand', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.LibraryPage(
+          repository: repository,
+          onAdd: (_) {},
+          onSearch: (_) {},
+          onOpenItem: (_) {},
+        ),
+      ),
+    );
+
+    expect(find.text('StashTrail'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Library and Search avoid layout exceptions at narrow width with large text', (tester) async {
     await tester.binding.setSurfaceSize(const Size(320, 568));
     addTearDown(() => tester.binding.setSurfaceSize(null));
