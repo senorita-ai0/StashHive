@@ -147,9 +147,9 @@ class SavedItem {
     return SavedItem(
       id: raw['id'] is String ? raw['id'] as String : '',
       kind: ItemKind.fromWire(raw['kind']),
-      title: raw['title'] is String ? raw['title'] as String : '',
+      title: raw['title'] is String ? (raw['title'] as String).trim() : '',
       content: raw['content'] is String ? raw['content'] as String : '',
-      url: raw['url'] is String ? raw['url'] as String : null,
+      url: raw['url'] is String ? (raw['url'] as String).trim() : null,
       tags: List<String>.unmodifiable(tags),
       collection: raw['collection'] is String
           ? (raw['collection'] as String).trim().isEmpty
@@ -163,10 +163,10 @@ class SavedItem {
           ? raw['attachmentKey'] as String
           : null,
       attachmentName: raw['attachmentName'] is String
-          ? raw['attachmentName'] as String
+          ? (raw['attachmentName'] as String).trim()
           : null,
       attachmentMimeType: raw['attachmentMimeType'] is String
-          ? raw['attachmentMimeType'] as String
+          ? (raw['attachmentMimeType'] as String).trim().toLowerCase()
           : null,
     );
   }
