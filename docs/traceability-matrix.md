@@ -7,7 +7,7 @@
 | FR-001 | SCR-001, SCR-004 | TSK-102, TSK-105 | TC-001 | IN PROGRESS — source added; build/test pending |
 | FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104 | TC-002 | IN PROGRESS — source added; build/test pending |
 | FR-003 | SCR-004 | TSK-102, TSK-105 | TC-003 | IN PROGRESS — source added; build/test pending |
-| FR-004 | SCR-001, SCR-003 | TSK-103, TSK-201 | TC-004 | IN PROGRESS — source added; build/test pending |
+| FR-004 | SCR-001, SCR-003 | TSK-103, TSK-201, TSK-410 | TC-004, TC-114 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
 | FR-005 | SCR-001, SCR-003 | TSK-202 | TC-005 | IN PROGRESS — source added; build/test pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
