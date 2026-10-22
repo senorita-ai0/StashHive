@@ -319,3 +319,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Attempt to save a link/note with an attachment key and an image/document without a key; repository validation must reject both before mutation.
 - Create two items sharing one attachment key, convert one to a note, and confirm the other remains readable and its payload is retained.
 - Repository regression source is committed but unrun. Confirm image-to-document switching requires choosing a replacement file in Quick Save and verify actual storage cleanup on Android/web.
+
+
+### TC-049 — Saved-item validation parity
+
+- Attempt to save/export a URL beyond the shared 4,096-character limit and verify rejection before storage/export.
+- Attempt to export a file item whose attachment filename is whitespace-only; export must reject data that restore would reject.
+- Verify invalid attachment-kind/key pairs, oversized content, and excessive tag counts are consistently rejected by repository/save, encoder, and decoder validation.
+- Regression source is authored but unrun; full save → backup → restore round-trip remains pending.
