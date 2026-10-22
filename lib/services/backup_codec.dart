@@ -59,6 +59,11 @@ class BackupCodec {
         item.tags.any((tag) => tag.length > 100)) {
       throw const FormatException('A saved item exceeds supported limits.');
     }
+    if (item.tags.any((tag) => tag.isEmpty || tag.trim() != tag)) {
+      throw const FormatException(
+        'Tags must be non-empty and must not have surrounding whitespace.',
+      );
+    }
     if ((item.attachmentName?.trim().isEmpty ?? false) ||
         (item.attachmentName?.length ?? 0) > 255 ||
         (item.attachmentMimeType?.trim().isEmpty ?? false) ||
