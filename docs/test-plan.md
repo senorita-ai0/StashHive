@@ -452,7 +452,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 ### TC-066 — Generated ID collision avoidance
 
 - Seed the local item and attachment stores with known keys.
-- Request a new item ID and verify it is absent from both stores, including orphaned attachment keys.
+- Request a new item ID and verify it is absent from both stores, including orphaned attachment keys and raw attachment references whose payload is missing.
 - Repository test source is committed but unrun; concurrent multi-window writes still need platform-level consideration.
 
 
