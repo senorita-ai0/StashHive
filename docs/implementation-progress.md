@@ -124,7 +124,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
 - [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
 - [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
-- [x] Progress/test docs updated through TSK-393 and TC-100.
+- [x] Progress/test docs updated through TSK-395 and TC-102.
 
 ## Phase 2/3 latest source increments — 2026-10-22
 
