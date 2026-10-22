@@ -1742,7 +1742,13 @@ class _QuickSavePageState extends State<QuickSavePage> {
       await widget.repository.save(item, attachmentBytes: _selectedBytes);
       if (mounted) Navigator.of(context).pop(true);
     } catch (error) {
-      _showMessage('Could not save this item. ' + error.toString());
+      _showMessage(
+        'Could not save this item. ' +
+            _messageForOperationError(
+              error,
+              fallback: 'Check the item details and selected file, then try again.',
+            ),
+      );
       if (mounted) setState(() => _saving = false);
     }
   }
