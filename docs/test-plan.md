@@ -193,3 +193,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Submit two batches with distinct contents that could alias under a delimiter-based fingerprint (for example, paths `a|b` and `c` versus `a` and `b|c`); both should be accepted as distinct events.
 - Re-submit an identical batch inside the deduplication window and confirm it is rejected.
 - Unit regression source is authored but unrun. Android initial-intent/stream integration remains NOT STARTED.
+
+
+### TC-032 — Nonlinear text-scale layout sizing
+
+- With the default text scale, verify Library and Search cards use the baseline extent.
+- With enlarged accessibility text (including a platform nonlinear text scaler), verify the card extent derives from a representative body font size rather than a 1-pixel sample, and remains bounded at extreme values.
+- Unit regression source is authored but unrun. Visual inspection with enlarged text, screen readers and narrow widths on Android and web remains NOT STARTED.
