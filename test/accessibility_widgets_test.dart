@@ -409,6 +409,77 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Collection row actions have contextual tooltips', (tester) async {
+    await repository.addCollection('Learning');
+    await repository.save(
+      const SavedItem(
+        id: 'collection-tooltip-link',
+        kind: ItemKind.link,
+        title: 'Saved for learning',
+        content: '',
+        url: 'https://example.com/learning',
+        tags: [],
+        collection: 'Learning',
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 2,
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: app.CollectionsPage(
+            repository: repository,
+            onOpenItem: (_) {},
+            onAdd: (_) {},
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final actions = find.byTooltip('Actions for Learning collection');
+    expect(actions, findsOneWidget);
+    await tester.tap(actions);
+    await tester.pumpAndSettle();
+    expect(find.text('Rename'), findsOneWidget);
+    expect(find.text('Delete'), findsOneWidget);
+  });
+
+  testWidgets('Item Details overflow menu has an accessible name', (tester) async {
+    await repository.save(
+      const SavedItem(
+        id: 'details-menu-link',
+        kind: ItemKind.link,
+        title: 'Details action link',
+        content: '',
+        url: 'https://example.com/details',
+        tags: [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 2,
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.ItemDetailsPage(
+          repository: repository,
+          itemId: 'details-menu-link',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byTooltip('Item actions'), findsOneWidget);
+    await tester.tap(find.byTooltip('Item actions'));
+    await tester.pumpAndSettle();
+    expect(find.text('Edit item'), findsOneWidget);
+    expect(find.text('Delete item'), findsOneWidget);
+  });
+
   testWidgets('Library search teaser exposes and handles semantic activation', (tester) async {
     final semantics = tester.ensureSemantics();
     addTearDown(semantics.dispose);
