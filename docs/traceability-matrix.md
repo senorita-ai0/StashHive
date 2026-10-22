@@ -480,3 +480,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009 (avoid duplicate share drafts without collapsing intentional distinct context).
 - Test: TC-075 in `test/share_intake_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-369 — Case-insensitive tag identity
+
+- Implementation: `SavedItem.fromMap` normalization and `BackupCodec.validateSavedItem` shared by repository save/backup encode/decode.
+- Requirements: FR-002, FR-005–006 and FR-010 (consistent tag metadata and retrieval).
+- Test: TC-076 in `test/saved_item_test.dart`, `test/library_repository_test.dart`, and `test/backup_codec_test.dart`.
+- Verification: source/tests committed but unrun.
