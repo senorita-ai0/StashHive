@@ -143,6 +143,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added Item Details regression source for missing legacy image/document payloads and restore guidance.
 - [x] Share-event canonicalization now follows each media type's effective draft fields; regressions cover equivalent text payloads and ignored file-message metadata.
 - [x] Aligned tag normalization/validation across saved-item deserialization, repository writes and backup encode/decode, with case-insensitive duplicate regressions.
+- [x] Incoming file shares now bound filename/MIME metadata before file I/O; regressions cover the oversize cases.
 - [x] Added credential-bearing URL, URL boundary, tag integrity, collision-safe ID and responsive kind-selector regression source.
 
 ## Current validation state — 2026-10-22
