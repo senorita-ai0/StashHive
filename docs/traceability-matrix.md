@@ -17,16 +17,16 @@
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415 | TC-012, TC-117, TC-119, TC-120 | IN PROGRESS — bounded-size source added; execution and platform export pending |
 | FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415 | TC-013, TC-117, TC-119, TC-120 | IN PROGRESS — codec/source added; restore tests pending |
-| FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | NOT STARTED |
+| FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | IN PROGRESS — local-first flows are implemented in source; offline/restart tests pending |
 | FR-015 | SCR-006, SCR-001 | TSK-003, TSK-303, TSK-422 | TC-015, TC-130 | IN PROGRESS — local-storage reminder source added; browser restart/storage verification pending |
 | FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205 | TC-016 | BLOCKED pending POC |
-| FR-017 | SCR-004 | TSK-203 | TC-017 | NOT STARTED |
+| FR-017 | SCR-004 | TSK-203 | TC-017 | IN PROGRESS — URLs remain bookmarks without page scraping/capture; acceptance check pending |
 | FR-018 | SCR-006 | TSK-304 | TC-018 | IN PROGRESS — local-only UI/source added; privacy checks pending |
 | FR-019 | SCR-001, SCR-002 | Later if approved | TC-019 | NOT STARTED / Could |
-| NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | NOT STARTED |
+| NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | IN PROGRESS — no backend/account integration in core source; offline and network inspection pending |
 | NFR-002 | SCR-006 | TSK-304 | TC-018 | NOT STARTED |
 | NFR-003 | SCR-006 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417 | TC-012–015, TC-117, TC-120, TC-122 | IN PROGRESS — backup byte-limit source/test added; memory/platform verification pending |
-| NFR-004 | SCR-004 | TSK-203 | TC-006, TC-017 | NOT STARTED |
+| NFR-004 | SCR-004 | TSK-203 | TC-006, TC-017 | IN PROGRESS — copy states local storage, no sync and no OCR; end-to-end wording review pending |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
 | NFR-006 | All screens | TSK-103, TSK-304 | UI/accessibility checklist | IN PROGRESS — text scaling, semantics and contrast source/tests added; execution and platform checks pending |
 | NFR-007 | Search/list | TSK-003, TSK-305, TSK-412 | TC-116 / Performance baseline | IN PROGRESS — non-gating harness added; measurements pending |
