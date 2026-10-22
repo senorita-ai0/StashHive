@@ -30,6 +30,63 @@ void main() {
     await testDirectory.delete(recursive: true);
   });
 
+  testWidgets('Library and Search avoid layout exceptions at narrow width with large text', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(320, 568));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await repository.save(
+      const SavedItem(
+        id: 'small-screen-long-title',
+        kind: ItemKind.link,
+        title: 'A deliberately long saved title for small screens',
+        content: 'A longer summary that should wrap without breaking the card layout.',
+        url: 'https://example.com/small-screen',
+        tags: ['Responsive', 'Accessibility'],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 2,
+      ),
+    );
+
+    Widget largeTextApp(Widget child) {
+      return MaterialApp(
+        builder: (context, appChild) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(2),
+          ),
+          child: appChild!,
+        ),
+        home: Scaffold(body: child),
+      );
+    }
+
+    await tester.pumpWidget(
+      largeTextApp(
+        app.LibraryPage(
+          repository: repository,
+          onAdd: (_) {},
+          onSearch: (_) {},
+          onOpenItem: (_) {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+
+    await tester.pumpWidget(
+      largeTextApp(
+        app.SearchPage(
+          repository: repository,
+          initialQuery: 'small screens',
+          onOpenItem: (_) {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('favorite star icon meets graphical contrast in both themes', (tester) async {
     late Color lightStar;
     late Color lightSurface;
