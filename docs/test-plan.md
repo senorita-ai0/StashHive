@@ -230,3 +230,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Render the app with its light theme and calculate contrast of the muted foreground against white cards, the light canvas, and input fields; require at least 4.5:1.
 - Repeat in dark theme against the dark canvas and input field; require at least 4.5:1.
 - Widget test source is authored but unrun. Manual visual review should still check chip states, icons, focus indicators, and text over every surface; status remains NOT STARTED until the UI test runs and manual review is recorded.
+
+
+### TC-037 — Punctuation around URLs shared as text
+
+- Share text containing a link wrapped in parentheses and followed by sentence punctuation; verify the outer bracket/period is not persisted as part of the URL.
+- Share a URL whose own path ends in a balanced parenthesized segment; verify the balanced characters remain part of the URL.
+- Unit regression source is authored but unrun. Confirm behavior with actual app shares from browser/chat clients during Android validation; status remains NOT STARTED.
