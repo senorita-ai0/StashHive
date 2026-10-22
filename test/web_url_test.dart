@@ -48,6 +48,7 @@ void main() {
       expect(parseHttpUrl('file:///etc/passwd'), isNull);
       expect(parseHttpUrl('mailto:hello@example.com'), isNull);
       expect(parseHttpUrl('https:///missing-host'), isNull);
+      expect(parseHttpUrl('https://user:password@example.com/secret'), isNull);
     });
 
     test('rejects empty, whitespace-bearing and invalid input', () {
