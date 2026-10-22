@@ -534,3 +534,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Share a file with a filename longer than 255 characters and verify a clear filename-limit rejection before reading bytes.
 - Share an otherwise image-classified file with MIME metadata longer than 128 characters and verify the metadata limit is reported before file I/O.
 - Confirm valid file shares continue to preserve their name/MIME/bytes. Test source is committed but unrun.
+
+
+### TC-078 — Attachment metadata requires an attachment key
+
+- Attempt to save a link/note with a filename or MIME field but no attachment key; repository validation must reject it before writing.
+- Attempt to export the same malformed item; backup validation must reject it instead of producing a record that cannot be interpreted consistently.
+- Regression source is committed but unrun.
