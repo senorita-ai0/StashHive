@@ -958,5 +958,5 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 - Implementation: visible strings in `lib/main.dart`, the Android manifest configurator, `web/manifest.json`, `web/index.html`, README and current product/design docs. `BackupCodec` deliberately retains the version-1 `StashHive` app marker.
 - Requirements: FR-012–013 and NFR-003 (existing local data and portable backups remain recoverable); visible branding consistency supports predictable navigation.
-- Tests: TC-125 in `test/accessibility_widgets_test.dart`; TC-126 in `test/backup_codec_test.dart`.
+- Tests: TC-125 in `test/accessibility_widgets_test.dart`; TC-126 in `test/backup_codec_test.dart`. The generated manifest label is additionally covered by `tool/test_configure_android_share_intents.py`.
 - Verification: source/test committed but unrun; Android and PWA install labels remain pending manual validation.
