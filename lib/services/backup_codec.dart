@@ -42,6 +42,23 @@ class BackupCodec {
   static const int maxTotalAttachmentBytes = 100 * 1024 * 1024;
   static const int maxJsonCharacters = 145 * 1024 * 1024;
   static const int minSupportedTimestampMs = -8640000000000000;
+
+  /// Ensures repository mutations stay within the item count that backups can
+  /// represent. [incomingCount] is zero for edits and the number of new records
+  /// for restore/import preflight.
+  static void validateItemCount({
+    required int currentCount,
+    required int incomingCount,
+  }) {
+    if (currentCount < 0 ||
+        incomingCount < 0 ||
+        currentCount + incomingCount > maxItems) {
+      throw FormatException(
+        'StashHive supports up to $maxItems saved items. '
+        'Remove some items before saving or restoring more.',
+      );
+    }
+  }
   static const int maxSupportedTimestampMs = 8640000000000000;
 
   /// Validates item fields shared by repository saves and backup export/import.
