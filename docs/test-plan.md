@@ -708,3 +708,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Deliver a standalone URL once as text (uppercase scheme and trailing punctuation) and once as URL media; confirm one normalized URL draft fingerprint.
 - Deliver the same recognized PNG once as a generic file intent with conflicting MIME metadata and once as an image intent; confirm duplicate suppression.
 - Confirm non-empty URL context remains distinct. Regression source is committed but unrun; verify real provider event shapes on Android.
+
+
+### TC-102 — Attachment previews avoid a second byte copy
+
+- Read a saved attachment and confirm returned bytes remain byte-for-byte identical to stored payloads.
+- Verify Library thumbnail, Item Details preview and document share accept the returned `Uint8List` directly without an extra UI-side copy.
+- Existing repository integrity tests cover the data; execution and Android memory profiling remain pending.
