@@ -505,3 +505,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed a legacy image record whose attachment key has no payload; open/view it and confirm the missing-image message appears.
 - Seed a legacy document record with a missing payload; activate Open/share and confirm StashHive advises restoring a backup.
 - Confirm the page remains responsive and the item remains in the library. Widget tests are committed but unrun.
+
+
+### TC-074 — Quick Save kind icon contrast
+
+- Check Link, Note, Image and Document icons when selected/unselected in light/dark themes.
+- Require at least 3:1 non-text contrast for decorative icons, with normal-text labels retaining at least 4.5:1 where applicable.
+- Unit regression source is committed but unrun; manually confirm visual consistency with borders and selected state.
