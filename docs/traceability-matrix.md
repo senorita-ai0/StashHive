@@ -792,3 +792,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-010, FR-012–013 and NFR-003 (restore integrity and no partial writes from invalid inputs).
 - Test: TC-094 in `test/backup_codec_test.dart` and `test/library_repository_test.dart`.
 - Verification: source/tests committed but unrun.
+
+
+### TSK-388 — Preserve legacy collection compatibility
+
+- Implementation: `BackupCodec.validateDecodedBackup` accepts valid collection strings without requiring case-insensitive uniqueness; `LibraryRepository.restoreDecodedBackup` merges them case-insensitively.
+- Requirements: FR-010, FR-012–013 (portable collection metadata and backward-compatible restore).
+- Test: TC-095 in `test/backup_codec_test.dart`.
+- Verification: source/test committed but unrun.
