@@ -1399,7 +1399,14 @@ class _QuickSavePageState extends State<QuickSavePage> {
         setState(() => _saving = false);
         return;
       }
-      final hasAttachment = _selectedBytes != null || preservesExistingAttachment;
+      // Preserve a shared attachment key for metadata-only edits. If the
+      // user chooses replacement bytes, use this item's ID as a new key so
+      // changing one item does not overwrite the bytes shared by other items.
+      final String? attachmentKey = _selectedBytes != null
+          ? id
+          : preservesExistingAttachment
+              ? existing!.attachmentKey
+              : null;
       final item = SavedItem(
         id: id,
         kind: _kind,
@@ -1411,7 +1418,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
         isFavorite: existing?.isFavorite ?? false,
         createdAtMs: existing?.createdAtMs ?? now,
         updatedAtMs: now,
-        attachmentKey: hasAttachment ? id : null,
+        attachmentKey: attachmentKey,
         attachmentName: _selectedBytes != null
             ? _selectedName
             : preservesExistingAttachment
