@@ -460,3 +460,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-367:** The item-kind selector now uses the readable dark accent for selected icons, the normal accent on light unselected surfaces, and the light pastel accent for unselected icons in dark mode. This aligns icon foregrounds with the tile background for each state.
 - Extended the per-kind contrast regression to include decorative icon contrast as well as label text. Test source is committed but unrun.
+
+
+### Phase 2 — deduplicate by effective share content (2026-10-22)
+
+- **TSK-368:** The share-event fingerprint now reflects the fields actually consumed for each media type: effective text for text shares, URL plus context for URL shares, and path/MIME for file/image/video shares. Meaningful URL context still distinguishes intentional shares, while irrelevant provider metadata no longer creates duplicates.
+- Added regressions for text path/message variation and unused file-message metadata. Test source is committed but unrun; verify actual plugin payloads on Android.
