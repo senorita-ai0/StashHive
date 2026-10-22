@@ -50,6 +50,8 @@ class DecodedBackup {
 class BackupCodec {
   BackupCodec._();
 
+  // Stable version-1 marker: preserve compatibility with existing exports.
+  static const String _legacyBackupAppIdentifier = 'StashHive';
   static const int formatVersion = 1;
   static const int maxItems = 10000;
   static const int maxCollections = 500;
@@ -102,7 +104,7 @@ class BackupCodec {
         incomingCount < 0 ||
         currentCount + incomingCount > maxItems) {
       throw FormatException(
-        'StashHive supports up to $maxItems saved items. '
+        'StashTrail supports up to $maxItems saved items. '
         'Remove some items before saving or restoring more.',
       );
     }
@@ -194,7 +196,7 @@ class BackupCodec {
   }
 
   /// Validates item fields shared by repository saves and backup export/import.
-  /// Keeping these constraints aligned prevents StashHive from exporting a
+  /// Keeping these constraints aligned prevents StashTrail from exporting a
   /// backup that its own decoder would later reject.
   static void validateSavedItem(SavedItem item) {
     _validateSavedItemMap(item.toMap());
@@ -306,7 +308,7 @@ class BackupCodec {
     // full jsonEncode(items) here could allocate gigabytes before the final
     // 145 MiB cap is checked.
     final outputValue = <String, Object?>{
-      'app': 'StashHive',
+      'app': _legacyBackupAppIdentifier,
       'formatVersion': formatVersion,
       'exportedAt': exportedAt,
       'collections': safeCollections,
@@ -425,8 +427,8 @@ class BackupCodec {
     if (decoded is! Map) {
       throw const FormatException('The backup file has an invalid structure.');
     }
-    if (decoded['app'] != 'StashHive') {
-      throw const FormatException('This file is not a StashHive backup.');
+    if (decoded['app'] != _legacyBackupAppIdentifier) {
+      throw const FormatException('This file is not a recognized StashTrail or StashHive backup.');
     }
     if (decoded['formatVersion'] != formatVersion) {
       throw FormatException(
