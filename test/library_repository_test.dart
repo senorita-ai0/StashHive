@@ -292,6 +292,26 @@ void main() {
     );
   });
 
+  test('rolls back collection creation when preference write reports late failure', () async {
+    LibraryRepository.addCollectionAfterWriteForTesting = () async {
+      throw StateError('simulated post-write collection failure');
+    };
+    try {
+      await expectLater(
+        repository.addCollection('Needs rollback'),
+        throwsA(isA<StateError>()),
+      );
+    } finally {
+      LibraryRepository.addCollectionAfterWriteForTesting = null;
+    }
+
+    expect(repository.collections.value, isEmpty);
+    expect(
+      Hive.box<dynamic>('stashhive_preferences_v1').containsKey('collections'),
+      isFalse,
+    );
+  });
+
   test('normalizes legacy collection names and counts malformed entries', () async {
     final preferences = Hive.box<dynamic>('stashhive_preferences_v1');
     await preferences.put(
