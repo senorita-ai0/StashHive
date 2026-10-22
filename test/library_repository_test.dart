@@ -185,6 +185,94 @@ void main() {
     );
   });
 
+  test('restoreDecodedBackup revalidates objects before any storage writes', () async {
+    final invalidImage = buildImage(
+      id: 'constructed-backup-image',
+      attachmentKey: 'missing-constructed-payload',
+    );
+    final decoded = DecodedBackup(
+      items: [invalidImage],
+      attachments: const {},
+      collections: const ['Ideas'],
+      exportedAt: '2026-10-22T00:00:00Z',
+    );
+
+    await expectLater(
+      repository.restoreDecodedBackup(decoded),
+      throwsFormatException,
+    );
+
+    expect(repository.items.value, isEmpty);
+    expect(
+      Hive.box<dynamic>('stashhive_items_v1').isEmpty,
+      isTrue,
+    );
+    expect(
+      Hive.box<dynamic>('stashhive_attachments_v1').isEmpty,
+      isTrue,
+    );
+    expect(repository.collections.value, isEmpty);
+  });
+
+  test('restore includes valid item-assigned collections omitted from input list', () async {
+    final item = buildLink(
+      id: 'constructed-collection-assignment',
+      collection: 'Assigned only on item',
+    );
+    final decoded = DecodedBackup(
+      items: [item],
+      attachments: const {},
+      collections: const [],
+      exportedAt: '2026-10-22T00:00:00Z',
+    );
+
+    final imported = await repository.restoreDecodedBackup(decoded);
+
+    expect(imported, 1);
+    expect(
+      repository.collections.value,
+      contains('Assigned only on item'),
+    );
+    expect(
+      repository.findById(item.id)?.collection,
+      'Assigned only on item',
+    );
+  });
+
+  test('restore collection capacity includes item-only assignments before writes', () async {
+    await Hive.box<dynamic>('stashhive_preferences_v1').put(
+      'collections',
+      List<String>.generate(
+        BackupCodec.maxCollections,
+        (index) => 'Existing $index',
+      ),
+    );
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+    final item = buildLink(
+      id: 'constructed-overflow-assignment',
+      collection: 'Collection omitted from declared list',
+    );
+    final decoded = DecodedBackup(
+      items: [item],
+      attachments: const {},
+      collections: const [],
+      exportedAt: '2026-10-22T00:00:00Z',
+    );
+
+    await expectLater(
+      repository.restoreDecodedBackup(decoded),
+      throwsA(isA<FormatException>()),
+    );
+
+    expect(repository.findById(item.id), isNull);
+    expect(repository.items.value, isEmpty);
+    expect(
+      repository.collections.value,
+      hasLength(BackupCodec.maxCollections),
+    );
+  });
+
   test('restore rejects a merged collection count over the backup limit before writes', () async {
     await Hive.box<dynamic>('stashhive_preferences_v1').put(
       'collections',
