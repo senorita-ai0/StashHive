@@ -838,3 +838,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - Confirm Quick Save, OS-share intake, bounded byte reads and backup codec all use the same attachment byte cap.
 - Boundary test source continues to assert the stream accepts exactly the cap and rejects a chunk that would cross it. Source inspection completed; tests remain unrun.
+
+
+### TC-100 — Preflight combined attachment bytes before decoding
+
+- Verify the encoded-length helper rounds byte budgets up to base64's 4-character quantum for 0–4 decoded bytes and rejects negative budgets.
+- Confirm backup decoding checks each encoded payload against remaining combined bytes before base64 allocation, then still checks actual decoded sizes.
+- Helper regression source is committed but unrun; profile a near-100 MiB backup only at the manual performance checkpoint.
