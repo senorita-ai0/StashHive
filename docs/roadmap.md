@@ -538,3 +538,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-380:** Favorite actions in the Library card menu and Item Details now catch repository validation failures for parseable but invalid legacy data and explain that the item needs repair (correct URL or reselect missing file) instead of surfacing an unhandled exception.
 - Added a widget regression that attempts to favorite an unsafe legacy URL and confirms the item remains unchanged while repair guidance is shown. Test source is committed but unrun.
+
+
+### Phase 2 — size-first backup restore picker (2026-10-22)
+
+- **TSK-381:** Backup & Privacy now uses the pinned file_picker single-file API and checks file length against the 145 MiB backup limit before reading bytes, then checks the actual byte buffer again. Empty/unknown-size and oversized selections receive explicit feedback instead of being eagerly loaded.
+- This also removes the old `FilePickerResult.files` access left behind by the dependency API migration. Source is committed but unrun; web and Android provider behavior remains a manual check.
