@@ -3107,16 +3107,27 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
       source = '';
       bytes = Uint8List(0);
       if (!mounted) return;
+      final omissionNotes = <String>[];
+      if (decodedBackup.omittedUnreadableRecordCount > 0) {
+        final count = decodedBackup.omittedUnreadableRecordCount;
+        omissionNotes.add(
+          '$count unreadable local record(s) were omitted during export and cannot be recovered from this file.',
+        );
+      }
+      if (decodedBackup.omittedCollectionEntryCount > 0) {
+        final count = decodedBackup.omittedCollectionEntryCount;
+        omissionNotes.add(
+          '$count legacy collection name(s) or assignment(s) were normalized or omitted; this backup contains only the valid portable collection list.',
+        );
+      }
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('Merge this backup?'),
           content: Text(
-            decodedBackup.omittedUnreadableRecordCount > 0
-                ? 'This backup was created after '
-                    '${decodedBackup.omittedUnreadableRecordCount} unreadable local record(s) were omitted. '
-                    'It cannot recover those omitted entries. The readable items in this backup will be added to your current library; existing items will not be overwritten, and ID conflicts receive new IDs.'
-                : 'Items from the backup will be added to your current library. Existing items will not be overwritten. If IDs conflict, restored copies receive new IDs.',
+            omissionNotes.isEmpty
+                ? 'Items from the backup will be added to your current library. Existing items will not be overwritten. If IDs conflict, restored copies receive new IDs.'
+                : '${omissionNotes.join(' ')} The readable items in this backup will be added to your current library; existing items will not be overwritten, and ID conflicts receive new IDs.',
           ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
