@@ -15,6 +15,7 @@ import 'data/library_repository.dart';
 import 'models/saved_item.dart';
 import 'services/share_intake.dart';
 import 'services/mime_types.dart';
+import 'services/backup_codec.dart';
 import 'services/web_url.dart';
 import 'ui/layout_metrics.dart';
 
@@ -2989,7 +2990,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         _message('The selected backup is empty or its size is unavailable.');
         return;
       }
-      const maxBackupBytes = 145 * 1024 * 1024;
+      const maxBackupBytes = BackupCodec.maxJsonCharacters;
       if (length > maxBackupBytes) {
         _message('That backup is too large to import in this version.');
         return;
