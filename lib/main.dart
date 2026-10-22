@@ -1355,14 +1355,15 @@ class _QuickSavePageState extends State<QuickSavePage> {
         final entered = _urlController.text.trim();
         final candidate = entered.contains('://') ? entered : 'https://' + entered;
         final uri = Uri.tryParse(candidate);
+        final scheme = uri?.scheme.toLowerCase() ?? '';
         if (uri == null ||
-            (uri.scheme != 'http' && uri.scheme != 'https') ||
+            (scheme != 'http' && scheme != 'https') ||
             uri.host.isEmpty) {
           _showMessage('Enter a valid http or https website URL.');
           setState(() => _saving = false);
           return;
         }
-        url = uri.toString();
+        url = uri.replace(scheme: scheme).toString();
         if (url.length > maxSavedItemUrlCharacters) {
           _showMessage('Website URLs must be 4,096 characters or shorter.');
           setState(() => _saving = false);
@@ -1385,6 +1386,17 @@ class _QuickSavePageState extends State<QuickSavePage> {
         setState(() => _saving = false);
         return;
       }
+      final tags = _parseTags();
+      if (tags.length > 100) {
+        _showMessage('Use 100 tags or fewer for each saved item.');
+        setState(() => _saving = false);
+        return;
+      }
+      if (tags.any((tag) => tag.length > 100)) {
+        _showMessage('Tags must be 100 characters or shorter.');
+        setState(() => _saving = false);
+        return;
+      }
       // Preserve a shared attachment key for metadata-only edits. If the
       // user chooses replacement bytes, use this item's ID as a new key so
       // changing one item does not overwrite the bytes shared by other items.
@@ -1399,7 +1411,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
         title: title,
         content: content,
         url: url,
-        tags: List<String>.unmodifiable(_parseTags()),
+        tags: List<String>.unmodifiable(tags),
         collection: _collection,
         isFavorite: existing?.isFavorite ?? false,
         createdAtMs: existing?.createdAtMs ?? now,
