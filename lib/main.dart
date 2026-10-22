@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'data/library_repository.dart';
 import 'models/saved_item.dart';
 import 'services/share_intake.dart';
+import 'services/mime_types.dart';
 import 'ui/layout_metrics.dart';
 
 const Color kBrand = Color(0xFF5B5CE2);
@@ -1317,22 +1318,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
     }
   }
 
-  String _mimeTypeFor(String name) {
-    final ext = name.split('.').last.toLowerCase();
-    return switch (ext) {
-      'jpg' || 'jpeg' => 'image/jpeg',
-      'png' => 'image/png',
-      'gif' => 'image/gif',
-      'webp' => 'image/webp',
-      'pdf' => 'application/pdf',
-      'txt' => 'text/plain',
-      'csv' => 'text/csv',
-      'doc' => 'application/msword',
-      'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'rtf' => 'application/rtf',
-      _ => 'application/octet-stream',
-    };
-  }
+  String _mimeTypeFor(String name) => guessMimeTypeFromFilename(name);
 
   List<String> _parseTags() {
     final seen = <String>{};
