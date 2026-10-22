@@ -496,3 +496,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-373:** Raw local-record reload, repository saves and backup encode/decode now share the DateTime-supported timestamp bounds. Out-of-range legacy records are skipped and counted instead of reaching date formatting with unusable values.
 - Added reload, save and backup-codec regression source. Tests are committed but unrun.
+
+
+### Phase 2 — protect orphan payloads at repository save boundary (2026-10-22)
+
+- **TSK-374:** Repository save now refuses to write new bytes to an attachment key that already contains a payload unless that key is already the item's own current attachment key. Shared-reference checks still prevent in-place changes to shared bytes. This protects orphaned/corrupt payloads even when callers bypass Quick Save's safe-key helper.
+- Added a direct repository regression proving a rejected save leaves both the new record absent and the orphan bytes unchanged. Test source is committed but unrun.
