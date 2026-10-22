@@ -13,7 +13,7 @@
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417 | TC-008, TC-122 | IN PROGRESS — repository-owned byte snapshot source/test added; platform validation pending |
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204 | TC-009 | IN PROGRESS — source added, build/device test pending |
-| FR-010 | SCR-005 | TSK-203 | TC-010 | IN PROGRESS — source added; build/test pending |
+| FR-010 | SCR-005 | TSK-203, TSK-423 | TC-010, TC-131 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415 | TC-012, TC-117, TC-119, TC-120 | IN PROGRESS — bounded-size source added; execution and platform export pending |
 | FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415 | TC-013, TC-117, TC-119, TC-120 | IN PROGRESS — codec/source added; restore tests pending |
@@ -976,3 +976,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-015; the reminder uses platform-specific wording and does not imply cloud sync.
 - Tests: repository preference persistence in `test/library_repository_test.dart`; reminder content/actions in `test/accessibility_widgets_test.dart`; manual acceptance TC-130.
 - Verification: source and regression cases are authored; they remain unrun. Web profile persistence, Android restart behavior and responsive visual review remain pending.
+
+
+### TSK-423 — Recoverable collection deletion errors
+
+- Implementation: `lib/main.dart`, `_CollectionsPageState._deleteCollection`.
+- Requirement: FR-010; a repository failure must not escape as an uncaught UI error.
+- Regression: TC-131 in `test/accessibility_widgets_test.dart` injects a collection-mutation failure and checks user feedback plus retained collection/item assignment.
+- Verification: source/test added but unrun; underlying storage interruption behavior remains subject to manual validation.
