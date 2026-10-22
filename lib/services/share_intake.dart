@@ -349,7 +349,7 @@ class ShareIntake {
           ? (isImage ? 'Shared image' : 'Shared document')
           : fileName,
       content: '',
-      bytes: Uint8List.fromList(bytes),
+      bytes: bytes,
       fileName: attachmentName,
       mimeType: mimeType,
     );
