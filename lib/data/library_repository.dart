@@ -27,8 +27,11 @@ class LibraryRepository {
       ValueNotifier<List<SavedItem>>(<SavedItem>[]);
   final ValueNotifier<List<String>> collections =
       ValueNotifier<List<String>>(<String>[]);
-  /// Number of raw local records skipped because their shape could not be read.
+  /// Raw local records skipped because their shape could not be read.
   final ValueNotifier<int> skippedRecordCount = ValueNotifier<int>(0);
+  /// Invalid, duplicate or over-limit collection preference entries skipped
+  /// while recovering the collection list.
+  final ValueNotifier<int> skippedCollectionCount = ValueNotifier<int>(0);
 
   /// Fault-injection seam for verifying that a failed restore removes writes
   /// already staged before the collection preferences are committed.
@@ -139,15 +142,37 @@ class LibraryRepository {
 
   void _refreshCollections() {
     final value = _preferencesBox.get('collections');
-    final names = value is List
-        ? value
-            .whereType<String>()
-            .map((name) => name.trim())
-            .where((name) => name.isNotEmpty)
-            .toSet()
-            .toList()
-        : <String>[];
+    final names = <String>[];
+    final seen = <String>{};
+    var skipped = 0;
+
+    if (value is List) {
+      for (final rawName in value) {
+        if (rawName is! String) {
+          skipped++;
+          continue;
+        }
+        final name = rawName.trim();
+        if (name.isEmpty || name.length > 80) {
+          skipped++;
+          continue;
+        }
+        if (!seen.add(name.toLowerCase())) {
+          skipped++;
+          continue;
+        }
+        if (names.length >= BackupCodec.maxCollections) {
+          skipped++;
+          continue;
+        }
+        names.add(name);
+      }
+    } else if (value != null) {
+      skipped++;
+    }
+
     names.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    skippedCollectionCount.value = skipped;
     collections.value = List<String>.unmodifiable(names);
   }
 
@@ -700,5 +725,6 @@ class LibraryRepository {
     items.dispose();
     collections.dispose();
     skippedRecordCount.dispose();
+    skippedCollectionCount.dispose();
   }
 }
