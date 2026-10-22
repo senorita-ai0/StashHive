@@ -802,5 +802,5 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — repository-owned attachment byte snapshots (2026-10-22)
 
-- **TSK-414:** `LibraryRepository.save` now copies incoming bytes once after validation and before the first storage await. Quick Save can avoid a pre-call copy, while the repository still owns a stable snapshot that callers cannot mutate after passing it in.
-- Added a regression that mutates the original buffer during the save pre-commit hook and verifies the stored attachment retains the original bytes. Test source is committed but unrun.
+- **TSK-417:** `LibraryRepository.save` now copies incoming bytes once after validation and before the first storage await. Quick Save can avoid a pre-call copy, while the repository still owns a stable snapshot that callers cannot mutate after passing it in.
+- Added **TC-122**, which mutates the original buffer during the save pre-commit hook and verifies that stored attachment bytes remain unchanged. Test source is committed but unrun.
