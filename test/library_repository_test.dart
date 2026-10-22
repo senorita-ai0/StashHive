@@ -241,6 +241,26 @@ void main() {
     );
   });
 
+  test('item-assigned collections remain reachable without preference entries', () async {
+    await repository.save(
+      buildLink(
+        id: 'implicit-collection-item',
+        collection: 'Research only on the item',
+      ),
+    );
+
+    expect(
+      repository.collections.value,
+      contains('Research only on the item'),
+      reason: 'A saved item must not point at a collection hidden from navigation.',
+    );
+    final backup = await repository.createBackup();
+    expect(
+      BackupCodec.decode(backup).collections,
+      contains('Research only on the item'),
+    );
+  });
+
   test('normalizes legacy collection names and counts malformed entries', () async {
     final preferences = Hive.box<dynamic>('stashhive_preferences_v1');
     await preferences.put(
