@@ -42,6 +42,34 @@ void main() {
         'https://en.wikipedia.org/wiki/Function_(mathematics)',
       );
     });
+    test('keeps a single shared word as a note instead of inventing a URL', () async {
+      final result = await ShareIntake.fromSharedMedia(
+        SharedMediaFile(
+          path: 'remember',
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      );
+
+      expect(result, isNotNull);
+      expect(result!.kind, ItemKind.note);
+      expect(result.content, 'remember');
+      expect(result.url, isNull);
+    });
+
+    test('normalizes a bare domain into a link draft', () async {
+      final result = await ShareIntake.fromSharedMedia(
+        SharedMediaFile(
+          path: 'example.com/guide',
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      );
+
+      expect(result, isNotNull);
+      expect(result!.kind, ItemKind.link);
+      expect(result.url, 'https://example.com/guide');
+    });
     test('recognizes a URL inside shared title and text', () async {
       final result = await ShareIntake.fromSharedMedia(
         SharedMediaFile(
