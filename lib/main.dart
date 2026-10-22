@@ -1362,7 +1362,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
     setState(() => _saving = true);
     try {
       final now = DateTime.now().toUtc().millisecondsSinceEpoch;
-      final id = existing?.id ?? LibraryRepository.createId();
+      final id = existing?.id ?? widget.repository.createUniqueId();
       String? url;
       var title = _titleController.text.trim();
       final content = _contentController.text.trim();
