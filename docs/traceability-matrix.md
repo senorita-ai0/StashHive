@@ -472,3 +472,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: NFR-006 (non-text contrast and visual state indication).
 - Test: TC-074 in `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-368 — Fingerprint effective share draft content
+
+- Implementation: `ShareEventDeduplicator.shouldAccept` in `lib/services/share_intake.dart`.
+- Requirement: FR-009 (avoid duplicate share drafts without collapsing intentional distinct context).
+- Test: TC-075 in `test/share_intake_test.dart`.
+- Verification: source/test committed but unrun.
