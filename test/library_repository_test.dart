@@ -383,6 +383,35 @@ void main() {
     expect(repository.items.value, isEmpty);
   });
 
+  test('skips malformed or mismatched raw records without hiding valid items', () async {
+    await Hive.box<dynamic>('stashhive_items_v1').put(
+      'unknown-kind',
+      <String, Object?>{
+        'id': 'unknown-kind',
+        'kind': 'future-kind',
+        'title': 'Unsupported legacy value',
+        'content': '',
+        'tags': <String>[],
+        'isFavorite': false,
+        'createdAtMs': 1000,
+        'updatedAtMs': 1000,
+      },
+    );
+    await Hive.box<dynamic>('stashhive_items_v1').put(
+      'wrong-box-key',
+      buildLink(id: 'different-record-id').toMap(),
+    );
+
+    await repository.save(buildLink(id: 'valid-record'));
+
+    expect(
+      repository.items.value.map((item) => item.id),
+      ['valid-record'],
+    );
+    expect(repository.findById('unknown-kind'), isNull);
+    expect(repository.findById('wrong-box-key'), isNull);
+  });
+
   test('rejects empty or untrimmed tags before repository writes', () async {
     await expectLater(
       repository.save(buildLink(id: 'empty-tag').copyWith(tags: const [''])),
