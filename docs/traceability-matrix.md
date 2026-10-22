@@ -368,3 +368,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: NFR-006 (responsive, enlarged-text accessible UI).
 - Test: TC-061 in `test/quick_save_test.dart`.
 - Verification: implementation/test committed; execution and Android/web visual inspection remain pending.
+
+
+### TSK-355 — Strict URL entry normalization
+
+- Implementation: `lib/services/web_url.dart`, `parseUserWebUrl`; used by Quick Save and `ShareIntake`.
+- Requirements: FR-002, FR-009 and FR-017–018 (URL validity and safe external action).
+- Tests: TC-062 in `test/web_url_test.dart`, `test/quick_save_test.dart`, and existing `test/share_intake_test.dart`.
+- Verification: source/test committed; execution and platform link flows remain pending.
