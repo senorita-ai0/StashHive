@@ -316,6 +316,19 @@ class ShareIntake {
         'StashHive currently accepts shared images and PDF, TXT, DOC/DOCX, RTF or CSV files.',
       );
     }
+    if (fileName.length > 255) {
+      throw const FormatException(
+        'The shared filename is too long (maximum 255 characters).',
+      );
+    }
+    if (mimeType.length > 128) {
+      throw const FormatException(
+        'The shared file type metadata is too long to validate safely.',
+      );
+    }
+    final attachmentName = fileName.isEmpty
+        ? (isImage ? 'shared-image' : 'shared-document')
+        : fileName;
 
     final file = XFile(localPath, mimeType: mimeType);
     final length = await file.length();
@@ -337,7 +350,7 @@ class ShareIntake {
           : fileName,
       content: '',
       bytes: Uint8List.fromList(bytes),
-      fileName: fileName,
+      fileName: attachmentName,
       mimeType: mimeType,
     );
   }
