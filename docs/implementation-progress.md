@@ -270,6 +270,13 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added TC-129 to verify a failed delete restores both the unreadable raw record and its attachment bytes.
 - [ ] Run TC-127–TC-129 during the manual validation checkpoint; rollback behavior and legacy-store recovery remain unverified on target platforms.
 
+## Phase 3 — first-launch local-storage safety reminder (2026-10-22)
+
+- [x] Added a one-time Library reminder that explains browser-profile storage on web and app/device storage on Android, including local data-loss and no-sync limitations.
+- [x] Added **Got it** and **Create backup** actions; the latter opens Backup & privacy directly.
+- [x] Persisted the acknowledgement in the existing local preferences box and added repository/widget regression source plus manual case **TC-130**.
+- [ ] Run the new regressions and inspect the reminder at narrow widths, enlarged text and on both target platforms during the manual checkpoint.
+
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-129 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-129 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-130 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-130 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
