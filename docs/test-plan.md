@@ -912,3 +912,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Pass two otherwise valid item records with the same ID but different titles/timestamps to the encoder.
 - Confirm export rejects the input before JSON output; the decoder's unique-ID rule and encoder rule must agree.
 - Codec regression source is committed but unrun.
+
+
+### TC-117 — Backup size preflight for large aggregate item metadata
+
+- Reuse a moderate source string across enough valid item records that JSON escaping takes the serialized backup beyond the 145 MiB cap.
+- Confirm the encoder rejects it with the portable-size error before producing a full backup string.
+- Test source is committed but unrun; compare peak memory during the manual performance checkpoint.
