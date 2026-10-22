@@ -15,8 +15,8 @@
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204 | TC-009 | IN PROGRESS — source added, build/device test pending |
 | FR-010 | SCR-005 | TSK-203 | TC-010 | IN PROGRESS — source added; build/test pending |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
-| FR-012 | SCR-006 | TSK-006, TSK-301 | TC-012 | IN PROGRESS — codec/source added; platform export test pending |
-| FR-013 | SCR-006 | TSK-006, TSK-302 | TC-013 | IN PROGRESS — codec/source added; restore tests pending |
+| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-415 | TC-012, TC-119 | IN PROGRESS — codec/source added; tests/platform export pending |
+| FR-013 | SCR-006 | TSK-006, TSK-302, TSK-415 | TC-013, TC-119 | IN PROGRESS — codec/source added; restore tests pending |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | NOT STARTED |
 | FR-015 | SCR-006 | TSK-003, TSK-303 | TC-015 | NOT STARTED |
 | FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205 | TC-016 | BLOCKED pending POC |
@@ -906,9 +906,9 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Verification: regression source committed but unrun; no OCR or canonical Unicode normalization guarantee is implied.
 
 
-### TSK-412 — Unique item IDs in exported backups
+### TSK-415 — Unique item IDs in exported backups
 
 - Implementation: `BackupCodec.encode`, validation alongside the saved-item loop.
 - Requirements: FR-001–003 and FR-012–013 (stable saved-item identity across portable backup/restore).
-- Test: TC-116 in `test/backup_codec_test.dart`.
+- Test: TC-119 in `test/backup_codec_test.dart`.
 - Verification: source/test committed but unrun.
