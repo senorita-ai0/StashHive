@@ -1517,7 +1517,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                 ? existing?.attachmentMimeType
                 : null,
       );
-      await widget.repository.save(item, attachmentBytes: _selectedBytes?.toList());
+      await widget.repository.save(item, attachmentBytes: _selectedBytes);
       if (mounted) Navigator.of(context).pop(true);
     } catch (error) {
       _showMessage('Could not save this item. ' + error.toString());
