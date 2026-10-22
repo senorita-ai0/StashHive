@@ -712,3 +712,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (transparent recovery and backup completeness).
 - Test: TC-104 in `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-398 — Confirm collection normalization before partial backup export
+
+- Implementation: `BackupPrivacyPage` warning banner and `_export` confirmation in `lib/main.dart`, observing both skipped counters.
+- Requirements: FR-012–013 and NFR-003/NFR-006 (transparent backup completeness and accessible warnings).
+- Test: TC-105 in `test/accessibility_widgets_test.dart`.
+- Verification: source/test committed but unrun.
