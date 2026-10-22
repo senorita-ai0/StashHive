@@ -839,7 +839,8 @@ void main() {
       LibraryRepository.collectionBeforeItemWriteForTesting = null;
     }
 
-    expect(find.textContaining('simulated collection delete failure'), findsOneWidget);
+    expect(find.text('Could not delete the collection. Please try again.'), findsOneWidget);
+    expect(find.textContaining('simulated collection delete failure'), findsNothing);
     expect(repository.collections.value, contains('Learning'));
     expect(repository.findById('collection-delete-failure')?.collection, 'Learning');
     expect(tester.takeException(), isNull);
@@ -1084,7 +1085,11 @@ void main() {
     }
 
     expect(find.text('Item details'), findsOneWidget);
-    expect(find.textContaining('simulated item delete failure'), findsOneWidget);
+    expect(
+      find.text('Could not delete this item. The item remains in your library. Please try again.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('simulated item delete failure'), findsNothing);
     expect(repository.findById(item.id)?.title, item.title);
     expect(await repository.readAttachment(item.attachmentKey!), orderedEquals(bytes));
     expect(tester.takeException(), isNull);
