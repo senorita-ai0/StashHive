@@ -288,3 +288,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008–009 (local and incoming file intake).
 - Test: TC-051 in `test/mime_types_test.dart` and `test/share_intake_test.dart`.
 - Verification: source and tests committed; execution and platform-specific format support remain pending.
+
+
+### TSK-345 — Quick Save field-limit feedback
+
+- Implementation: `lib/main.dart`, URL normalization and tag validation.
+- Requirements: FR-002, FR-005, FR-006 and FR-009 (saved URL/tag validity).
+- Test: TC-052 in `test/quick_save_test.dart`.
+- Verification: source and widget tests committed; execution remains pending.
