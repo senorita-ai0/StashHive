@@ -91,6 +91,32 @@ void main() {
       expect(partialDecoded.omittedCollectionEntryCount, 2);
     });
 
+    test('rejects malformed partial-backup omission metadata', () {
+      final valid = BackupCodec.encode(
+        items: [sampleLink()],
+        attachmentBytes: const {},
+        collections: const ['Learning'],
+      );
+      for (final invalidCount in <Object?>[-1, 1.5, 'two']) {
+        final badCollectionCount =
+            jsonDecode(valid) as Map<String, dynamic>;
+        badCollectionCount['omittedCollectionEntryCount'] = invalidCount;
+        expect(
+          () => BackupCodec.decode(jsonEncode(badCollectionCount)),
+          throwsFormatException,
+          reason: 'Collection omission metadata must be a non-negative integer.',
+        );
+
+        final badRecordCount = jsonDecode(valid) as Map<String, dynamic>;
+        badRecordCount['omittedUnreadableRecordCount'] = invalidCount;
+        expect(
+          () => BackupCodec.decode(jsonEncode(badRecordCount)),
+          throwsFormatException,
+          reason: 'Record omission metadata must be a non-negative integer.',
+        );
+      }
+    });
+
     test('round-trips items and collection names', () {
       final json = BackupCodec.encode(
         items: [sampleLink()],
