@@ -191,7 +191,7 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — collision-safe share-event fingerprints (2026-10-22)
 
-- **TSK-324:** Replaced integer-only share fingerprints with canonical JSON serialization of each ordered event's type, path and MIME type. This prevents an integer hash collision (or ambiguous delimiter encoding) from suppressing a distinct user share.
+- **TSK-324:** Share events are serialized as canonical ordered JSON and represented in the cache by a SHA-256 digest. The cache stores fixed-size fingerprints rather than retaining full shared text/path payloads; canonical fields avoid delimiter ambiguity, and SHA-256 avoids relying on Dart's small integer object hashes.
 - Added regression coverage for two distinct batches whose values could alias under a simple delimiter scheme. Source and test are committed but unrun; device delivery checks remain pending and Phase 2 is still open.
 
 
@@ -205,3 +205,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-326:** Expanded the generated Android manifest configurator so SEND_MULTIPLE offers every MIME family supported by single-share intake, not only images. Added test assertions that generated action/MIME pairs are exact and that multi-select coverage mirrors single-share coverage.
 - This enables supported homogeneous text, URL, and document batches to reach the existing sequential Quick Save flow. Python regression tests and Android chooser/device behavior are committed but unrun; Phase 2 remains open pending manual validation.
+
+
+#### TSK-324 hardening — bounded fingerprint storage (2026-10-22)
+
+- Added the `crypto` package and changed the deduplication cache key to a SHA-256 digest of canonical JSON. Only the 64-character digest remains in the short-lived cache rather than the serialized shared text/path.
+- The dependency is declared as `crypto: ^3.0.7`; test/build resolution remains pending because CI is manual-only.
