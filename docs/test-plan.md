@@ -396,3 +396,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Open Quick Save and confirm Link/Note/Image/Document each expose a named button with a selected state.
 - Confirm only the active type is selected, then activate a different type through `SemanticsAction.tap` and confirm selection moves to that option.
 - Widget test source is committed but unrun. Verify announcements with TalkBack and a browser screen reader; ensure decorative icon/label children are not double-announced.
+
+
+### TC-059 — Legacy unsafe URL never reaches platform launcher
+
+- Insert a legacy record with `javascript:alert(1)` directly into local storage, then open Item Details.
+- Activate “Open link” and confirm the page reports that only HTTP/HTTPS links are allowed.
+- Confirm the external-launch error message is not shown, proving the URL was rejected before the platform launcher was called.
+- Widget test source is committed but unrun; verify valid HTTPS links still open correctly on Android and web.
