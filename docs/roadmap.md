@@ -332,7 +332,7 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — size-first file-picker intake (2026-10-22)
 
-- **TSK-346:** Quick Save uses file_picker 12.x's single-file `pickFile()` API, checks the selected file's length against the 15 MiB limit, and only then reads the byte buffer. It rejects zero/unknown-size selections with a clear recoverable message and performs a second post-read size check.
+- **TSK-346:** Quick Save uses file_picker 12.x's single-file `pickFile()` API, checks length first, then consumes `readAsByteStream()` through a hard-capped reader so inaccurate lengths cannot cause unbounded allocations. It rejects zero/unknown-size selections with a clear recoverable message and performs a second post-read size check.
 - This reduces unnecessary allocation for oversized local/web selections. Source is committed but unrun; verify web picker behavior with lazy `readAsBytes()`, Android gallery/SAF reads, cancellation and cloud-backed files during the manual platform checkpoint.
 
 
@@ -542,7 +542,7 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — size-first backup restore picker (2026-10-22)
 
-- **TSK-381:** Backup & Privacy now uses the pinned file_picker single-file API and checks file length against the 145 MiB backup limit before reading bytes, then checks the actual byte buffer again. Empty/unknown-size and oversized selections receive explicit feedback instead of being eagerly loaded.
+- **TSK-381:** Backup & Privacy now uses the pinned file_picker single-file API, checks length first, and consumes `readAsByteStream()` through the 145 MiB capped reader. Empty/unknown-size and oversized selections receive explicit feedback.
 - This also removes the old `FilePickerResult.files` access left behind by the dependency API migration. Source is committed but unrun; web and Android provider behavior remains a manual check.
 
 
@@ -718,3 +718,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-390:** `SavedItem.fromMap` now trims legacy titles, URLs and attachment filenames, and normalizes attachment MIME metadata to lowercase. This matches the normalization already applied to tags and collections and prevents surrounding whitespace/case drift from being carried into later edits/exports; URL scheme safety remains enforced separately at save/open boundaries.
 - Added a model regression for padded title/URL/filename and mixed-case MIME metadata. Test source is committed but unrun.
+
+
+### Phase 2 — bound file-picker streams for attachments and backups (2026-10-22)
+
+- **TSK-391:** Quick Save and Backup & Privacy now use `PlatformFile.readAsByteStream()` with the shared capped reader. The 15 MiB attachment limit and 145 MiB backup limit are enforced while chunks arrive; initial length checks remain as an early rejection path.
+- This closes the same stale-length memory-risk for local picker inputs that was addressed for OS-shared files. Stream-reader boundary tests are committed but unrun; validate browser, Android SAF and cloud-provider implementations during the manual checkpoint.
