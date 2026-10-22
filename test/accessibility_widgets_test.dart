@@ -352,6 +352,66 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Backup confirms before omitting unexportable legacy items', (tester) async {
+    const legacyId = 'unexportable-legacy-url-for-backup-dialog';
+    await Hive.box<dynamic>('stashhive_items_v1').put(
+      legacyId,
+      const SavedItem(
+        id: legacyId,
+        kind: ItemKind.link,
+        title: 'Old unsafe link',
+        content: '',
+        url: 'javascript:alert(1)',
+        tags: [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 2,
+      ).toMap(),
+    );
+    await repository.save(
+      const SavedItem(
+        id: 'valid-next-to-unexportable',
+        kind: ItemKind.link,
+        title: 'Valid entry',
+        content: '',
+        url: 'https://example.com/valid',
+        tags: [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 3,
+      ),
+    );
+
+    expect(repository.unexportableRecordCount, 1);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.BackupPrivacyPage(repository: repository),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final exportButton = find.widgetWithText(FilledButton, 'Create backup');
+    await tester.ensureVisible(exportButton);
+    await tester.tap(exportButton);
+    await tester.pumpAndSettle();
+
+    expect(find.text('This backup may be incomplete'), findsOneWidget);
+    expect(
+      find.textContaining(
+        '1 readable legacy item(s) have invalid fields',
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('This backup may be incomplete'), findsNothing);
+    expect(repository.findById(legacyId), isNotNull);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Backup page warns and asks before exporting skipped records and collections', (tester) async {
     await Hive.box<dynamic>('stashhive_items_v1').put(
       'unreadable-backup-warning-record',
