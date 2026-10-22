@@ -55,6 +55,11 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function()? deleteAfterAttachmentDeleteForTesting;
 
+  /// Fault-injection seam for a collection preference write that reports an
+  /// error after the underlying write has completed.
+  @visibleForTesting
+  static Future<void> Function()? addCollectionAfterWriteForTesting;
+
   bool get darkMode => _preferencesBox.get('darkMode') == true;
 
   static Future<LibraryRepository> open() async {
@@ -489,7 +494,27 @@ class LibraryRepository {
       );
     }
     current.add(cleaned);
-    await _preferencesBox.put('collections', current);
+    final hadCollectionsKey = _preferencesBox.containsKey('collections');
+    final previousCollectionsValue = _preferencesBox.get('collections');
+    try {
+      await _preferencesBox.put('collections', current);
+      final afterWrite = addCollectionAfterWriteForTesting;
+      if (afterWrite != null) await afterWrite();
+    } catch (_) {
+      // A storage future can fail after the preference write has taken effect.
+      // Restore the previous value best-effort and retain the original error.
+      try {
+        if (hadCollectionsKey) {
+          await _preferencesBox.put('collections', previousCollectionsValue);
+        } else {
+          await _preferencesBox.delete('collections');
+        }
+      } catch (_) {
+        // Continue with refresh; never mask the original add failure.
+      }
+      _refreshCollections();
+      rethrow;
+    }
     _refreshCollections();
   }
 
