@@ -767,3 +767,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed 500 portable collection names and a legacy saved item assigned to a distinct 501st collection.
 - Open Backup & Privacy and start export; confirm it blocks the export before the partial-export dialog and explains how to repair the item's assignment.
 - Confirm the item remains present and unmodified. Repository/widget test source is committed but unrun.
+
+
+### TC-110 — Partial-backup omission metadata survives export/import
+
+- Export a library with one unreadable raw record and two invalid/duplicate collection entries alongside a readable item.
+- Decode the generated backup and confirm both omission counts are preserved.
+- Confirm old version-1 backups without either optional field decode both counts as zero, and malformed negative/wrong-type counts are rejected.
+- Codec/repository regression source is committed but unrun; restore dialog display of both notices remains part of the manual picker validation.
