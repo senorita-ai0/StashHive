@@ -712,12 +712,19 @@ class LibraryRepository {
   /// decode once before confirmation and avoid parsing large JSON/base64 data
   /// a second time after the user accepts the merge.
   Future<int> restoreDecodedBackup(DecodedBackup decoded) async {
+    BackupCodec.validateDecodedBackup(decoded);
     BackupCodec.validateItemCount(
       currentCount: items.value.length,
       incomingCount: decoded.items.length,
     );
     final mergedCollections = List<String>.from(collections.value);
-    for (final name in decoded.collections) {
+    final importedCollectionNames = <String>[
+      ...decoded.collections,
+      ...decoded.items
+          .map((item) => item.collection)
+          .whereType<String>(),
+    ];
+    for (final name in importedCollectionNames) {
       if (!mergedCollections.any(
         (existing) => existing.toLowerCase() == name.toLowerCase(),
       )) {
