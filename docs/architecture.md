@@ -152,3 +152,10 @@ Core source now includes sequential incoming-share review, bounded/collision-res
 ## Save/backup validation alignment — 2026-10-22
 
 `BackupCodec.validateSavedItem` is the shared item-level validation boundary used before repository writes and during backup encode/decode. The saved URL maximum is defined alongside the saved-item model and reused by incoming-share intake, Quick Save and backup validation. This keeps invalid item kinds, malformed attachment metadata and over-limit fields from being intentionally saved or exported only to fail later during restore. Attachment byte writes and orphan cleanup still use best-effort rollback; process death and underlying storage failures require the manual platform validation plan.
+
+
+## Backup v1 completeness metadata — 2026-10-22
+
+The implemented JSON v1 backup format may include two optional non-negative counters: `omittedUnreadableRecordCount` for raw local records that could not be materialized, and `omittedCollectionEntryCount` for legacy collection entries/assignments normalized or omitted during collection recovery. Export includes the counters when non-zero; decode defaults either missing field to zero so existing v1 backups remain compatible. Restore confirmation must explain these counts, because a backup cannot reconstruct raw records or collection data that were omitted from its contents.
+
+Before export, the repository blocks any remaining visible item assignment that cannot be represented within the portable 500-collection cap. Collection assignments are canonicalized against the merged collection list during restore. These changes are implemented in source with regression cases, but the tests and Android/web restore flows remain unverified until the manual validation checkpoint.
