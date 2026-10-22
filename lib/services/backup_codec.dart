@@ -136,8 +136,14 @@ class BackupCodec {
           'It was not included in the backup.',
         );
       }
+      if (bytes.isEmpty) {
+        throw const FormatException('An attachment is empty and cannot be exported.');
+      }
       if (bytes.length > maxAttachmentBytes) {
         throw const FormatException('An attachment exceeds the 15 MB backup limit.');
+      }
+      if (bytes.any((byte) => byte < 0 || byte > 255)) {
+        throw const FormatException('An attachment contains invalid byte values.');
       }
       totalBytes += bytes.length;
       if (totalBytes > maxTotalAttachmentBytes) {
@@ -262,6 +268,9 @@ class BackupCodec {
         bytes = Uint8List.fromList(base64Decode(encoded));
       } on FormatException {
         throw const FormatException('An attachment contains invalid base64 data.');
+      }
+      if (bytes.isEmpty) {
+        throw const FormatException('An attachment payload is empty.');
       }
       if (bytes.length > maxAttachmentBytes) {
         throw const FormatException('An attachment exceeds 15 MB.');
