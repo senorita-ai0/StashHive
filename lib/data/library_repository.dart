@@ -669,6 +669,68 @@ class LibraryRepository {
     }).length;
   }
 
+  /// Number of visible legacy items that cannot be safely represented in a
+  /// backup because item validation, attachment bytes, or the combined
+  /// attachment budget fails. These records remain unchanged in local storage.
+  int get unexportableRecordCount =>
+      _buildBackupSnapshot(copyAttachmentBytes: false).omitted;
+
+  ({
+    List<SavedItem> items,
+    Map<String, Uint8List> attachmentBytes,
+    int omitted,
+  }) _buildBackupSnapshot({required bool copyAttachmentBytes}) {
+    final exportableItems = <SavedItem>[];
+    final byteMap = <String, Uint8List>{};
+    final includedKeys = <String>{};
+    final rejectedKeys = <String>{};
+    var totalBytes = 0;
+    var omitted = 0;
+
+    for (final item in items.value) {
+      try {
+        BackupCodec.validateSavedItem(item);
+      } catch (_) {
+        omitted++;
+        continue;
+      }
+
+      final key = item.attachmentKey;
+      if (key != null) {
+        if (rejectedKeys.contains(key)) {
+          omitted++;
+          continue;
+        }
+        if (!includedKeys.contains(key)) {
+          final raw = _attachmentsBox.get(key);
+          if (!isValidAttachmentByteList(raw)) {
+            rejectedKeys.add(key);
+            omitted++;
+            continue;
+          }
+          final bytes = (raw as List).cast<int>();
+          if (totalBytes + bytes.length > BackupCodec.maxTotalAttachmentBytes) {
+            rejectedKeys.add(key);
+            omitted++;
+            continue;
+          }
+          totalBytes += bytes.length;
+          includedKeys.add(key);
+          if (copyAttachmentBytes) {
+            byteMap[key] = Uint8List.fromList(bytes);
+          }
+        }
+      }
+      exportableItems.add(item);
+    }
+
+    return (
+      items: List<SavedItem>.unmodifiable(exportableItems),
+      attachmentBytes: byteMap,
+      omitted: omitted,
+    );
+  }
+
   Future<String> createBackup() async {
     final unrepresentedAssignments = unrepresentedCollectionAssignmentCount;
     if (unrepresentedAssignments > 0) {
@@ -682,25 +744,14 @@ class LibraryRepository {
       );
     }
 
-    final byteMap = <String, Uint8List>{};
-    for (final item in items.value) {
-      final key = item.attachmentKey;
-      if (key == null || byteMap.containsKey(key)) continue;
-      final value = _attachmentsBox.get(key);
-      if (!isValidAttachmentByteList(value)) {
-        throw FormatException(
-          'The local attachment for "${item.title}" is missing or damaged. '
-          'Select the file again or restore a backup before exporting.',
-        );
-      }
-      byteMap[key] = Uint8List.fromList((value as List).cast<int>());
-    }
+    final snapshot = _buildBackupSnapshot(copyAttachmentBytes: true);
     return BackupCodec.encode(
-      items: List<SavedItem>.from(items.value),
-      attachmentBytes: byteMap,
+      items: snapshot.items,
+      attachmentBytes: snapshot.attachmentBytes,
       collections: List<String>.from(collections.value),
       omittedUnreadableRecordCount: skippedRecordCount.value,
       omittedCollectionEntryCount: skippedCollectionCount.value,
+      omittedUnexportableRecordCount: snapshot.omitted,
     );
   }
 
