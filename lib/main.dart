@@ -1863,40 +1863,58 @@ class _QuickSavePageState extends State<QuickSavePage> {
     final existing = widget.existingItem;
     final name = _selectedName ?? existing?.attachmentName;
     final hasCurrent = _selectedBytes != null || (existing?.hasAttachment ?? false);
-    return InkWell(
+    final pickerLabel = name ??
+        (_kind == ItemKind.image ? 'Choose an image' : 'Choose a document');
+    final pickerHint = hasCurrent
+        ? 'Select a replacement file, up to 15 megabytes'
+        : 'Select a file, up to 15 megabytes';
+    return Semantics(
+      button: true,
+      label: pickerLabel,
+      hint: pickerHint,
       onTap: _pickAttachment,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: _kind.softAccent,
+      child: ExcludeSemantics(
+        child: InkWell(
+          onTap: _pickAttachment,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: _kind.accent.withValues(alpha: 0.3)),
-        ),
-        child: Row(
-          children: [
-            Icon(_kind.icon, color: _kind.accent, size: 28),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name ?? (_kind == ItemKind.image ? 'Choose an image' : 'Choose a document'),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    hasCurrent ? 'Tap to choose a replacement file' : 'Select a file up to 15 MB',
-                    style: TextStyle(color: mutedTextColor(context), fontSize: 12),
-                  ),
-                ],
-              ),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: _kind.softAccent,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: _kind.accent.withValues(alpha: 0.3)),
             ),
-            const Icon(Icons.upload_file_rounded),
-          ],
+            child: Row(
+              children: [
+                Icon(_kind.icon, color: _kind.accent, size: 28),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        pickerLabel,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        hasCurrent
+                            ? 'Tap to choose a replacement file'
+                            : 'Select a file up to 15 MB',
+                        style: TextStyle(
+                          color: mutedTextColor(context),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.upload_file_rounded),
+              ],
+            ),
+          ),
         ),
       ),
     );
