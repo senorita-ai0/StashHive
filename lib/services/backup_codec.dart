@@ -73,6 +73,19 @@ class BackupCodec {
     return total;
   }
 
+  /// Maximum base64 character count needed to encode at most [maxDecodedBytes].
+  /// The result rounds up to a full four-character base64 quantum.
+  static int maxBase64CharactersForDecodedBytes(int maxDecodedBytes) {
+    if (maxDecodedBytes < 0) {
+      throw ArgumentError.value(
+        maxDecodedBytes,
+        'maxDecodedBytes',
+        'Must not be negative.',
+      );
+    }
+    return ((maxDecodedBytes + 2) ~/ 3) * 4;
+  }
+
   /// Ensures repository mutations stay within the item count that backups can
   /// represent. [incomingCount] is zero for edits and the number of new records
   /// for restore/import preflight.
@@ -433,6 +446,13 @@ class BackupCodec {
                   checksum.length != 64 ||
                   !RegExp(r'^[0-9a-fA-F]{64}').hasMatch(checksum)))) {
         throw const FormatException('An attachment entry exceeds supported limits.');
+      }
+      final remainingBytes = maxTotalAttachmentBytes - totalBytes;
+      if (encoded.length >
+          maxBase64CharactersForDecodedBytes(remainingBytes)) {
+        throw const FormatException(
+          'The combined attachments exceed 100 MB.',
+        );
       }
       final Uint8List bytes;
       try {
