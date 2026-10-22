@@ -1007,3 +1007,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Save an image with local attachment bytes, open Item Details, choose Delete saved item, and confirm.
 - Inject a failure after the repository has attempted to remove the attachment. Confirm the screen remains open, a recoverable error is shown, and rollback preserves the saved record and original attachment bytes.
 - Regression source is committed but unrun; actual storage-write interruption recovery remains pending the manual validation checkpoint.
+
+
+### TC-133 — Attachment storage wording matches the platform
+
+- Open Item Details for an image or document on Android and confirm the attachment section describes storage inside StashTrail on the device.
+- Open the same screen in the web app and confirm the label says the file is stored in this browser profile, not on the device or in the cloud.
+- Check this copy together with Backup & privacy's local-storage warning. Widget source currently asserts the native label; both platform branches still require manual review because tests/builds have not been run.
