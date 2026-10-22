@@ -346,3 +346,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-348:** Repository saves now reject empty attachment bytes, non-byte integer values, and missing/empty/unreadable stored payloads. Backup encode and decode reject empty attachment payloads so an image/document cannot be marked as having a valid local attachment when no usable bytes exist.
 - Added repository and backup-codec regression tests. Source and test cases are committed but unrun; behavior for interrupted storage writes still requires the manual validation checkpoint.
+
+
+### Phase 2 — fail safely on damaged legacy attachment bytes (2026-10-22)
+
+- **TSK-349:** `readAttachment` now returns no payload for empty, non-integer or out-of-byte-range stored values instead of silently filtering bad entries. Backup export validates stored bytes before conversion and surfaces a recoverable damage message instead of silently producing a different payload/checksum.
+- Added a repository regression that corrupts a legacy stored attachment, verifies reads do not return a partially filtered file, and verifies backup export fails with a clear message. Test source is committed but unrun.
