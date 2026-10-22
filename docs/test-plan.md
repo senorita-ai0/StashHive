@@ -868,7 +868,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Widget regression source is committed but unrun.
 
 
-### TC-114 — Search result sorting parity
+### TC-115 — Search result sorting parity
 
 - Save three items with deliberately different titles, creation timestamps and update timestamps.
 - Confirm the default Recently saved order uses newest updates first, Title A–Z uses a case-insensitive title comparison, and Oldest first uses creation timestamps ascending.
@@ -883,7 +883,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm restore displays that unexportable items omitted from the source backup cannot be recovered from that file. Regression source is committed but unrun.
 
 
-### TC-115 — Metadata-only performance baseline
+### TC-116 — Metadata-only performance baseline
 
 - After dependencies are resolved, run `dart run tool/benchmark_library_repository.dart` from the repository root when the owner requests a measurement checkpoint.
 - Capture output for 100, 1,000 and 10,000 metadata-only items. Record the date, OS, Flutter/Dart versions and JSON output; note the runtime mode and any unusual machine load.
