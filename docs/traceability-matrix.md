@@ -720,3 +720,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003/NFR-006 (transparent backup completeness and accessible warnings).
 - Test: TC-105 in `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-399 — Contextual accessible names for secondary menus
+
+- Implementation: `lib/main.dart`, Item Details overflow menu and Collection row action menu.
+- Requirement: NFR-006 (accessible controls and keyboard/screen-reader usability).
+- Test: TC-106 in `test/accessibility_widgets_test.dart`.
+- Verification: source/test committed but unrun; assistive-technology check remains pending.
