@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/services/backup_codec.dart';
@@ -171,6 +172,74 @@ void main() {
           collections: const [],
         ),
         throwsFormatException,
+      );
+    });
+
+    test('writes attachment checksums and rejects modified payload bytes', () {
+      final bytes = Uint8List.fromList([1, 2, 3, 4, 5]);
+      final image = SavedItem(
+        id: 'image-checksum',
+        kind: ItemKind.image,
+        title: 'Checksum reference',
+        content: '',
+        tags: const [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 1000,
+        attachmentKey: 'image-checksum',
+        attachmentName: 'checksum.png',
+        attachmentMimeType: 'image/png',
+      );
+      final source = BackupCodec.encode(
+        items: [image],
+        attachmentBytes: {'image-checksum': bytes},
+        collections: const [],
+      );
+      final payload = jsonDecode(source) as Map<String, dynamic>;
+      final attachments =
+          payload['attachments'] as Map<String, dynamic>;
+      final attachment =
+          attachments['image-checksum'] as Map<String, dynamic>;
+
+      expect(attachment['sha256'], sha256.convert(bytes).toString());
+      attachment['base64'] = base64Encode([9, 8, 7, 6, 5]);
+
+      expect(
+        () => BackupCodec.decode(jsonEncode(payload)),
+        throwsFormatException,
+      );
+    });
+
+    test('accepts legacy version-one backups without attachment checksums', () {
+      final bytes = Uint8List.fromList([1, 2, 3]);
+      final image = SavedItem(
+        id: 'legacy-image',
+        kind: ItemKind.image,
+        title: 'Legacy backup',
+        content: '',
+        tags: const [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 1000,
+        attachmentKey: 'legacy-image',
+        attachmentName: 'legacy.png',
+        attachmentMimeType: 'image/png',
+      );
+      final source = BackupCodec.encode(
+        items: [image],
+        attachmentBytes: {'legacy-image': bytes},
+        collections: const [],
+      );
+      final payload = jsonDecode(source) as Map<String, dynamic>;
+      final attachments = payload['attachments'] as Map<String, dynamic>;
+      (attachments['legacy-image'] as Map<String, dynamic>).remove('sha256');
+
+      final decoded = BackupCodec.decode(jsonEncode(payload));
+      expect(
+        decoded.attachments['legacy-image']!.bytes,
+        orderedEquals(bytes),
       );
     });
 
