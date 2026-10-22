@@ -7,7 +7,61 @@ import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/main.dart' as app;
 
+double _contrastRatio(Color first, Color second) {
+  final a = first.computeLuminance();
+  final b = second.computeLuminance();
+  return (a > b ? a + 0.05 : b + 0.05) /
+      (a > b ? b + 0.05 : a + 0.05);
+}
+
 void main() {
+  testWidgets('muted text meets contrast on light surfaces', (tester) async {
+    late Color muted;
+    late Color canvas;
+    late Color field;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: app.buildLightTheme(),
+        home: Builder(
+          builder: (context) {
+            muted = app.mutedTextColor(context);
+            canvas = Theme.of(context).scaffoldBackgroundColor;
+            field = Theme.of(context).inputDecorationTheme.fillColor!;
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+
+    expect(_contrastRatio(muted, Colors.white), greaterThanOrEqualTo(4.5));
+    expect(_contrastRatio(muted, canvas), greaterThanOrEqualTo(4.5));
+    expect(_contrastRatio(muted, field), greaterThanOrEqualTo(4.5));
+  });
+
+  testWidgets('muted text meets contrast on dark surfaces', (tester) async {
+    late Color muted;
+    late Color canvas;
+    late Color field;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: app.buildLightTheme(),
+        darkTheme: app.buildDarkTheme(),
+        themeMode: ThemeMode.dark,
+        home: Builder(
+          builder: (context) {
+            muted = app.mutedTextColor(context);
+            canvas = Theme.of(context).scaffoldBackgroundColor;
+            field = Theme.of(context).inputDecorationTheme.fillColor!;
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+
+    expect(_contrastRatio(muted, canvas), greaterThanOrEqualTo(4.5));
+    expect(_contrastRatio(muted, field), greaterThanOrEqualTo(4.5));
+  });
+
   late Directory testDirectory;
   late LibraryRepository repository;
 
