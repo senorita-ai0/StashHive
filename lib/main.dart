@@ -1102,7 +1102,7 @@ class SavedItemTile extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
-                              color: item.kind.accent,
+                              color: item.kind.readableTextAccent,
                             ),
                           ),
                         ),
@@ -1663,7 +1663,13 @@ class _QuickSavePageState extends State<QuickSavePage> {
                           Text(kind.label,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: kind.accent)),
+                              style: TextStyle(
+                                 fontSize: 11,
+                                 fontWeight: FontWeight.w600,
+                                 color: _kind == kind
+                                     ? kind.readableTextAccent
+                                     : kind.accent,
+                               )),
                         ],
                       ),
                     ),
@@ -1964,7 +1970,11 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                         Icon(item.kind.icon, size: 15, color: item.kind.accent),
                         const SizedBox(width: 6),
                         Text(item.kind.label.toUpperCase(),
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: item.kind.accent)),
+                            style: TextStyle(
+                               fontSize: 11,
+                               fontWeight: FontWeight.w700,
+                               color: item.kind.readableTextAccent,
+                             )),
                       ],
                     ),
                   ),
