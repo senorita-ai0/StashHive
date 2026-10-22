@@ -410,6 +410,7 @@ void main() {
     );
     expect(repository.findById('unknown-kind'), isNull);
     expect(repository.findById('wrong-box-key'), isNull);
+    expect(repository.skippedRecordCount.value, 2);
   });
 
   test('keeps parseable legacy records visible for recovery actions', () async {
