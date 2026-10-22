@@ -394,3 +394,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-356:** The strict HTTP/HTTPS parser now rejects URL user-info such as embedded usernames/passwords. This applies to Quick Save, shared URL intake, backup validation and external launch because they share the same parsing boundary.
 - Added a unit regression for a credential-bearing URL. Test source is committed but unrun.
+
+
+### Phase 2 — inline feedback for overlong URLs (2026-10-22)
+
+- **TSK-357:** Quick Save's URL field now reports the 4,096-character URL limit during form validation, before the save attempt, while the save/repository validators remain as backstops.
+- Added a widget regression confirming an over-limit value shows the inline error and writes no item. Test source is committed but unrun.
