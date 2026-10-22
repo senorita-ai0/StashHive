@@ -389,12 +389,12 @@ class ShareIntake {
     if (length > maxIncomingAttachmentBytes) {
       throw const FormatException('Shared files must be 15 MB or smaller.');
     }
-    final bytes = await file.readAsBytes();
+    // File providers may report stale/unknown lengths. Enforce the cap while
+    // chunks arrive so a bad length response cannot trigger an unbounded
+    // allocation through XFile.readAsBytes().
+    final bytes = await _readBoundedBytes(file);
     if (bytes.isEmpty) {
       throw const FormatException('The shared file is empty or unavailable.');
-    }
-    if (bytes.length > maxIncomingAttachmentBytes) {
-      throw const FormatException('Shared files must be 15 MB or smaller.');
     }
 
     return IncomingShare(
@@ -407,6 +407,19 @@ class ShareIntake {
       fileName: attachmentName,
       mimeType: mimeType,
     );
+  }
+
+  static Future<Uint8List> _readBoundedBytes(XFile file) async {
+    final builder = BytesBuilder(copy: false);
+    var totalBytes = 0;
+    await for (final chunk in file.openRead()) {
+      if (chunk.length > maxIncomingAttachmentBytes - totalBytes) {
+        throw const FormatException('Shared files must be 15 MB or smaller.');
+      }
+      totalBytes += chunk.length;
+      builder.add(chunk);
+    }
+    return builder.takeBytes();
   }
 
   /// Removes punctuation that surrounds a shared URL without removing
