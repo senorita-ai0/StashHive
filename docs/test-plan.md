@@ -541,3 +541,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Attempt to save a link/note with a filename or MIME field but no attachment key; repository validation must reject it before writing.
 - Attempt to export the same malformed item; backup validation must reject it instead of producing a record that cannot be interpreted consistently.
 - Regression source is committed but unrun.
+
+
+### TC-079 — Empty note rejection at save/export boundaries
+
+- Attempt to save a note whose content is empty or whitespace-only; the repository must reject it before writing a record.
+- Attempt to export the same invalid note; backup validation must reject it.
+- Confirm ordinary non-empty Unicode notes still round-trip. Test source is committed but unrun.
