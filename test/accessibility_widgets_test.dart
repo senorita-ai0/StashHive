@@ -908,6 +908,14 @@ void main() {
     for (final item in items) {
       await repository.save(item);
     }
+    final metadataBefore = <String, List<Object>>{
+      for (final saved in repository.items.value)
+        saved.id: <Object>[
+          saved.title,
+          saved.createdAtMs,
+          saved.updatedAtMs,
+        ],
+    };
 
     await tester.pumpWidget(
       MaterialApp(
@@ -948,6 +956,16 @@ void main() {
 
     expect(titleY('Cedar'), lessThan(titleY('Bravo')));
     expect(titleY('Bravo'), lessThan(titleY('Alpha')));
+
+    final metadataAfter = <String, List<Object>>{
+      for (final saved in repository.items.value)
+        saved.id: <Object>[
+          saved.title,
+          saved.createdAtMs,
+          saved.updatedAtMs,
+        ],
+    };
+    expect(metadataAfter, metadataBefore);
   });
 
 }
