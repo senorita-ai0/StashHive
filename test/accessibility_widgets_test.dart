@@ -207,6 +207,39 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Library warning includes skipped legacy collection entries', (tester) async {
+    await Hive.box<dynamic>('stashhive_preferences_v1').put(
+      'collections',
+      <Object?>['Research', 'research', '   '],
+    );
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: app.LibraryPage(
+            repository: repository,
+            onAdd: (_) {},
+            onSearch: (_) {},
+            onOpenItem: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    expect(repository.skippedCollectionCount.value, 2);
+    expect(
+      find.textContaining('2 collection entries were invalid'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('use a previous backup'),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Library search teaser exposes and handles semantic activation', (tester) async {
     final semantics = tester.ensureSemantics();
     addTearDown(semantics.dispose);
