@@ -51,6 +51,11 @@ void main() {
     expect(_contrastRatio(muted, Colors.white), greaterThanOrEqualTo(4.5));
     expect(_contrastRatio(muted, canvas), greaterThanOrEqualTo(4.5));
     expect(_contrastRatio(muted, field), greaterThanOrEqualTo(4.5));
+    expect(
+      _contrastRatio(muted, const Color(0xFFEEF0FF)),
+      greaterThanOrEqualTo(4.5),
+      reason: 'Muted chip labels must remain readable on the selected-chip fill.',
+    );
   });
 
   testWidgets('muted text meets contrast on dark surfaces', (tester) async {
