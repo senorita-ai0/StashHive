@@ -916,5 +916,25 @@ void main() {
       };
       expect(() => BackupCodec.decode(jsonEncode(payload)), throwsFormatException);
     });
+
+    test('preserves the version-1 StashHive marker for backup compatibility', () {
+      final legacyPayload = <String, Object?>{
+        'app': 'StashHive',
+        'formatVersion': BackupCodec.formatVersion,
+        'exportedAt': '2026-10-22T00:00:00Z',
+        'collections': <String>['Learning'],
+        'items': <Object?>[sampleLink().toMap()],
+        'attachments': <String, Object?>{},
+      };
+
+      final decoded = BackupCodec.decode(jsonEncode(legacyPayload));
+      final reencoded = BackupCodec.encode(
+        items: decoded.items,
+        attachmentBytes: const {},
+        collections: decoded.collections,
+      );
+
+      expect(jsonDecode(reencoded)['app'], 'StashHive');
+    });
   });
 }
