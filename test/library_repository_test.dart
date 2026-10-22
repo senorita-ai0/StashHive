@@ -906,6 +906,39 @@ void main() {
     expect(repository.skippedRecordCount.value, 0);
   });
 
+  test('rolls back deletion of an unreadable legacy record and its attachment', () async {
+    const itemId = 'unreadable-rollback-record';
+    const attachmentKey = 'unreadable-rollback-payload';
+    final bytes = Uint8List.fromList([6, 2, 6, 4]);
+    final storedItems = Hive.box<dynamic>('stashhive_items_v1');
+    final storedAttachments = Hive.box<dynamic>('stashhive_attachments_v1');
+    await storedItems.put(itemId, <String, Object?>{
+      'id': itemId,
+      'kind': 'unknown-kind',
+      'attachmentKey': attachmentKey,
+    });
+    await storedAttachments.put(attachmentKey, bytes);
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    LibraryRepository.deleteAfterAttachmentDeleteForTesting = () async {
+      throw StateError('simulated error after attachment removal');
+    };
+    try {
+      await expectLater(
+        repository.delete(itemId),
+        throwsA(isA<StateError>()),
+      );
+    } finally {
+      LibraryRepository.deleteAfterAttachmentDeleteForTesting = null;
+    }
+
+    expect(storedItems.get(itemId), isA<Map>());
+    expect(storedAttachments.containsKey(attachmentKey), isTrue);
+    expect(await repository.readAttachment(attachmentKey), orderedEquals(bytes));
+    expect(repository.skippedRecordCount.value, 1);
+  });
+
   test('restores item and attachment when delete fails after attachment removal', () async {
     final originalBytes = Uint8List.fromList([9, 8, 7, 6]);
     final image = buildImage();
