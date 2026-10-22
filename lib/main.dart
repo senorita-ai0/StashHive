@@ -15,6 +15,7 @@ import 'data/library_repository.dart';
 import 'models/saved_item.dart';
 import 'services/share_intake.dart';
 import 'services/mime_types.dart';
+import 'services/web_url.dart';
 import 'ui/layout_metrics.dart';
 
 const Color kBrand = Color(0xFF5B5CE2);
@@ -1815,9 +1816,11 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     final item = _item;
     if (item == null) return;
     if (item.kind == ItemKind.link && item.url != null) {
-      final uri = Uri.tryParse(item.url!);
-      if (uri == null || !['http', 'https'].contains(uri.scheme) || uri.host.isEmpty) {
-        _message('This saved URL is not valid.');
+      // Persisted records may predate current validation; guard the launcher
+      // independently so non-web schemes are never sent to another app.
+      final uri = parseHttpUrl(item.url);
+      if (uri == null) {
+        _message('This saved URL is not a valid HTTP or HTTPS link.');
         return;
       }
       try {
