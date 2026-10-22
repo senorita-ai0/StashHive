@@ -5,6 +5,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 
 import '../models/saved_item.dart';
 import '../services/backup_codec.dart';
+import '../services/attachment_bytes.dart';
 
 class LibraryRepository {
   LibraryRepository._({
@@ -196,17 +197,6 @@ class LibraryRepository {
       if (value is Map && value['attachmentKey'] == key) return true;
     }
     return false;
-  }
-
-  bool _isValidAttachmentBytes(Object? value) {
-    if (value is! List ||
-        value.isEmpty ||
-        value.length > BackupCodec.maxAttachmentBytes) {
-      return false;
-    }
-    return value.every(
-      (byte) => byte is int && byte >= 0 && byte <= 255,
-    );
   }
 
   Future<void> save(SavedItem item, {List<int>? attachmentBytes}) async {
@@ -405,7 +395,7 @@ class LibraryRepository {
 
   Future<List<int>?> readAttachment(String key) async {
     final value = _attachmentsBox.get(key);
-    if (!_isValidAttachmentBytes(value)) return null;
+    if (!isValidAttachmentByteList(value)) return null;
     return List<int>.unmodifiable((value as List).cast<int>());
   }
 
@@ -545,7 +535,7 @@ class LibraryRepository {
       final key = item.attachmentKey;
       if (key == null || byteMap.containsKey(key)) continue;
       final value = _attachmentsBox.get(key);
-      if (!_isValidAttachmentBytes(value)) {
+      if (!isValidAttachmentByteList(value)) {
         throw FormatException(
           'The local attachment for "${item.title}" is missing or damaged. '
           'Select the file again or restore a backup before exporting.',
