@@ -580,3 +580,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-387:** When the operating system delivers an image share intent with a contradictory non-image MIME header and an unrecognized extension, intake keeps the intent's image classification but normalizes the MIME metadata to an image MIME when known, otherwise `application/octet-stream`.
 - Added a file-based regression for an extensionless image share labelled `text/plain`. Test source is committed but unrun; real provider MIME behavior remains a manual Android check.
+
+
+### Phase 2 — roll back collection creation after late storage errors (2026-10-22)
+
+- **TSK-388:** `addCollection` now snapshots the preference key and previous value, then best-effort restores it if the storage call fails after taking effect. The collection notifier is refreshed on rollback and the original failure is rethrown.
+- Added fault-injection coverage for failure after the write, including the case where no previous collection preference key existed. Test source is committed but unrun.
