@@ -622,3 +622,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-394:** Share deduplication now treats a standalone URL received as text and as a URL intent as the same normalized URL draft. It also treats generic-file and image intents for the same image as the same image draft, when extension-first MIME resolution agrees. URL context remains part of URL fingerprints, and unsupported video events remain a separate category.
 - Added cross-type URL/image deduplication regressions. Tests are committed but unrun; initial-intent/stream event behavior still needs Android verification.
+
+
+### Phase 2/3 — reuse validated byte buffers for previews and file sharing (2026-10-22)
+
+- **TSK-395:** `LibraryRepository.readAttachment` now returns a validated `Uint8List`; Library thumbnails, Item Details previews and file sharing consume that buffer directly instead of wrapping it in a second `Uint8List.fromList` copy.
+- Existing repository byte-integrity assertions remain applicable. Test source is committed but unrun; preview/rebuild memory behavior still needs device profiling.
