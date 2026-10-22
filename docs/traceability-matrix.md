@@ -808,3 +808,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008–009 and NFR-003 (safe attachment import and bounded memory).
 - Test: TC-096 in `test/attachment_bytes_test.dart`, alongside file intake boundaries in `test/share_intake_test.dart`.
 - Verification: source/test committed but unrun; device/provider behavior remains pending.
+
+
+### TSK-390 — Normalize legacy item metadata on load
+
+- Implementation: `SavedItem.fromMap`.
+- Requirements: FR-001–003, FR-008–009 and FR-012–013 (consistent metadata across load/edit/share/backup).
+- Test: TC-097 in `test/saved_item_test.dart`.
+- Verification: source/test committed but unrun.
