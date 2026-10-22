@@ -625,6 +625,28 @@ void main() {
     );
   });
 
+  test('repository refuses to overwrite an unrelated orphan payload', () async {
+    const orphanKey = 'orphan-image-id';
+    final orphanBytes = Uint8List.fromList([14, 15, 16, 17]);
+    await Hive.box<dynamic>('stashhive_attachments_v1')
+        .put(orphanKey, orphanBytes.toList());
+    final incoming = buildImage(id: orphanKey, attachmentKey: orphanKey);
+
+    await expectLater(
+      repository.save(
+        incoming,
+        attachmentBytes: Uint8List.fromList([99, 98, 97]),
+      ),
+      throwsFormatException,
+    );
+
+    expect(repository.findById(orphanKey), isNull);
+    expect(
+      await repository.readAttachment(orphanKey),
+      orderedEquals(orphanBytes),
+    );
+  });
+
   test('repository refuses in-place writes to a shared attachment key', () async {
     const sharedKey = 'shared-direct-save';
     final originalBytes = Uint8List.fromList([10, 20, 30, 40]);
