@@ -586,3 +586,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm a count of 9,999 plus one new item is accepted and 10,000 plus zero new items is accepted.
 - Confirm any count above 10,000 and negative count inputs are rejected by the shared guard.
 - Verify repository save and restore call the guard before storage writes; unit/repository regression source is committed but unrun.
+
+
+### TC-085 — Restore cannot accidentally heal another record's missing attachment
+
+- Seed a legacy image record referencing an attachment key whose payload is missing.
+- Restore a valid backup image whose ID/attachment key matches that dangling reference.
+- Confirm restore allocates a different ID/key, stores the imported bytes under the new key, and leaves the legacy reference missing rather than silently reassigning its data.
+- Repository regression source is committed but unrun.
