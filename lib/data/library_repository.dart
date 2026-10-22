@@ -649,6 +649,7 @@ class LibraryRepository {
       items: List<SavedItem>.from(items.value),
       attachmentBytes: byteMap,
       collections: List<String>.from(collections.value),
+      omittedUnreadableRecordCount: skippedRecordCount.value,
     );
   }
 
