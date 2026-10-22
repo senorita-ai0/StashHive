@@ -150,6 +150,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Legacy collection preferences are normalized case-insensitively and capped at 500 on reload; skipped entries share the accessible recovery warning.
 - [x] Valid collection names assigned on saved items are merged into collection navigation when absent from preferences; legacy collection strings are canonicalized on read.
 - [x] Repository save enforces the 500-collection limit even when a new name is introduced only by item metadata, not by Add Collection.
+- [x] Restore revalidates publicly constructible decoded-backup objects and counts item-assigned collection names during capacity preflight before writes.
 - [x] Collection creation now rolls back preference writes when the storage future reports a late failure; a fault-injection regression covers the no-prior-key case.
 - [x] Backup restore now fully validates once before showing confirmation, retains only the decoded backup for the accepted restore, and removes the second full JSON decode.
 - [x] Unified backup export/decode and restore-picker limits in UTF-8 bytes, avoiding export/restore mismatch for Unicode-heavy content.
