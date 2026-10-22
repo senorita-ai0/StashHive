@@ -435,6 +435,56 @@ void main() {
       );
     });
 
+    test('deduplicates normalized URL shares across text and URL media types', () {
+      final deduplicator = ShareEventDeduplicator();
+      final start = DateTime.utc(2026, 10, 22, 19);
+      final textUrl = SharedMediaFile(
+        path: 'HTTPS://example.com/guide.',
+        type: SharedMediaType.text,
+        mimeType: 'text/plain',
+      );
+      final urlMedia = SharedMediaFile(
+        path: 'https://example.com/guide',
+        type: SharedMediaType.url,
+        mimeType: 'text/uri-list',
+      );
+
+      expect(deduplicator.shouldAccept([textUrl], now: start), isTrue);
+      expect(
+        deduplicator.shouldAccept(
+          [urlMedia],
+          now: start.add(const Duration(milliseconds: 100)),
+        ),
+        isFalse,
+        reason: 'Both providers resolve to the same normalized standalone URL draft.',
+      );
+    });
+
+    test('deduplicates image intent and file intent for the same image draft', () {
+      final deduplicator = ShareEventDeduplicator();
+      final start = DateTime.utc(2026, 10, 22, 20);
+      final genericFile = SharedMediaFile(
+        path: '/provider/cache/reference.png',
+        type: SharedMediaType.file,
+        mimeType: 'text/plain',
+      );
+      final imageIntent = SharedMediaFile(
+        path: '/provider/cache/reference.png',
+        type: SharedMediaType.image,
+        mimeType: 'image/png',
+      );
+
+      expect(deduplicator.shouldAccept([genericFile], now: start), isTrue);
+      expect(
+        deduplicator.shouldAccept(
+          [imageIntent],
+          now: start.add(const Duration(milliseconds: 100)),
+        ),
+        isFalse,
+        reason: 'The file and image intents produce the same image draft.',
+      );
+    });
+
     test('deduplicates recognized files despite conflicting raw MIME headers', () {
       final deduplicator = ShareEventDeduplicator();
       final start = DateTime.utc(2026, 10, 22, 18);
