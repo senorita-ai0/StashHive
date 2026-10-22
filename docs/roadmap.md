@@ -316,3 +316,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-343:** Quick Save now keeps an item's existing attachment key for metadata-only edits, including when the key belongs to another item that owns shared bytes. Choosing replacement bytes still writes a new per-item key, avoiding unintended overwrite of another item's shared payload.
 - Added widget regressions for editing a shared-attachment item without replacing bytes and converting an image into a note with the attachment reference/unused bytes removed. Tests are committed but unrun.
+
+
+### Phase 2 — shared MIME mapping for selected and shared files (2026-10-22)
+
+- **TSK-344:** Centralized extension-to-MIME guessing in `lib/services/mime_types.dart`; Quick Save's file picker and OS share intake now use the same mapping. Added BMP, HEIC/HEIF and TIFF mappings that were previously missing or inconsistent.
+- Added direct MIME-helper tests and a share-intake regression for TIFF content with generic MIME metadata. Tests are committed but unrun; actual platform file support still needs device verification.
