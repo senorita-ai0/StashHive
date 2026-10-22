@@ -127,3 +127,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: NFR-006 (accessibility and large-text layout).
 - Test: TC-032; `test/layout_metrics_test.dart` covers factor normalization and fallback behavior.
 - Verification: source and tests committed; test execution and Android/web enlarged-text visual inspection remain pending.
+
+
+### TSK-326 — Multi-select share filter parity
+
+- Implementation: `tool/configure_android_share_intents.py`.
+- Requirement: FR-009 (incoming shared content).
+- Test: TC-033 and `tool/test_configure_android_share_intents.py`.
+- Verification: configurator and regression source committed; Python execution and Android chooser/device delivery remain pending.
