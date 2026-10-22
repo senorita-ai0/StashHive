@@ -1667,6 +1667,16 @@ class _QuickSavePageState extends State<QuickSavePage> {
     );
   }
 
+  void _selectKind(ItemKind kind) {
+    setState(() {
+      _kind = kind;
+      _selectedBytes = null;
+      _selectedName = null;
+      _selectedMimeType = null;
+      _contentController.clear();
+    });
+  }
+
   Widget _buildKindPicker() {
     final options = <ItemKind>[
       ItemKind.link,
@@ -1683,43 +1693,52 @@ class _QuickSavePageState extends State<QuickSavePage> {
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(right: kind == options.last ? 0 : 8),
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        _kind = kind;
-                        _selectedBytes = null;
-                        _selectedName = null;
-                        _selectedMimeType = null;
-                        _contentController.clear();
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(14),
-                    child: Container(
-                      width: width,
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-                      decoration: BoxDecoration(
-                        color: _kind == kind ? kind.softAccent : Theme.of(context).colorScheme.surface,
+                  child: Semantics(
+                    button: true,
+                    selected: _kind == kind,
+                    label: kind.label,
+                    onTap: () => _selectKind(kind),
+                    child: ExcludeSemantics(
+                      child: InkWell(
+                        onTap: () => _selectKind(kind),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: _kind == kind ? kind.accent : Theme.of(context).dividerColor,
-                          width: _kind == kind ? 1.4 : 1,
+                        child: Container(
+                          width: width,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _kind == kind
+                                ? kind.softAccent
+                                : Theme.of(context).colorScheme.surface,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: _kind == kind
+                                  ? kind.accent
+                                  : Theme.of(context).dividerColor,
+                              width: _kind == kind ? 1.4 : 1,
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Icon(kind.icon, color: kind.accent, size: 21),
+                              const SizedBox(height: 6),
+                              Text(
+                                kind.label,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: _kind == kind
+                                      ? kind.readableTextAccent
+                                      : kind.accent,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(kind.icon, color: kind.accent, size: 21),
-                          const SizedBox(height: 6),
-                          Text(kind.label,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                 fontSize: 11,
-                                 fontWeight: FontWeight.w600,
-                                 color: _kind == kind
-                                     ? kind.readableTextAccent
-                                     : kind.accent,
-                               )),
-                        ],
                       ),
                     ),
                   ),
