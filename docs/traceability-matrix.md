@@ -784,3 +784,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003 and NFR-003 (safe recovery from malformed local records).
 - Test: TC-093 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-387 — Validate decoded backup objects before restore writes
+
+- Implementation: `BackupCodec.validateDecodedBackup` called by `LibraryRepository.restoreDecodedBackup`; item-assigned collections participate in merge/capacity preflight.
+- Requirements: FR-010, FR-012–013 and NFR-003 (restore integrity and no partial writes from invalid inputs).
+- Test: TC-094 in `test/backup_codec_test.dart` and `test/library_repository_test.dart`.
+- Verification: source/tests committed but unrun.
