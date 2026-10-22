@@ -1,6 +1,6 @@
 /// Normalizes the system-scaled body font size to a layout scale factor.
 ///
-/// The caller should pass [TextScaler.scale] for a representative body font
+/// The caller should pass the scaled output for a representative body font
 /// size (14 logical pixels here), not for a 1-pixel font. Text scaling can be
 /// non-linear, so sampling at 1 pixel can underestimate the space needed by
 /// actual labels.
