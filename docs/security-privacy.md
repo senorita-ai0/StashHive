@@ -78,3 +78,8 @@ If the project becomes public, add a monitored security contact before release. 
 
 - Before replacing attachment bytes, save captures the prior raw attachment-box value. If the item record cannot commit, it tries to restore that value; for a new attachment with no prior value, it removes the staged bytes.
 - Cleanup failures do not mask the original item-save exception. This is best-effort in-process rollback, not an atomic transaction against power loss or storage failure.
+
+
+## Phase 3 UI error handling increment — 2026-10-22
+
+Normal file selection, save, item/collection deletion and backup operation error messages now preserve app-defined validation guidance but do not routinely display the raw string form of unexpected plugin/storage exceptions. Regression source checks the item and collection deletion fallbacks. This is a source-level improvement only: startup failure diagnostics, platform-owned messages, logs, permissions, and network behavior still require the manual privacy review; no audit or test pass is claimed.
