@@ -477,6 +477,13 @@ void main() {
       ),
       throwsFormatException,
     );
+    await expectLater(
+      repository.save(
+        buildLink(id: 'duplicate-case-tags')
+            .copyWith(tags: const ['Reading', 'reading']),
+      ),
+      throwsFormatException,
+    );
     expect(repository.items.value, isEmpty);
   });
 
