@@ -245,3 +245,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Change the base64 payload to different but valid bytes without changing the stored digest; restore must reject the backup with a clear integrity error.
 - Remove the digest from a version-1 backup and verify it remains importable for backward compatibility.
 - Codec regression source is authored but unrun; full restore/storage interruption checks remain NOT STARTED.
+
+
+### TC-039 — Shared text limit units and error message
+
+- Submit text at the supported 1,000,000-character boundary and confirm it remains eligible for intake.
+- Submit text one character above the limit and confirm rejection states the character limit explicitly instead of describing it as a byte-size limit.
+- Unit test source is authored but unrun; Unicode-heavy payload behavior remains pending validation.
