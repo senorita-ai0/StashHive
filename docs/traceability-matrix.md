@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | FR-001 | SCR-001, SCR-004 | TSK-102, TSK-105 | TC-001 | IN PROGRESS — source added; build/test pending |
 | FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104 | TC-002 | IN PROGRESS — source added; build/test pending |
-| FR-003 | SCR-004 | TSK-102, TSK-105 | TC-003 | IN PROGRESS — source added; build/test pending |
+| FR-003 | SCR-004 | TSK-102, TSK-105, TSK-424 | TC-003, TC-132 | IN PROGRESS — delete failure now reports feedback; rollback/platform validation pending |
 | FR-004 | SCR-001, SCR-003 | TSK-103, TSK-201, TSK-416 | TC-004, TC-121 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
 | FR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-118 | IN PROGRESS — Unicode regression source added; execution/platform review pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
@@ -984,3 +984,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-010; a repository failure must not escape as an uncaught UI error.
 - Regression: TC-131 in `test/accessibility_widgets_test.dart` injects a collection-mutation failure and checks user feedback plus retained collection/item assignment.
 - Verification: source/test added but unrun; underlying storage interruption behavior remains subject to manual validation.
+
+
+### TSK-424 — Recoverable item deletion errors
+
+- Implementation: `lib/main.dart`, `_ItemDetailsPageState._delete`.
+- Requirement: FR-003; when repository deletion fails, remain on Item Details and display a recoverable error rather than allowing an uncaught exception to escape.
+- Regression: TC-132 in `test/accessibility_widgets_test.dart` injects an error after attachment removal and checks that the item and bytes are restored by the repository rollback path.
+- Verification: test source authored but unrun; rollback remains best-effort under real storage interruption.
