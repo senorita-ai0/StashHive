@@ -528,3 +528,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008, FR-011–013 and NFR-003 (preserve existing/recoverable payloads).
 - Test: TC-081 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-375 — Collection count portability bound
+
+- Implementation: `BackupCodec.maxCollections`, enforced by `LibraryRepository.addCollection`.
+- Requirements: FR-010, FR-012–013 and NFR-003 (organizing collections and reliable backup portability).
+- Test: TC-082 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
