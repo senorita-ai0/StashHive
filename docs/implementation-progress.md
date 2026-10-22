@@ -168,6 +168,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Restore now persists imported item collection assignments using canonical names from the merged destination list.
 - [x] Backup export now blocks legacy items assigned to collection names beyond the portable cap and explains how to repair those assignments before retrying.
 - [x] Partial backups now preserve unreadable-record and legacy-collection omission counts in optional version-1 metadata so restore can warn on another device/profile.
+- [x] Collection Contents now matches collection assignments case-insensitively as a fallback for legacy/in-memory casing differences.
 - [x] Share-event canonicalization now follows each media type's effective draft fields; regressions cover equivalent text payloads and ignored file-message metadata.
 - [x] Aligned tag normalization/validation across saved-item deserialization, repository writes and backup encode/decode, with case-insensitive duplicate regressions.
 - [x] Incoming file shares now bound filename/MIME metadata before file I/O; regressions cover the oversize cases.
