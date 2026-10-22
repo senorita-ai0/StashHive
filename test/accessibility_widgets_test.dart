@@ -77,13 +77,18 @@ void main() {
     expect(_contrastRatio(darkStar, darkField), greaterThanOrEqualTo(3));
   });
 
-  test('item-type labels meet contrast on their light and dark surfaces', () {
+  test('item-type labels and icons meet contrast on light and dark surfaces', () {
     const darkSurface = Color(0xFF202638);
     for (final kind in ItemKind.values) {
       expect(
         _contrastRatio(kind.readableTextAccent, Colors.white),
         greaterThanOrEqualTo(4.5),
-        reason: '${kind.label} must remain readable when unselected on a light surface.',
+        reason: '${kind.label} text must remain readable on a light surface.',
+      );
+      expect(
+        _contrastRatio(kind.accent, Colors.white),
+        greaterThanOrEqualTo(3),
+        reason: '${kind.label} decorative icon must meet graphical contrast on light surfaces.',
       );
       expect(
         _contrastRatio(kind.readableTextAccent, kind.softAccent),
