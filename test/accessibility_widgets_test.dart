@@ -33,6 +33,14 @@ void main() {
     await testDirectory.delete(recursive: true);
   });
 
+  testWidgets('Startup failure UI hides raw local storage diagnostics', (tester) async {
+    await tester.pumpWidget(const app.StartupFailureApp());
+    expect(find.text('StashTrail could not open its local library'), findsOneWidget);
+    expect(find.textContaining('Technical details are hidden'), findsOneWidget);
+    expect(find.byType(SelectableText), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Library header displays the StashTrail brand', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
