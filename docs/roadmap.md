@@ -358,3 +358,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-350:** Quick Save now asks the repository for a safe attachment key before writing replacement bytes. If the preferred item-ID key already stores an orphaned payload or is shared by another raw record, it allocates an unused key rather than overwriting data owned by another saved item.
 - Added repository tests for shared-key preservation, the normal unshared-key path and collisions with orphaned payloads. Source/test are committed but unrun; validate replacement-file behavior on Android/web during the manual checkpoint.
+
+
+### Phase 3 — selected item-kind semantics in Quick Save (2026-10-22)
+
+- **TSK-351:** Quick Save's Link/Note/Image/Document options now expose button semantics and the currently selected option through the selected state, while keeping the visual tiles and pointer interactions intact.
+- Added a widget regression that checks the selected state and activates another choice through the semantics action. Test source is committed but unrun; TalkBack and browser screen-reader confirmation remain pending.
