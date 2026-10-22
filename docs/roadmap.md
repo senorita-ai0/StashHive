@@ -508,3 +508,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-375:** The backup codec exposes a single 500-collection maximum and repository collection creation now enforces it. The UI can no longer grow the collection preference list beyond the portable-backup format's declared limit.
 - Added a repository regression that reloads a full collection list, rejects collection 501, and confirms the list still round-trips through the backup codec. Test source is committed but unrun.
+
+
+### Phase 2 — preflight merged collection limit during restore (2026-10-22)
+
+- **TSK-376:** Restore now calculates the merged collection list and rejects an import that would push the destination library beyond the shared 500-collection backup limit before writing any imported records or attachments.
+- Added a repository regression with a 500-collection destination and one new incoming collection, asserting the restore fails before importing the item or changing the collection list. Test source is committed but unrun.
