@@ -314,6 +314,12 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Updated TC-131/TC-132 widget regression assertions so injected internal exception text must not appear to the user; added manual case **TC-136** for the wider error-path review.
 - [ ] Run the regressions and review remaining startup/platform-provided messages at the manual privacy checkpoint.
 
+## Phase 3 — privacy-safe startup failure screen (2026-10-22)
+
+- [x] Startup failure UI no longer displays the raw storage initialization exception; it gives platform-appropriate recovery steps and explains why technical details are hidden.
+- [x] Added widget regression source and manual case **TC-137**.
+- [ ] Run TC-137 and review startup recovery copy on web and Android during the manual privacy checkpoint.
+
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-136 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-136 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-137 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-137 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
