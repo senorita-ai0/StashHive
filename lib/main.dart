@@ -3100,13 +3100,15 @@ class SettingsPage extends StatelessWidget {
               SettingsRow(
                 icon: Icons.manage_search_rounded,
                 title: 'Search & saved content',
-                subtitle: 'What is searchable on this device',
+                subtitle: kIsWeb
+                    ? 'What is searchable in this browser'
+                    : 'What is searchable on this device',
                 color: const Color(0xFFB87A22),
                 background: const Color(0xFFFFF2DF),
                 onTap: () => _showInfo(
                   context,
                   'What can StashTrail search?',
-                  'This first version searches titles, URLs, notes and tags stored in your local library. OCR and PDF text extraction are not enabled yet, so text found only inside an image or PDF is not searchable unless you add it to the notes.',
+                  'This first version searches titles, URLs, notes, tags and collection names stored in your local library. OCR and PDF text extraction are not enabled yet, so text found only inside an image or PDF is not searchable unless you add it to the notes.',
                 ),
               ),
               const SizedBox(height: 24),
