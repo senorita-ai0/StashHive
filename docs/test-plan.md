@@ -426,3 +426,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Verify `javascript:alert(1)`, `file:`, `mailto:`, `http:example.com` and malformed host-port strings are rejected at the field boundary and nothing is saved.
 - Repeat the classification for incoming shared text/URL parsing using `test/web_url_test.dart` and `test/share_intake_test.dart`.
 - Unit/widget test source is committed but unrun; repeat valid-link open flow on Android/web after the manual checkpoint.
+
+
+### TC-063 — Embedded credentials in web URLs
+
+- Confirm a normal HTTP/HTTPS URL remains valid.
+- Confirm a URL containing embedded username/password user-info is rejected before save, import or platform launch.
+- Unit test source is committed but unrun; verify the message shown to users remains understandable and does not echo credential data.
