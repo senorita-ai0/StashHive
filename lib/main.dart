@@ -1295,12 +1295,26 @@ class _QuickSavePageState extends State<QuickSavePage> {
             ? null
             : const ['pdf', 'txt', 'doc', 'docx', 'rtf', 'csv'],
         allowMultiple: false,
-        withData: true,
       );
       if (!mounted || result == null || result.files.isEmpty) return;
       final file = result.files.first;
-      final bytes = file.bytes;
-      if (bytes == null) {
+
+      // Inspect file length before allocating the full byte buffer. On web and
+      // mobile this keeps oversized selections from consuming unbounded memory.
+      final length = await file.length();
+      if (!mounted) return;
+      if (length == 0) {
+        _showMessage('That file is empty. Choose a non-empty file.');
+        return;
+      }
+      if (length > kMaxAttachmentBytes) {
+        _showMessage('Files must be 15 MB or smaller in this version.');
+        return;
+      }
+
+      final bytes = await file.readAsBytes();
+      if (!mounted) return;
+      if (bytes.isEmpty) {
         _showMessage('Could not read that file. Try selecting it again.');
         return;
       }
