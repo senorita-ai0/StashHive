@@ -352,3 +352,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-349:** `readAttachment` now returns no payload for empty, non-integer or out-of-byte-range stored values instead of silently filtering bad entries. Backup export validates stored bytes before conversion and surfaces a recoverable damage message instead of silently producing a different payload/checksum.
 - Added a repository regression that corrupts a legacy stored attachment, verifies reads do not return a partially filtered file, and verifies backup export fails with a clear message. Test source is committed but unrun.
+
+
+### Phase 2 — copy-on-write keys for shared attachment replacements (2026-10-22)
+
+- **TSK-350:** Quick Save now asks the repository for a safe attachment key before writing replacement bytes. If the preferred item-ID key already stores an orphaned payload or is shared by another raw record, it allocates an unused key rather than overwriting data owned by another saved item.
+- Added repository tests for shared-key preservation, the normal unshared-key path and collisions with orphaned payloads. Source/test are committed but unrun; validate replacement-file behavior on Android/web during the manual checkpoint.
