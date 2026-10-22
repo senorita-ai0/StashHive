@@ -236,3 +236,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-330:** URL extraction from shared text removes trailing punctuation and unmatched closing brackets/parentheses while preserving balanced parentheses commonly found in real URL paths. The bracket-counting pass is linear-time to avoid repeated scans on long shared messages.
 - Added regressions for a wrapped URL and a legitimate URL ending in a balanced parenthesis. Test source is committed but unrun; validate against real Android share payloads during the manual checkpoint.
+
+
+### Phase 2 — backup attachment integrity checksums (2026-10-22)
+
+- **TSK-331:** Newly encoded backups now carry a SHA-256 checksum for each unique attachment payload. Restore validates the checksum after base64 decoding, detecting changed bytes even when the payload remains syntactically valid base64. Existing version-1 backups without the optional checksum remain importable.
+- Added regressions for checksum output, modified-byte rejection and legacy version-1 compatibility. Tests are authored but unrun; backup recovery is not marked verified until manual validation.
