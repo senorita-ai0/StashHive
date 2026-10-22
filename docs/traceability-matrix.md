@@ -496,3 +496,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008–009 and NFR-003 (bounded file import and recoverable validation).
 - Test: TC-077 in `test/share_intake_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-371 — Attachment metadata/key consistency
+
+- Implementation: `BackupCodec.validateSavedItem`, shared by repository saves and backup encode/decode.
+- Requirements: FR-001–003, FR-008 and FR-012–013 (consistent attachment metadata and portability).
+- Test: TC-078 in `test/library_repository_test.dart` and `test/backup_codec_test.dart`.
+- Verification: source/tests committed but unrun.
