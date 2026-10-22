@@ -418,3 +418,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-360:** Repository reload validates raw field types and confirms each Hive key matches the record ID. It keeps parseable legacy records visible—even when a URL or attachment is invalid—so Item Details can show safe open/missing-file feedback; truly malformed shapes are skipped without preventing valid entries from loading.
 - Added a repository regression that seeds an unknown item kind and a box-key/record-ID mismatch, then verifies the valid record still loads. Test source is committed but unrun.
+
+
+### Phase 2 — visible warning for skipped malformed local records (2026-10-22)
+
+- **TSK-361:** The repository now tracks the count of raw local records skipped during refresh. The Library shows a live-region warning with the count, explains that raw entries were not intentionally deleted, clarifies that new backups may omit unreadable records, and recommends using a previous backup for recovery.
+- Added repository and Library widget regressions for the count and warning. Source/tests are committed but unrun; confirm recovery wording and behavior against real corrupted storage before release.
