@@ -3136,7 +3136,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
           builder: (context) => AlertDialog(
             title: const Text('This backup may be incomplete'),
             content: Text(
-              '${omissions.join(' ')} Original local entries will not be deleted. You can repair omitted items after exporting. Continue with a partial backup?',
+              '${omissions.join(' ')} The raw local entries will not be deleted. You can repair omitted items after exporting. Continue with a partial backup?',
             ),
             actions: [
               TextButton(
