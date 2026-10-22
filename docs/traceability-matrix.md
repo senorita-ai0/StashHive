@@ -7,7 +7,7 @@
 | FR-001 | SCR-001, SCR-004 | TSK-102, TSK-105 | TC-001 | IN PROGRESS — source added; build/test pending |
 | FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104 | TC-002 | IN PROGRESS — source added; build/test pending |
 | FR-003 | SCR-004 | TSK-102, TSK-105 | TC-003 | IN PROGRESS — source added; build/test pending |
-| FR-004 | SCR-001, SCR-003 | TSK-103, TSK-201, TSK-410 | TC-004, TC-114 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
+| FR-004 | SCR-001, SCR-003 | TSK-103, TSK-201, TSK-411 | TC-004, TC-115 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
 | FR-005 | SCR-001, SCR-003 | TSK-202 | TC-005 | IN PROGRESS — source added; build/test pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
@@ -29,7 +29,7 @@
 | NFR-004 | SCR-004 | TSK-203 | TC-006, TC-017 | NOT STARTED |
 | NFR-005 | SCR-001, SCR-003 | TSK-202 | TC-005, TC-016 | NOT STARTED |
 | NFR-006 | All screens | TSK-103, TSK-304 | UI/accessibility checklist | IN PROGRESS — text scaling, semantics and contrast source/tests added; execution and platform checks pending |
-| NFR-007 | Search/list | TSK-003, TSK-305, TSK-411 | TC-115 / Performance baseline | IN PROGRESS — non-gating harness added; measurements pending |
+| NFR-007 | Search/list | TSK-003, TSK-305, TSK-412 | TC-116 / Performance baseline | IN PROGRESS — non-gating harness added; measurements pending |
 | NFR-008 | Attachments / OCR | TSK-005, TSK-305 | Package-size benchmark | NOT STARTED |
 | NFR-009 | Architecture | TSK-002, TSK-101 | Static checks/build | NOT STARTED |
 | NFR-010 | Dependency register | TSK-003, TSK-403 | License review | NOT STARTED |
@@ -866,11 +866,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Verification: source/test committed but unrun.
 
 
-### TSK-410 — Search result sorting parity
+### TSK-411 — Search result sorting parity
 
 - Implementation: `lib/main.dart`, `_SearchPageState` filtering and sort control.
 - Requirements: FR-004 and SCR-003 (consistent retrieval controls, result count and sorting).
-- Test: TC-114 in `test/accessibility_widgets_test.dart`.
+- Test: TC-115 in `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun; responsive visual and screen-reader checks remain pending.
 
 
@@ -882,9 +882,9 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Verification: source/tests committed but unrun.
 
 
-### TSK-411 — Metadata-only performance baseline harness
+### TSK-412 — Metadata-only performance baseline harness
 
 - Implementation: `tool/benchmark_library_repository.dart`; run procedure in `docs/performance-benchmark.md`.
 - Requirements: NFR-007 (measured baseline for realistic local-library sizes), with NFR-003 platform/recovery verification still tracked separately.
-- Test/measurement: TC-115 in `docs/test-plan.md`; execute deliberately on a representative machine and record environment details with JSON output.
+- Test/measurement: TC-116 in `docs/test-plan.md`; execute deliberately on a representative machine and record environment details with JSON output.
 - Verification: harness is source only; no benchmark measurements have been run and no performance pass is claimed.
