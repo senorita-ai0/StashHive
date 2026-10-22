@@ -640,3 +640,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-010, FR-012–013 and NFR-003 (local persistence recovery).
 - Test: TC-095 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-389 — Single-pass backup restore validation
+
+- Implementation: `BackupPrivacyPage._restore`, `LibraryRepository.restoreBackup` and `restoreDecodedBackup`.
+- Requirements: FR-012–013 and NFR-003 (validate before mutation and limit peak memory).
+- Test: TC-096 references existing cases in `test/backup_codec_test.dart` and `test/library_repository_test.dart`.
+- Verification: source committed; test execution and memory profiling remain pending.
