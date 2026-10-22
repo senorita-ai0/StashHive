@@ -592,3 +592,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-389:** Backup & Privacy now performs full `BackupCodec.decode` validation before showing the merge confirmation and passes the already decoded result to `restoreDecodedBackup`. The raw JSON string and file-byte reference are released before the confirmation dialog, avoiding a second full parse of large base64 attachments after confirmation.
 - Existing restore/rejection/rollback repository tests cover the decoded path through `restoreBackup`; source is committed but tests remain unrun. Manual memory profiling remains pending.
+
+
+### Phase 2 — consistent UTF-8 backup size limit (2026-10-22)
+
+- **TSK-390:** Export and decode now enforce the portable backup cap in UTF-8 bytes as well as the in-memory character guard. The restore picker uses the same `BackupCodec.maxBackupBytes` constant, preventing Unicode-heavy backups from passing export but being rejected by file-size preflight.
+- Added UTF-8 byte-count regressions for ASCII, Urdu/Arabic-script text and supplementary Unicode characters. Test source is committed but unrun.
