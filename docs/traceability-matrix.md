@@ -568,3 +568,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003 and NFR-003 (malformed record recovery consistency).
 - Test: TC-086 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-380 — Repair guidance for rejected legacy record updates
+
+- Implementation: `lib/main.dart`, `SavedItemTile` favorite menu and `ItemDetailsPage._toggleFavorite`.
+- Requirements: FR-003, FR-011–013 and NFR-003 (safe recovery actions).
+- Test: TC-087 in `test/external_navigation_test.dart`.
+- Verification: source/test committed but unrun.
