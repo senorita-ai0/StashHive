@@ -280,3 +280,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003, FR-008 and NFR-003.
 - Test: TC-050 in `test/quick_save_test.dart`.
 - Verification: source and widget test committed; execution/platform checks remain pending.
+
+
+### TSK-344 — Shared MIME type mapping
+
+- Implementation: `lib/services/mime_types.dart`, called by Quick Save and `ShareIntake`.
+- Requirements: FR-008–009 (local and incoming file intake).
+- Test: TC-051 in `test/mime_types_test.dart` and `test/share_intake_test.dart`.
+- Verification: source and tests committed; execution and platform-specific format support remain pending.
