@@ -1724,6 +1724,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
       builder: (context, constraints) {
         final scaledLabelFontSize =
             MediaQuery.textScalerOf(context).scale(11);
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         // Keep four compact options on roomy desktop layouts, but wrap to two
         // columns when the available width or system text scale needs room.
         final columns = constraints.maxWidth >= 560 &&
@@ -1768,7 +1769,15 @@ class _QuickSavePageState extends State<QuickSavePage> {
                         ),
                         child: Column(
                           children: [
-                            Icon(kind.icon, color: kind.accent, size: 21),
+                            Icon(
+                              kind.icon,
+                              color: _kind == kind
+                                  ? kind.readableTextAccent
+                                  : isDark
+                                      ? kind.softAccent
+                                      : kind.accent,
+                              size: 21,
+                            ),
                             const SizedBox(height: 6),
                             Text(
                               kind.label,
@@ -1778,9 +1787,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
-                                color: _kind == kind ||
-                                        Theme.of(context).brightness ==
-                                            Brightness.light
+                                color: _kind == kind || !isDark
                                     ? kind.readableTextAccent
                                     : kind.softAccent,
                               ),
