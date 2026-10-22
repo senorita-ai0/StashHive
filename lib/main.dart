@@ -1347,9 +1347,14 @@ class _QuickSavePageState extends State<QuickSavePage> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     final existing = widget.existingItem;
-    if ((_kind == ItemKind.image || _kind == ItemKind.document) &&
+    final needsAttachment =
+        _kind == ItemKind.image || _kind == ItemKind.document;
+    final preservesExistingAttachment = needsAttachment &&
+        existing?.kind == _kind &&
+        (existing?.hasAttachment ?? false);
+    if (needsAttachment &&
         _selectedBytes == null &&
-        !(existing?.hasAttachment ?? false)) {
+        !preservesExistingAttachment) {
       _showMessage('Choose a file before saving.');
       return;
     }
@@ -1389,7 +1394,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
         setState(() => _saving = false);
         return;
       }
-      final hasAttachment = _selectedBytes != null || (existing?.hasAttachment ?? false);
+      final hasAttachment = _selectedBytes != null || preservesExistingAttachment;
       final item = SavedItem(
         id: id,
         kind: _kind,
@@ -1402,8 +1407,16 @@ class _QuickSavePageState extends State<QuickSavePage> {
         createdAtMs: existing?.createdAtMs ?? now,
         updatedAtMs: now,
         attachmentKey: hasAttachment ? id : null,
-        attachmentName: _selectedName ?? existing?.attachmentName,
-        attachmentMimeType: _selectedMimeType ?? existing?.attachmentMimeType,
+        attachmentName: _selectedBytes != null
+            ? _selectedName
+            : preservesExistingAttachment
+                ? existing?.attachmentName
+                : null,
+        attachmentMimeType: _selectedBytes != null
+            ? _selectedMimeType
+            : preservesExistingAttachment
+                ? existing?.attachmentMimeType
+                : null,
       );
       await widget.repository.save(item, attachmentBytes: _selectedBytes?.toList());
       if (mounted) Navigator.of(context).pop(true);
