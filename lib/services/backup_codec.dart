@@ -40,8 +40,28 @@ class BackupCodec {
   static const int maxCollections = 500;
   static const int maxAttachmentBytes = 15 * 1024 * 1024;
   static const int maxTotalAttachmentBytes = 100 * 1024 * 1024;
-  static const int maxJsonCharacters = 145 * 1024 * 1024;
+  static const int maxBackupBytes = 145 * 1024 * 1024;
+  // Retained as the character guard for decoding in-memory JSON; the UTF-8
+  // byte limit is the portable file-size boundary enforced on every path.
+  static const int maxJsonCharacters = maxBackupBytes;
   static const int minSupportedTimestampMs = -8640000000000000;
+
+  /// Counts the UTF-8 size without allocating a second full-size byte buffer.
+  /// Stops as soon as the portable backup cap is exceeded.
+  static int utf8ByteLength(String value) {
+    var total = 0;
+    for (final rune in value.runes) {
+      total += rune <= 0x7F
+          ? 1
+          : rune <= 0x7FF
+              ? 2
+              : rune <= 0xFFFF
+                  ? 3
+                  : 4;
+      if (total > maxBackupBytes) return total;
+    }
+    return total;
+  }
 
   /// Ensures repository mutations stay within the item count that backups can
   /// represent. [incomingCount] is zero for edits and the number of new records
@@ -212,14 +232,16 @@ class BackupCodec {
       'items': items.map((item) => item.toMap()).toList(),
       'attachments': attachments,
     });
-    if (output.length > maxJsonCharacters) {
+    if (output.length > maxJsonCharacters ||
+        utf8ByteLength(output) > maxBackupBytes) {
       throw const FormatException('The backup is too large to share or restore.');
     }
     return output;
   }
 
   static DecodedBackup decode(String source) {
-    if (source.length > maxJsonCharacters) {
+    if (source.length > maxJsonCharacters ||
+        utf8ByteLength(source) > maxBackupBytes) {
       throw const FormatException('The backup file is too large to import.');
     }
     final Object? decoded;
