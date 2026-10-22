@@ -200,3 +200,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - With the default text scale, verify Library and Search cards use the baseline extent.
 - With enlarged accessibility text (including a platform nonlinear text scaler), verify the card extent derives from a representative body font size rather than a 1-pixel sample, and remains bounded at extreme values.
 - Unit regression source is authored but unrun. Visual inspection with enlarged text, screen readers and narrow widths on Android and web remains NOT STARTED.
+
+
+### TC-033 — Android multi-select MIME coverage
+
+- Run the manifest configurator against a generated runner and verify SEND_MULTIPLE intent filters exist for every supported SEND MIME family.
+- Confirm the configurator remains idempotent and preserves singleTask launch mode.
+- Python test source is authored but unrun. Verify in Android's chooser that multi-select text/URL/document batches can target StashHive, then confirm each item is presented sequentially and unsupported items are skipped with feedback; status remains NOT STARTED.
