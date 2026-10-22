@@ -454,3 +454,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed the local item and attachment stores with known keys.
 - Request a new item ID and verify it is absent from both stores, including orphaned attachment keys.
 - Repository test source is committed but unrun; concurrent multi-window writes still need platform-level consideration.
+
+
+### TC-067 — Invalid local-record recovery
+
+- Seed the local store with an unsupported item kind and a record whose stored Hive key differs from its embedded item ID.
+- Trigger repository refresh by saving a valid item; confirm the valid item loads and the malformed/mismatched records are skipped without crashing the library.
+- Test source is committed but unrun; verify how recoverable damaged records are surfaced to users before release.
