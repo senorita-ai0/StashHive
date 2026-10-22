@@ -122,6 +122,13 @@ class LibraryRepository {
     return null;
   }
 
+  bool _isValidAttachmentBytes(Object? value) {
+    if (value is! List || value.isEmpty) return false;
+    return value.every(
+      (byte) => byte is int && byte >= 0 && byte <= 255,
+    );
+  }
+
   Future<void> save(SavedItem item, {List<int>? attachmentBytes}) async {
     BackupCodec.validateSavedItem(item);
     final key = item.attachmentKey;
@@ -145,12 +152,20 @@ class LibraryRepository {
         attachmentBytes.length > BackupCodec.maxAttachmentBytes) {
       throw const FormatException('Attachments must be 15 MB or smaller.');
     }
-    if (key != null &&
-        attachmentBytes == null &&
-        !_attachmentsBox.containsKey(key)) {
-      throw StateError(
-        'The selected attachment is not available locally. Please select it again.',
+    if (attachmentBytes != null &&
+        (attachmentBytes.isEmpty ||
+            attachmentBytes.any((byte) => byte < 0 || byte > 255))) {
+      throw const FormatException(
+        'The selected attachment is empty or contains invalid byte values.',
       );
+    }
+    if (key != null && attachmentBytes == null) {
+      final stored = _attachmentsBox.get(key);
+      if (!_isValidAttachmentBytes(stored)) {
+        throw StateError(
+          'The selected attachment is missing or unreadable. Please select it again.',
+        );
+      }
     }
 
     final hadPreviousItem = _itemsBox.containsKey(item.id);
