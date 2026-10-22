@@ -26,6 +26,8 @@ class LibraryRepository {
       ValueNotifier<List<SavedItem>>(<SavedItem>[]);
   final ValueNotifier<List<String>> collections =
       ValueNotifier<List<String>>(<String>[]);
+  /// Number of raw local records skipped because their shape could not be read.
+  final ValueNotifier<int> skippedRecordCount = ValueNotifier<int>(0);
 
   /// Fault-injection seam for verifying that a failed restore removes writes
   /// already staged before the collection preferences are committed.
@@ -93,9 +95,13 @@ class LibraryRepository {
 
   void _refreshItems() {
     final result = <SavedItem>[];
+    var skipped = 0;
     for (final entry in _itemsBox.toMap().entries) {
       final value = entry.value;
-      if (value is! Map) continue;
+      if (value is! Map) {
+        skipped++;
+        continue;
+      }
       try {
         // Validate raw field types first. Keep parseable legacy records visible
         // so missing attachments or unsafe URLs can show recovery feedback;
@@ -110,9 +116,12 @@ class LibraryRepository {
         result.add(item);
       } catch (_) {
         // Keep the usable library open; damaged records are skipped rather
-        // than preventing valid saved items from loading.
+        // than preventing valid saved items from loading. Surface the count
+        // so the user is not left unaware that some records need recovery.
+        skipped++;
       }
     }
+    skippedRecordCount.value = skipped;
     result.sort((a, b) => b.updatedAtMs.compareTo(a.updatedAtMs));
     items.value = List<SavedItem>.unmodifiable(result);
   }
@@ -642,5 +651,6 @@ class LibraryRepository {
   void dispose() {
     items.dispose();
     collections.dispose();
+    skippedRecordCount.dispose();
   }
 }
