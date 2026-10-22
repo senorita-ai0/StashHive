@@ -798,3 +798,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-413:** The encoder now measures per-item JSON and attachment-entry/base64 sizes against the 145 MiB portable cap before constructing the full backup JSON or allocating each base64 string. This catches large aggregate note metadata early instead of allocating an oversized JSON string and only then rejecting it.
 - Added a boundary regression with shared large source text across many items so escaped JSON exceeds the cap without requiring a huge input fixture. Test source is committed but unrun; peak-memory profiling remains pending.
+
+
+### Phase 2 — preflight portable backup size before JSON/base64 allocation (2026-10-22)
+
+- **TSK-416:** Backup encoding now estimates UTF-8 size incrementally from the root structure, separately encoded item maps, attachment metadata and exact base64 character counts. It rejects a backup that exceeds the 145 MiB portable limit before allocating the large base64 strings or the final JSON string, while retaining a final exact-size guard.
+- Added **TC-120** to cover UTF-8/escaped metadata, attachment key quoting, per-payload byte round-trips and valid output-size parity. It is a bounded happy-path regression; oversized-boundary rejection and memory behavior still require deliberate validation. Test source is committed but unrun.
