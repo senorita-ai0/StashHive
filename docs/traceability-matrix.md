@@ -848,3 +848,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008–009 and NFR-003/NFR-006 (retain attachments and communicate preview limitations accessibly).
 - Test: TC-101 in `test/external_navigation_test.dart`.
 - Verification: source/test committed but unrun; real platform codec coverage remains pending.
+
+
+### TSK-395 — Reduce attachment buffer copies during decode
+
+- Implementation: `BackupCodec.decode`, retaining the typed result from `base64Decode`.
+- Requirements: FR-012–013 and NFR-003 (bounded memory with data integrity).
+- Test: TC-102 references existing round-trip/checksum assertions in `test/backup_codec_test.dart`.
+- Verification: source committed; tests and memory profiling remain pending.
