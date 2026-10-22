@@ -21,6 +21,23 @@ SavedItem sampleLink() => SavedItem(
 
 void main() {
   group('BackupCodec', () {
+    test('counts UTF-8 bytes without allocating an encoded buffer', () {
+      for (final value in <String>[
+        'plain ASCII',
+        'قابلِ تلاش متن',
+        'An emoji: 😀🧰',
+      ]) {
+        expect(
+          BackupCodec.utf8ByteLength(value),
+          utf8.encode(value).length,
+          reason: 'The byte count must match UTF-8 for ${value.runtimeType}.',
+        );
+      }
+      expect(BackupCodec.utf8ByteLength('abc'), 3);
+      expect(BackupCodec.utf8ByteLength('😀'), 4);
+      expect('😀'.length, 2);
+    });
+
     test('validates repository item counts against the backup limit', () {
       expect(
         () => BackupCodec.validateItemCount(
