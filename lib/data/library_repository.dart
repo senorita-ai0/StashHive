@@ -124,6 +124,26 @@ class LibraryRepository {
 
   Future<void> save(SavedItem item, {List<int>? attachmentBytes}) async {
     final key = item.attachmentKey;
+    final requiresAttachment =
+        item.kind == ItemKind.image || item.kind == ItemKind.document;
+
+    if (requiresAttachment != (key != null)) {
+      throw const FormatException(
+        'Only image/document items may reference an attachment, and both require one.',
+      );
+    }
+    if (key != null && (key.trim().isEmpty || key.length > 128)) {
+      throw const FormatException('The attachment reference is invalid.');
+    }
+    if (attachmentBytes != null && !requiresAttachment) {
+      throw const FormatException(
+        'Attachments can only be saved for image or document items.',
+      );
+    }
+    if (attachmentBytes != null &&
+        attachmentBytes.length > BackupCodec.maxAttachmentBytes) {
+      throw const FormatException('Attachments must be 15 MB or smaller.');
+    }
     if (key != null &&
         attachmentBytes == null &&
         !_attachmentsBox.containsKey(key)) {
@@ -134,6 +154,10 @@ class LibraryRepository {
 
     final hadPreviousItem = _itemsBox.containsKey(item.id);
     final previousItemValue = _itemsBox.get(item.id);
+    final previousAttachmentKey = previousItemValue is Map &&
+            previousItemValue['attachmentKey'] is String
+        ? previousItemValue['attachmentKey'] as String
+        : null;
     final hadPreviousAttachment =
         key != null && _attachmentsBox.containsKey(key);
     final previousAttachment =
@@ -184,6 +208,19 @@ class LibraryRepository {
       }
       _refreshItems();
       rethrow;
+    }
+    // If an edit removed/replaced its attachment reference, reclaim the old
+    // payload only after the new item record committed and only when no other
+    // raw (including unreadable legacy) item still points at that key.
+    if (previousAttachmentKey != null &&
+        previousAttachmentKey != key &&
+        !_hasAttachmentReference(previousAttachmentKey)) {
+      try {
+        await _attachmentsBox.delete(previousAttachmentKey);
+      } catch (_) {
+        // Orphan cleanup is best-effort and must not turn a committed edit
+        // into a reported save failure.
+      }
     }
     _refreshItems();
   }
