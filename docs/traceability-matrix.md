@@ -944,3 +944,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (bounded, portable backup restore).
 - Test: TC-123 in `test/backup_codec_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-419 — Deterministic saved-item sorting
+
+- Implementation: `SavedItemSort` and `compareSavedItemsForSort` in `lib/models/saved_item.dart`, used by Library and Search in `lib/main.dart`.
+- Requirements: FR-004, FR-005 and NFR-005 (consistent predictable retrieval and sorting).
+- Test: TC-124 in `test/saved_item_test.dart`.
+- Verification: source/test committed but unrun.
