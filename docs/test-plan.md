@@ -963,3 +963,17 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Decode a valid version-1 backup whose `app` field is `StashHive`, then encode it again.
 - Confirm the marker remains `StashHive` and the backup remains readable; do not rename that schema marker as part of UI branding.
 - Codec regression source is committed but unrun; old files must remain importable after the StashTrail rename.
+
+
+### TC-127 — Delete an unreadable legacy record and reclaim orphaned bytes
+
+- Seed a raw item record whose shape cannot be decoded but whose `attachmentKey` is a string, then seed bytes under that attachment key.
+- Confirm the unreadable-record count includes the item, delete it by storage ID, and confirm both the raw item key and its now-unreferenced attachment payload are removed.
+- Regression source is committed but unrun; verify behavior against legacy-store fixtures at the manual checkpoint.
+
+
+### TC-128 — Do not delete an attachment still referenced by another item
+
+- Seed an unreadable item and a valid image/document item that reference the same stored attachment key.
+- Delete the unreadable record and confirm the valid item remains readable and the original attachment bytes are unchanged.
+- Regression source is committed but unrun; reference safety is required even when the remaining/deleted record is not decoded normally.
