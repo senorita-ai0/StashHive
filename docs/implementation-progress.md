@@ -144,6 +144,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added a common 10,000-item cap enforced before new saves and restore writes, keeping local data representable in the versioned backup format.
 - [x] Restore collision preflight now reserves dangling attachment-key references from raw records so imported bytes cannot silently repair or reassign another record's missing payload.
 - [x] Direct repository lookups now apply the same raw type/size and box-key/embedded-ID checks as refresh, while retaining recoverable parseable legacy records.
+- [x] Raw legacy created/updated timestamps are now bounded before reload/direct lookup so malformed dates do not break date-dependent UI.
 - [x] Library card and Item Details favorite actions now show repair guidance when strict saves reject a recoverable but invalid legacy record.
 - [x] Backup restore now uses the file_picker single-file API, rejects oversized/unknown-size backups before bulk reads, and repeats the cap check after loading bytes.
 - [x] Legacy collection preferences are normalized case-insensitively and capped at 500 on reload; skipped entries share the accessible recovery warning.
