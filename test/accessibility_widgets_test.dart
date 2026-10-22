@@ -1025,6 +1025,25 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Search settings explain collection search and local scope', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: app.SettingsPage(
+            repository: repository,
+            darkMode: false,
+            onDarkModeChanged: (_) {},
+          ),
+        ),
+      ),
+    );
+    expect(find.text('What is searchable on this device'), findsOneWidget);
+    await tester.tap(find.text('Search & saved content'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('collection names'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Item deletion failure keeps details open and reports an error', (tester) async {
     final bytes = Uint8List.fromList([1, 3, 3, 7]);
     const item = SavedItem(
