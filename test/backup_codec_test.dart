@@ -742,6 +742,62 @@ void main() {
       );
     });
 
+    test('rejects orphan attachment payloads before decoding base64', () {
+      final source = jsonEncode(<String, Object?>{
+        'app': 'StashHive',
+        'formatVersion': BackupCodec.formatVersion,
+        'exportedAt': '2026-10-22T00:00:00Z',
+        'collections': <String>[],
+        'items': <Object?>[],
+        'attachments': <String, Object?>{
+          'orphan-key': <String, Object?>{
+            'name': 'unused.png',
+            'mimeType': 'image/png',
+            // Invalid base64 makes this prove the reference check happens
+            // before the decoder tries to allocate/decode this unused entry.
+            'base64': '%%%not-base64%%%',
+          },
+        },
+      });
+
+      expect(
+        () => BackupCodec.decode(source),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            contains('no saved item references'),
+          ),
+        ),
+      );
+    });
+
+    test('restore preflight rejects orphan attachments in a decoded object', () {
+      final decoded = DecodedBackup(
+        items: [sampleLink()],
+        attachments: {
+          'unused-payload': BackupAttachment(
+            name: 'unused.png',
+            mimeType: 'image/png',
+            bytes: Uint8List.fromList([1, 2, 3]),
+          ),
+        },
+        collections: const [],
+        exportedAt: '2026-10-22T00:00:00Z',
+      );
+
+      expect(
+        () => BackupCodec.validateDecodedBackup(decoded),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            contains('no saved item references'),
+          ),
+        ),
+      );
+    });
+
     test('rejects files which are not StashHive backups', () {
       expect(
         () => BackupCodec.decode(jsonEncode({'app': 'OtherApp', 'formatVersion': 1})),
