@@ -38,6 +38,18 @@ void main() {
       expect('😀'.length, 2);
     });
 
+    test('calculates a safe preflight for base64 decoded-byte budgets', () {
+      expect(BackupCodec.maxBase64CharactersForDecodedBytes(0), 0);
+      expect(BackupCodec.maxBase64CharactersForDecodedBytes(1), 4);
+      expect(BackupCodec.maxBase64CharactersForDecodedBytes(2), 4);
+      expect(BackupCodec.maxBase64CharactersForDecodedBytes(3), 4);
+      expect(BackupCodec.maxBase64CharactersForDecodedBytes(4), 8);
+      expect(
+        () => BackupCodec.maxBase64CharactersForDecodedBytes(-1),
+        throwsArgumentError,
+      );
+    });
+
     test('validates repository item counts against the backup limit', () {
       expect(
         () => BackupCodec.validateItemCount(
