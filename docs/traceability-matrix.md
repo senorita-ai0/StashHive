@@ -680,3 +680,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009 (avoid duplicate incoming drafts when provider metadata differs without changing the effective draft).
 - Test: TC-100 in `test/share_intake_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-394 — Canonical cross-type share fingerprints
+
+- Implementation: `ShareEventDeduplicator` text/URL/file fingerprint helpers in `lib/services/share_intake.dart`.
+- Requirement: FR-009 (suppress duplicate initial/stream deliveries when provider type labels differ but the effective draft is equivalent).
+- Test: TC-101 in `test/share_intake_test.dart`.
+- Verification: source/test committed but unrun.
