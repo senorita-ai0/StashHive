@@ -352,6 +352,63 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Backup page warns and asks before exporting skipped records and collections', (tester) async {
+    await Hive.box<dynamic>('stashhive_items_v1').put(
+      'unreadable-backup-warning-record',
+      <String, Object?>{
+        'id': 'unreadable-backup-warning-record',
+        'kind': 'unsupported-legacy-kind',
+        'title': 'Unreadable record',
+        'content': '',
+        'tags': <String>[],
+        'isFavorite': false,
+        'createdAtMs': 1,
+        'updatedAtMs': 2,
+      },
+    );
+    await Hive.box<dynamic>('stashhive_preferences_v1').put(
+      'collections',
+      <Object?>['Research', 'research', '   '],
+    );
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.skippedRecordCount.value, 1);
+    expect(repository.skippedCollectionCount.value, 2);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.BackupPrivacyPage(repository: repository),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('1 saved record(s) could not be read.'), findsOneWidget);
+    expect(find.textContaining('2 collection entries were invalid'), findsOneWidget);
+    expect(find.textContaining('previous known-good backup'), findsOneWidget);
+
+    final exportButton = find.widgetWithText(FilledButton, 'Create backup');
+    await tester.ensureVisible(exportButton);
+    await tester.tap(exportButton);
+    await tester.pumpAndSettle();
+
+    expect(find.text('This backup may be incomplete'), findsOneWidget);
+    expect(
+      find.textContaining('1 saved record(s) could not be read and will be omitted.'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('2 collection preference entries were invalid'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('raw local entries will not be deleted'), findsOneWidget);
+
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(find.text('This backup may be incomplete'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Library search teaser exposes and handles semantic activation', (tester) async {
     final semantics = tester.ensureSemantics();
     addTearDown(semantics.dispose);
