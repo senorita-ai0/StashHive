@@ -1377,6 +1377,11 @@ class _QuickSavePageState extends State<QuickSavePage> {
           return;
         }
         url = uri.toString();
+        if (url.length > maxSavedItemUrlCharacters) {
+          _showMessage('Website URLs must be 4,096 characters or shorter.');
+          setState(() => _saving = false);
+          return;
+        }
         if (title.isEmpty) title = uri.host;
       } else if (title.isEmpty) {
         if (_kind == ItemKind.note) {
