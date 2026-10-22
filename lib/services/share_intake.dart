@@ -8,6 +8,7 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import '../models/saved_item.dart';
 import 'mime_types.dart';
 import 'web_url.dart';
+import 'bounded_bytes_reader.dart';
 
 const int maxIncomingAttachmentBytes = 15 * 1024 * 1024;
 const int maxIncomingUrlCharacters = maxSavedItemUrlCharacters;
@@ -409,18 +410,12 @@ class ShareIntake {
     );
   }
 
-  static Future<Uint8List> _readBoundedBytes(XFile file) async {
-    final builder = BytesBuilder(copy: false);
-    var totalBytes = 0;
-    await for (final chunk in file.openRead()) {
-      if (chunk.length > maxIncomingAttachmentBytes - totalBytes) {
-        throw const FormatException('Shared files must be 15 MB or smaller.');
-      }
-      totalBytes += chunk.length;
-      builder.add(chunk);
-    }
-    return builder.takeBytes();
-  }
+  static Future<Uint8List> _readBoundedBytes(XFile file) =>
+      readBoundedByteStream(
+        file.openRead(),
+        maxBytes: maxIncomingAttachmentBytes,
+        limitMessage: 'Shared files must be 15 MB or smaller.',
+      );
 
   /// Removes punctuation that surrounds a shared URL without removing
   /// balanced parentheses/brackets that are legitimately part of its path.
