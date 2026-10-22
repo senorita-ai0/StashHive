@@ -30,6 +30,53 @@ void main() {
     await testDirectory.delete(recursive: true);
   });
 
+  testWidgets('favorite star icon meets graphical contrast in both themes', (tester) async {
+    late Color lightStar;
+    late Color lightSurface;
+    late Color lightCanvas;
+    late Color darkStar;
+    late Color darkSurface;
+    late Color darkCanvas;
+    late Color darkField;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: app.buildLightTheme(),
+        home: Builder(
+          builder: (context) {
+            lightStar = app.favoriteStarColor(context);
+            lightSurface = Theme.of(context).colorScheme.surface;
+            lightCanvas = Theme.of(context).scaffoldBackgroundColor;
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: app.buildLightTheme(),
+        darkTheme: app.buildDarkTheme(),
+        themeMode: ThemeMode.dark,
+        home: Builder(
+          builder: (context) {
+            darkStar = app.favoriteStarColor(context);
+            darkSurface = Theme.of(context).colorScheme.surface;
+            darkCanvas = Theme.of(context).scaffoldBackgroundColor;
+            darkField = Theme.of(context).inputDecorationTheme.fillColor!;
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+
+    expect(_contrastRatio(lightStar, Colors.white), greaterThanOrEqualTo(3));
+    expect(_contrastRatio(lightStar, lightSurface), greaterThanOrEqualTo(3));
+    expect(_contrastRatio(lightStar, lightCanvas), greaterThanOrEqualTo(3));
+    expect(_contrastRatio(darkStar, darkSurface), greaterThanOrEqualTo(3));
+    expect(_contrastRatio(darkStar, darkCanvas), greaterThanOrEqualTo(3));
+    expect(_contrastRatio(darkStar, darkField), greaterThanOrEqualTo(3));
+  });
+
   test('item-type text accents meet contrast against their pastel fills', () {
     for (final kind in ItemKind.values) {
       expect(
