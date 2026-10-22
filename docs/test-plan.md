@@ -329,11 +329,12 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Regression source is authored but unrun; full save → backup → restore round-trip remains pending.
 
 
-### TC-050 — Quick Save edits with shared attachments
+### TC-050 — Quick Save metadata edits with shared attachments
 
 - Create two image items that intentionally reference one stored attachment key.
 - Edit the second item without choosing replacement bytes; save and confirm it retains the shared key and the original bytes remain readable.
-- Edit an image into a note; enter note text, save, and confirm the new record clears attachment key/name/MIME and the now-unreferenced payload is removed.
+- Confirm replacement-file selection uses a per-item key rather than overwriting bytes shared by another item.
+- Repository tests TC-048 cover converting an attachment-bearing item to a note directly and verify old metadata/payload cleanup. The current editor keeps item kind fixed.
 - Widget regression source is committed but unrun; repeat on Android/web after the manual build checkpoint.
 
 
