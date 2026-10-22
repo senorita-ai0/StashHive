@@ -139,6 +139,23 @@ void main() {
       );
     });
 
+    test('keeps legacy case-only collection duplicates normalizable', () {
+      final source = BackupCodec.encode(
+        items: [sampleLink()],
+        attachmentBytes: const {},
+        collections: const ['Learning'],
+      );
+      final payload = jsonDecode(source) as Map<String, dynamic>;
+      payload['collections'] = <String>['Learning', 'learning'];
+
+      final decoded = BackupCodec.decode(jsonEncode(payload));
+      expect(
+        () => BackupCodec.validateDecodedBackup(decoded),
+        returnsNormally,
+      );
+      expect(decoded.collections, ['Learning', 'learning']);
+    });
+
     test('round-trips omission metadata and old backups default to complete', () {
       final completeBackup = BackupCodec.encode(
         items: [sampleLink()],
