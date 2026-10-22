@@ -320,3 +320,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001, FR-008, FR-012–013 and NFR-003.
 - Test: TC-055 in `test/library_repository_test.dart` and `test/backup_codec_test.dart`.
 - Verification: source/regression committed; test execution and storage-interruption recovery remain pending.
+
+
+### TSK-349 — Damaged legacy attachment records
+
+- Implementation: `LibraryRepository.readAttachment` and `createBackup`.
+- Requirements: FR-011–013 and NFR-003 (attachment integrity/recovery).
+- Test: TC-056 in `test/library_repository_test.dart`.
+- Verification: source/test committed; unit execution and recovery workflow remain pending.
