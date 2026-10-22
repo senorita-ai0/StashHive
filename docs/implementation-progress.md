@@ -124,7 +124,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
 - [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
 - [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
-- [x] Progress/test docs updated through TSK-410 and TC-114.
+- [x] Progress/test docs updated through TSK-412 and TC-116.
 
 ## Phase 2/3 latest source increments — 2026-10-22
 
@@ -203,18 +203,18 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added Search sort state and the three options already supported in Library: Recently saved, Oldest first and Title A–Z.
 - [x] Kept filtering and sort operations separate from persistence; changing sort order does not mutate saved items.
 - [x] Wrapped the result count/live status and sort control so they can reflow on narrow screens and at enlarged text sizes.
-- [x] Added TC-114 widget regression source for all three sort modes.
-- [ ] Execute TC-114 and review narrow-width/large-text layout at the manual validation checkpoint.
+- [x] Added TC-115 widget regression source for all three sort modes.
+- [ ] Execute TC-115 and review narrow-width/large-text layout at the manual validation checkpoint.
 - [ ] Complete keyboard and screen-reader checks; no visual or assistive-technology pass is claimed.
 
 ## Phase 3 — metadata performance baseline harness (2026-10-22)
 
 - [x] Added `tool/benchmark_library_repository.dart` with temporary Hive fixtures for 100, 1,000 and 10,000 metadata-only items.
 - [x] Added `docs/performance-benchmark.md` with the deliberate run command, metric definitions, and environment-recording guidance.
-- [x] Added TC-115 and linked TSK-411 to roadmap and traceability; no CI trigger or timing threshold was introduced.
+- [x] Added TC-116 and linked TSK-412 to roadmap and traceability; no CI trigger or timing threshold was introduced.
 - [ ] Run the harness at an owner-approved measurement checkpoint and record output plus OS/Flutter/Dart versions.
 - [ ] Complete the broader storage recovery/device and browser verification; benchmark source does not replace platform tests.
 
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All new regression cases, including TC-114 and the unrun TC-115 benchmark procedure, are source-authored, not passed. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-115 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
