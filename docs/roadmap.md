@@ -664,3 +664,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-401:** Restore now maps incoming item collection assignments through the merged destination collection-name map before writing records. A backup assignment such as `learning` is persisted as the destination's existing `Learning`, not merely normalized in memory afterward.
 - Added a repository regression asserting both the live model and raw Hive record use the canonical spelling. Test source is committed but unrun.
+
+
+### Phase 2 — block backup export until overflow collection assignments are repaired (2026-10-22)
+
+- **TSK-405:** Repository backup preflight now counts saved items whose collection assignment is not represented in the portable collection list and provides a targeted repair error. Backup & Privacy checks this condition before its partial-export confirmation and tells users to edit affected items to select an available collection or No collection.
+- Added repository and widget regressions for a 500-collection legacy destination containing an item assigned to an unrepresentable 501st name. Test source is committed but unrun.
