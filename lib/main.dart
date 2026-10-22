@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'data/library_repository.dart';
 import 'models/saved_item.dart';
+import 'services/bounded_bytes_reader.dart';
 import 'services/share_intake.dart';
 import 'services/mime_types.dart';
 import 'services/backup_codec.dart';
@@ -1409,14 +1410,14 @@ class _QuickSavePageState extends State<QuickSavePage> {
         return;
       }
 
-      final bytes = await file.readAsBytes();
+      final bytes = await readBoundedByteStream(
+        file.readAsByteStream(),
+        maxBytes: kMaxAttachmentBytes,
+        limitMessage: 'Files must be 15 MB or smaller in this version.',
+      );
       if (!mounted) return;
       if (bytes.isEmpty) {
         _showMessage('Could not read that file. Try selecting it again.');
-        return;
-      }
-      if (bytes.length > kMaxAttachmentBytes) {
-        _showMessage('Files must be 15 MB or smaller in this version.');
         return;
       }
       setState(() {
@@ -3110,14 +3111,14 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         _message('That backup is too large to import in this version.');
         return;
       }
-      var bytes = await file.readAsBytes();
+      var bytes = await readBoundedByteStream(
+        file.readAsByteStream(),
+        maxBytes: maxBackupBytes,
+        limitMessage: 'That backup is too large to import in this version.',
+      );
       if (!mounted) return;
       if (bytes.isEmpty) {
         _message('Could not read the selected backup file.');
-        return;
-      }
-      if (bytes.length > maxBackupBytes) {
-        _message('That backup is too large to import in this version.');
         return;
       }
       var source = utf8.decode(bytes, allowMalformed: false);
