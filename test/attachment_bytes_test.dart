@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stashhive/services/attachment_bytes.dart';
+import 'package:stashhive/services/bounded_bytes_reader.dart';
 import 'package:stashhive/services/backup_codec.dart';
 
 class _OversizedByteList extends ListBase<int> {
@@ -26,6 +27,53 @@ class _OversizedByteList extends ListBase<int> {
 }
 
 void main() {
+  group('readBoundedByteStream', () {
+    test('joins chunks that remain within the attachment cap', () async {
+      final bytes = await readBoundedByteStream(
+        Stream<List<int>>.fromIterable([
+          [1, 2],
+          [3, 4, 5],
+        ]),
+        maxBytes: 5,
+        limitMessage: 'too large',
+      );
+
+      expect(bytes, orderedEquals([1, 2, 3, 4, 5]));
+    });
+
+    test('stops reading as soon as the stream exceeds the cap', () async {
+      var producedChunks = 0;
+      Stream<List<int>> chunks() async* {
+        producedChunks++;
+        yield [1, 2, 3];
+        producedChunks++;
+        yield [4, 5, 6];
+        producedChunks++;
+        yield [7];
+      }
+
+      await expectLater(
+        readBoundedByteStream(
+          chunks(),
+          maxBytes: 5,
+          limitMessage: 'Shared files must be 15 MB or smaller.',
+        ),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'Shared files must be 15 MB or smaller.',
+          ),
+        ),
+      );
+      expect(
+        producedChunks,
+        2,
+        reason: 'The reader must cancel instead of consuming later chunks.',
+      );
+    });
+  });
+
   group('isValidAttachmentByteList', () {
     test('accepts non-empty byte lists within the cap', () {
       expect(isValidAttachmentByteList([0, 1, 127, 255]), isTrue);
