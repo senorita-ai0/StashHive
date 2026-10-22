@@ -2984,7 +2984,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
     try {
       final json = await widget.repository.createBackup();
       final name = 'stashhive-backup-' + DateTime.now().toUtc().toIso8601String().substring(0, 10) + '.json';
-      final bytes = Uint8List.fromList(utf8.encode(json));
+      final bytes = utf8.encode(json);
       final result = await SharePlus.instance.share(
         ShareParams(
           title: 'StashHive backup',
