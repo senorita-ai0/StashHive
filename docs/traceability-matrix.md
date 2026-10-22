@@ -1,4 +1,4 @@
-# StashHive — Requirement Traceability Matrix
+# StashTrail — Requirement Traceability Matrix
 
 **Status:** Implementation in progress; Phase 2/3 source and regression tests exist, but execution and platform evidence remain pending. Do not mark a requirement DONE without supporting validation evidence.
 
@@ -952,3 +952,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-004, FR-005 and NFR-005 (consistent predictable retrieval and sorting).
 - Test: TC-124 in `test/saved_item_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-420 — StashTrail product-brand alignment with legacy data compatibility
+
+- Implementation: visible strings in `lib/main.dart`, the Android manifest configurator, `web/manifest.json`, `web/index.html`, README and current product/design docs. `BackupCodec` deliberately retains the version-1 `StashHive` app marker.
+- Requirements: FR-012–013 and NFR-003 (existing local data and portable backups remain recoverable); visible branding consistency supports predictable navigation.
+- Tests: TC-125 in `test/accessibility_widgets_test.dart`; TC-126 in `test/backup_codec_test.dart`.
+- Verification: source/test committed but unrun; Android and PWA install labels remain pending manual validation.
