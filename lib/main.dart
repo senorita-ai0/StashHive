@@ -1290,18 +1290,13 @@ class _QuickSavePageState extends State<QuickSavePage> {
 
   Future<void> _pickAttachment() async {
     try {
-      final files = await FilePicker.pickFiles(
+      final file = await FilePicker.pickFile(
         type: _kind == ItemKind.image ? FileType.image : FileType.custom,
         allowedExtensions: _kind == ItemKind.image
             ? null
             : const ['pdf', 'txt', 'doc', 'docx', 'rtf', 'csv'],
-        allowMultiple: false,
-        // In file_picker 12.x, web may default this to true; disable eager
-        // loading so the byte limit can be checked before allocating data.
-        withData: false,
       );
-      if (!mounted || files.isEmpty) return;
-      final file = files.first;
+      if (!mounted || file == null) return;
 
       // Inspect file length before allocating the full byte buffer. On web and
       // mobile this keeps oversized selections from consuming unbounded memory.
