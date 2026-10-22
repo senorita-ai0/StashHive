@@ -153,14 +153,15 @@ class LibraryRepository {
 
   SavedItem? findById(String id) {
     final value = _itemsBox.get(id);
-    if (value is Map) {
-      try {
-        return SavedItem.fromMap(value);
-      } catch (_) {
-        return null;
-      }
+    if (value is! Map) return null;
+    try {
+      BackupCodec.validateStoredRecordMap(value);
+      final item = SavedItem.fromMap(value);
+      if (item.id != id) return null;
+      return item;
+    } catch (_) {
+      return null;
     }
-    return null;
   }
 
   /// Selects a safe key for replacement bytes without overwriting another
