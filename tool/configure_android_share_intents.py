@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Idempotently add StashHive incoming-share filters to a generated Android runner."""
+"""Idempotently set the StashTrail app label and add incoming-share filters to a generated Android runner."""
 
 from __future__ import annotations
 
@@ -87,6 +87,9 @@ def configure_manifest(manifest_path: str | Path) -> int:
     application = root.find("application")
     if application is None:
         raise ValueError("AndroidManifest.xml has no <application> element.")
+
+    # Keep generated native runners aligned with the user-facing product name.
+    application.set(ANDROID + "label", "StashTrail")
 
     activities = application.findall("activity")
     main_activity = next(
