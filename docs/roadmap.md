@@ -436,3 +436,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-363:** Local reload now applies explicit size bounds to item ID, title, content, URL, collection and attachment metadata before presenting a stored record. Parseable legacy semantic issues (for example a non-web URL or missing attachment) stay visible; raw values that exceed structural limits are skipped and included in the recovery warning count.
 - Expanded the repository regression with an oversized legacy note payload. Test source is committed but unrun.
+
+
+### Phase 3 — contrast-safe inactive Quick Save type labels (2026-10-22)
+
+- **TSK-364:** Item-kind labels now use a darker, readable foreground on light surfaces; on dark surfaces, unselected labels use their light pastel foreground, while selected labels retain the readable dark shade on the selected pastel chip.
+- Expanded the contrast regression across every item type and the selected/unselected light/dark surface combinations. Test source is committed but unrun; manual visual inspection remains pending.
