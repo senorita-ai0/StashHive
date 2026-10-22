@@ -748,3 +748,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-395:** Backup decode now retains the typed byte buffer returned by `base64Decode()` directly instead of immediately copying it through `Uint8List.fromList`. This reduces peak memory for attachment-heavy backups while preserving existing checksum and byte-limit validation.
 - Existing codec regressions cover byte-for-byte round trips and checksum verification; they remain authored but unrun.
+
+
+### Phase 3 — case-insensitive collection row counts (2026-10-22)
+
+- **TSK-409:** Collection rows now count saved-item assignments case-insensitively, matching the existing Collection Contents filter. A legacy item assigned to `learning` is counted under the visible `Learning` collection rather than incorrectly showing zero.
+- Added a widget regression for the displayed item count. Test source is committed but unrun.
