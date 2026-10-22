@@ -798,3 +798,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-413:** The encoder now measures per-item JSON and attachment-entry/base64 sizes against the 145 MiB portable cap before constructing the full backup JSON or allocating each base64 string. This catches large aggregate note metadata early instead of allocating an oversized JSON string and only then rejecting it.
 - Added **TC-117**, a boundary regression with shared large source text across enough valid records that escaped JSON exceeds the cap without requiring a huge input fixture, plus **TC-120** for UTF-8/escaped attachment metadata and output-size parity. Test sources are committed but unrun; peak-memory profiling remains pending.
+
+
+### Phase 2 — repository-owned attachment byte snapshots (2026-10-22)
+
+- **TSK-414:** `LibraryRepository.save` now copies incoming bytes once after validation and before the first storage await. Quick Save can avoid a pre-call copy, while the repository still owns a stable snapshot that callers cannot mutate after passing it in.
+- Added a regression that mutates the original buffer during the save pre-commit hook and verifies the stored attachment retains the original bytes. Test source is committed but unrun.
