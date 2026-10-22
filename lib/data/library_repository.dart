@@ -199,7 +199,11 @@ class LibraryRepository {
   }
 
   bool _isValidAttachmentBytes(Object? value) {
-    if (value is! List || value.isEmpty) return false;
+    if (value is! List ||
+        value.isEmpty ||
+        value.length > BackupCodec.maxAttachmentBytes) {
+      return false;
+    }
     return value.every(
       (byte) => byte is int && byte >= 0 && byte <= 255,
     );
