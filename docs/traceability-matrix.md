@@ -584,3 +584,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-013 and NFR-003 (bounded restore and recoverable import errors).
 - Test: TC-088 manual Android/web picker validation.
 - Verification: source committed; provider behavior and restore integration remain unverified.
+
+
+### TSK-382 — Legacy collection preference normalization
+
+- Implementation: `LibraryRepository._refreshCollections` and `skippedCollectionCount`; Library recovery banner in `lib/main.dart`.
+- Requirements: FR-010, FR-012–013 and NFR-003/NFR-006 (portable collections and recovery feedback).
+- Tests: TC-089 in `test/library_repository_test.dart` and `test/accessibility_widgets_test.dart`.
+- Verification: source/tests committed but unrun.
