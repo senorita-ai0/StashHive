@@ -796,3 +796,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed local storage with an otherwise well-shaped record whose updated timestamp exceeds the supported DateTime range.
 - Trigger repository refresh and confirm it is skipped and included in the recovery count; direct lookup by its stored ID must also return null.
 - Verify valid records remain visible. Regression source is committed but unrun.
+
+
+### TC-094 — Revalidate in-memory decoded backups before restore
+
+- Construct a `DecodedBackup` directly rather than using JSON decode; include missing attachment bytes, invalid attachment metadata or duplicate item IDs and confirm validation fails before any storage write.
+- Construct a valid item assigned to a collection absent from the declared collection list; confirm restore includes the assignment in navigation/backup metadata.
+- At 500 existing collections, construct a backup whose item alone introduces a new assignment; confirm restore fails before writing the item.
+- Regression source is committed but unrun.
