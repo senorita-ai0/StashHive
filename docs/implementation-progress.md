@@ -124,7 +124,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
 - [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
 - [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
-- [x] Progress/test docs updated through TSK-416 and TC-121.
+- [x] Progress/test docs updated through TSK-417 and TC-122.
 
 ## Phase 2/3 latest source increments — 2026-10-22
 
@@ -237,6 +237,12 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added TC-117 for the large-aggregate-metadata rejection boundary and TC-120 for multibyte/escaped metadata, base64 boundary lengths, output byte-count parity and attachment byte round-trip coverage.
 - [ ] Run TC-117 and TC-120; validate over-limit export rejection plus peak-memory behavior at the manual checkpoint.
 
+## Phase 2 — repository-owned attachment input snapshots (2026-10-22)
+
+- [x] `LibraryRepository.save` now snapshots caller-provided bytes after validation and before its first storage await; later changes to the caller's mutable buffer cannot change the stored attachment payload.
+- [x] Added TC-122 to mutate the caller buffer through the test seam during save and verify persisted bytes match the original snapshot.
+- [ ] Run TC-122 at the manual validation checkpoint and verify picker/storage behavior on supported platforms.
+
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-121 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-122 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
