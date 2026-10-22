@@ -715,3 +715,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Read a saved attachment and confirm returned bytes remain byte-for-byte identical to stored payloads.
 - Verify Library thumbnail, Item Details preview and document share accept the returned `Uint8List` directly without an extra UI-side copy.
 - Existing repository integrity tests cover the data; execution and Android memory profiling remain pending.
+
+
+### TC-103 — Backup export buffer integrity after copy reduction
+
+- Export a backup containing non-ASCII metadata and attachment payloads; confirm the shareable JSON bytes decode to the same backup content.
+- Confirm export no longer creates an additional `Uint8List.fromList` copy after UTF-8 encoding.
+- Existing codec/restore byte-integrity tests apply but are unrun; profile large exports during the manual checkpoint.
