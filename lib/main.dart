@@ -1350,11 +1350,14 @@ class _QuickSavePageState extends State<QuickSavePage> {
     _selectedMimeType = widget.initialShare?.mimeType;
     final existingCollection = _collection;
     if (existingCollection != null) {
-      _collection = widget.repository.collections.value
-          .where(
-            (name) => name.toLowerCase() == existingCollection.toLowerCase(),
-          )
-          .firstOrNull;
+      String? canonicalCollection;
+      for (final name in widget.repository.collections.value) {
+        if (name.toLowerCase() == existingCollection.toLowerCase()) {
+          canonicalCollection = name;
+          break;
+        }
+      }
+      _collection = canonicalCollection;
     }
   }
 
