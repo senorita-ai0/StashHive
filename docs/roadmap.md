@@ -410,7 +410,7 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — collision-safe ID allocation (2026-10-22)
 
-- **TSK-359:** Quick Save now requests a repository-generated ID that is absent from both the item and attachment stores. Replacement attachment keys reuse the same uniqueness check, preventing a newly generated item from accidentally overwriting an orphaned attachment payload.
+- **TSK-359:** Quick Save now requests a repository-generated ID absent from both the item and attachment stores and not referenced by any raw item as an attachment key, including legacy references whose payload is missing. Replacement attachment keys reuse the same uniqueness check.
 - Added repository coverage for generated ID uniqueness against existing record/payload keys. Test source is committed but unrun.
 
 
