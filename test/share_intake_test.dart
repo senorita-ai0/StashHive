@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:stashhive/models/saved_item.dart';
@@ -445,6 +447,118 @@ void main() {
         isTrue,
         reason: 'Different batch contents must not alias through a delimiter.',
       );
+    });
+
+    test('reads a supported document share into an attachment draft', () async {
+      final directory =
+          await Directory.systemTemp.createTemp('stashhive_share_file_test_');
+      try {
+        final file = File('${directory.path}/meeting-notes.txt');
+        final bytes = [72, 101, 108, 108, 111, 10];
+        await file.writeAsBytes(bytes);
+
+        final result = await ShareIntake.fromSharedMedia(
+          SharedMediaFile(
+            path: file.path,
+            type: SharedMediaType.file,
+            mimeType: 'application/octet-stream',
+          ),
+        );
+
+        expect(result, isNotNull);
+        expect(result!.kind, ItemKind.document);
+        expect(result.fileName, 'meeting-notes.txt');
+        expect(result.mimeType, 'text/plain');
+        expect(result.bytes, orderedEquals(bytes));
+      } finally {
+        await directory.delete(recursive: true);
+      }
+    });
+
+    test('reads a supported image share into an image draft', () async {
+      final directory =
+          await Directory.systemTemp.createTemp('stashhive_share_image_test_');
+      try {
+        final file = File('${directory.path}/reference.png');
+        final bytes = [137, 80, 78, 71];
+        await file.writeAsBytes(bytes);
+
+        final result = await ShareIntake.fromSharedMedia(
+          SharedMediaFile(
+            path: file.path,
+            type: SharedMediaType.image,
+            mimeType: 'image/png',
+          ),
+        );
+
+        expect(result, isNotNull);
+        expect(result!.kind, ItemKind.image);
+        expect(result.fileName, 'reference.png');
+        expect(result.mimeType, 'image/png');
+        expect(result.bytes, orderedEquals(bytes));
+      } finally {
+        await directory.delete(recursive: true);
+      }
+    });
+
+    test('rejects an unsupported shared file extension', () async {
+      final directory =
+          await Directory.systemTemp.createTemp('stashhive_share_unsupported_test_');
+      try {
+        final file = File('${directory.path}/installer.exe');
+        await file.writeAsBytes([1, 2, 3]);
+
+        await expectLater(
+          ShareIntake.fromSharedMedia(
+            SharedMediaFile(
+              path: file.path,
+              type: SharedMediaType.file,
+              mimeType: 'application/octet-stream',
+            ),
+          ),
+          throwsA(
+            isA<FormatException>().having(
+              (error) => error.message,
+              'message',
+              contains('currently accepts shared images'),
+            ),
+          ),
+        );
+      } finally {
+        await directory.delete(recursive: true);
+      }
+    });
+
+    test('rejects an oversized shared file before reading its bytes', () async {
+      final directory =
+          await Directory.systemTemp.createTemp('stashhive_share_oversize_test_');
+      try {
+        final file = File('${directory.path}/large.pdf');
+        final handle = await file.open(mode: FileMode.write);
+        await handle.setPosition(maxIncomingAttachmentBytes);
+        await handle.writeByte(1);
+        await handle.close();
+
+        expect(await file.length(), maxIncomingAttachmentBytes + 1);
+        await expectLater(
+          ShareIntake.fromSharedMedia(
+            SharedMediaFile(
+              path: file.path,
+              type: SharedMediaType.file,
+              mimeType: 'application/pdf',
+            ),
+          ),
+          throwsA(
+            isA<FormatException>().having(
+              (error) => error.message,
+              'message',
+              contains('15 MB or smaller'),
+            ),
+          ),
+        );
+      } finally {
+        await directory.delete(recursive: true);
+      }
     });
 
     test('returns unsupported for shared video instead of mislabeling it', () async {
