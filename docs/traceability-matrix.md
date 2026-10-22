@@ -768,3 +768,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-010–011 and NFR-003 (consistent collection retrieval across legacy data).
 - Test: TC-111 in `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-408 — Accessible attachment picker control
+
+- Implementation: `lib/main.dart`, Quick Save `_buildAttachmentPicker`.
+- Requirement: NFR-006 (named, usable controls for assistive technology).
+- Test: TC-112 in `test/accessibility_widgets_test.dart`.
+- Verification: source/test committed but unrun; real assistive-technology check remains pending.
