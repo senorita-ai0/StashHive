@@ -294,3 +294,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Share a standalone URL with a trailing sentence period and verify the saved URL excludes that period.
 - Share a standalone URL with a balanced parenthesized path segment and verify the parentheses are retained.
 - Unit regression source is committed but unrun; validate browser/chat source payloads on Android before marking passed.
+
+
+### TC-046 — Incoming URL and context size limits
+
+- Share a URL at exactly 4,096 characters; confirm it is accepted.
+- Share a URL at 4,097 characters; confirm intake rejects it with a clear limit message.
+- Share a valid URL with accompanying text at 1,000,001 characters; confirm the draft is rejected using the stated text-character limit.
+- Unit regression source is authored but unrun; cross-check the caps with backup decode/encode limits.
