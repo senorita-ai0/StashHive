@@ -360,6 +360,10 @@ class BackupCodec {
         mimeType: mimeType,
         bytes: bytes,
       );
+      // jsonDecode keeps the original base64 strings in its dynamic tree.
+      // Drop each one after validating/decoding it so large restores do not
+      // retain both the full parsed base64 tree and decoded attachment bytes.
+      value.remove('base64');
     }
 
     final referencedAttachmentKeys = items
