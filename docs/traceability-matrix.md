@@ -744,3 +744,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-010, FR-012–013 and NFR-003 (consistent portable collection assignments).
 - Test: TC-108 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-405 — Repair gate for overflow collection assignments
+
+- Implementation: `LibraryRepository.unrepresentedCollectionAssignmentCount` and `createBackup`; `BackupPrivacyPage._export` in `lib/main.dart`.
+- Requirements: FR-010, FR-012–013 and NFR-003 (portable backups and transparent recovery).
+- Test: TC-109 in `test/library_repository_test.dart` and `test/accessibility_widgets_test.dart`.
+- Verification: source/tests committed but unrun.
