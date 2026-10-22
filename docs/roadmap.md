@@ -44,7 +44,7 @@
 | TSK-302 | Implement restore and conflict strategy | FR-013 | IN PROGRESS | Valid archive restored; corrupt/unknown-version archives rejected with no partial corruption. |
 | TSK-303 | Platform-specific web persistence and data-loss messaging | FR-015 | NOT STARTED | Same browser profile reload retains test data; different browser does not imply sync; clearing-data warning is clear. |
 | TSK-304 | Privacy, accessibility and security review | FR-018, NFR-002, NFR-006 | NOT STARTED | Permission list justified; no saved-content logs; keyboard/contrast/large-text checklist complete. |
-| TSK-305 | Performance and recovery regression suite | NFR-003, NFR-007–009 | NOT STARTED | Benchmark report and known limits documented; key flows recover from interrupted operations. |
+| TSK-305 | Performance and recovery regression suite | NFR-003, NFR-007–009 | IN PROGRESS — baseline harness added; measurements and recovery verification pending | Capture 100/1,000/10,000-item baseline and verify recovery flows at the manual checkpoint. |
 
 ### M4 — Closed validation, monetization decision, release readiness
 
@@ -767,3 +767,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **TSK-410:** Backup planning now separates structurally unreadable records from visible legacy items that cannot be safely exported. Invalid URLs, empty legacy notes, missing/damaged attachments and attachments that exceed the combined 100 MiB budget are omitted from the portable snapshot only after an explicit partial-export confirmation.
 - The version-1 backup metadata includes an optional `omittedUnexportableRecordCount`; old backups default it to zero. Restore confirmation explains those items cannot be recovered from that file, and the original local records remain in place.
 - Added codec metadata round-trip/validation tests, repository partial-export tests and a widget regression for the confirmation/cancel path. Tests are committed but unrun.
+
+
+### Phase 3 — metadata performance baseline harness (2026-10-22)
+
+- **TSK-411:** Added `tool/benchmark_library_repository.dart` and `docs/performance-benchmark.md` to establish a repeatable, non-gating baseline for metadata-only libraries of 100, 1,000 and 10,000 items. The harness reports repository open/validation, repeated search and favorite filtering, one existing-item edit, and metadata backup encoding.
+- **Status:** Harness and run instructions are committed; no measurements have been taken. TSK-305 remains IN PROGRESS until the output is recorded and recovery/platform verification is completed. No arbitrary latency threshold or CI timing gate is introduced.
