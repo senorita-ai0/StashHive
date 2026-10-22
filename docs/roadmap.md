@@ -810,3 +810,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-418:** Backup decode now checks attachment keys against the validated items before base64 decoding payloads. In-memory restore preflight enforces the same invariant, so unused attachment bytes cannot consume the 100 MiB allowance or memory without being associated with any item.
 - Added regressions for invalid-base64 orphan payloads (proving reference rejection precedes decoding) and direct `DecodedBackup` construction. Test source is committed but unrun.
+
+
+### Phase 3 — deterministic tie-breaking for Library and Search sort modes (2026-10-22)
+
+- **TSK-419:** Centralized the three sort modes in `compareSavedItemsForSort`. Equal timestamps now fall back to the other timestamp, then case-insensitive/exact title and persisted item ID; equal case-insensitive titles no longer depend on the input list's incidental ordering.
+- Library and Search now share the same comparator, and a model regression covers ties for Recently saved, Oldest first and Title A–Z. Test source is committed but unrun.
