@@ -69,6 +69,76 @@ void main() {
       );
     });
 
+    test('revalidates manually constructed decoded backups', () {
+      final image = SavedItem(
+        id: 'decoded-image',
+        kind: ItemKind.image,
+        title: 'Decoded image',
+        content: '',
+        tags: const ['Reference'],
+        collection: 'Ideas',
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 2000,
+        attachmentKey: 'decoded-image',
+        attachmentName: 'image.png',
+        attachmentMimeType: 'image/png',
+      );
+
+      final valid = DecodedBackup(
+        items: [image],
+        attachments: {
+          'decoded-image': BackupAttachment(
+            name: 'image.png',
+            mimeType: 'image/png',
+            bytes: Uint8List.fromList([1, 2, 3]),
+          ),
+        },
+        collections: const ['Ideas'],
+        exportedAt: '2026-10-22T00:00:00Z',
+      );
+      expect(() => BackupCodec.validateDecodedBackup(valid), returnsNormally);
+
+      final missingPayload = DecodedBackup(
+        items: [image],
+        attachments: const {},
+        collections: const ['Ideas'],
+        exportedAt: '2026-10-22T00:00:00Z',
+      );
+      expect(
+        () => BackupCodec.validateDecodedBackup(missingPayload),
+        throwsFormatException,
+      );
+
+      final invalidMetadata = DecodedBackup(
+        items: [image],
+        attachments: {
+          'decoded-image': BackupAttachment(
+            name: ' ',
+            mimeType: 'image/png',
+            bytes: Uint8List.fromList([1, 2, 3]),
+          ),
+        },
+        collections: const ['Ideas'],
+        exportedAt: '2026-10-22T00:00:00Z',
+      );
+      expect(
+        () => BackupCodec.validateDecodedBackup(invalidMetadata),
+        throwsFormatException,
+      );
+
+      final duplicateIds = DecodedBackup(
+        items: [sampleLink(), sampleLink()],
+        attachments: const {},
+        collections: const ['Learning'],
+        exportedAt: '2026-10-22T00:00:00Z',
+      );
+      expect(
+        () => BackupCodec.validateDecodedBackup(duplicateIds),
+        throwsFormatException,
+      );
+    });
+
     test('round-trips omission metadata and old backups default to complete', () {
       final completeBackup = BackupCodec.encode(
         items: [sampleLink()],
