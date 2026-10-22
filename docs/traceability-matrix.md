@@ -400,3 +400,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-002, FR-005–006, FR-010 (consistent tags/search metadata).
 - Test: TC-065 in `test/library_repository_test.dart` and `test/backup_codec_test.dart`.
 - Verification: source/tests committed but unrun.
+
+
+### TSK-359 — Collision-safe saved-item IDs
+
+- Implementation: `LibraryRepository.createUniqueId`, used by Quick Save and attachment replacement-key allocation.
+- Requirements: FR-001–003 and NFR-003 (prevent unintended overwrite of local records/payloads).
+- Test: TC-066 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
