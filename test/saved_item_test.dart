@@ -109,6 +109,31 @@ void main() {
       expect(restored.matchesQuery('اردو'), isTrue);
     });
 
+
+    test('searches emoji, accented text, and punctuation without corruption', () {
+      final item = makeItem(
+        kind: ItemKind.note,
+        title: 'Café plans: déjà-vu #42 🚀',
+        url: null,
+        content: 'Résumé notes; keep [draft] (v2). Launch 🚀!',
+        tags: const ['release#42', '🚀Launch'],
+        collection: 'Équipe',
+      );
+
+      expect(item.matchesQuery('CAFÉ'), isTrue);
+      expect(item.matchesQuery('DÉJÀ-VU'), isTrue);
+      expect(item.matchesQuery('résumé'), isTrue);
+      expect(item.matchesQuery('🚀'), isTrue);
+      expect(item.matchesQuery('#42'), isTrue);
+      expect(item.matchesQuery('[draft]'), isTrue);
+      expect(item.matchesQuery('équipe'), isTrue);
+
+      // Search is substring-based: punctuation that is actually present is
+      // searchable, while a different string is not silently rewritten.
+      expect(item.matchesQuery('release#42'), isTrue);
+      expect(item.matchesQuery('release 42'), isFalse);
+    });
+
     test('clears optional references explicitly through copyWith', () {
       final updated = makeItem(attachmentKey: 'local-file').copyWith(
         clearCollection: true,
