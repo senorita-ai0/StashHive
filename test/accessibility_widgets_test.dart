@@ -15,6 +15,21 @@ double _contrastRatio(Color first, Color second) {
 }
 
 void main() {
+  late Directory testDirectory;
+  late LibraryRepository repository;
+
+  setUp(() async {
+    testDirectory = await Directory.systemTemp.createTemp('stashhive_a11y_test_');
+    Hive.init(testDirectory.path);
+    repository = await LibraryRepository.openInitializedForTesting();
+  });
+
+  tearDown(() async {
+    repository.dispose();
+    await Hive.close();
+    await testDirectory.delete(recursive: true);
+  });
+
   testWidgets('muted text meets contrast on light surfaces', (tester) async {
     late Color muted;
     late Color canvas;
@@ -60,21 +75,6 @@ void main() {
 
     expect(_contrastRatio(muted, canvas), greaterThanOrEqualTo(4.5));
     expect(_contrastRatio(muted, field), greaterThanOrEqualTo(4.5));
-  });
-
-  late Directory testDirectory;
-  late LibraryRepository repository;
-
-  setUp(() async {
-    testDirectory = await Directory.systemTemp.createTemp('stashhive_a11y_test_');
-    Hive.init(testDirectory.path);
-    repository = await LibraryRepository.openInitializedForTesting();
-  });
-
-  tearDown(() async {
-    repository.dispose();
-    await Hive.close();
-    await testDirectory.delete(recursive: true);
   });
 
   testWidgets('Library search teaser exposes and handles semantic activation', (tester) async {
