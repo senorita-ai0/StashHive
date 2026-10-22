@@ -673,3 +673,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Select a valid backup with attachments, confirm the merge, and verify restored data/bytes match the source.
 - Confirm repository rollback behavior is unchanged when the decoded restore is interrupted.
 - Existing decoder/restore regression source covers these paths but is unrun; profile peak memory on a large backup at the manual checkpoint.
+
+
+### TC-097 — UTF-8 backup size parity
+
+- Verify the shared UTF-8 byte counter matches encoded byte lengths for ASCII, Urdu/Arabic-script text and emoji, including a supplementary character whose Dart string length differs from UTF-8 byte length.
+- Confirm backup export/decode and the restore file picker use the same 145 MiB byte cap.
+- Unit source is committed but unrun; exercise Unicode-heavy backup export/restore in the final checkpoint.
