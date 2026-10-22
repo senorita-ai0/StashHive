@@ -211,3 +211,10 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - Added the `crypto` package and changed the deduplication cache key to a SHA-256 digest of canonical JSON. Only the 64-character digest remains in the short-lived cache rather than the serialized shared text/path.
 - The dependency is declared as `crypto: ^3.0.7`; test/build resolution remains pending because CI is manual-only.
+
+
+### Phase 2 — shared attachment backup/restore integrity (2026-10-22)
+
+- **TSK-327:** Backup export now counts a shared attachment key only once toward the attachment budget, rather than counting the same byte payload for every saved-item reference. Export also rejects image/document records without a valid attachment key and rejects attachment keys on unsupported item types instead of emitting a backup that cannot be restored.
+- Restore now maps each original attachment key to one collision-safe key and stages its bytes only once, preserving relationships between items that intentionally share a stored attachment.
+- Added codec and repository regressions for shared references and invalid export references. Tests are authored but unrun; source-level rollback does not claim crash-atomic storage behavior.
