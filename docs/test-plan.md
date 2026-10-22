@@ -752,3 +752,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed the preference list with `Learning` and a legacy raw saved item assigned to `learning`; reopen the repository and confirm direct lookup and the visible item model use `Learning`.
 - Save a new item assigned to `learning`; confirm the Hive record itself stores `Learning` and it remains selectable/filterable in the existing collection.
 - Repository regression source is committed but unrun.
+
+
+### TC-108 — Restore persists canonical collection spelling
+
+- Seed the destination with a `Learning` collection.
+- Restore a valid backup whose item and collection metadata use `learning`.
+- Confirm the restored item model, the raw persisted record and the visible collection list use one canonical `Learning` spelling.
+- Repository regression source is committed but unrun.
