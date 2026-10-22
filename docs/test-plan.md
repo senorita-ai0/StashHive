@@ -520,3 +520,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Deliver file shares with the same path and MIME but different unused message metadata; confirm the duplicate is suppressed.
 - Confirm URL shares with different accompanying context are still treated as distinct events and batch ordering is preserved.
 - Regression source is committed but unrun; confirm actual initial-intent/stream parity on Android.
+
+
+### TC-076 — Case-insensitive tag identity
+
+- Deserialize a legacy item with `Reading`, `reading`, `Work`, blank entries and padded duplicates; confirm it normalizes to `Reading`, `Work`.
+- Attempt to save/export an item containing both `Reading` and `reading`; strict validation must reject it.
+- Test source is committed but unrun; confirm tag chips/counts remain stable after restart and backup restore.
