@@ -288,16 +288,38 @@ class _HomeShellState extends State<HomeShell> {
   final ShareEventDeduplicator _shareDeduplicator =
       ShareEventDeduplicator();
   bool _processingShareBatches = false;
+  bool _showStorageReminder = false;
 
   @override
   void initState() {
     super.initState();
+    _showStorageReminder = !widget.repository.hasSeenStorageReminder;
     // Incoming share intents are configured for Android only in this phase.
     // The browser build and unsupported platforms never invoke the native plugin.
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _startShareIntake();
       });
+    }
+  }
+
+  Future<void> _acknowledgeStorageReminder({
+    required bool openBackup,
+  }) async {
+    if (!mounted) return;
+    setState(() => _showStorageReminder = false);
+    try {
+      await widget.repository.markStorageReminderSeen();
+    } catch (_) {
+      // The reminder is non-critical; if the preference cannot be saved,
+      // it will be offered again on the next app/browser launch.
+    }
+    if (openBackup && mounted) {
+      await Navigator.of(context).push<void>(
+        MaterialPageRoute(
+          builder: (_) => BackupPrivacyPage(repository: widget.repository),
+        ),
+      );
     }
   }
 
@@ -465,6 +487,13 @@ class _HomeShellState extends State<HomeShell> {
         onAdd: _openAdd,
         onSearch: _openSearch,
         onOpenItem: _openItem,
+        showStorageReminder: _showStorageReminder,
+        onDismissStorageReminder: () => unawaited(
+          _acknowledgeStorageReminder(openBackup: false),
+        ),
+        onCreateBackup: () => unawaited(
+          _acknowledgeStorageReminder(openBackup: true),
+        ),
       ),
       SearchPage(
         key: ValueKey<int>(_searchRevision),
@@ -524,12 +553,87 @@ class _HomeShellState extends State<HomeShell> {
   }
 }
 
+class _StorageSafetyReminder extends StatelessWidget {
+  const _StorageSafetyReminder({
+    required this.onDismiss,
+    required this.onCreateBackup,
+  });
+
+  final VoidCallback onDismiss;
+  final VoidCallback onCreateBackup;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: colors.secondaryContainer,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: colors.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.shield_outlined, color: colors.onSecondaryContainer),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Keep your library safe',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: colors.onSecondaryContainer,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            kIsWeb
+                ? 'Your library stays in this browser profile. Clearing site data can erase it, and it does not sync to other browsers or devices.'
+                : 'Your library stays on this device. Uninstalling the app or clearing app data can erase it, and it does not sync to the web.',
+            style: TextStyle(
+              color: colors.onSecondaryContainer,
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                TextButton(
+                  onPressed: onDismiss,
+                  child: const Text('Got it'),
+                ),
+                FilledButton.tonal(
+                  onPressed: onCreateBackup,
+                  child: const Text('Create backup'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class LibraryPage extends StatefulWidget {
   const LibraryPage({
     required this.repository,
     required this.onAdd,
     required this.onSearch,
     required this.onOpenItem,
+    this.showStorageReminder = false,
+    this.onDismissStorageReminder,
+    this.onCreateBackup,
     super.key,
   });
 
@@ -537,6 +641,9 @@ class LibraryPage extends StatefulWidget {
   final ValueChanged<ItemKind?> onAdd;
   final ValueChanged<String> onSearch;
   final ValueChanged<SavedItem> onOpenItem;
+  final bool showStorageReminder;
+  final VoidCallback? onDismissStorageReminder;
+  final VoidCallback? onCreateBackup;
 
   @override
   State<LibraryPage> createState() => _LibraryPageState();
@@ -608,6 +715,14 @@ class _LibraryPageState extends State<LibraryPage> {
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).textTheme.bodySmall?.color,
                         )),
+                if (widget.showStorageReminder)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 14),
+                    child: _StorageSafetyReminder(
+                      onDismiss: widget.onDismissStorageReminder ?? () {},
+                      onCreateBackup: widget.onCreateBackup ?? () {},
+                    ),
+                  ),
                 const SizedBox(height: 17),
                 ValueListenableBuilder<int>(
                   valueListenable: widget.repository.skippedRecordCount,
