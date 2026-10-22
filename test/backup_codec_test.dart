@@ -267,6 +267,49 @@ void main() {
       );
     });
 
+    test('export rejects saved URLs the restore format cannot accept', () {
+      final overlongUrl = 'https://example.com/' +
+          List<String>.filled(maxSavedItemUrlCharacters, 'a').join();
+      expect(overlongUrl.length, greaterThan(maxSavedItemUrlCharacters));
+
+      expect(
+        () => BackupCodec.encode(
+          items: [sampleLink().copyWith(url: overlongUrl)],
+          attachmentBytes: const {},
+          collections: const ['Learning'],
+        ),
+        throwsFormatException,
+      );
+    });
+
+    test('export rejects attachment metadata that restore would reject', () {
+      final image = SavedItem(
+        id: 'bad-meta-image',
+        kind: ItemKind.image,
+        title: 'Bad metadata',
+        content: '',
+        tags: const [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 1000,
+        attachmentKey: 'bad-meta-image',
+        attachmentName: '   ',
+        attachmentMimeType: 'image/png',
+      );
+
+      expect(
+        () => BackupCodec.encode(
+          items: [image],
+          attachmentBytes: {
+            'bad-meta-image': Uint8List.fromList([1, 2, 3]),
+          },
+          collections: const [],
+        ),
+        throwsFormatException,
+      );
+    });
+
     test('rejects files which are not StashHive backups', () {
       expect(
         () => BackupCodec.decode(jsonEncode({'app': 'OtherApp', 'formatVersion': 1})),
