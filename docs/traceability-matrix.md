@@ -536,3 +536,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-010, FR-012–013 and NFR-003 (organizing collections and reliable backup portability).
 - Test: TC-082 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-376 — Preflight merged collection count during restore
+
+- Implementation: `LibraryRepository.restoreBackup`, before staging/write phase.
+- Requirements: FR-010, FR-012–013 and NFR-003 (collection organization and backup portability).
+- Test: TC-083 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
