@@ -388,6 +388,53 @@ void main() {
         reason: 'Normalization yields the same user-visible share draft.',
       );
     });
+    test('deduplicates text events based on the effective draft text', () {
+      final deduplicator = ShareEventDeduplicator();
+      final start = DateTime.utc(2026, 10, 22, 16);
+      final fromPath = SharedMediaFile(
+        path: 'Read this later',
+        type: SharedMediaType.text,
+        mimeType: 'text/plain',
+      );
+      final fromMessage = SharedMediaFile(
+        path: 'provider-placeholder',
+        type: SharedMediaType.text,
+        mimeType: 'TEXT/PLAIN',
+        message: ' Read this later ',
+      );
+
+      expect(deduplicator.shouldAccept([fromPath], now: start), isTrue);
+      expect(
+        deduplicator.shouldAccept(
+          [fromMessage],
+          now: start.add(const Duration(milliseconds: 100)),
+        ),
+        isFalse,
+        reason: 'Both events produce the same text draft despite provider-field differences.',
+      );
+    });
+
+    test('ignores unused message metadata for file share deduplication', () {
+      final deduplicator = ShareEventDeduplicator();
+      final start = DateTime.utc(2026, 10, 22, 17);
+      SharedMediaFile fileWithMessage(String message) => SharedMediaFile(
+            path: '/provider/cache/report.pdf',
+            type: SharedMediaType.file,
+            mimeType: 'application/pdf',
+            message: message,
+          );
+
+      expect(deduplicator.shouldAccept([fileWithMessage('Original caption')], now: start), isTrue);
+      expect(
+        deduplicator.shouldAccept(
+          [fileWithMessage('Different unused caption')],
+          now: start.add(const Duration(milliseconds: 100)),
+        ),
+        isFalse,
+        reason: 'The file draft ignores the shared message field.',
+      );
+    });
+
     test('distinguishes batch order and respects the bounded fingerprint cache', () {
       final deduplicator = ShareEventDeduplicator(
         window: const Duration(seconds: 3),
