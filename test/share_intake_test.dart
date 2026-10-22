@@ -160,6 +160,38 @@ void main() {
       expect(deduplicator.shouldAccept(const [], now: start), isFalse);
     });
 
+    test('treats distinct shared messages as different events', () {
+      final deduplicator = ShareEventDeduplicator();
+      final start = DateTime.utc(2026, 10, 22, 14);
+      SharedMediaFile shared(String message) => SharedMediaFile(
+            path: 'https://example.com/same',
+            type: SharedMediaType.url,
+            mimeType: 'text/uri-list',
+            message: message,
+          );
+
+      expect(
+        deduplicator.shouldAccept([shared('First note')], now: start),
+        isTrue,
+      );
+      expect(
+        deduplicator.shouldAccept(
+          [shared('Second note')],
+          now: start.add(const Duration(milliseconds: 100)),
+        ),
+        isTrue,
+        reason: 'The same URL can be intentionally shared with different context.',
+      );
+      expect(
+        deduplicator.shouldAccept(
+          [shared('Second note')],
+          now: start.add(const Duration(milliseconds: 200)),
+        ),
+        isFalse,
+        reason: 'An identical event is still suppressed inside the window.',
+      );
+    });
+
     test('distinguishes batch order and respects the bounded fingerprint cache', () {
       final deduplicator = ShareEventDeduplicator(
         window: const Duration(seconds: 3),
