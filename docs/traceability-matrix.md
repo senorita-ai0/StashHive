@@ -576,3 +576,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-003, FR-011–013 and NFR-003 (safe recovery actions).
 - Test: TC-087 in `test/external_navigation_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-381 — Backup restore picker size guard
+
+- Implementation: `lib/main.dart`, `BackupPrivacyPage._restore` using `FilePicker.pickFile()`.
+- Requirements: FR-013 and NFR-003 (bounded restore and recoverable import errors).
+- Test: TC-088 manual Android/web picker validation.
+- Verification: source committed; provider behavior and restore integration remain unverified.
