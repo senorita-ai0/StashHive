@@ -555,3 +555,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed a raw local record whose update timestamp exceeds the supported date range; trigger refresh and confirm it is skipped, counted, and does not prevent valid records from loading.
 - Try to save and export records with out-of-range timestamps; both paths must reject them before persistence/export.
 - Regression source is committed but unrun; confirm ordinary current timestamps still render and round-trip.
+
+
+### TC-081 — Orphan attachment payload cannot be overwritten by a new item
+
+- Seed an attachment payload with no owning saved item.
+- Attempt to save a new image using that key with different bytes.
+- Confirm the repository rejects the save, does not add the record, and preserves the original orphan payload byte-for-byte.
+- Test source is committed but unrun.
