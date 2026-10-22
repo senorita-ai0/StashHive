@@ -148,6 +148,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Collection row counts now use the same case-insensitive assignment matching as Collection Contents.
 - [x] Backup export now distinguishes unreadable raw records from visible but unexportable legacy items, asks for confirmation, filters them from the portable snapshot, and carries their omission count through restore warnings.
 - [x] Partial backup snapshots now cap export at 10,000 items for over-limit legacy libraries and retain all omitted items locally.
+- [x] Backup encoding now rejects duplicate item identifiers so exported JSON obeys the same uniqueness rule as restore.
 - [x] Raw legacy created/updated timestamps are now bounded before reload/direct lookup so malformed dates do not break date-dependent UI.
 - [x] Library card and Item Details favorite actions now show repair guidance when strict saves reject a recoverable but invalid legacy record.
 - [x] Backup restore now uses the file_picker single-file API, rejects oversized/unknown-size backups before bulk reads, and repeats the cap check after loading bytes.
