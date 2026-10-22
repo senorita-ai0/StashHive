@@ -586,3 +586,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-388:** `addCollection` now snapshots the preference key and previous value, then best-effort restores it if the storage call fails after taking effect. The collection notifier is refreshed on rollback and the original failure is rethrown.
 - Added fault-injection coverage for failure after the write, including the case where no previous collection preference key existed. Test source is committed but unrun.
+
+
+### Phase 2 — decode/validate backups once before confirmation (2026-10-22)
+
+- **TSK-389:** Backup & Privacy now performs full `BackupCodec.decode` validation before showing the merge confirmation and passes the already decoded result to `restoreDecodedBackup`. The raw JSON string and file-byte reference are released before the confirmation dialog, avoiding a second full parse of large base64 attachments after confirmation.
+- Existing restore/rejection/rollback repository tests cover the decoded path through `restoreBackup`; source is committed but tests remain unrun. Manual memory profiling remains pending.
