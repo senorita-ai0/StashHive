@@ -738,3 +738,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Open Backup & Privacy and confirm the recovery banner includes both skipped-record and skipped-collection counts.
 - Start export; confirm the dialog describes both omission types and explains raw entries are not deleted. Cancel and confirm it closes without starting the share flow.
 - Widget test source is committed but unrun; confirm the affirmative path remains functional at the manual checkpoint.
+
+
+### TC-106 — Accessible names for secondary action menus
+
+- Open Collections with at least one collection; confirm its overflow menu exposes a contextual name such as `Actions for Learning collection` and reveals Rename/Delete actions.
+- Open Item Details; confirm the overflow menu exposes `Item actions` and reveals Edit/Delete actions.
+- Widget test source is committed but unrun; verify spoken labels and keyboard activation with TalkBack and browser screen readers.
