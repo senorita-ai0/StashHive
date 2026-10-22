@@ -137,6 +137,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added repository/Library widget regression source for the count and visible recovery warning.
 - [x] Added a repository-level guard preventing any caller from writing replacement bytes to a key still referenced by another raw item, plus collision-safe IDs that avoid item/attachment keys and missing-payload legacy references.
 - [x] Expanded item-type label contrast coverage to include unselected states on light and dark surfaces; Quick Save now chooses readable foregrounds for all four types.
+- [x] Centralized attachment byte-list validation, including a pre-iteration length cap for oversized legacy payloads.
 - [x] Bound raw local record field sizes during recovery so oversized records are skipped and counted while parseable legacy records with safe-to-display field sizes remain visible.
 - [x] Added credential-bearing URL, URL boundary, tag integrity, collision-safe ID and responsive kind-selector regression source.
 
