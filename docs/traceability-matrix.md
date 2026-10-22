@@ -616,3 +616,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-010, FR-012–013 and NFR-003 (collection portability consistency).
 - Test: TC-092 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-386 — Narrow-width Library header
+
+- Implementation: `lib/main.dart`, Library brand row title constraint.
+- Requirement: NFR-006 (responsive large-text layout).
+- Test: TC-093 in `test/accessibility_widgets_test.dart`.
+- Verification: source/test committed but unrun; actual device/browser visual inspection remains pending.
