@@ -520,3 +520,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003, FR-012–013 and NFR-003 (robust local recovery and portable records).
 - Test: TC-080 in `test/library_repository_test.dart` and `test/backup_codec_test.dart`.
 - Verification: source/tests committed but unrun.
+
+
+### TSK-374 — Guard existing orphan payloads on save
+
+- Implementation: `LibraryRepository.save`, alongside the shared-key reference guard.
+- Requirements: FR-008, FR-011–013 and NFR-003 (preserve existing/recoverable payloads).
+- Test: TC-081 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
