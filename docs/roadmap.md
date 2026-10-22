@@ -442,3 +442,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-364:** Item-kind labels now use a darker, readable foreground on light surfaces; on dark surfaces, unselected labels use their light pastel foreground, while selected labels retain the readable dark shade on the selected pastel chip.
 - Expanded the contrast regression across every item type and the selected/unselected light/dark surface combinations. Test source is committed but unrun; manual visual inspection remains pending.
+
+
+### Phase 2 — bounded validation for stored attachment bytes (2026-10-22)
+
+- **TSK-365:** Extracted stored attachment byte checks into `isValidAttachmentByteList`. It rejects empty, malformed, out-of-range and oversized payloads, checks the 15 MiB length cap before iterating the list, and is reused by repository reads/backup.
+- Added unit coverage using a lazy oversized list to verify the size guard does not enumerate elements. Test source is committed but unrun.
