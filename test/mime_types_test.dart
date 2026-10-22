@@ -35,7 +35,7 @@ void main() {
   group('guessMimeTypeFromFilename', () {
     test('handles paths, mixed case and Windows separators', () {
       expect(
-        guessMimeTypeFromFilename(r'C:\\Users\\me\\PHOTO.HEIC'),
+        guessMimeTypeFromFilename(r'C:\Users\me\PHOTO.HEIC'),
         'image/heic',
       );
       expect(guessMimeTypeFromFilename('/tmp/report.PDF'), 'application/pdf');
