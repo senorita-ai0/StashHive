@@ -468,3 +468,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed local storage with an item record whose kind or required field shape is unreadable, then trigger repository refresh.
 - Confirm valid records still load, the skipped-record count matches the malformed raw entries, and the Library displays the recovery warning.
 - Verify the warning does not claim malformed raw data is included in exports and recommends a prior backup. Widget/repository test source is committed but unrun.
+
+
+### TC-069 — Prevent in-place writes to shared attachment keys
+
+- Create two saved items referencing the same attachment key.
+- Attempt to save replacement bytes through the repository using that shared key.
+- Confirm the write is rejected before record or payload mutation, and both items retain their prior relationship and original bytes.
+- Repository regression source is committed but unrun.
