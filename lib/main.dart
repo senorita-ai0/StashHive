@@ -2991,7 +2991,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 const DetailSectionLabel(label: 'BACKUP FORMAT'),
                 const SizedBox(height: 8),
                 const Text(
-                  'Version 1 JSON backup. Includes saved metadata, tags, collections, and copied attachments up to 15 MB each and 100 MB combined. Import validates the version, IDs, URL schemes, file sizes and attachment data before writing.',
+                  'Version 1 JSON backup. Includes saved metadata, tags, collections, and copied attachments up to 15 MB each and 100 MB combined. Import validates the version, IDs, URL schemes, file sizes and attachment data, and checks SHA-256 integrity for checksummed attachments before writing.',
                   style: TextStyle(color: mutedTextColor(context), fontSize: 12, height: 1.5),
                 ),
               ],
