@@ -82,7 +82,13 @@ void main() {
             mimeType: 'text/plain',
           ),
         ),
-        throwsFormatException,
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            contains('1,000,000-character'),
+          ),
+        ),
       );
     });
 
