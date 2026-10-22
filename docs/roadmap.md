@@ -754,3 +754,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-409:** Collection rows now count saved-item assignments case-insensitively, matching the existing Collection Contents filter. A legacy item assigned to `learning` is counted under the visible `Learning` collection rather than incorrectly showing zero.
 - Added a widget regression for the displayed item count. Test source is committed but unrun.
+
+
+### Phase 3 — Search result sorting parity (2026-10-22)
+
+- **TSK-410:** Search Results now has the sort control specified by SCR-003 and mirrors Library's three options: Recently saved (most recently updated first), Oldest first (creation timestamp ascending), and Title A–Z (case-insensitive). The result count and sort control use a wrapping layout so they can separate cleanly at narrow widths or enlarged text.
+- Added widget regression source for all three ordering modes. Source/test are committed but unrun; visual comparison, large-text checks and screen-reader review remain pending. CI stays manual-only.
