@@ -23,6 +23,11 @@ const Color kMutedDark = Color(0xFFAAB2C5);
 
 Color mutedTextColor(BuildContext context) =>
     Theme.of(context).brightness == Brightness.dark ? kMutedDark : kMutedLight;
+
+Color favoriteStarColor(BuildContext context) =>
+    Theme.of(context).brightness == Brightness.dark
+        ? const Color(0xFFE1A52B)
+        : const Color(0xFF996400);
 const Color kCanvas = Color(0xFFF8F9FD);
 const Color kBorder = Color(0xFFE7E9F2);
 const int kMaxAttachmentBytes = 15 * 1024 * 1024;
@@ -1068,14 +1073,14 @@ class SavedItemTile extends StatelessWidget {
                           ),
                         ),
                         if (item.isFavorite)
-                          const Padding(
-                            padding: EdgeInsets.only(left: 4),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 4),
                             child: Semantics(
                               label: 'Saved as a favorite',
                               child: Icon(
                                 Icons.star_rounded,
                                 size: 16,
-                                color: Color(0xFFE1A52B),
+                                color: favoriteStarColor(context),
                               ),
                             ),
                           ),
@@ -2014,7 +2019,12 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                         await widget.repository.toggleFavorite(item.id);
                         if (mounted) setState(_reload);
                       },
-                      icon: Icon(item.isFavorite ? Icons.star_rounded : Icons.star_outline_rounded),
+                      icon: Icon(
+                        item.isFavorite
+                            ? Icons.star_rounded
+                            : Icons.star_outline_rounded,
+                        color: item.isFavorite ? favoriteStarColor(context) : null,
+                      ),
                       label: Text(item.isFavorite ? 'Favorited' : 'Favorite'),
                     ),
                   ],
