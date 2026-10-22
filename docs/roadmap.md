@@ -670,3 +670,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-405:** Repository backup preflight now counts saved items whose collection assignment is not represented in the portable collection list and provides a targeted repair error. Backup & Privacy checks this condition before its partial-export confirmation and tells users to edit affected items to select an available collection or No collection.
 - Added repository and widget regressions for a 500-collection legacy destination containing an item assigned to an unrepresentable 501st name. Test source is committed but unrun.
+
+
+### Phase 2 — preserve partial-backup omission metadata through restore (2026-10-22)
+
+- **TSK-406:** Backup export now writes both unreadable-record and legacy collection-entry omission counts into optional version-1 metadata. Decode validates those values and defaults either to zero for older backups. Restore confirmation explains both missing records and normalized/omitted collection data.
+- Added codec round-trip/backward-compatibility coverage and repository coverage proving `createBackup()` populates both counts. Tests are committed but unrun.
