@@ -8,7 +8,7 @@
 | FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104 | TC-002 | IN PROGRESS — source added; build/test pending |
 | FR-003 | SCR-004 | TSK-102, TSK-105, TSK-424 | TC-003, TC-132 | IN PROGRESS — delete failure now reports feedback; rollback/platform validation pending |
 | FR-004 | SCR-001, SCR-003 | TSK-103, TSK-201, TSK-416 | TC-004, TC-121 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
-| FR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-118 | IN PROGRESS — Unicode regression source added; execution/platform review pending |
+| FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427 | TC-005, TC-118, TC-135 | IN PROGRESS — Unicode search source and search-scope explanation aligned; execution/platform review pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417 | TC-008, TC-122 | IN PROGRESS — repository-owned byte snapshot source/test added; platform validation pending |
@@ -26,7 +26,7 @@
 | NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | IN PROGRESS — no backend/account integration in core source; offline and network inspection pending |
 | NFR-002 | SCR-006 | TSK-304 | TC-018 | NOT STARTED |
 | NFR-003 | SCR-006 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426 | TC-012–015, TC-117, TC-120, TC-122, TC-134 | IN PROGRESS — backup byte limits and preference-write rollback source added; execution/platform verification pending |
-| NFR-004 | SCR-004 | TSK-203 | TC-006, TC-017 | IN PROGRESS — copy states local storage, no sync and no OCR; end-to-end wording review pending |
+| NFR-004 | SCR-004, SCR-006 | TSK-203, TSK-425, TSK-427 | TC-006, TC-017, TC-133, TC-135 | IN PROGRESS — platform-specific local-storage/search copy added; end-to-end wording review pending |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
 | NFR-006 | All screens | TSK-103, TSK-304 | UI/accessibility checklist | IN PROGRESS — text scaling, semantics and contrast source/tests added; execution and platform checks pending |
 | NFR-007 | Search/list | TSK-003, TSK-305, TSK-412 | TC-116 / Performance baseline | IN PROGRESS — non-gating harness added; measurements pending |
@@ -1008,3 +1008,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Behavior: if a preference write fails after it may have committed, the repository attempts to restore the previous value; the app catches the failure and syncs its visible theme to the persisted preference.
 - Tests: repository late-write rollback in `test/library_repository_test.dart` and switch-reversion coverage in `test/accessibility_widgets_test.dart`; manual case TC-134.
 - Verification: source/tests are authored but unrun; platform storage behavior remains unverified.
+
+
+### TSK-427 — Accurate search scope and platform wording
+
+- Implementation: `lib/main.dart`, Settings → Search & saved content.
+- Requirements: FR-005 and NFR-004; help text names fields actually indexed (including collection names), states local scope, and avoids implying OCR or cross-device search.
+- Regression: TC-135 in `test/accessibility_widgets_test.dart` checks native copy and field disclosure; web phrasing remains part of manual platform review.
+- Verification: source/test committed but unrun.
