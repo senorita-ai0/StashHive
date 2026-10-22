@@ -360,3 +360,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-008–009 (file intake).
 - Test: TC-060 in `test/share_intake_test.dart`.
 - Verification: source/test committed; execution and platform metadata behavior remain pending.
+
+
+### TSK-354 — Responsive item-kind selector
+
+- Implementation: `lib/main.dart`, Quick Save `_buildKindPicker`.
+- Requirement: NFR-006 (responsive, enlarged-text accessible UI).
+- Test: TC-061 in `test/quick_save_test.dart`.
+- Verification: implementation/test committed; execution and Android/web visual inspection remain pending.
