@@ -780,3 +780,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **TSK-411:** The backup snapshot now keeps at most 10,000 exportable saved items and records the rest as unexportable omissions. This avoids making every backup fail when an older local store exceeds today's portable item cap; the local records remain unchanged.
 - The collection-overflow repair gate now checks the records actually selected for export, so a record already omitted for item/attachment limits doesn't block the partial backup unnecessarily.
 - Added repository coverage with 10,001 legacy items, asserting the backup contains 10,000 and the additional local item remains in the library. Test source is committed but unrun.
+
+
+### Phase 3 — expanded Unicode search coverage (2026-10-22)
+
+- **TSK-414:** Expanded the saved-item model search regression matrix to explicitly cover case-insensitive accented words, emoji, hash/punctuation tokens and bracketed text, alongside the existing English, Urdu-script and Roman Urdu coverage. This is intended to protect stored user-entered text; it does not promise OCR or accent-folding across different Unicode normalization forms.
+- Added **TC-118** in `test/saved_item_test.dart`. Regression source is committed but unrun; NFR-005 remains IN PROGRESS until the manual test checkpoint and target-platform search review.
