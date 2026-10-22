@@ -461,3 +461,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed the local store with an unsupported item kind and a record whose stored Hive key differs from its embedded item ID.
 - Trigger repository refresh by saving a valid item; confirm the valid item loads and the malformed/mismatched records are skipped without crashing the library.
 - Test source is committed but unrun; verify how recoverable damaged records are surfaced to users before release.
+
+
+### TC-068 — Recovery warning for malformed local records
+
+- Seed local storage with an item record whose kind or required field shape is unreadable, then trigger repository refresh.
+- Confirm valid records still load, the skipped-record count matches the malformed raw entries, and the Library displays the recovery warning.
+- Verify the warning does not claim malformed raw data is included in exports and recommends a prior backup. Widget/repository test source is committed but unrun.
