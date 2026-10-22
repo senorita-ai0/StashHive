@@ -845,3 +845,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Verify the encoded-length helper rounds byte budgets up to base64's 4-character quantum for 0–4 decoded bytes and rejects negative budgets.
 - Confirm backup decoding checks each encoded payload against remaining combined bytes before base64 allocation, then still checks actual decoded sizes.
 - Helper regression source is committed but unrun; profile a near-100 MiB backup only at the manual performance checkpoint.
+
+
+### TC-101 — Unsupported image preview fallback
+
+- Save an image-kind item with bytes that the current decoder cannot display.
+- Open Item Details and activate View image; confirm a readable preview-unavailable message is shown, no widget exception escapes, and the saved attachment remains available for sharing.
+- Widget regression source is committed but unrun; verify real TIFF/HEIC behavior on Android/web because support varies by platform decoder.
