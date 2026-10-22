@@ -183,7 +183,9 @@ class ShareIntake {
       throw const FormatException('Shared text is over the 1,000,000-character limit.');
     }
 
-    final standalone = _parseWebUrl(text.trim());
+    final standalone = _parseWebUrl(
+      _trimTrailingShareUrlPunctuation(text.trim()),
+    );
     if (standalone != null) {
       return IncomingShare(
         kind: ItemKind.link,
