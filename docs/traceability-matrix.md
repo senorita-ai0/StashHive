@@ -832,3 +832,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008–009, FR-012–013 and NFR-003 (consistent bounded import/export).
 - Test: TC-099 plus stream-boundary tests in `test/attachment_bytes_test.dart`.
 - Verification: source committed; test execution remains pending.
+
+
+### TSK-393 — Preflight combined attachment size before base64 allocation
+
+- Implementation: `BackupCodec.maxBase64CharactersForDecodedBytes`, used by `BackupCodec.decode` before decoding each attachment.
+- Requirements: FR-012–013 and NFR-003 (bounded backup import memory).
+- Test: TC-100 in `test/backup_codec_test.dart`.
+- Verification: source/test committed but unrun; memory profile pending.
