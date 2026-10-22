@@ -856,3 +856,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (bounded memory with data integrity).
 - Test: TC-102 references existing round-trip/checksum assertions in `test/backup_codec_test.dart`.
 - Verification: source committed; tests and memory profiling remain pending.
+
+
+### TSK-409 — Case-insensitive collection row counts
+
+- Implementation: `lib/main.dart`, `CollectionsPage` count calculation.
+- Requirements: FR-010–011 and NFR-003 (consistent collection metadata and counts).
+- Test: TC-113 in `test/accessibility_widgets_test.dart`.
+- Verification: source/test committed but unrun.
