@@ -296,3 +296,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-002, FR-005, FR-006 and FR-009 (saved URL/tag validity).
 - Test: TC-052 in `test/quick_save_test.dart`.
 - Verification: source and widget tests committed; execution remains pending.
+
+
+### TSK-346 — Size-first file-picker intake
+
+- Implementation: `lib/main.dart`, Quick Save `_pickAttachment`.
+- Requirements: FR-008 and NFR-003 (safe attachment import and memory use).
+- Test: TC-053 manual Android/web selection; automated share-intake size regression is in `test/share_intake_test.dart`.
+- Verification: source committed; plugin behavior and memory usage remain unverified until the manual validation checkpoint.
