@@ -241,6 +241,44 @@ void main() {
     );
   });
 
+  test('normalizes legacy collection names and counts malformed entries', () async {
+    final preferences = Hive.box<dynamic>('stashhive_preferences_v1');
+    await preferences.put(
+      'collections',
+      <Object?>[
+        'Learning',
+        'learning',
+        '',
+        42,
+        List<String>.filled(81, 'x').join(),
+        'Research',
+      ],
+    );
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.collections.value, ['Learning', 'Research']);
+    expect(repository.skippedCollectionCount.value, 4);
+  });
+
+  test('caps legacy collection preferences at the portable limit', () async {
+    await Hive.box<dynamic>('stashhive_preferences_v1').put(
+      'collections',
+      List<String>.generate(
+        BackupCodec.maxCollections + 1,
+        (index) => 'Legacy Collection $index',
+      ),
+    );
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(
+      repository.collections.value,
+      hasLength(BackupCodec.maxCollections),
+    );
+    expect(repository.skippedCollectionCount.value, 1);
+  });
+
   test('deleting a collection unassigns but does not delete its items', () async {
     await repository.addCollection('Learning');
     await repository.save(buildLink(collection: 'Learning'));
