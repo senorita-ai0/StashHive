@@ -789,3 +789,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Open Quick Save for an image without a selected file.
 - Confirm the picker is exposed as one button named `Choose an image`, with a tap action and a hint that a file up to 15 MB can be selected.
 - For an existing attachment, confirm the spoken label uses the filename and the hint announces replacement behavior. Widget source is committed but unrun; verify with TalkBack and a browser screen reader.
+
+
+### TC-093 — Out-of-range legacy timestamp recovery
+
+- Seed local storage with an otherwise well-shaped record whose updated timestamp exceeds the supported DateTime range.
+- Trigger repository refresh and confirm it is skipped and included in the recovery count; direct lookup by its stored ID must also return null.
+- Verify valid records remain visible. Regression source is committed but unrun.
