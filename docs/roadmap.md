@@ -831,3 +831,11 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - Cleanup still scans remaining raw records first, including unreadable legacy records, so bytes shared with any other item are preserved.
 - Added **TC-127** and **TC-128** for orphan cleanup and shared-payload retention. Regression source is committed but unrun; no tests/build/CI triggered.
 - Added **TC-129** for rollback if an error is reported after attachment removal. The case remains source-authored and unrun.
+
+
+### TSK-422 — First-launch local-storage safety reminder — 2026-10-22
+
+- **Requirement:** FR-015 (browser-local storage honesty and data-loss awareness).
+- **Source:** A first-launch Library reminder now distinguishes browser-profile storage from Android app/device storage. It explains that clearing local data may erase the library and that StashTrail does not sync; users can dismiss it or open Backup & privacy directly.
+- **Persistence:** Dismissal is saved in the existing `stashhive_preferences_v1` box so it is scoped to the current app/browser store and does not require a backend.
+- **Tests:** TC-130 plus repository/widget regression source added. Status is **IN PROGRESS** until source checks are run and the first-launch/restart paths are manually reviewed on web and Android. No test/build/CI was run for this change.
