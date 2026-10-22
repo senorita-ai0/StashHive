@@ -107,6 +107,31 @@ void main() {
     );
   });
 
+  test('restore canonicalizes imported collection casing to destination names', () async {
+    await repository.addCollection('Learning');
+    final incoming = buildLink(
+      id: 'restore-lowercase-collection',
+      collection: 'learning',
+    );
+    final backup = BackupCodec.encode(
+      items: [incoming],
+      attachmentBytes: const {},
+      collections: const ['learning'],
+    );
+
+    await repository.restoreBackup(backup);
+
+    final restored = repository.findById(incoming.id);
+    final raw = Hive.box<dynamic>('stashhive_items_v1').get(incoming.id);
+    expect(restored?.collection, 'Learning');
+    expect(raw['collection'], 'Learning');
+    expect(
+      repository.collections.value
+          .where((name) => name.toLowerCase() == 'learning'),
+      hasLength(1),
+    );
+  });
+
   test('restore avoids attachment keys referenced by missing legacy payloads', () async {
     const incomingId = 'incoming-image-key';
     final legacyBrokenImage = buildImage(
