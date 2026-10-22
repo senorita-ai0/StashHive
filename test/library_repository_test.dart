@@ -449,6 +449,65 @@ void main() {
     );
   });
 
+  test('replacement key avoids overwriting bytes shared by other items', () async {
+    const sharedKey = 'owner-image';
+    final bytes = Uint8List.fromList([11, 22, 33, 44]);
+    final owner = buildImage(id: 'owner-image', attachmentKey: sharedKey);
+    final dependent = buildImage(id: 'dependent-image', attachmentKey: sharedKey);
+    await repository.save(owner, attachmentBytes: bytes);
+    await repository.save(dependent);
+
+    expect(
+      repository.isAttachmentReferencedByOtherItem(owner.id, sharedKey),
+      isTrue,
+    );
+    final replacementKey = repository.attachmentKeyForReplacement(
+      owner.id,
+      currentAttachmentKey: owner.attachmentKey,
+    );
+
+    expect(replacementKey, isNot(sharedKey));
+    expect(
+      await repository.readAttachment(sharedKey),
+      orderedEquals(bytes),
+    );
+    expect(
+      Hive.box<dynamic>('stashhive_attachments_v1').containsKey(replacementKey),
+      isFalse,
+    );
+  });
+
+  test('replacement keeps own attachment key when it is not shared', () async {
+    final item = buildImage(id: 'solo-image');
+    await repository.save(
+      item,
+      attachmentBytes: Uint8List.fromList([5, 4, 3, 2, 1]),
+    );
+
+    expect(
+      repository.attachmentKeyForReplacement(
+        item.id,
+        currentAttachmentKey: item.attachmentKey,
+      ),
+      item.id,
+    );
+  });
+
+  test('replacement avoids overwriting an unrelated orphan payload', () async {
+    const itemId = 'would-collide';
+    final orphanBytes = Uint8List.fromList([7, 7, 7]);
+    await Hive.box<dynamic>('stashhive_attachments_v1')
+        .put(itemId, orphanBytes.toList());
+
+    final replacementKey = repository.attachmentKeyForReplacement(itemId);
+
+    expect(replacementKey, isNot(itemId));
+    expect(
+      await repository.readAttachment(itemId),
+      orderedEquals(orphanBytes),
+    );
+  });
+
   test('damaged legacy attachment bytes are not silently filtered', () async {
     final item = buildImage(id: 'damaged-legacy-image');
     await repository.save(
