@@ -167,6 +167,20 @@ void main() {
     expect(Uri.parse(repository.items.value.single.url!).scheme, 'https');
   });
 
+  testWidgets('rejects an explicit non-web scheme in URL input', (tester) async {
+    await openNewLink(tester);
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'javascript:alert(1)',
+    );
+    await tester.ensureVisible(find.text('Save to StashHive'));
+    await tester.tap(find.text('Save to StashHive'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Enter a valid http or https URL.'), findsOneWidget);
+    expect(repository.items.value, isEmpty);
+  });
+
   testWidgets('shows a clear error when too many tags are entered', (tester) async {
     await openNewLink(tester);
     await tester.enterText(
