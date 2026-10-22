@@ -311,3 +311,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Share an unsupported `.exe` file and confirm a recoverable unsupported-type error.
 - Create a file one byte over the 15 MiB limit and confirm intake rejects it using the length check before reading the full payload.
 - Unit regression source is committed but unrun. Android content URI permissions, source-app chooser and actual attachment persistence remain NOT STARTED.
+
+
+### TC-048 — Edit item kind and attachment cleanup
+
+- Save an image with bytes, edit it into a note/link, and confirm the new record has no attachment key/name/MIME while the unused old payload is reclaimed.
+- Attempt to save a link/note with an attachment key and an image/document without a key; repository validation must reject both before mutation.
+- Create two items sharing one attachment key, convert one to a note, and confirm the other remains readable and its payload is retained.
+- Repository regression source is committed but unrun. Confirm image-to-document switching requires choosing a replacement file in Quick Save and verify actual storage cleanup on Android/web.
