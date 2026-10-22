@@ -610,6 +610,48 @@ void main() {
       }
     });
 
+    test('rejects an incoming filename beyond the metadata limit before IO', () async {
+      final longName = '${List<String>.filled(256, 'x').join()}.txt';
+
+      await expectLater(
+        ShareIntake.fromSharedMedia(
+          SharedMediaFile(
+            path: '/tmp/$longName',
+            type: SharedMediaType.file,
+            mimeType: 'text/plain',
+          ),
+        ),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            contains('filename is too long'),
+          ),
+        ),
+      );
+    });
+
+    test('rejects oversized MIME metadata before file IO', () async {
+      final oversizedMime = 'image/' + List<String>.filled(130, 'x').join();
+
+      await expectLater(
+        ShareIntake.fromSharedMedia(
+          SharedMediaFile(
+            path: '/tmp/unknown-extension.bin',
+            type: SharedMediaType.file,
+            mimeType: oversizedMime,
+          ),
+        ),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            contains('file type metadata is too long'),
+          ),
+        ),
+      );
+    });
+
     test('rejects an unsupported shared file extension', () async {
       final directory =
           await Directory.systemTemp.createTemp('stashhive_share_unsupported_test_');
