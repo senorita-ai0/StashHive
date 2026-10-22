@@ -90,14 +90,32 @@ class ShareEventDeduplicator {
     // fixed-size digest, not copies of potentially large shared text/paths.
     // Canonical JSON preserves field and batch boundaries before hashing.
     final canonical = jsonEncode(
-      media
-          .map((item) => <Object?>[
-                item.type.name,
-                item.path.trim(),
-                item.mimeType?.trim().toLowerCase() ?? '',
-                item.message?.trim() ?? '',
-              ])
-          .toList(growable: false),
+      media.map((item) {
+        final path = item.path.trim();
+        final mimeType = item.mimeType?.trim().toLowerCase() ?? '';
+        final message = item.message?.trim() ?? '';
+        return switch (item.type) {
+          // Text intake selects exactly one effective text field; ignore the
+          // unused path/message representation to match the actual draft.
+          SharedMediaType.text => <Object?>[
+              item.type.name,
+              message.isNotEmpty ? message : path,
+              mimeType,
+            ],
+          // URL intake preserves the accompanying message as draft context.
+          SharedMediaType.url => <Object?>[
+              item.type.name,
+              path,
+              mimeType,
+              message,
+            ],
+          // File/image/video intake does not use the platform message field.
+          SharedMediaType.image ||
+          SharedMediaType.file ||
+          SharedMediaType.video =>
+            <Object?>[item.type.name, path, mimeType],
+        };
+      }).toList(growable: false),
     );
     final fingerprint = sha256.convert(utf8.encode(canonical)).toString();
     final previous = _seen[fingerprint];
