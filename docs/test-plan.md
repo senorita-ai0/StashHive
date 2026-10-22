@@ -216,3 +216,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Restore into a library where the original IDs and attachment key already exist; confirm the restored items still share one newly mapped key, bytes remain readable, and the shared payload is written only once.
 - Verify export rejects image/document items with missing or empty attachment keys and rejects unsupported item kinds carrying attachments.
 - Unit/repository regression source is authored but unrun; manual storage interruption and device persistence checks remain NOT STARTED.
+
+
+### TC-035 — Same URL with distinct shared context
+
+- Submit two URL share events with identical type/path/MIME but different platform-provided message text; both should be accepted as distinct events.
+- Re-submit one of those exact events inside the deduplication window; it should be rejected as a duplicate.
+- Unit regression source is authored but unrun. Check that initial-intent and stream copies from an actual source app preserve the same message payload on Android; status remains NOT STARTED.
