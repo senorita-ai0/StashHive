@@ -579,3 +579,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Restore a valid backup that introduces one additional distinct collection.
 - Confirm restore rejects before writes, destination items remain unchanged, and the collection list stays at 500.
 - Regression source is committed but unrun.
+
+
+### TC-084 — Saved-item count stays within backup capacity
+
+- Confirm a count of 9,999 plus one new item is accepted and 10,000 plus zero new items is accepted.
+- Confirm any count above 10,000 and negative count inputs are rejected by the shared guard.
+- Verify repository save and restore call the guard before storage writes; unit/repository regression source is committed but unrun.
