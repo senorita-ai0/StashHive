@@ -266,3 +266,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Submit a share event with surrounding whitespace in its path/message and mixed-case MIME metadata, then resubmit the same user-visible event with normalized fields.
 - Confirm the first event is accepted and the normalized equivalent is suppressed inside the de-duplication window.
 - Unit regression source is authored but unrun; verify field consistency for actual initial-intent and stream events on Android; status remains NOT STARTED.
+
+
+### TC-042 — Mixed-MIME Android multi-share
+
+- Generate/configure the Android manifest and confirm `SEND_MULTIPLE` includes `*/*` as well as each supported MIME family.
+- From an Android file manager, select a mixed image/document/text batch; confirm StashHive appears in the chooser, each entry is inspected by its actual type, supported drafts progress sequentially, and unsupported entries are skipped with feedback.
+- Python manifest regression is authored but unrun. Chooser matching and URI permission behavior require a real Android device; status remains NOT STARTED.
