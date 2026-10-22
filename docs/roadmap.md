@@ -742,3 +742,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-394:** The full-size image dialog now displays an accessible “Preview unavailable” message when Flutter cannot decode the stored bytes, while retaining the saved attachment for sharing. This prevents otherwise valid files in less-supported image formats from producing a broken preview surface.
 - Added an Item Details widget regression using invalid/unsupported encoded bytes; test source is committed but unrun.
+
+
+### Phase 2 — avoid a redundant copy after base64 decoding (2026-10-22)
+
+- **TSK-395:** Backup decode now retains the typed byte buffer returned by `base64Decode()` directly instead of immediately copying it through `Uint8List.fromList`. This reduces peak memory for attachment-heavy backups while preserving existing checksum and byte-limit validation.
+- Existing codec regressions cover byte-for-byte round trips and checksum verification; they remain authored but unrun.
