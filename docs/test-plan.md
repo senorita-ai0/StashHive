@@ -665,3 +665,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Start with no collection preference key.
 - Inject an error after the collection preference write has completed, then attempt to add a collection.
 - Confirm the API reports the original error, removes the partially committed preference key, and exposes no new collection in the notifier. Regression source is committed but unrun.
+
+
+### TC-096 — Validate backup once and restore decoded content
+
+- Select a malformed backup and confirm codec validation rejects it before the merge confirmation appears.
+- Select a valid backup with attachments, confirm the merge, and verify restored data/bytes match the source.
+- Confirm repository rollback behavior is unchanged when the decoded restore is interrupted.
+- Existing decoder/restore regression source covers these paths but is unrun; profile peak memory on a large backup at the manual checkpoint.
