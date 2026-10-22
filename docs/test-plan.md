@@ -680,3 +680,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Verify the shared UTF-8 byte counter matches encoded byte lengths for ASCII, Urdu/Arabic-script text and emoji, including a supplementary character whose Dart string length differs from UTF-8 byte length.
 - Confirm backup export/decode and the restore file picker use the same 145 MiB byte cap.
 - Unit source is committed but unrun; exercise Unicode-heavy backup export/restore in the final checkpoint.
+
+
+### TC-098 — Backup decoder does not retain decoded base64 fields
+
+- Decode a backup containing one or more attachments and confirm byte content, metadata, checksum validation and restore output remain unchanged.
+- Review the temporary parsed attachment map to confirm its `base64` field is removed only after the corresponding byte payload has passed size and integrity validation.
+- Existing backup codec regression source covers the returned behavior but is unrun; measure memory use on a large backup during the manual performance checkpoint.
