@@ -270,6 +270,60 @@ void main() {
       expect(decoded.items.single.hasAttachment, isTrue);
     });
 
+
+    test('preflight accepts UTF-8 and escaped attachment metadata accurately', () {
+      final keys = <String>[
+        'plain-key',
+        'quoted"key',
+        r'back\\slash',
+        '图像-🚀',
+      ];
+      final payloads = <String, Uint8List>{
+        for (var index = 0; index < keys.length; index++)
+          keys[index]: Uint8List.fromList(
+            List<int>.generate(index + 1, (byte) => (byte * 41 + 7) % 256),
+          ),
+      };
+      final items = <SavedItem>[
+        for (var index = 0; index < keys.length; index++)
+          SavedItem(
+            id: 'preflight-image-$index',
+            kind: ItemKind.image,
+            title: index == 0 ? 'Café "launch" 🚀' : 'Image $index',
+            content: 'ملاحظة; path: C:\\design; emoji 🚀',
+            tags: const ['设计', 'emoji 🚀'],
+            collection: 'Ideas / 设计',
+            isFavorite: index.isEven,
+            createdAtMs: 1000 + index,
+            updatedAtMs: 2000 + index,
+            attachmentKey: keys[index],
+            attachmentName: index == 0 ? '方案 "A" 🚀.png' : 'image-$index.png',
+            attachmentMimeType: 'image/png',
+          ),
+      ];
+
+      final json = BackupCodec.encode(
+        items: items,
+        attachmentBytes: payloads,
+        collections: const ['Ideas / 设计'],
+      );
+
+      expect(BackupCodec.utf8ByteLength(json), utf8.encode(json).length);
+      expect(BackupCodec.utf8ByteLength(json), lessThanOrEqualTo(
+        BackupCodec.maxBackupBytes,
+      ));
+
+      final decoded = BackupCodec.decode(json);
+      expect(decoded.items, hasLength(keys.length));
+      for (final key in keys) {
+        expect(
+          decoded.attachments[key]!.bytes,
+          orderedEquals(payloads[key]!),
+          reason: 'Preflight must preserve payload bytes for attachment key $key.',
+        );
+      }
+    });
+
     test('exports a shared attachment payload only once', () {
       final first = SavedItem(
         id: 'image-1',
