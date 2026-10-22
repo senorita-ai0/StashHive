@@ -406,3 +406,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-358:** Shared saved-item validation now rejects empty tags and tags with surrounding whitespace, aligning direct repository writes and backup encode/decode with Quick Save's normalized tag behavior.
 - Added repository and backup-codec regressions. Tests are committed but unrun.
+
+
+### Phase 2 — collision-safe ID allocation (2026-10-22)
+
+- **TSK-359:** Quick Save now requests a repository-generated ID that is absent from both the item and attachment stores. Replacement attachment keys reuse the same uniqueness check, preventing a newly generated item from accidentally overwriting an orphaned attachment payload.
+- Added repository coverage for generated ID uniqueness against existing record/payload keys. Test source is committed but unrun.
