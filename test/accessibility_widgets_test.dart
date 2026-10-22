@@ -480,6 +480,38 @@ void main() {
     expect(node.hasFlag(SemanticsFlag.isButton), isTrue);
     expect(node.hasAction(SemanticsAction.tap), isTrue);
     expect(node.getSemanticsData().hint, 'Select a file, up to 15 megabytes');
+
+    const existingImage = SavedItem(
+      id: 'existing-picker-image',
+      kind: ItemKind.image,
+      title: 'Existing image',
+      content: '',
+      tags: [],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1,
+      updatedAtMs: 2,
+      attachmentKey: 'existing-picker-image',
+      attachmentName: 'reference.png',
+      attachmentMimeType: 'image/png',
+    );
+    await repository.save(existingImage, attachmentBytes: const [1, 2, 3]);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.QuickSavePage(
+          repository: repository,
+          existingItem: existingImage,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final replacementPicker = find.bySemanticsLabel('reference.png');
+    expect(replacementPicker, findsOneWidget);
+    expect(
+      tester.getSemantics(replacementPicker).getSemanticsData().hint,
+      'Select a replacement file, up to 15 megabytes',
+    );
   });
 
   testWidgets('Collection contents match assignments ignoring casing', (tester) async {
