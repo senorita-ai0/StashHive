@@ -652,3 +652,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-399:** Added explicit tooltips/accessible names to Collection row action menus and the Item Details overflow menu, matching the contextual labeling already used by saved-item cards and other icon buttons.
 - Added widget regressions that locate each menu by its accessible tooltip and activate it to reveal its actions. Test source is committed but unrun; screen-reader and keyboard validation remain open.
+
+
+### Phase 2/3 — canonical collection spelling on reload and save (2026-10-22)
+
+- **TSK-400:** Repository reload canonicalizes item collection assignments to the visible collection's spelling when names match case-insensitively. Direct repository saves do the same before validation/persistence, so items assigned to `learning` remain visible inside the existing `Learning` collection.
+- Added a repository regression covering both a legacy raw record and a new save, including the stored representation. Test source is committed but unrun.
