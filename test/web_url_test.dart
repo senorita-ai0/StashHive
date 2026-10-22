@@ -2,6 +2,35 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:stashhive/services/web_url.dart';
 
 void main() {
+  group('parseUserWebUrl', () {
+    test('accepts explicit web schemes and bare domains', () {
+      expect(parseUserWebUrl('HTTPS://EXAMPLE.COM/Guide')?.toString(),
+          'https://EXAMPLE.COM/Guide');
+      expect(parseUserWebUrl('example.com/guide')?.toString(),
+          'https://example.com/guide');
+      expect(parseUserWebUrl('example.com:8443/guide')?.toString(),
+          'https://example.com:8443/guide');
+      expect(parseUserWebUrl('localhost:8080')?.toString(),
+          'https://localhost:8080');
+    });
+
+    test('does not reinterpret explicit non-web schemes as hostnames', () {
+      expect(parseUserWebUrl('javascript:alert(1)'), isNull);
+      expect(parseUserWebUrl('javascript://example.com/alert(1)'), isNull);
+      expect(parseUserWebUrl('http:example.com'), isNull);
+      expect(parseUserWebUrl('file:///etc/passwd'), isNull);
+      expect(parseUserWebUrl('mailto:hello@example.com'), isNull);
+      expect(parseUserWebUrl('example.com:bad'), isNull);
+    });
+
+    test('does not turn arbitrary words into URLs', () {
+      expect(parseUserWebUrl('remember'), isNull);
+      expect(parseUserWebUrl('notes'), isNull);
+      expect(parseUserWebUrl(''), isNull);
+      expect(parseUserWebUrl('https://example.com/a b'), isNull);
+    });
+  });
+
   group('parseHttpUrl', () {
     test('accepts HTTP and HTTPS and normalizes scheme casing', () {
       expect(
