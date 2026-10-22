@@ -811,3 +811,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Start with a valid version-1 backup, change its collection list to contain `Learning` and `learning`, and decode it.
 - Confirm decoded-backup preflight permits the historical case-only duplicate and repository merge produces one canonical collection label.
 - Regression source is committed but unrun.
+
+
+### TC-096 — Shared-file streaming size enforcement
+
+- Feed a chunk stream whose total equals the cap and confirm bytes are returned intact.
+- Feed a stream whose next chunk would exceed the cap; confirm a clear format error and that the reader does not consume subsequent chunks.
+- Existing share-intake tests still cover an oversized local file. Test source is committed but unrun; validate Android content providers with unreliable length reporting during device verification.
