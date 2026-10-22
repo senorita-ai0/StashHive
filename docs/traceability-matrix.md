@@ -159,3 +159,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009 (incoming shared content and user-supplied context).
 - Test: TC-035 in `test/share_intake_test.dart`.
 - Verification: source and regression committed; test and real Android delivery behavior remain unverified.
+
+
+### TSK-329 — Theme-aware muted text contrast
+
+- Implementation: `lib/main.dart`, `kMutedLight`, `kMutedDark` and `mutedTextColor`.
+- Requirement: NFR-006 (accessible contrast).
+- Test: TC-036 in `test/accessibility_widgets_test.dart` checks muted text against canvas and input surfaces with a 4.5:1 threshold.
+- Verification: code and widget-test source committed; automated execution and full surface-by-surface manual review remain pending.
