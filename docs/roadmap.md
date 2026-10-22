@@ -724,3 +724,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-391:** Quick Save and Backup & Privacy now use `PlatformFile.readAsByteStream()` with the shared capped reader. The 15 MiB attachment limit and 145 MiB backup limit are enforced while chunks arrive; initial length checks remain as an early rejection path.
 - This closes the same stale-length memory-risk for local picker inputs that was addressed for OS-shared files. Stream-reader boundary tests are committed but unrun; validate browser, Android SAF and cloud-provider implementations during the manual checkpoint.
+
+
+### Phase 2 — one source of truth for attachment size limits (2026-10-22)
+
+- **TSK-392:** Quick Save and share intake now reference `BackupCodec.maxAttachmentBytes` rather than repeating the 15 MiB literal. The bounded byte reader uses the same cap and backup export/restore validates against that value.
+- This prevents intake from accepting payloads that the portable backup layer would reject after a future limit change. Source committed; validation remains manual-only.
