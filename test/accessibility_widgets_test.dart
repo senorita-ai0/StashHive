@@ -354,20 +354,21 @@ void main() {
 
   testWidgets('Backup confirms before omitting unexportable legacy items', (tester) async {
     const legacyId = 'unexportable-legacy-url-for-backup-dialog';
+    final unsafeLegacyItem = SavedItem(
+      id: legacyId,
+      kind: ItemKind.link,
+      title: 'Old unsafe link',
+      content: '',
+      url: 'javascript:alert(1)',
+      tags: const [],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1,
+      updatedAtMs: 2,
+    );
     await Hive.box<dynamic>('stashhive_items_v1').put(
       legacyId,
-      const SavedItem(
-        id: legacyId,
-        kind: ItemKind.link,
-        title: 'Old unsafe link',
-        content: '',
-        url: 'javascript:alert(1)',
-        tags: [],
-        collection: null,
-        isFavorite: false,
-        createdAtMs: 1,
-        updatedAtMs: 2,
-      ).toMap(),
+      unsafeLegacyItem.toMap(),
     );
     await repository.save(
       const SavedItem(
