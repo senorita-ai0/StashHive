@@ -273,3 +273,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Generate/configure the Android manifest and confirm `SEND_MULTIPLE` includes `*/*` as well as each supported MIME family.
 - From an Android file manager, select a mixed image/document/text batch; confirm StashHive appears in the chooser, each entry is inspected by its actual type, supported drafts progress sequentially, and unsupported entries are skipped with feedback.
 - Python manifest regression is authored but unrun. Chooser matching and URI permission behavior require a real Android device; status remains NOT STARTED.
+
+
+### TC-043 — Item-type badge text contrast
+
+- Check each Link, Note, Image and Document badge's text accent against its pastel background.
+- Compute WCAG contrast and require at least 4.5:1 for the small type labels. Verify icons remain distinguishable on both light and dark surfaces.
+- Unit regression source is authored but unrun; manual visual review across themes remains NOT STARTED.
