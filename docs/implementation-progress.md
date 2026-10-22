@@ -145,6 +145,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Aligned tag normalization/validation across saved-item deserialization, repository writes and backup encode/decode, with case-insensitive duplicate regressions.
 - [x] Incoming file shares now bound filename/MIME metadata before file I/O; regressions cover the oversize cases.
 - [x] Shared save/backup validation now rejects filename/MIME metadata when no attachment key exists, with repository and export regression source.
+- [x] Shared validation now rejects empty/whitespace-only notes at repository and backup boundaries, with regression source.
 - [x] Added credential-bearing URL, URL boundary, tag integrity, collision-safe ID and responsive kind-selector regression source.
 
 ## Current validation state — 2026-10-22
