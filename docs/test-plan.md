@@ -237,3 +237,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Share text containing a link wrapped in parentheses and followed by sentence punctuation; verify the outer bracket/period is not persisted as part of the URL.
 - Share a URL whose own path ends in a balanced parenthesized segment; verify the balanced characters remain part of the URL.
 - Unit regression source is authored but unrun. Confirm behavior with actual app shares from browser/chat clients during Android validation; status remains NOT STARTED.
+
+
+### TC-038 — Backup attachment checksum integrity
+
+- Export a backup with an attachment; verify its SHA-256 digest is included and matches the decoded bytes.
+- Change the base64 payload to different but valid bytes without changing the stored digest; restore must reject the backup with a clear integrity error.
+- Remove the digest from a version-1 backup and verify it remains importable for backward compatibility.
+- Codec regression source is authored but unrun; full restore/storage interruption checks remain NOT STARTED.
