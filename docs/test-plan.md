@@ -623,3 +623,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed preferences with case-only duplicates, an empty name, a non-string value, and an overlong name; confirm one canonical instance remains and skipped entries are counted.
 - Seed 501 unique collection names; confirm only 500 are exposed and the remainder is reported.
 - Confirm the Library warning announces collection normalization/rejection and recovery guidance without throwing. Regression source is committed but unrun.
+
+
+### TC-090 — Attachment buffer integrity after copy reduction
+
+- Import a shared image/document and confirm the stored bytes match the source exactly.
+- Save a picked file and restore a backup containing attachments; confirm every byte remains identical and shared-payload relationships remain intact.
+- Existing assertions live in `test/share_intake_test.dart`, `test/library_repository_test.dart`, and `test/backup_codec_test.dart`; execution is pending. Profile peak memory only during the manual performance checkpoint.
