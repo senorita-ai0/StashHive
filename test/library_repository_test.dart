@@ -327,8 +327,10 @@ void main() {
 
   test('backup restore preserves shared attachment references', () async {
     final originalBytes = Uint8List.fromList([7, 8, 9, 10]);
-    final first = buildImage(id: 'shared-image-1', attachmentKey: 'shared-bytes');
-    final second = buildImage(id: 'shared-image-2', attachmentKey: 'shared-bytes');
+    final first = buildImage(id: 'shared-image-1', attachmentKey: 'shared-bytes')
+        .copyWith(title: 'First shared view', attachmentName: 'first.png');
+    final second = buildImage(id: 'shared-image-2', attachmentKey: 'shared-bytes')
+        .copyWith(title: 'Second shared view', attachmentName: 'second.png');
     await repository.save(first, attachmentBytes: originalBytes);
     await repository.save(second);
 
@@ -340,6 +342,14 @@ void main() {
         .where((item) => item.id != first.id && item.id != second.id)
         .toList(growable: false);
     expect(restoredItems, hasLength(2));
+    expect(
+      restoredItems.singleWhere((item) => item.title == 'First shared view').attachmentName,
+      'first.png',
+    );
+    expect(
+      restoredItems.singleWhere((item) => item.title == 'Second shared view').attachmentName,
+      'second.png',
+    );
     final restoredKeys = restoredItems.map((item) => item.attachmentKey).toSet();
     expect(restoredKeys, hasLength(1));
 
