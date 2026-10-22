@@ -977,3 +977,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed an unreadable item and a valid image/document item that reference the same stored attachment key.
 - Delete the unreadable record and confirm the valid item remains readable and the original attachment bytes are unchanged.
 - Regression source is committed but unrun; reference safety is required even when the remaining/deleted record is not decoded normally.
+
+
+### TC-129 — Roll back failed deletion of an unreadable legacy record
+
+- Seed an unreadable raw item and its referenced attachment payload.
+- Trigger the existing post-attachment-delete fault seam so the delete operation reports an error after removing the payload.
+- Confirm the raw item is restored, the original attachment bytes are restored, and the unreadable-record count reflects the record again.
+- Regression source is committed but unrun; recovery under actual storage interruption still needs platform validation.
