@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
@@ -82,13 +83,15 @@ class ShareEventDeduplicator {
       return age.isNegative || age > window;
     });
 
-    // Keep the full canonical fingerprint as the cache key. An integer
-    // hash alone can collide and incorrectly suppress a different share.
-    final fingerprint = jsonEncode(
+    // Hash the canonical ordered fields so the bounded cache retains only a
+    // fixed-size digest, not copies of potentially large shared text/paths.
+    // Canonical JSON preserves field and batch boundaries before hashing.
+    final canonical = jsonEncode(
       media
           .map((item) => <Object?>[item.type.name, item.path, item.mimeType])
           .toList(growable: false),
     );
+    final fingerprint = sha256.convert(utf8.encode(canonical)).toString();
     final previous = _seen[fingerprint];
     if (previous != null && timestamp.difference(previous) <= window) {
       return false;
