@@ -400,3 +400,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-357:** Quick Save's URL field now reports the 4,096-character URL limit during form validation, before the save attempt, while the save/repository validators remain as backstops.
 - Added a widget regression confirming an over-limit value shows the inline error and writes no item. Test source is committed but unrun.
+
+
+### Phase 2 — tag-field integrity across repository and backups (2026-10-22)
+
+- **TSK-358:** Shared saved-item validation now rejects empty tags and tags with surrounding whitespace, aligning direct repository writes and backup encode/decode with Quick Save's normalized tag behavior.
+- Added repository and backup-codec regressions. Tests are committed but unrun.
