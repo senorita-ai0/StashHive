@@ -790,5 +790,5 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — reject duplicate IDs during backup export (2026-10-22)
 
-- **TSK-412:** The backup encoder now checks item-ID uniqueness before writing JSON, matching the decoder's rule. A direct encoder caller can no longer create a backup with duplicate IDs that StashHive will later reject during restore.
+- **TSK-415:** The backup encoder now checks item-ID uniqueness before writing JSON, matching the decoder's rule. A direct encoder caller can no longer create a backup with duplicate IDs that StashHive will later reject during restore.
 - Added a codec regression using two different records with the same ID. Test source is committed but unrun.
