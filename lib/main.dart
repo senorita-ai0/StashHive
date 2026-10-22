@@ -913,6 +913,7 @@ class _SearchPageState extends State<SearchPage> {
   late final TextEditingController _controller =
       TextEditingController(text: widget.initialQuery);
   String _filter = 'All';
+  String _sort = 'Recently saved';
 
   @override
   void dispose() {
@@ -922,11 +923,21 @@ class _SearchPageState extends State<SearchPage> {
 
   List<SavedItem> _search(List<SavedItem> items) {
     final query = _controller.text;
-    return items.where((item) {
+    final results = items.where((item) {
       final kindMatch = _filter == 'All' || item.kind.pluralLabel == _filter;
       return kindMatch && item.matchesQuery(query);
-    }).toList()
-      ..sort((a, b) => b.updatedAtMs.compareTo(a.updatedAtMs));
+    }).toList();
+
+    if (_sort == 'Title A–Z') {
+      results.sort(
+        (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+      );
+    } else if (_sort == 'Oldest first') {
+      results.sort((a, b) => a.createdAtMs.compareTo(b.createdAtMs));
+    } else {
+      results.sort((a, b) => b.updatedAtMs.compareTo(a.updatedAtMs));
+    }
+    return results;
   }
 
   @override
@@ -995,19 +1006,73 @@ class _SearchPageState extends State<SearchPage> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Semantics(
-                            liveRegion: true,
-                            label:
-                                '${results.length} ${results.length == 1 ? 'result' : 'results'}',
-                            child: ExcludeSemantics(
-                              child: Text(
-                                '${results.length} ${results.length == 1 ? 'result' : 'results'}',
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                      color: mutedTextColor(context),
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                          Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 8,
+                            runSpacing: 4,
+                            children: [
+                              Semantics(
+                                liveRegion: true,
+                                label:
+                                    '${results.length} ${results.length == 1 ? 'result' : 'results'}',
+                                child: ExcludeSemantics(
+                                  child: Text(
+                                    '${results.length} ${results.length == 1 ? 'result' : 'results'}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall
+                                        ?.copyWith(
+                                          color: mutedTextColor(context),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                ),
                               ),
-                            ),
+                              PopupMenuButton<String>(
+                                tooltip: 'Sort search results',
+                                initialValue: _sort,
+                                onSelected: (value) =>
+                                    setState(() => _sort = value),
+                                itemBuilder: (_) => const [
+                                  PopupMenuItem(
+                                    value: 'Recently saved',
+                                    child: Text('Recently saved'),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'Oldest first',
+                                    child: Text('Oldest first'),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'Title A–Z',
+                                    child: Text('Title A–Z'),
+                                  ),
+                                ],
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                    vertical: 6,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        _sort,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: kBrand,
+                                        ),
+                                      ),
+                                      const Icon(
+                                        Icons.expand_more_rounded,
+                                        color: kBrand,
+                                        size: 19,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 10),
                           Expanded(
