@@ -364,6 +364,27 @@ class BackupCodec {
         'A saved item contains invalid optional field types.',
       );
     }
+    final id = value['id'] as String;
+    final title = value['title'] as String;
+    final content = value['content'] as String;
+    final url = value['url'] as String?;
+    final collection = value['collection'] as String?;
+    final attachmentKey = value['attachmentKey'] as String?;
+    final attachmentName = value['attachmentName'] as String?;
+    final attachmentMimeType = value['attachmentMimeType'] as String?;
+    if (id.isEmpty ||
+        id.length > 128 ||
+        title.length > 500 ||
+        content.length > 1000000 ||
+        (url?.length ?? 0) > maxSavedItemUrlCharacters ||
+        (collection?.length ?? 0) > 80 ||
+        (attachmentKey?.length ?? 0) > 128 ||
+        (attachmentName?.length ?? 0) > 255 ||
+        (attachmentMimeType?.length ?? 0) > 128) {
+      throw const FormatException(
+        'A saved item contains fields beyond supported storage limits.',
+      );
+    }
     final tags = value['tags'] as List;
     if (tags.length > 100 ||
         tags.any((tag) => tag is! String || (tag as String).length > 100)) {
