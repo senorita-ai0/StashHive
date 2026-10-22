@@ -337,6 +337,12 @@ class BackupCodec {
       exportedAt: decoded['exportedAt'] is String ? decoded['exportedAt'] as String : '',
     );
   }
+  /// Validates the raw record shape before model parsing can normalize
+  /// malformed field values into defaults.
+  static void validateSavedItemMap(Map<dynamic, dynamic> value) {
+    _validateSavedItemMap(value);
+  }
+
   static void _validateSavedItemMap(Map<dynamic, dynamic> value) {
     if (value['id'] is! String ||
         value['kind'] is! String ||
@@ -361,8 +367,18 @@ class BackupCodec {
       );
     }
     final tags = value['tags'] as List;
-    if (tags.any((tag) => tag is! String)) {
-      throw const FormatException('A saved item contains an invalid tag.');
+    if (tags.length > 100 || tags.any((tag) => tag is! String)) {
+      throw const FormatException('A saved item contains an invalid tag list.');
+    }
+    if (tags.cast<String>().any(
+      (tag) =>
+          tag.isEmpty ||
+          tag.trim() != tag ||
+          tag.length > 100,
+    )) {
+      throw const FormatException(
+        'Tags must be non-empty, trimmed and 100 characters or shorter.',
+      );
     }
     final collection = value['collection'];
     if (collection is String &&
