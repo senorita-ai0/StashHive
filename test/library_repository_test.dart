@@ -241,6 +241,37 @@ void main() {
     );
   });
 
+  test('repository rejects a new assigned collection over the portability cap', () async {
+    await Hive.box<dynamic>('stashhive_preferences_v1').put(
+      'collections',
+      List<String>.generate(
+        BackupCodec.maxCollections,
+        (index) => 'Existing $index',
+      ),
+    );
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    await expectLater(
+      repository.save(
+        buildLink(
+          id: 'overlimit-assigned-collection',
+          collection: 'Not in existing list',
+        ),
+      ),
+      throwsA(
+        isA<FormatException>().having(
+          (error) => error.message,
+          'message',
+          contains('up to 500 collections'),
+        ),
+      ),
+    );
+    expect(repository.findById('overlimit-assigned-collection'), isNull);
+    expect(repository.items.value, isEmpty);
+    expect(repository.collections.value, hasLength(BackupCodec.maxCollections));
+  });
+
   test('item-assigned collections remain reachable without preference entries', () async {
     await repository.save(
       buildLink(
