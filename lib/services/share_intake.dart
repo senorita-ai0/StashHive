@@ -8,7 +8,7 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import '../models/saved_item.dart';
 
 const int maxIncomingAttachmentBytes = 15 * 1024 * 1024;
-const int maxIncomingUrlCharacters = 4096;
+const int maxIncomingUrlCharacters = maxSavedItemUrlCharacters;
 const int maxIncomingTextCharacters = 1000000;
 
 /// A user-selected or OS-shared item ready to prefill StashHive's save form.
