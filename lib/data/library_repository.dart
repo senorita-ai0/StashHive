@@ -648,7 +648,7 @@ class LibraryRepository {
         // Use one collision-safe new key and stage the bytes only once.
         mappedKey = mappedAttachmentKeys.putIfAbsent(oldKey, () => newId);
         if (stagedAttachmentKeys.add(oldKey)) {
-          bytesToWrite = attachment.bytes.toList(growable: false);
+          bytesToWrite = attachment.bytes;
         }
       }
       final restored = SavedItem(
