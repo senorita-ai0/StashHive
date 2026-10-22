@@ -251,6 +251,18 @@ class LibraryRepository {
       currentCount: items.value.length,
       incomingCount: alreadyVisible ? 0 : 1,
     );
+    final assignedCollection = item.collection;
+    if (assignedCollection != null &&
+        !collections.value.any(
+          (name) =>
+              name.toLowerCase() == assignedCollection.toLowerCase(),
+        ) &&
+        collections.value.length >= BackupCodec.maxCollections) {
+      throw const FormatException(
+        'StashHive supports up to 500 collections. '
+        'Choose an existing collection before saving this item.',
+      );
+    }
     final key = item.attachmentKey;
     final hadPreviousItem = _itemsBox.containsKey(item.id);
     final previousItemValue = _itemsBox.get(item.id);
