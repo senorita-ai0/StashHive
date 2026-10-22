@@ -868,7 +868,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Widget regression source is committed but unrun.
 
 
-### TC-115 — Search result sorting parity
+### TC-117 — Search result sorting parity
 
 - Save three items with deliberately different titles, creation timestamps and update timestamps.
 - Confirm the default Recently saved order uses newest updates first, Title A–Z uses a case-insensitive title comparison, and Oldest first uses creation timestamps ascending.
