@@ -855,3 +855,11 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **Source:** Item Details catches a repository/storage failure during deletion, reports the error and leaves the details route open rather than attempting navigation away on a failed delete.
 - **Regression:** TC-132 injects a failure after attachment removal and confirms the saved item and attachment bytes are restored by repository rollback.
 - **Status:** Source/test authored, unrun. Tests and actual storage-interruption validation remain pending.
+
+
+### TSK-425 — Platform-specific Item Details attachment location — 2026-10-22
+
+- **Requirements:** FR-015 and NFR-004 (honest platform/storage messaging).
+- **Source:** Item Details reports browser-profile storage on web and device-local storage on Android rather than using the native phrase on every platform.
+- **Regression/manual check:** Widget source checks the native label; TC-133 requires checking both web and Android.
+- **Status:** Source committed; automated and manual verification pending.
