@@ -53,6 +53,9 @@ class BackupCodec {
     if (item.title.trim().isEmpty || item.title.length > 500) {
       throw const FormatException('A saved item has an invalid title.');
     }
+    if (item.kind == ItemKind.note && item.content.trim().isEmpty) {
+      throw const FormatException('A saved note must contain some text.');
+    }
     if (item.content.length > 1000000 ||
         (item.url?.length ?? 0) > maxSavedItemUrlCharacters ||
         item.tags.length > 100 ||
