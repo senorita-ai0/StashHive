@@ -63,6 +63,85 @@ void main() {
       expect(decoded.items.single.hasAttachment, isTrue);
     });
 
+    test('exports a shared attachment payload only once', () {
+      final first = SavedItem(
+        id: 'image-1',
+        kind: ItemKind.image,
+        title: 'First view',
+        content: '',
+        tags: const [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 1000,
+        attachmentKey: 'shared-image',
+        attachmentName: 'shared.png',
+        attachmentMimeType: 'image/png',
+      );
+      final second = SavedItem(
+        id: 'image-2',
+        kind: ItemKind.image,
+        title: 'Second view',
+        content: '',
+        tags: const [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 1000,
+        attachmentKey: 'shared-image',
+        attachmentName: 'shared.png',
+        attachmentMimeType: 'image/png',
+      );
+      final bytes = Uint8List.fromList([1, 2, 3, 4]);
+      final json = BackupCodec.encode(
+        items: [first, second],
+        attachmentBytes: {'shared-image': bytes},
+        collections: const [],
+      );
+
+      final decoded = BackupCodec.decode(json);
+      expect(decoded.attachments.keys, ['shared-image']);
+      expect(decoded.items, hasLength(2));
+      expect(
+        decoded.items.map((item) => item.attachmentKey),
+        everyElement('shared-image'),
+      );
+    });
+
+    test('rejects image exports without a valid attachment key', () {
+      SavedItem image({String? attachmentKey}) => SavedItem(
+            id: 'image',
+            kind: ItemKind.image,
+            title: 'Image',
+            content: '',
+            tags: const [],
+            collection: null,
+            isFavorite: false,
+            createdAtMs: 1000,
+            updatedAtMs: 1000,
+            attachmentKey: attachmentKey,
+            attachmentName: 'image.png',
+            attachmentMimeType: 'image/png',
+          );
+
+      expect(
+        () => BackupCodec.encode(
+          items: [image()],
+          attachmentBytes: const {},
+          collections: const [],
+        ),
+        throwsFormatException,
+      );
+      expect(
+        () => BackupCodec.encode(
+          items: [image(attachmentKey: '')],
+          attachmentBytes: const {},
+          collections: const [],
+        ),
+        throwsFormatException,
+      );
+    });
+
     test('rejects files which are not StashHive backups', () {
       expect(
         () => BackupCodec.decode(jsonEncode({'app': 'OtherApp', 'formatVersion': 1})),
