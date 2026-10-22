@@ -192,3 +192,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009 (incoming text shares).
 - Test: `test/share_intake_test.dart`; asserts the 1,000,000-character error wording.
 - Verification: source/test committed but not executed.
+
+
+### TSK-333 — Plain text versus inferred bare URLs
+
+- Implementation: `lib/services/share_intake.dart`, scheme-less host classification.
+- Requirement: FR-009 (incoming URL/text shares).
+- Test: TC-040 in `test/share_intake_test.dart`.
+- Verification: source and tests committed; no unit or Android device execution claimed.
