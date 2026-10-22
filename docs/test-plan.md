@@ -701,3 +701,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Deliver the same `.png` file event twice in the duplicate window, once with `text/plain` and once with `image/png` MIME metadata.
 - Confirm the first event is accepted and the second is suppressed because both resolve to `image/png` under extension-first intake.
 - Regression source is committed but unrun; validate the equivalent provider behavior on Android.
+
+
+### TC-101 — Cross-type incoming share deduplication
+
+- Deliver a standalone URL once as text (uppercase scheme and trailing punctuation) and once as URL media; confirm one normalized URL draft fingerprint.
+- Deliver the same recognized PNG once as a generic file intent with conflicting MIME metadata and once as an image intent; confirm duplicate suppression.
+- Confirm non-empty URL context remains distinct. Regression source is committed but unrun; verify real provider event shapes on Android.
