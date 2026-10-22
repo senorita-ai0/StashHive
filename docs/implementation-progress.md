@@ -1,4 +1,4 @@
-# StashHive — Implementation Progress
+# StashTrail — Implementation Progress
 
 **As of:** 2026-10-22  
 **Active phase:** Phase 3 — Platform assurance (Phase 2 sharing/build validation remains pending)  
@@ -55,7 +55,7 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 ## Current limitations
 
 - OCR/PDF text extraction is not implemented; search covers stored metadata and user-entered text.
-- PDF/document content is not rendered inside StashHive; files are handed off through the platform share flow.
+- PDF/document content is not rendered inside StashTrail; files are handed off through the platform share flow.
 - Multi-item shares are presented sequentially, one editable draft per supported entry; the user explicitly saves or cancels each before the next opens.
 - Android runner files are generated rather than committed. After generating them locally, run python3 tool/configure_android_share_intents.py.
 - Web and Android libraries remain separate; cloud sync is not present.
@@ -243,6 +243,25 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added TC-122 to mutate the caller buffer through the test seam during save and verify persisted bytes match the original snapshot.
 - [ ] Run TC-122 at the manual validation checkpoint and verify picker/storage behavior on supported platforms.
 
+## Phase 2 — reject unreferenced backup attachment payloads (2026-10-22)
+
+- [x] TSK-418 rejects orphan attachment keys before base64 decoding and applies the same reference invariant to direct in-memory restore objects.
+- [x] Added TC-123 for an orphan with intentionally invalid base64 and for direct `DecodedBackup` construction.
+- [ ] Run TC-123 and confirm valid version-1 backups remain compatible at the manual validation checkpoint.
+
+## Phase 3 — deterministic Library/Search sorting (2026-10-22)
+
+- [x] TSK-419 centralizes the three sort modes and uses deterministic timestamp/title/ID tie-breakers in Library and Search.
+- [x] Added TC-124 to cover tie ordering across Recently saved, Oldest first and Title A–Z.
+- [ ] Run TC-124 and complete the paired widget, keyboard and assistive-technology checks.
+
+## Phase 3 — StashTrail product-brand alignment (2026-10-22)
+
+- [x] Updated visible Flutter copy, web install metadata, README and current product/design references to StashTrail; the Android configurator sets the generated launcher label.
+- [x] Kept the `stashhive` package, `stashhive_*_v1` Hive box identifiers and the version-1 `StashHive` backup marker unchanged for existing-data compatibility.
+- [x] Added TC-125 for visible Library branding and TC-126 for a version-1 backup-marker round trip.
+- [ ] Execute TC-125 and TC-126 at the manual validation checkpoint; tests and builds are not claimed.
+
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-122 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-126 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-126 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
