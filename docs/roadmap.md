@@ -248,3 +248,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-332:** The intake guard is character-count based, so its error now says “1,000,000-character limit” rather than “1 MB,” which is misleading for non-ASCII and emoji content.
 - The unit regression now checks the actual error copy. Test source is committed but unrun.
+
+
+### Phase 2 — avoid turning single-word shares into URLs (2026-10-22)
+
+- **TSK-333:** Scheme-less text is only inferred to be a web link when the parsed host looks domain-like (contains a dot) or is `localhost`. Plain text such as `remember` stays a note, while bare domains and domain-plus-port values continue to normalize to HTTPS links.
+- Added regressions for a single word, a bare domain and a bare domain with an explicit port. Tests are authored but unrun; Android-source-app behavior remains part of manual share validation.
