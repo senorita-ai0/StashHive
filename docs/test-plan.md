@@ -350,3 +350,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Enter 101 unique tags; Quick Save should explain the 100-tag limit and save nothing.
 - Enter a tag containing 101 characters; Quick Save should explain the per-tag limit and save nothing.
 - Widget regression source is committed but unrun; verify the messages are understandable at narrow widths and enlarged text.
+
+
+### TC-053 — Size-first file-picker intake
+
+- Pick a valid small image/document on Android and web; confirm length is checked before bytes are read and the attachment can be saved.
+- Pick a file above 15 MiB; confirm it is rejected before calling the full-byte read path.
+- Try an empty file and a cloud/provider file whose size cannot be determined; confirm a clear recoverable error and no saved item.
+- Test source for share-file size checks exists, but picker plugin behavior requires manual platform verification. Status remains NOT STARTED.
