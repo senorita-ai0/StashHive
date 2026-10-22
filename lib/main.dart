@@ -578,11 +578,17 @@ class _LibraryPageState extends State<LibraryPage> {
                   children: [
                     const BrandMark(size: 37),
                     const SizedBox(width: 10),
-                    Text('StashHive',
+                    Flexible(
+                      child: Text(
+                        'StashHive',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.w800,
                               letterSpacing: -0.5,
-                            )),
+                            ),
+                      ),
+                    ),
                     const Spacer(),
                     IconButton(
                       tooltip: 'Filter and sort',
