@@ -327,3 +327,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Attempt to export a file item whose attachment filename is whitespace-only; export must reject data that restore would reject.
 - Verify invalid attachment-kind/key pairs, oversized content, and excessive tag counts are consistently rejected by repository/save, encoder, and decoder validation.
 - Regression source is authored but unrun; full save → backup → restore round-trip remains pending.
+
+
+### TC-050 — Quick Save edits with shared attachments
+
+- Create two image items that intentionally reference one stored attachment key.
+- Edit the second item without choosing replacement bytes; save and confirm it retains the shared key and the original bytes remain readable.
+- Edit an image into a note; enter note text, save, and confirm the new record clears attachment key/name/MIME and the now-unreferenced payload is removed.
+- Widget regression source is committed but unrun; repeat on Android/web after the manual build checkpoint.
