@@ -37,6 +37,7 @@ class BackupCodec {
 
   static const int formatVersion = 1;
   static const int maxItems = 10000;
+  static const int maxCollections = 500;
   static const int maxAttachmentBytes = 15 * 1024 * 1024;
   static const int maxTotalAttachmentBytes = 100 * 1024 * 1024;
   static const int maxJsonCharacters = 145 * 1024 * 1024;
@@ -511,7 +512,7 @@ class BackupCodec {
         );
       }
       if (seen.add(name.toLowerCase())) result.add(name);
-      if (result.length > 500) {
+      if (result.length > maxCollections) {
         throw const FormatException('The backup contains too many collections.');
       }
     }
