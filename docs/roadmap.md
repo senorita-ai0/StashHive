@@ -514,3 +514,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-376:** Restore now calculates the merged collection list and rejects an import that would push the destination library beyond the shared 500-collection backup limit before writing any imported records or attachments.
 - Added a repository regression with a 500-collection destination and one new incoming collection, asserting the restore fails before importing the item or changing the collection list. Test source is committed but unrun.
+
+
+### Phase 2 — portable saved-item count preflight (2026-10-22)
+
+- **TSK-377:** Added a shared item-count guard for repository mutations. New item saves and backup restore now reject a destination that would exceed the codec's 10,000-item portable limit; editing an existing visible item remains allowed at capacity.
+- Added boundary coverage for the shared count validator. Source/tests are committed but unrun.
