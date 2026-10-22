@@ -283,6 +283,12 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added **TC-131** fault-injection regression source to check the collection and item assignment remain intact after a failed delete.
 - [ ] Run TC-131 and verify collection mutation recovery against the target storage implementations at the manual checkpoint.
 
+## Phase 3 — recoverable deletion failures in the UI (2026-10-22)
+
+- [x] Item Details now catches repository delete failures, keeps the details screen open and displays an error message.
+- [x] Added **TC-132** fault-injection regression source to verify the item and attachment survive the simulated post-removal failure; the preceding increment added **TC-131** for collection deletion.
+- [ ] Run TC-131 and TC-132 during the manual checkpoint; storage rollback is best-effort and has not been platform-verified.
+
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-131 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-131 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-132 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-132 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
