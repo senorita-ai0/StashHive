@@ -207,6 +207,14 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [ ] Execute TC-114 and review narrow-width/large-text layout at the manual validation checkpoint.
 - [ ] Complete keyboard and screen-reader checks; no visual or assistive-technology pass is claimed.
 
+## Phase 3 — metadata performance baseline harness (2026-10-22)
+
+- [x] Added `tool/benchmark_library_repository.dart` with temporary Hive fixtures for 100, 1,000 and 10,000 metadata-only items.
+- [x] Added `docs/performance-benchmark.md` with the deliberate run command, metric definitions, and environment-recording guidance.
+- [x] Added TC-115 and linked TSK-411 to roadmap and traceability; no CI trigger or timing threshold was introduced.
+- [ ] Run the harness at an owner-approved measurement checkpoint and record output plus OS/Flutter/Dart versions.
+- [ ] Complete the broader storage recovery/device and browser verification; benchmark source does not replace platform tests.
+
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All new regression cases, including TC-114, are source-authored, not passed. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All new regression cases, including TC-114 and the unrun TC-115 benchmark procedure, are source-authored, not passed. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
