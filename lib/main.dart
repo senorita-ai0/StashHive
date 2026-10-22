@@ -605,43 +605,63 @@ class _LibraryPageState extends State<LibraryPage> {
                 const SizedBox(height: 17),
                 ValueListenableBuilder<int>(
                   valueListenable: widget.repository.skippedRecordCount,
-                  builder: (context, skippedCount, _) {
-                    if (skippedCount == 0) return const SizedBox.shrink();
-                    final message = skippedCount == 1
-                        ? '1 saved record could not be read.'
-                        : '$skippedCount saved records could not be read.';
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Semantics(
-                        liveRegion: true,
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.errorContainer,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.warning_amber_rounded,
-                                color: Theme.of(context).colorScheme.onErrorContainer,
+                  builder: (context, skippedRecords, _) {
+                    return ValueListenableBuilder<int>(
+                      valueListenable:
+                          widget.repository.skippedCollectionCount,
+                      builder: (context, skippedCollections, _) {
+                        if (skippedRecords == 0 && skippedCollections == 0) {
+                          return const SizedBox.shrink();
+                        }
+                        final messages = <String>[];
+                        if (skippedRecords > 0) {
+                          messages.add(
+                            skippedRecords == 1
+                                ? '1 saved record could not be read.'
+                                : '$skippedRecords saved records could not be read.',
+                          );
+                        }
+                        if (skippedCollections > 0) {
+                          messages.add(
+                            skippedCollections == 1
+                                ? '1 collection entry was invalid, duplicated, or beyond the 500-collection limit.'
+                                : '$skippedCollections collection entries were invalid, duplicated, or beyond the 500-collection limit.',
+                          );
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Semantics(
+                            liveRegion: true,
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.errorContainer,
+                                borderRadius: BorderRadius.circular(14),
                               ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  '$message The raw entries were not deleted, but this library view and new backups may omit them. Avoid clearing app/browser data; use a previous backup if you need to recover these records.',
-                                  style: TextStyle(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.warning_amber_rounded,
                                     color: Theme.of(context).colorScheme.onErrorContainer,
-                                    height: 1.35,
                                   ),
-                                ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      '${messages.join(' ')} The raw entries were not deleted, but this view or a new backup may omit invalid entries. Avoid clearing app/browser data; use a previous backup if you need to recover data.',
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.onErrorContainer,
+                                        height: 1.35,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     );
                   },
                 ),
