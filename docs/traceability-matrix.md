@@ -352,3 +352,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-017–018 and NFR-006 (safe external actions and accessible feedback).
 - Test: TC-059 in `test/external_navigation_test.dart`; parser unit tests are in `test/web_url_test.dart`.
 - Verification: regression committed but unrun; platform launcher behavior remains pending.
+
+
+### TSK-353 — MIME metadata consistency
+
+- Implementation: `lib/services/share_intake.dart`, recognized-extension MIME resolution.
+- Requirement: FR-008–009 (file intake).
+- Test: TC-060 in `test/share_intake_test.dart`.
+- Verification: source/test committed; execution and platform metadata behavior remain pending.
