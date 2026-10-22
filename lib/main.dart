@@ -2124,7 +2124,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
               padding: const EdgeInsets.fromLTRB(20, 6, 20, 30),
               children: [
                 if (item.kind == ItemKind.image && _attachmentFuture != null)
-                  FutureBuilder<List<int>?>(
+                  FutureBuilder<Uint8List?>(
                     future: _attachmentFuture,
                     builder: (context, snapshot) {
                       if (snapshot.data == null || snapshot.data!.isEmpty) {
@@ -2135,7 +2135,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxHeight: 310),
                           child: Image.memory(
-                            Uint8List.fromList(snapshot.data!),
+                            snapshot.data!,
                             fit: BoxFit.contain,
                             errorBuilder: (_, __, ___) => _previewPlaceholder(item, height: 210),
                           ),
