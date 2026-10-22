@@ -433,3 +433,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm a normal HTTP/HTTPS URL remains valid.
 - Confirm a URL containing embedded username/password user-info is rejected before save, import or platform launch.
 - Unit test source is committed but unrun; verify the message shown to users remains understandable and does not echo credential data.
+
+
+### TC-064 — Inline saved URL length validation
+
+- Enter a URL that exceeds the supported 4,096-character limit, attempt to save, and confirm the field exposes the specific limit message.
+- Confirm no record is written and the user remains on the form to edit the value.
+- Widget source is committed but unrun; repeat at narrow width and enlarged text scale to review error-message wrapping.
