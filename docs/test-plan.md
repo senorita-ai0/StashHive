@@ -942,3 +942,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Decode a backup containing no items but one attachment entry with invalid base64; confirm the decoder rejects the orphan key with a reference error before reporting a base64 error.
 - Construct a `DecodedBackup` directly with an attachment not referenced by any item; confirm restore-boundary validation rejects it too.
 - Codec regression source is committed but unrun; confirm compatibility with valid version-1 backups on the manual checkpoint.
+
+
+### TC-124 — Deterministic tie-breaking across sort modes
+
+- Create items with equal updated timestamps, equal creation timestamps and duplicate case-insensitive titles but distinct IDs.
+- Sort with Recently saved, Oldest first and Title A–Z; confirm each mode follows documented primary ordering and the same deterministic secondary ordering on repeated runs.
+- The model comparator regression is committed but unrun; widget parity and narrow/enlarged-text sort controls remain pending manual checks.
