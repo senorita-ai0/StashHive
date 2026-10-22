@@ -263,6 +263,12 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Extended `tool/test_configure_android_share_intents.py` to assert the generated Android application label is StashTrail, including idempotent reconfiguration.
 - [ ] Execute TC-125 and TC-126 at the manual validation checkpoint; tests and builds are not claimed.
 
+## Phase 2 — attachment cleanup for unreadable records (2026-10-22)
+
+- [x] TSK-421: deleting an unreadable legacy item now checks its raw string attachment reference and removes the payload only when no remaining raw record references it.
+- [x] Added TC-127 for reclaiming an orphan payload and TC-128 to prove bytes shared with a valid item are preserved.
+- [ ] Run TC-127/TC-128 during the manual validation checkpoint; rollback behavior and legacy-store recovery remain unverified on target platforms.
+
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-126 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-126 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-128 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-128 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
