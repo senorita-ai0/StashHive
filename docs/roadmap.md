@@ -773,3 +773,10 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-412:** Added `tool/benchmark_library_repository.dart` and `docs/performance-benchmark.md` to establish a repeatable, non-gating baseline for metadata-only libraries of 100, 1,000 and 10,000 items. The harness reports repository open/validation, repeated search and favorite filtering, one existing-item edit, and metadata backup encoding.
 - **Status:** Harness and run instructions are committed; no measurements have been taken. TSK-305 remains IN PROGRESS until the output is recorded and recovery/platform verification is completed. No arbitrary latency threshold or CI timing gate is introduced.
+
+
+### Phase 2 — partial export for legacy libraries over the item cap (2026-10-22)
+
+- **TSK-411:** The backup snapshot now keeps at most 10,000 exportable saved items and records the rest as unexportable omissions. This avoids making every backup fail when an older local store exceeds today's portable item cap; the local records remain unchanged.
+- The collection-overflow repair gate now checks the records actually selected for export, so a record already omitted for item/attachment limits doesn't block the partial backup unnecessarily.
+- Added repository coverage with 10,001 legacy items, asserting the backup contains 10,000 and the additional local item remains in the library. Test source is committed but unrun.
