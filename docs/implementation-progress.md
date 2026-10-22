@@ -1,6 +1,6 @@
 # StashHive — Implementation Progress
 
-**As of:** 2026-10-21  
+**As of:** 2026-10-22  
 **Active phase:** Phase 3 — Platform assurance (Phase 2 sharing/build validation remains pending)  
 **Owner direction:** Develop features first; run CI/builds only when manually requested.
 
@@ -110,3 +110,22 @@ The text-scale layout helper now explicitly converts the bounded `clamp` result 
 ## Phase 3 — accessible Library search entry (2026-10-21)
 
 The Library's search-shaped navigation control now exposes a button role, the label “Search your library” and the hint “Opens the Search tab.” The decorative, non-editable text field is excluded from the semantics tree so assistive technology does not announce it as an editable field. Added a widget semantics test source; tests and screen-reader verification remain unrun.
+
+
+## Phase 2/3 source increments — 2026-10-22
+
+- [x] Share intake: bounded SHA-256 event fingerprints normalize path/MIME/message fields, keep distinct context and batch ordering, clamp batch progress, trim unmatched URL punctuation, and align URL/text length limits.
+- [x] Share intake: distinguish a plain word from a bare web address; reject non-web schemes and credential-bearing URLs; prefer known supported filename extensions over conflicting MIME metadata.
+- [x] Android share manifest: support mixed-MIME `ACTION_SEND_MULTIPLE` through a `*/*` filter while retaining direct filters for supported single/multiple types.
+- [x] Attachment persistence: validate saved-item fields through a shared save/backup validator; reject empty/invalid/missing attachment bytes; detect corrupted legacy byte lists without filtering invalid entries into a different file.
+- [x] Backup/restore: add SHA-256 per attachment payload (optional when importing older v1 backups), reject empty payloads and invalid metadata, and test payload tampering/backward compatibility.
+- [x] Shared attachments: preserve existing keys for metadata-only edits, allocate copy-on-write replacement keys when a preferred key is shared or occupied, and avoid deleting bytes still referenced by another raw item.
+- [x] File picker: use file_picker 12.3.0's single-file `pickFile()` API; check length before lazy byte loading, and keep the post-read size guard.
+- [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
+- [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
+- [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
+- [x] Progress/test docs updated through TSK-357 and TC-064.
+
+## Current validation state — 2026-10-22
+
+No tests, formatter, analyzer, Android build or web build were run for this increment. GitHub Actions remains `workflow_dispatch`-only. All new regression cases are source-authored, not passed. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
