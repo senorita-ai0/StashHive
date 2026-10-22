@@ -832,3 +832,9 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm Quick Save uses `PlatformFile.readAsByteStream()` and the shared byte reader for the 15 MiB cap.
 - Confirm Backup & Privacy uses the same reader with the 145 MiB cap and still releases the raw byte buffer after decode/validation.
 - Run stream-reader boundary tests, then verify actual Android SAF, browser and cloud-backed files with unreliable length metadata. Source changes/tests are committed but unrun; platform validation remains NOT STARTED.
+
+
+### TC-099 — Attachment size limit consistency
+
+- Confirm Quick Save, OS-share intake, bounded byte reads and backup codec all use the same attachment byte cap.
+- Boundary test source continues to assert the stream accepts exactly the cap and rejects a chunk that would cross it. Source inspection completed; tests remain unrun.
