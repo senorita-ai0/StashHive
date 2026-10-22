@@ -560,3 +560,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008, FR-011–013 and NFR-003 (preserve attachment identity during recovery).
 - Test: TC-085 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-379 — Direct lookup respects stored-record validation
+
+- Implementation: `LibraryRepository.findById`, reusing `BackupCodec.validateStoredRecordMap`.
+- Requirements: FR-001–003 and NFR-003 (malformed record recovery consistency).
+- Test: TC-086 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
