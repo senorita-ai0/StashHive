@@ -310,6 +310,51 @@ void main() {
       );
     });
 
+    test('rejects empty attachment bytes during export and restore', () {
+      final image = SavedItem(
+        id: 'empty-image',
+        kind: ItemKind.image,
+        title: 'Empty image',
+        content: '',
+        tags: const [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 1000,
+        attachmentKey: 'empty-image',
+        attachmentName: 'empty.png',
+        attachmentMimeType: 'image/png',
+      );
+
+      expect(
+        () => BackupCodec.encode(
+          items: [image],
+          attachmentBytes: {'empty-image': Uint8List(0)},
+          collections: const [],
+        ),
+        throwsFormatException,
+      );
+
+      final payload = <String, Object?>{
+        'app': 'StashHive',
+        'formatVersion': BackupCodec.formatVersion,
+        'exportedAt': '2026-10-22T00:00:00Z',
+        'collections': <String>[],
+        'items': [image.toMap()],
+        'attachments': <String, Object?>{
+          'empty-image': <String, Object?>{
+            'name': 'empty.png',
+            'mimeType': 'image/png',
+            'base64': '',
+          },
+        },
+      };
+      expect(
+        () => BackupCodec.decode(jsonEncode(payload)),
+        throwsFormatException,
+      );
+    });
+
     test('rejects files which are not StashHive backups', () {
       expect(
         () => BackupCodec.decode(jsonEncode({'app': 'OtherApp', 'formatVersion': 1})),
