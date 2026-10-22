@@ -872,3 +872,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-004 and SCR-003 (consistent retrieval controls, result count and sorting).
 - Test: TC-114 in `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun; responsive visual and screen-reader checks remain pending.
+
+
+### TSK-410 — Partial backup of unexportable legacy items
+
+- Implementation: `LibraryRepository._buildBackupSnapshot` / `unexportableRecordCount`, `BackupCodec` optional omission metadata, and `BackupPrivacyPage._export/_restore`.
+- Requirements: FR-012–013 and NFR-003 (transparent backup completeness and local data preservation).
+- Tests: TC-114 in `test/library_repository_test.dart`, `test/backup_codec_test.dart`, and `test/accessibility_widgets_test.dart`.
+- Verification: source/tests committed but unrun.
