@@ -432,3 +432,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-003, FR-008, FR-011–013 and NFR-003 (preserve shared attachment integrity).
 - Test: TC-069 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-363 — Bound raw record sizes during recovery
+
+- Implementation: `BackupCodec.validateStoredRecordMap` used by `LibraryRepository._refreshItems`.
+- Requirements: FR-001–003 and NFR-003 (robust loading of local records).
+- Test: TC-070 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
