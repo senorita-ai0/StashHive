@@ -520,3 +520,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-377:** Added a shared item-count guard for repository mutations. New item saves and backup restore now reject a destination that would exceed the codec's 10,000-item portable limit; editing an existing visible item remains allowed at capacity.
 - Added boundary coverage for the shared count validator. Source/tests are committed but unrun.
+
+
+### Phase 2 — reserve dangling attachment references during restore (2026-10-22)
+
+- **TSK-378:** Backup restore now reserves attachment keys referenced by raw local records, even when the referenced payload is missing. Imported image/document IDs and their mapped attachment keys cannot accidentally populate a broken legacy item's missing file.
+- Added a repository regression that restores an image whose original ID matches a dangling legacy attachment reference and confirms both the imported payload and the broken legacy reference remain separate. Test source is committed but unrun.
