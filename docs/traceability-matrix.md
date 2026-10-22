@@ -696,3 +696,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008, FR-011–013 and NFR-003 (attachment integrity and bounded memory).
 - Test: TC-102 references byte-integrity assertions in `test/library_repository_test.dart`.
 - Verification: source committed; tests and memory profile remain pending.
+
+
+### TSK-396 — Reuse UTF-8 encoded backup bytes
+
+- Implementation: `BackupPrivacyPage._export` in `lib/main.dart`.
+- Requirements: FR-012–013 and NFR-003 (backup integrity and bounded memory).
+- Test: TC-103 references existing backup round-trip tests in `test/backup_codec_test.dart`.
+- Verification: source committed; tests and profiling remain pending.
