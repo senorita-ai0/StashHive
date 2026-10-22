@@ -887,3 +887,11 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **Source:** File selection, save, item/collection deletion and backup operation handlers now retain app-defined validation guidance but use a generic retry message for unexpected failures instead of printing raw plugin/storage exceptions into routine UI.
 - **Regression/manual check:** TC-131 and TC-132 assert that injected storage exception text is not shown; TC-136 covers remaining error branches and platform-provided messages.
 - **Status:** Source committed, unrun; this does not complete the privacy/logging/network review.
+
+
+### TSK-429 — Privacy-safe startup storage failure screen — 2026-10-22
+
+- **Requirements:** FR-018 and NFR-002 (privacy-conscious failure messaging).
+- **Source:** Startup initialization failures now show browser- or device-specific recovery guidance without printing the raw exception, which may include local storage paths.
+- **Regression:** TC-137 checks that recovery guidance is displayed and raw selectable diagnostics are absent.
+- **Status:** Source/test committed but unrun; no privacy audit or startup failure injection is claimed.
