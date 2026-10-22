@@ -120,6 +120,33 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Dark-mode switch reverts when its preference cannot be saved', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+    await tester.pumpWidget(
+      app.StashHiveApp(repository: repository, initialDarkMode: false),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Settings').last);
+    await tester.pumpAndSettle();
+    final switchFinder = find.byType(Switch);
+    expect(switchFinder, findsOneWidget);
+
+    LibraryRepository.setDarkModeAfterWriteForTesting = () async {
+      throw StateError('simulated dark-mode preference failure');
+    };
+    try {
+      await tester.tap(switchFinder);
+      await tester.pumpAndSettle();
+    } finally {
+      LibraryRepository.setDarkModeAfterWriteForTesting = null;
+    }
+
+    expect(repository.darkMode, isFalse);
+    expect(tester.widget<Switch>(switchFinder).value, isFalse);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Library and Search avoid layout exceptions at narrow width with large text', (tester) async {
     await tester.binding.setSurfaceSize(const Size(320, 568));
     addTearDown(() => tester.binding.setSurfaceSize(null));
