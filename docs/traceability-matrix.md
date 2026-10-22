@@ -728,3 +728,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: NFR-006 (accessible controls and keyboard/screen-reader usability).
 - Test: TC-106 in `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun; assistive-technology check remains pending.
+
+
+### TSK-400 — Canonical collection spelling across persistence and UI
+
+- Implementation: `LibraryRepository._refreshCollections`, `_canonicalizeCollectionAssignment`, `findById` and `save`.
+- Requirements: FR-010, FR-012–013 and NFR-003 (consistent collection navigation and backup metadata).
+- Test: TC-107 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
