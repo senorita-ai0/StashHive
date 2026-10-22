@@ -993,3 +993,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the message states that clearing local data can erase the library and that it does not sync automatically. Activate **Backup options** and verify Backup & privacy opens directly; return and test **Got it**.
 - Confirm dismissal is persisted in the same local preferences store and the reminder does not reappear after closing and reopening the boxes. With a fresh browser profile/device store, confirm the reminder appears again.
 - Repository and widget regression source is committed but unrun; web/Android first-launch behavior remains pending the manual validation checkpoint.
+
+
+### TC-131 — Collection-delete storage failure is recoverable
+
+- Create a collection and assign a saved item to it. Start collection deletion and confirm the action.
+- Inject a failure during the repository's collection mutation. Confirm the UI shows a recoverable error instead of an uncaught framework exception, the collection remains listed, and the item's assignment remains intact after rollback.
+- Regression source is committed but unrun. Real storage-write interruption and rollback success still need the manual validation checkpoint.
