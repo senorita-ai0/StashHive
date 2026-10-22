@@ -815,6 +815,8 @@ void main() {
     );
     expect(repository.findById('unknown-kind'), isNull);
     expect(repository.findById('wrong-box-key'), isNull);
+    expect(repository.findById('oversized-legacy-content'), isNull);
+    expect(repository.findById('out-of-range-timestamp'), isNull);
     expect(repository.skippedRecordCount.value, 4);
   });
 
