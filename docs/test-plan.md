@@ -852,3 +852,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Save an image-kind item with bytes that the current decoder cannot display.
 - Open Item Details and activate View image; confirm a readable preview-unavailable message is shown, no widget exception escapes, and the saved attachment remains available for sharing.
 - Widget regression source is committed but unrun; verify real TIFF/HEIC behavior on Android/web because support varies by platform decoder.
+
+
+### TC-102 — Attachment bytes remain intact after base64 copy reduction
+
+- Decode a backup with one or more attachments and confirm the stored byte sequences match the original source.
+- Confirm SHA-256 tamper detection, empty-payload rejection and combined-byte-limit preflight continue to apply.
+- Existing codec tests cover the behaviors; execution and near-limit memory profiling remain pending.
