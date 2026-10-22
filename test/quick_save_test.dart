@@ -103,6 +103,28 @@ void main() {
     await testDirectory.delete(recursive: true);
   });
 
+  testWidgets('item-kind choices expose selected state semantically', (tester) async {
+    final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
+
+    await openNewLink(tester);
+    final linkChoice = find.bySemanticsLabel('Link');
+    final noteChoice = find.bySemanticsLabel('Note');
+
+    expect(linkChoice, findsOneWidget);
+    expect(noteChoice, findsOneWidget);
+    expect(tester.getSemantics(linkChoice).hasAction(SemanticsAction.tap), isTrue);
+    expect(tester.getSemantics(linkChoice).hasFlag(SemanticsFlag.isButton), isTrue);
+    expect(tester.getSemantics(linkChoice).hasFlag(SemanticsFlag.isSelected), isTrue);
+    expect(tester.getSemantics(noteChoice).hasFlag(SemanticsFlag.isSelected), isFalse);
+
+    tester.getSemantics(noteChoice).performAction(SemanticsAction.tap);
+    await tester.pumpAndSettle();
+
+    expect(tester.getSemantics(noteChoice).hasFlag(SemanticsFlag.isSelected), isTrue);
+    expect(tester.getSemantics(linkChoice).hasFlag(SemanticsFlag.isSelected), isFalse);
+  });
+
   testWidgets('normalizes uppercase URL schemes before saving', (tester) async {
     await openNewLink(tester);
     await tester.enterText(
