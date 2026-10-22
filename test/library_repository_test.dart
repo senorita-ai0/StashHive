@@ -354,6 +354,39 @@ void main() {
     expect(decoded.omittedCollectionEntryCount, 2);
   });
 
+  test('partial backup caps legacy libraries at the portable item limit', () async {
+    final rawItems = <String, Object?>{};
+    for (var index = 0; index < BackupCodec.maxItems + 1; index++) {
+      final id = 'legacy-over-limit-$index';
+      rawItems[id] = SavedItem(
+        id: id,
+        kind: ItemKind.note,
+        title: 'Legacy note $index',
+        content: 'Content $index',
+        tags: const [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: index + 1,
+      ).toMap();
+    }
+    await Hive.box<dynamic>('stashhive_items_v1').putAll(rawItems);
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.items.value, hasLength(BackupCodec.maxItems + 1));
+    expect(repository.unexportableRecordCount, 1);
+
+    final decoded = BackupCodec.decode(await repository.createBackup());
+    expect(decoded.items, hasLength(BackupCodec.maxItems));
+    expect(decoded.omittedUnexportableRecordCount, 1);
+    expect(
+      repository.items.value,
+      hasLength(BackupCodec.maxItems + 1),
+      reason: 'Portable export limits must not delete the extra local record.',
+    );
+  });
+
   test('partial backup omits unsafe legacy items and preserves their local records', () async {
     const unsafeId = 'legacy-unsafe-url-for-backup';
     final unsafe = buildLink(
