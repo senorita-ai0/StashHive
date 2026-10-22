@@ -61,6 +61,10 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function()? addCollectionAfterWriteForTesting;
 
+  /// Fault-injection seam for a theme preference write that fails after commit.
+  @visibleForTesting
+  static Future<void> Function()? setDarkModeAfterWriteForTesting;
+
   bool get darkMode => _preferencesBox.get('darkMode') == true;
 
   /// Whether the one-time local-storage safety reminder has been dismissed.
@@ -527,7 +531,26 @@ class LibraryRepository {
   }
 
   Future<void> setDarkMode(bool value) async {
-    await _preferencesBox.put('darkMode', value);
+    final hadDarkModeKey = _preferencesBox.containsKey('darkMode');
+    final previousValue = _preferencesBox.get('darkMode');
+    try {
+      await _preferencesBox.put('darkMode', value);
+      final afterWrite = setDarkModeAfterWriteForTesting;
+      if (afterWrite != null) await afterWrite();
+    } catch (_) {
+      // As with other preferences, the write may commit and then report an
+      // error. Restore the previous value best-effort and preserve the cause.
+      try {
+        if (hadDarkModeKey) {
+          await _preferencesBox.put('darkMode', previousValue);
+        } else {
+          await _preferencesBox.delete('darkMode');
+        }
+      } catch (_) {
+        // Preserve the original storage failure.
+      }
+      rethrow;
+    }
   }
 
   Future<void> addCollection(String name) async {
