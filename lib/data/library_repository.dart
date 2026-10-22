@@ -123,6 +123,7 @@ class LibraryRepository {
   }
 
   Future<void> save(SavedItem item, {List<int>? attachmentBytes}) async {
+    BackupCodec.validateSavedItem(item);
     final key = item.attachmentKey;
     final requiresAttachment =
         item.kind == ItemKind.image || item.kind == ItemKind.document;
