@@ -971,6 +971,33 @@ void main() {
     expect(repository.items.value.single.isFavorite, isTrue);
   });
 
+  testWidgets('Item Details labels native attachment storage accurately', (tester) async {
+    const item = SavedItem(
+      id: 'attachment-storage-label',
+      kind: ItemKind.image,
+      title: 'Storage location sample',
+      content: '',
+      tags: [],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1,
+      updatedAtMs: 2,
+      attachmentKey: 'attachment-storage-label',
+      attachmentName: 'sample.png',
+      attachmentMimeType: 'image/png',
+    );
+    await repository.save(item, attachmentBytes: Uint8List.fromList([7, 8, 9]));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.ItemDetailsPage(repository: repository, itemId: item.id),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Stored inside StashTrail on this device'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Item deletion failure keeps details open and reports an error', (tester) async {
     final bytes = Uint8List.fromList([1, 3, 3, 7]);
     const item = SavedItem(
