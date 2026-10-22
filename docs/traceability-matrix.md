@@ -25,7 +25,7 @@
 | FR-019 | SCR-001, SCR-002 | Later if approved | TC-019 | NOT STARTED / Could |
 | NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | IN PROGRESS — no backend/account integration in core source; offline and network inspection pending |
 | NFR-002 | SCR-006 | TSK-304 | TC-018 | NOT STARTED |
-| NFR-003 | SCR-006 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417 | TC-012–015, TC-117, TC-120, TC-122 | IN PROGRESS — backup byte-limit source/test added; memory/platform verification pending |
+| NFR-003 | SCR-006 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426 | TC-012–015, TC-117, TC-120, TC-122, TC-134 | IN PROGRESS — backup byte limits and preference-write rollback source added; execution/platform verification pending |
 | NFR-004 | SCR-004 | TSK-203 | TC-006, TC-017 | IN PROGRESS — copy states local storage, no sync and no OCR; end-to-end wording review pending |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
 | NFR-006 | All screens | TSK-103, TSK-304 | UI/accessibility checklist | IN PROGRESS — text scaling, semantics and contrast source/tests added; execution and platform checks pending |
@@ -1000,3 +1000,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-015/NFR-004; web describes data as stored in the current browser profile while Android describes device-local storage.
 - Regression: `test/accessibility_widgets_test.dart` checks the native label; TC-133 explicitly checks both platforms.
 - Verification: source is committed; widget test is unrun, and browser/native copy still needs visual confirmation.
+
+
+### TSK-426 — Dark-mode preference rollback
+
+- Implementation: `lib/data/library_repository.dart` and `_StashHiveAppState._setDarkMode` in `lib/main.dart`.
+- Behavior: if a preference write fails after it may have committed, the repository attempts to restore the previous value; the app catches the failure and syncs its visible theme to the persisted preference.
+- Tests: repository late-write rollback in `test/library_repository_test.dart` and switch-reversion coverage in `test/accessibility_widgets_test.dart`; manual case TC-134.
+- Verification: source/tests are authored but unrun; platform storage behavior remains unverified.
