@@ -594,3 +594,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Restore a valid backup image whose ID/attachment key matches that dangling reference.
 - Confirm restore allocates a different ID/key, stores the imported bytes under the new key, and leaves the legacy reference missing rather than silently reassigning its data.
 - Repository regression source is committed but unrun.
+
+
+### TC-086 — Direct lookup must not return skipped raw records
+
+- Seed an unknown-kind record, an oversized-content record and a record whose Hive key differs from the embedded ID.
+- Trigger refresh and verify all are skipped and counted; `findById` using each raw Hive key must also return null.
+- Confirm parseable legacy records with valid field shape but unsafe URLs/missing attachments remain directly retrievable for repair. Regression source is committed but unrun.
