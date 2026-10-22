@@ -871,3 +871,11 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **Source:** The repository stages and best-effort rolls back the prior dark-mode preference if a write reports failure; the app catches that failure and synchronizes the visible theme back to the repository's persisted value.
 - **Regression:** TC-134 covers both repository rollback and UI switch reversion with an injected late-write error.
 - **Status:** Source/test authored, unrun; actual device/browser preference persistence remains pending.
+
+
+### TSK-427 — Accurate search scope and platform wording — 2026-10-22
+
+- **Requirements:** FR-005 and NFR-004 (search transparency and truthful platform copy).
+- **Source:** Settings now includes collection names in the searchable-field explanation and identifies browser scope on web versus device scope on native builds. OCR and cross-device search remain explicitly unavailable.
+- **Regression/manual check:** TC-135 checks native copy and the indexed-field list; web label and end-to-end claims need a manual check.
+- **Status:** Source committed; regression test unrun and platform wording review pending.
