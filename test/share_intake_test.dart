@@ -285,6 +285,32 @@ void main() {
       );
     });
 
+    test('normalizes harmless metadata differences before deduplication', () {
+      final deduplicator = ShareEventDeduplicator();
+      final start = DateTime.utc(2026, 10, 22, 15);
+      final first = SharedMediaFile(
+        path: ' https://example.com/space ',
+        type: SharedMediaType.url,
+        mimeType: 'TEXT/URI-LIST',
+        message: ' Saved context ',
+      );
+      final normalized = SharedMediaFile(
+        path: 'https://example.com/space',
+        type: SharedMediaType.url,
+        mimeType: 'text/uri-list',
+        message: 'Saved context',
+      );
+
+      expect(deduplicator.shouldAccept([first], now: start), isTrue);
+      expect(
+        deduplicator.shouldAccept(
+          [normalized],
+          now: start.add(const Duration(milliseconds: 150)),
+        ),
+        isFalse,
+        reason: 'Normalization yields the same user-visible share draft.',
+      );
+    });
     test('distinguishes batch order and respects the bounded fingerprint cache', () {
       final deduplicator = ShareEventDeduplicator(
         window: const Duration(seconds: 3),
