@@ -3152,25 +3152,45 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 const SizedBox(height: 14),
                 ValueListenableBuilder<int>(
                   valueListenable: widget.repository.skippedRecordCount,
-                  builder: (context, skippedCount, _) {
-                    if (skippedCount == 0) return const SizedBox.shrink();
-                    return Semantics(
-                      liveRegion: true,
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.errorContainer,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Text(
-                          '$skippedCount saved record(s) could not be read. Any backup will omit them unless you recover the records first. Use a previous known-good backup if you need those entries.',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onErrorContainer,
-                            height: 1.35,
+                  builder: (context, skippedRecords, _) {
+                    return ValueListenableBuilder<int>(
+                      valueListenable:
+                          widget.repository.skippedCollectionCount,
+                      builder: (context, skippedCollections, _) {
+                        if (skippedRecords == 0 && skippedCollections == 0) {
+                          return const SizedBox.shrink();
+                        }
+                        final warnings = <String>[];
+                        if (skippedRecords > 0) {
+                          warnings.add(
+                            '$skippedRecords saved record(s) could not be read.',
+                          );
+                        }
+                        if (skippedCollections > 0) {
+                          warnings.add(
+                            '$skippedCollections collection entr(y/ies) were invalid, duplicated, or beyond the backup limit.',
+                          );
+                        }
+                        return Semantics(
+                          liveRegion: true,
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.errorContainer,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Text(
+                              '${warnings.join(' ')} A backup may omit these entries or include only normalized collection names. The original raw entries were not deleted; use a previous known-good backup if you need to recover skipped data.',
+                              style: TextStyle(
+                                color:
+                                    Theme.of(context).colorScheme.onErrorContainer,
+                                height: 1.35,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     );
                   },
                 ),
