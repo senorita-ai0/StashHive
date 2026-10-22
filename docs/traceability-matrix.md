@@ -440,3 +440,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003 and NFR-003 (robust loading of local records).
 - Test: TC-070 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-364 — Theme-aware Quick Save item-kind label contrast
+
+- Implementation: `lib/main.dart`, `_buildKindPicker` label foreground selection.
+- Requirement: NFR-006 (text contrast and theme support).
+- Test: TC-071 in `test/accessibility_widgets_test.dart`.
+- Verification: source/test committed but unrun; manual visual review remains pending.
