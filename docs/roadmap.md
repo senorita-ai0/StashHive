@@ -568,3 +568,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-385:** Repository save now rejects an item whose collection assignment would introduce a new name after the collection list reaches 500, closing a bypass around the Add Collection limit.
 - Added a regression that seeds 500 collections, attempts a save with a new assigned name, and confirms no item is written. Test source is committed but unrun.
+
+
+### Phase 3 — narrow-width Library header with enlarged text (2026-10-22)
+
+- **TSK-386:** The Library brand title now obeys the available row width and uses a single-line ellipsis, preventing the logo/title/filter controls from forcing a horizontal overflow at narrow widths with enlarged text.
+- Added a widget regression for Library and Search at 320×568 with 2× text scaling. Test source is committed but unrun; visual review remains part of the manual accessibility checkpoint.
