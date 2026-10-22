@@ -230,3 +230,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-329:** Replaced the single muted foreground color with theme-aware colors. Light theme muted text now uses `#646C82` (about 5.0:1 on the `#F8F9FD` canvas and 5.2:1 on white); dark theme uses `#AAB2C5` (about 8.4:1 on `#131724` and 7.1:1 on `#202638`). This addresses the previous muted color's 3.5:1 contrast on the light canvas.
 - Added widget regressions that calculate contrast against the actual theme canvas and input surface. Test source is committed but unrun; full visual/assistive-technology review remains pending.
+
+
+### Phase 2 — shared-link boundary punctuation (2026-10-22)
+
+- **TSK-330:** URL extraction from shared text removes trailing punctuation and unmatched closing brackets/parentheses while preserving balanced parentheses commonly found in real URL paths. The bracket-counting pass is linear-time to avoid repeated scans on long shared messages.
+- Added regressions for a wrapped URL and a legitimate URL ending in a balanced parenthesis. Test source is committed but unrun; validate against real Android share payloads during the manual checkpoint.
