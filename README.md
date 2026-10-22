@@ -51,6 +51,7 @@ OCR/PDF text extraction, in-app PDF rendering, cloud sync, accounts, public shar
 - [AI workflow](docs/AI_WORKFLOW.md)
 - [Blueprint review](docs/BLUEPRINT_REVIEW.md)
 - [Implementation progress](docs/implementation-progress.md)
+- [Performance benchmark guide](docs/performance-benchmark.md)
 
 ## Run locally
 
