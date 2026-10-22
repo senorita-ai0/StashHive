@@ -919,3 +919,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Reuse a moderate source string across enough valid item records that JSON escaping takes the serialized backup beyond the 145 MiB cap.
 - Confirm the encoder rejects it with the portable-size error before producing a full backup string.
 - Test source is committed but unrun; compare peak memory during the manual performance checkpoint.
+
+
+### TC-120 — Portable backup encoding size preflight
+
+- Encode multiple small attachment records with UTF-8 metadata (including accented, Urdu/CJK, and emoji text), quoted/backslash attachment keys, and payload byte lengths that exercise base64 rounding.
+- Confirm the encoder returns a portable backup within the 145 MiB UTF-8 byte cap, that its UTF-8 count matches the actual encoded bytes, and that decode preserves each attachment payload byte-for-byte.
+- This regression checks that the size estimate does not falsely reject normal escaped/multibyte metadata. It does not simulate an over-limit allocation; the pre-allocation rejection boundary and peak memory remain pending manual validation.
+- Source committed but unrun; keep CI manual-only.
