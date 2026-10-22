@@ -267,6 +267,24 @@ void main() {
       );
     });
 
+    test('export rejects empty or untrimmed tags', () {
+      for (final tags in <List<String>>[
+        const [''],
+        const ['   '],
+        const ['Reading '],
+      ]) {
+        expect(
+          () => BackupCodec.encode(
+            items: [sampleLink().copyWith(tags: tags)],
+            attachmentBytes: const {},
+            collections: const ['Learning'],
+          ),
+          throwsFormatException,
+          reason: 'Invalid tag lists should not enter portable backups.',
+        );
+      }
+    });
+
     test('export rejects saved URLs the restore format cannot accept', () {
       final overlongUrl = 'https://example.com/' +
           List<String>.filled(maxSavedItemUrlCharacters, 'a').join();
