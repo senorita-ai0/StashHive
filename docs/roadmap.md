@@ -478,3 +478,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-370:** Incoming file shares now reject filenames over 255 characters and MIME metadata over 128 characters before attempting file reads. Empty basenames get a safe attachment-name fallback after supported type classification.
 - Added share-intake regressions for oversized filename and MIME values. Tests are committed but unrun; real source-app metadata remains part of Android validation.
+
+
+### Phase 2 — reject orphaned attachment metadata (2026-10-22)
+
+- **TSK-371:** Strict saved-item validation now requires filename/MIME metadata to have an attachment key. This prevents stale fields from surviving through direct repository saves or being included in a portable backup after an attachment reference was removed.
+- Added repository and backup-codec regressions. Tests are committed but unrun.
