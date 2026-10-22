@@ -736,3 +736,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-010, FR-012–013 and NFR-003 (consistent collection navigation and backup metadata).
 - Test: TC-107 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-401 — Canonicalize collection spelling during restore
+
+- Implementation: `LibraryRepository.restoreDecodedBackup`, using the merged collection-name map before staging imported records.
+- Requirements: FR-010, FR-012–013 and NFR-003 (consistent portable collection assignments).
+- Test: TC-108 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
