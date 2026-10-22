@@ -51,10 +51,29 @@ class BackupCodec {
       items.map((item) => item.collection),
     );
     final attachments = <String, Object?>{};
+    final includedAttachmentKeys = <String>{};
     var totalBytes = 0;
     for (final item in items) {
       final key = item.attachmentKey;
-      if (key == null || key.isEmpty) continue;
+      if (key == null) {
+        if (item.kind == ItemKind.image || item.kind == ItemKind.document) {
+          throw const FormatException(
+            'An image or document item is missing its attachment key.',
+          );
+        }
+        continue;
+      }
+      if (item.kind != ItemKind.image && item.kind != ItemKind.document) {
+        throw const FormatException(
+          'Only image and document items can contain an attachment.',
+        );
+      }
+      if (key.trim().isEmpty || key.length > 128) {
+        throw const FormatException('An attachment key is invalid.');
+      }
+      // Multiple saved items may intentionally reference the same attachment.
+      // Include its bytes and count toward the backup budget only once.
+      if (!includedAttachmentKeys.add(key)) continue;
       final bytes = attachmentBytes[key];
       if (bytes == null) {
         throw FormatException(
