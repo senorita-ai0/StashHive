@@ -655,7 +655,7 @@ class _LibraryPageState extends State<LibraryPage> {
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
-                                      "${messages.join(' ')} The raw entries were not deleted, but this view or a new backup may omit invalid entries. Avoid clearing app/browser data; use a previous backup if you need to recover data.",
+                                      "${messages.join(' ')} The raw entries were not deleted, but this view or a new backup may omit invalid entries. Move any item assigned to a collection beyond the cap to an available collection or choose No collection. Avoid clearing app/browser data; use a previous backup if you need to recover data.",
                                       style: TextStyle(
                                         color: Theme.of(context).colorScheme.onErrorContainer,
                                         height: 1.35,
@@ -2996,10 +2996,10 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         }
         if (skippedCollections > 0) {
           final entryLabel = skippedCollections == 1
-              ? 'collection preference entry was'
-              : 'collection preference entries were';
+              ? 'collection name or assignment was'
+              : 'collection names or assignments were';
           omissions.add(
-            '$skippedCollections $entryLabel invalid, duplicated, or beyond the limit; the export will include only normalized, valid collection names.',
+            '$skippedCollections $entryLabel invalid, duplicated, or beyond the 500-collection limit.',
           );
         }
         final confirmed = await showDialog<bool>(
@@ -3173,10 +3173,10 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                         }
                         if (skippedCollections > 0) {
                           final entryLabel = skippedCollections == 1
-                              ? 'collection entry was'
-                              : 'collection entries were';
+                              ? 'collection name or assignment was'
+                              : 'collection names or assignments were';
                           warnings.add(
-                            '$skippedCollections $entryLabel invalid, duplicated, or beyond the backup limit.',
+                            '$skippedCollections $entryLabel invalid, duplicated, or beyond the 500-collection limit.',
                           );
                         }
                         return Semantics(
@@ -3189,7 +3189,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Text(
-                              '${warnings.join(' ')} A backup may omit these entries or include only normalized collection names. The original raw entries were not deleted; use a previous known-good backup if you need to recover skipped data.',
+                              '${warnings.join(' ')} A backup may omit unreadable records or normalize collection names. The raw data has not been intentionally deleted. Move any item assignment that exceeds the cap to an available collection or choose No collection before exporting.',
                               style: TextStyle(
                                 color:
                                     Theme.of(context).colorScheme.onErrorContainer,
