@@ -823,3 +823,10 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **TSK-420:** Aligned visible Flutter labels, generated Android launcher labels, web install metadata, README and current product/design documentation with StashTrail.
 - Internal package/Hive box identifiers and the version-1 `StashHive` backup marker remain unchanged so existing local data and version-1 exports stay compatible.
 - Added **TC-125** for the Library wordmark and **TC-126** for a version-1 backup marker round trip. Test source is committed but unrun; CI/build remains manual-only.
+
+
+### Phase 2 — attachment cleanup for unreadable records (2026-10-22)
+
+- **TSK-421:** Deleting an unreadable legacy record now recovers its raw attachment reference so unreferenced bytes can be cleaned up instead of stranded in local storage.
+- Cleanup still scans remaining raw records first, including unreadable legacy records, so bytes shared with any other item are preserved.
+- Added **TC-127** and **TC-128** for orphan cleanup and shared-payload retention. Regression source is committed but unrun; no tests/build/CI triggered.
