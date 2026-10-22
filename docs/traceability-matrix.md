@@ -135,3 +135,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009 (incoming shared content).
 - Test: TC-033 and `tool/test_configure_android_share_intents.py`.
 - Verification: configurator and regression source committed; Python execution and Android chooser/device delivery remain pending.
+
+
+### TSK-324 — Collision-resistant, bounded share fingerprints
+
+- Implementation: `lib/services/share_intake.dart` using direct dependency `crypto` for SHA-256 of canonical ordered share data.
+- Requirement: FR-009 (incoming shared content).
+- Test: TC-031 in `test/share_intake_test.dart`, including batch-content boundary cases.
+- Verification: source is committed; dependency resolution and test execution are pending the manual validation checkpoint.
