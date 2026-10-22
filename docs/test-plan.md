@@ -905,3 +905,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the model finds each exact stored script/emoji/punctuation token and matches uppercase/lowercase accented text where Dart lowercase conversion applies.
 - Confirm punctuation is preserved as literal substring content (for example, `release#42` matches and `release 42` does not). Do not infer OCR behavior or canonical-equivalence matching for differently normalized Unicode sequences.
 - Regression source is committed but unrun. Full widget search testing and target-device/browser text-entry behavior remain part of the manual validation checkpoint.
+
+
+### TC-116 — Backup encoder rejects duplicate item IDs
+
+- Pass two otherwise valid item records with the same ID but different titles/timestamps to the encoder.
+- Confirm export rejects the input before JSON output; the decoder's unique-ID rule and encoder rule must agree.
+- Codec regression source is committed but unrun.
