@@ -387,7 +387,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - Create two saved items sharing a payload whose key equals the owner item's ID.
 - Request a replacement key for the owner; it must not equal the shared key, and the original bytes must remain unchanged for the dependent item.
-- Verify an unshared item may keep its own key and an existing orphan payload is never silently overwritten by an unrelated new attachment.
+- Verify an unshared item may keep its own key, an existing orphan payload is never silently overwritten, and an attachment key referenced by a damaged legacy record is avoided even when its payload is missing.
 - Repository regression source is committed but unrun; perform actual replacement-file workflow on Android and web.
 
 
