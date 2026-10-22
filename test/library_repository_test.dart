@@ -412,6 +412,46 @@ void main() {
     expect(repository.findById('wrong-box-key'), isNull);
   });
 
+  test('keeps parseable legacy records visible for recovery actions', () async {
+    final unsafeLink = SavedItem(
+      id: 'legacy-unsafe-link',
+      kind: ItemKind.link,
+      title: 'Legacy unsafe link',
+      content: '',
+      url: 'javascript:alert(1)',
+      tags: const [],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 1000,
+    );
+    final missingImage = SavedItem(
+      id: 'legacy-missing-image',
+      kind: ItemKind.image,
+      title: 'Legacy missing image',
+      content: '',
+      tags: const [],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 1000,
+    );
+    await Hive.box<dynamic>('stashhive_items_v1')
+        .put(unsafeLink.id, unsafeLink.toMap());
+    await Hive.box<dynamic>('stashhive_items_v1')
+        .put(missingImage.id, missingImage.toMap());
+
+    await repository.save(buildLink(id: 'valid-after-legacy'));
+
+    expect(repository.findById(unsafeLink.id)?.url, 'javascript:alert(1)');
+    expect(repository.findById(missingImage.id)?.kind, ItemKind.image);
+    expect(repository.items.value.map((item) => item.id), containsAll([
+      unsafeLink.id,
+      missingImage.id,
+      'valid-after-legacy',
+    ]));
+  });
+
   test('rejects empty or untrimmed tags before repository writes', () async {
     await expectLater(
       repository.save(buildLink(id: 'empty-tag').copyWith(tags: const [''])),
