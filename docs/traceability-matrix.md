@@ -21,10 +21,10 @@
 | FR-015 | SCR-006, SCR-001, SCR-004 | TSK-003, TSK-303, TSK-422, TSK-425 | TC-015, TC-130, TC-133 | IN PROGRESS — storage reminders and platform-specific attachment copy added; browser restart/platform review pending |
 | FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205 | TC-016 | BLOCKED pending POC |
 | FR-017 | SCR-004 | TSK-203 | TC-017 | IN PROGRESS — URLs remain bookmarks without page scraping/capture; acceptance check pending |
-| FR-018 | SCR-006 | TSK-304, TSK-428 | TC-018, TC-136, TC-137 | IN PROGRESS — normal-operation and startup errors use safe fallback copy; privacy/log/network review pending |
+| FR-018 | SCR-006 | TSK-304, TSK-428, TSK-429 | TC-018, TC-136, TC-137 | IN PROGRESS — normal-operation and startup errors use safe fallback copy; privacy/log/network review pending |
 | FR-019 | SCR-001, SCR-002 | Later if approved | TC-019 | NOT STARTED / Could |
 | NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | IN PROGRESS — no backend/account integration in core source; offline and network inspection pending |
-| NFR-002 | SCR-006 | TSK-304, TSK-428 | TC-018, TC-136, TC-137 | IN PROGRESS — startup and routine error UI hide raw unexpected storage/plugin details; permissions/logging/network inspection pending |
+| NFR-002 | SCR-006 | TSK-304, TSK-428, TSK-429 | TC-018, TC-136, TC-137 | IN PROGRESS — startup and routine error UI hide raw unexpected storage/plugin details; permissions/logging/network inspection pending |
 | NFR-003 | SCR-006 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426 | TC-012–015, TC-117, TC-120, TC-122, TC-134 | IN PROGRESS — backup byte limits and preference-write rollback source added; execution/platform verification pending |
 | NFR-004 | SCR-004, SCR-006 | TSK-203, TSK-425, TSK-427 | TC-006, TC-017, TC-133, TC-135 | IN PROGRESS — platform-specific local-storage/search copy added; end-to-end wording review pending |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
