@@ -272,6 +272,43 @@ void main() {
     expect(repository.collections.value, hasLength(BackupCodec.maxCollections));
   });
 
+  test('canonicalizes case-only collection assignments for legacy and new items', () async {
+    await Hive.box<dynamic>('stashhive_preferences_v1').put(
+      'collections',
+      <String>['Learning'],
+    );
+    final legacy = buildLink(
+      id: 'legacy-lowercase-collection',
+      collection: 'learning',
+    );
+    await Hive.box<dynamic>('stashhive_items_v1')
+        .put(legacy.id, legacy.toMap());
+
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(
+      repository.findById(legacy.id)?.collection,
+      'Learning',
+    );
+    expect(
+      repository.items.value
+          .singleWhere((item) => item.id == legacy.id)
+          .collection,
+      'Learning',
+    );
+
+    final newItem = buildLink(
+      id: 'new-lowercase-collection',
+      collection: 'learning',
+    );
+    await repository.save(newItem);
+
+    final stored = Hive.box<dynamic>('stashhive_items_v1').get(newItem.id);
+    expect(stored['collection'], 'Learning');
+    expect(repository.findById(newItem.id)?.collection, 'Learning');
+  });
+
   test('item-assigned collections remain reachable without preference entries', () async {
     await repository.save(
       buildLink(
