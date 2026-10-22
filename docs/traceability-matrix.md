@@ -664,3 +664,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (bounded restore memory and validated attachment integrity).
 - Test: TC-098 references existing byte/checksum assertions in `test/backup_codec_test.dart` and `test/library_repository_test.dart`.
 - Verification: source committed; tests and memory profile remain pending.
+
+
+### TSK-392 — Picked attachment filename preflight
+
+- Implementation: `QuickSavePage._pickAttachment` in `lib/main.dart`.
+- Requirements: FR-008–009 and NFR-003 (bounded file intake and consistent metadata constraints).
+- Test: TC-099 manual/mocked picker case.
+- Verification: source committed; picker-specific behavior remains pending.
