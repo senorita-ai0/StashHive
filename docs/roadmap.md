@@ -296,3 +296,10 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-340:** Expanded share-intake regression coverage to exercise actual local file reads for a text document and an image, reject an unsupported `.exe` share, and reject a file larger than 15 MiB based on its length before reading its contents.
 - Tests use isolated temporary directories and clean them up even when assertions fail. Source is committed but unrun; Android content URI/permission behavior remains a device-validation requirement.
+
+
+### Phase 2 — attachment invariants during item edits (2026-10-22)
+
+- **TSK-341:** Quick Save now preserves an existing attachment only when the edited item keeps the same attachment-bearing kind. Switching an image/document to a note or link clears attachment key/name/MIME metadata; switching between image/document requires an explicitly chosen compatible file.
+- `LibraryRepository.save` independently enforces that only image/document kinds may carry attachment references, that both kinds require a valid key, and that provided bytes respect the 15 MiB cap. After a successful edit it best-effort deletes a no-longer-referenced old payload, but keeps bytes if another readable or unreadable raw item still references them.
+- Added repository regressions for kind/reference invariants, orphan cleanup and shared-reference preservation. Tests are authored but unrun; filesystem interruption behavior remains pending.
