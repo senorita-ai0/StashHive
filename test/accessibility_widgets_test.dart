@@ -30,6 +30,16 @@ void main() {
     await testDirectory.delete(recursive: true);
   });
 
+  test('item-type text accents meet contrast against their pastel fills', () {
+    for (final kind in ItemKind.values) {
+      expect(
+        _contrastRatio(kind.readableTextAccent, kind.softAccent),
+        greaterThanOrEqualTo(4.5),
+        reason: '${kind.label} badge text must meet normal-text contrast.',
+      );
+    }
+  });
+
   testWidgets('muted text meets contrast on light surfaces', (tester) async {
     late Color muted;
     late Color canvas;
