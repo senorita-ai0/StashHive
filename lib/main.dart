@@ -688,7 +688,9 @@ class _LibraryPageState extends State<LibraryPage> {
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: columns,
                               mainAxisExtent: savedItemCardExtentForTextScale(
-                                MediaQuery.textScalerOf(context).scale(1.0),
+                                savedItemTextScaleFactor(
+                                  MediaQuery.textScalerOf(context).scale(14.0),
+                                ),
                               ),
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 10,
@@ -944,7 +946,9 @@ class _SearchPageState extends State<SearchPage> {
                                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: columns,
                                           mainAxisExtent: savedItemCardExtentForTextScale(
-                                            MediaQuery.textScalerOf(context).scale(1.0),
+                                            savedItemTextScaleFactor(
+                                  MediaQuery.textScalerOf(context).scale(14.0),
+                                ),
                                           ),
                                           crossAxisSpacing: 12,
                                           mainAxisSpacing: 10,
