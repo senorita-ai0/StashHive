@@ -602,6 +602,48 @@ class _LibraryPageState extends State<LibraryPage> {
                           color: Theme.of(context).textTheme.bodySmall?.color,
                         )),
                 const SizedBox(height: 17),
+                ValueListenableBuilder<int>(
+                  valueListenable: widget.repository.skippedRecordCount,
+                  builder: (context, skippedCount, _) {
+                    if (skippedCount == 0) return const SizedBox.shrink();
+                    final message = skippedCount == 1
+                        ? '1 saved record could not be read.'
+                        : '$skippedCount saved records could not be read.';
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Semantics(
+                        liveRegion: true,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.errorContainer,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.warning_amber_rounded,
+                                color: Theme.of(context).colorScheme.onErrorContainer,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  '$message The raw entries were not deleted, but this library view and new backups may omit them. Avoid clearing app/browser data; use a previous backup if you need to recover these records.',
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onErrorContainer,
+                                    height: 1.35,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 Semantics(
                   button: true,
                   label: 'Search your library',
