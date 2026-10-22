@@ -760,3 +760,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Restore a valid backup whose item and collection metadata use `learning`.
 - Confirm the restored item model, the raw persisted record and the visible collection list use one canonical `Learning` spelling.
 - Repository regression source is committed but unrun.
+
+
+### TC-109 — Block export until overflow assignments are repaired
+
+- Seed 500 portable collection names and a legacy saved item assigned to a distinct 501st collection.
+- Open Backup & Privacy and start export; confirm it blocks the export before the partial-export dialog and explains how to repair the item's assignment.
+- Confirm the item remains present and unmodified. Repository/widget test source is committed but unrun.
