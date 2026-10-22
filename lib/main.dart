@@ -1520,8 +1520,9 @@ class _QuickSavePageState extends State<QuickSavePage> {
                         final input = value!.trim();
                         final candidate = input.contains('://') ? input : 'https://' + input;
                         final uri = Uri.tryParse(candidate);
+                        final scheme = uri?.scheme.toLowerCase() ?? '';
                         if (uri == null ||
-                            (uri.scheme != 'https' && uri.scheme != 'http') ||
+                            (scheme != 'https' && scheme != 'http') ||
                             uri.host.isEmpty) {
                           return 'Enter a valid http or https URL.';
                         }
