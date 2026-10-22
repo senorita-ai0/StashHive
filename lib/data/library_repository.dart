@@ -592,6 +592,15 @@ class LibraryRepository {
       ..._itemsBox.keys.whereType<String>(),
       ..._attachmentsBox.keys.whereType<String>(),
     };
+    // Raw legacy records may reference a missing payload key. Reserve those
+    // references too so restore cannot accidentally make a different item use
+    // that key as its ID/attachment key and silently "heal" the legacy record.
+    for (final storedId in _itemsBox.keys) {
+      final value = _itemsBox.get(storedId);
+      if (value is Map && value['attachmentKey'] is String) {
+        reserved.add(value['attachmentKey'] as String);
+      }
+    }
     final seenImportedIds = <String>{};
     final mappedAttachmentKeys = <String, String>{};
     final stagedAttachmentKeys = <String>{};
