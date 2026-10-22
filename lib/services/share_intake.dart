@@ -80,12 +80,10 @@ class ShareEventDeduplicator {
     final parsedPath = Uri.tryParse(rawPath);
     final localPath =
         parsedPath?.scheme == 'file' ? parsedPath!.toFilePath() : rawPath;
-    final normalizedPath = localPath.replaceAll('\\', '/');
-    final fileName = normalizedPath.split('/').where((part) => part.isNotEmpty).lastOrNull ?? '';
-    final extension = guessMimeTypeFromFilename(fileName);
+    final inferredByExtension = guessMimeTypeFromFilename(localPath);
     final sharedMime = item.mimeType?.trim().toLowerCase() ?? '';
-    final inferred = extension != defaultBinaryMimeType
-        ? extension
+    final inferred = inferredByExtension != defaultBinaryMimeType
+        ? inferredByExtension
         : sharedMime.isEmpty || sharedMime == defaultBinaryMimeType
             ? defaultBinaryMimeType
             : sharedMime;
