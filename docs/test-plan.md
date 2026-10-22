@@ -418,3 +418,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Render Quick Save with text scaling at 2×.
 - Confirm Link/Note/Image/Document remain separately named and visible, with Image/Document wrapping into a second row rather than clipping in four narrow columns.
 - Confirm the frame has no layout exception. Widget test source is committed but unrun; manually check common phone widths and system accessibility text settings.
+
+
+### TC-062 — URL entry must not reinterpret non-web schemes
+
+- Verify `example.com` and `example.com:8443/guide` normalize to HTTPS.
+- Verify `javascript:alert(1)`, `file:`, `mailto:`, `http:example.com` and malformed host-port strings are rejected at the field boundary and nothing is saved.
+- Repeat the classification for incoming shared text/URL parsing using `test/web_url_test.dart` and `test/share_intake_test.dart`.
+- Unit/widget test source is committed but unrun; repeat valid-link open flow on Android/web after the manual checkpoint.
