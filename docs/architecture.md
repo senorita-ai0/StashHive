@@ -123,9 +123,10 @@ flowchart TD
 
 ## Architecture status
 
-- `DONE`: proposed component boundaries, main entity model, important trade-offs, privacy boundaries.
-- `IN PROGRESS`: selection of database/attachment format; Android share API proof of concept; web persistence/backup proof of concept; OCR feasibility.
-- `NOT STARTED`: product source implementation, dependency pinning, migrations, deployment.
+- `DONE`: proposed component boundaries, main entity model, important trade-offs, privacy boundaries, and initial Flutter/repository/backup/share source implementation.
+- `IN PROGRESS`: validation of Hive CE on Android/web; Android share API behavior on device; browser persistence/backup behavior; backup recovery/checksum regressions; dependency and license review.
+- `BLOCKED / DEFERRED`: OCR feasibility and text-extraction implementation until a separate offline feasibility study is approved.
+- `NOT STARTED`: final release/deployment decisions, opt-in user testing, and store-readiness checks.
 
 
 ## Phase 1 implementation update — 2026-10-21
@@ -141,3 +142,8 @@ The first code slice uses three Hive CE boxes via `LibraryRepository`: saved-ite
 ## Phase 2 implementation note — share-event fingerprinting (2026-10-22)
 
 The incoming-share deduplicator serializes each ordered batch's type, path and MIME type, then uses the SHA-256 digest as its short-lived cache key. The cache is bounded by entry count and stores digest strings rather than shared text or paths. The direct dependency is `crypto: ^3.0.7`; package resolution and browser/Android build compatibility remain unverified until the owner requests the manual validation run.
+
+
+## Phase 2/3 implementation status — 2026-10-22
+
+Core source now includes sequential incoming-share review, bounded/collision-resistant share-event fingerprints, backup/restore validation and rollback coverage, per-attachment SHA-256 integrity checks, text-scale-aware card sizing, theme-aware muted-text contrast, and accessible search/favorite/action semantics. These are source-level changes with regression tests authored; no claim is made that the tests, web/Android builds, Android chooser behavior, browser restart persistence, or screen-reader checks have passed. The manual validation workflow remains disabled for automatic push triggers by owner request.
