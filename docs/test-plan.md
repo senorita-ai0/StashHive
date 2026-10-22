@@ -927,3 +927,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the encoder returns a portable backup within the 145 MiB UTF-8 byte cap, that its UTF-8 count matches the actual encoded bytes, and that decode preserves each attachment payload byte-for-byte.
 - This regression checks that the size estimate does not falsely reject normal escaped/multibyte metadata. It does not simulate an over-limit allocation; the pre-allocation rejection boundary and peak memory remain pending manual validation.
 - Source committed but unrun; keep CI manual-only.
+
+
+### TC-118 — Caller cannot mutate bytes after passing them to save
+
+- Pass a mutable `Uint8List` to repository save.
+- Mutate the caller's input buffer during the post-attachment/pre-item-commit hook.
+- Confirm `readAttachment` returns the original byte sequence, independent of later caller mutations.
+- Repository regression source is committed but unrun.
