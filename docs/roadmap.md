@@ -376,3 +376,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-353:** Incoming share intake now prefers the inferred MIME type for recognized supported file extensions when the platform's MIME header conflicts. This keeps stored content type aligned with the filename-based classification and avoids saving a text document as a PNG (or vice versa).
 - Added a file-based regression for a PNG labelled `text/plain` and a TXT file labelled `image/png`. Test source is committed but unrun; real Android share metadata remains a manual validation item.
+
+
+### Phase 3 — responsive Quick Save item-kind selector (2026-10-22)
+
+- **TSK-354:** The Link/Note/Image/Document selector now wraps into two columns on narrow layouts or when enlarged system text would crowd the labels; roomy desktop layouts retain four columns. Labels can occupy two lines instead of always truncating after one.
+- Added a widget regression at 2× text scale to verify the second row exists, all four controls remain semantically available and no layout exception is reported. Source/test committed but unrun; device visual checks remain pending.
