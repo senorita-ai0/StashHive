@@ -58,6 +58,12 @@ class BackupCodec {
         item.tags.any((tag) => tag.length > 100)) {
       throw const FormatException('A saved item exceeds supported limits.');
     }
+    if ((item.attachmentName?.trim().isEmpty ?? false) ||
+        (item.attachmentName?.length ?? 0) > 255 ||
+        (item.attachmentMimeType?.trim().isEmpty ?? false) ||
+        (item.attachmentMimeType?.length ?? 0) > 128) {
+      throw const FormatException('A saved item has invalid attachment metadata.');
+    }
     final collection = item.collection;
     if (collection != null &&
         (collection.trim().isEmpty ||
