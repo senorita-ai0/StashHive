@@ -873,3 +873,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Save three items with deliberately different titles, creation timestamps and update timestamps.
 - Confirm the default Recently saved order uses newest updates first, Title A–Z uses a case-insensitive title comparison, and Oldest first uses creation timestamps ascending.
 - Confirm changing sort order does not change saved-item metadata. The widget regression source is committed but unrun; check menu usability at narrow width and enlarged text during manual visual/accessibility review.
+
+
+### TC-114 — Partial backup of unexportable legacy items
+
+- Seed an unsafe legacy URL and a missing-payload image beside a valid item.
+- Confirm the repository's export preflight counts the two unexportable records, creates a backup containing only valid records, records the omission count in optional metadata, and keeps the original records unchanged locally.
+- On Backup & Privacy, attempt export and confirm the dialog explains invalid fields/missing attachments and asks before omission; cancel and confirm no share flow starts.
+- Confirm restore displays that unexportable items omitted from the source backup cannot be recovered from that file. Regression source is committed but unrun.
