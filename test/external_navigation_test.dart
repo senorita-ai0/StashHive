@@ -97,6 +97,45 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('favorite failure on a legacy unsafe link shows repair guidance', (tester) async {
+    const legacyId = 'legacy-unsafe-favorite';
+    final legacyItem = SavedItem(
+      id: legacyId,
+      kind: ItemKind.link,
+      title: 'Repair this old link',
+      content: '',
+      url: 'javascript:alert(1)',
+      tags: const [],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 1000,
+    );
+    await Hive.box<dynamic>('stashhive_items_v1')
+        .put(legacyId, legacyItem.toMap());
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.ItemDetailsPage(
+          repository: repository,
+          itemId: legacyId,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Favorite'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'This item needs repair before it can be updated. Edit it to correct its URL or reselect a missing file.',
+      ),
+      findsOneWidget,
+    );
+    expect(repository.findById(legacyId)?.isFavorite, isFalse);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('legacy non-web URL is rejected before external launch', (tester) async {
     const legacyId = 'legacy-malicious-link';
     final legacyItem = SavedItem(
