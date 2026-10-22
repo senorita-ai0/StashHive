@@ -889,3 +889,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Capture output for 100, 1,000 and 10,000 metadata-only items. Record the date, OS, Flutter/Dart versions and JSON output; note the runtime mode and any unusual machine load.
 - Review repository open/validation, repeated search and favorites filtering, an existing-item edit, and backup encoding results. Rerun surprising results on the same environment before comparison.
 - The harness imposes no latency threshold and must not be used to claim attachment or Android/web performance. Source is committed; measurements are pending. This is a deliberate local command, not an automatically triggered CI job.
+
+
+### TC-115 — Portable item cap for legacy library export
+
+- Seed 10,001 structurally valid local notes directly into the store to represent an older library exceeding the current cap.
+- Confirm repository state retains all 10,001 records, export produces a valid backup with 10,000 items, and metadata reports one omitted unexportable record.
+- Confirm the repository's collection-overflow gate is computed from items that will actually be exported, not records omitted by the portable item/attachment checks.
+- Test source is committed but unrun.
