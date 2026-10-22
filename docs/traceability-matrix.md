@@ -264,3 +264,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003, FR-008, NFR-003 (attachments and safe cleanup).
 - Test: TC-048 in `test/library_repository_test.dart`.
 - Verification: implementation/test committed; unit execution and platform storage behavior remain pending.
+
+
+### TSK-342 — Shared saved-item validation
+
+- Implementation: `lib/services/backup_codec.dart` `validateSavedItem`, called by `LibraryRepository.save`, backup encode and decode; `lib/main.dart` URL input boundary.
+- Requirements: FR-001–003, FR-012–013 and NFR-003 (valid save/export/restore data).
+- Test: TC-049, `test/backup_codec_test.dart`, and `test/library_repository_test.dart`.
+- Verification: implementation and regression source committed; execution remains pending manual validation.
