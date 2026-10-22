@@ -712,3 +712,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-389:** Shared-file intake now reads via `XFile.openRead()` into a bounded byte reader. It cancels the stream as soon as cumulative bytes would exceed 15 MiB, so a stale or unavailable provider length cannot trigger an unbounded `readAsBytes()` allocation.
 - Added stream-reader tests for exact-limit acceptance and early cancellation at the first over-limit chunk. Test source is committed but unrun; real Android content-provider behavior remains pending.
+
+
+### Phase 2 — normalize legacy item metadata on materialization (2026-10-22)
+
+- **TSK-390:** `SavedItem.fromMap` now trims legacy titles, URLs and attachment filenames, and normalizes attachment MIME metadata to lowercase. This matches the normalization already applied to tags and collections and prevents surrounding whitespace/case drift from being carried into later edits/exports; URL scheme safety remains enforced separately at save/open boundaries.
+- Added a model regression for padded title/URL/filename and mixed-case MIME metadata. Test source is committed but unrun.
