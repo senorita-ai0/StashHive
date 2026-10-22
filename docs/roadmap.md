@@ -830,3 +830,4 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **TSK-421:** Deleting an unreadable legacy record now recovers its raw attachment reference so unreferenced bytes can be cleaned up instead of stranded in local storage.
 - Cleanup still scans remaining raw records first, including unreadable legacy records, so bytes shared with any other item are preserved.
 - Added **TC-127** and **TC-128** for orphan cleanup and shared-payload retention. Regression source is committed but unrun; no tests/build/CI triggered.
+- Added **TC-129** for rollback if an error is reported after attachment removal. The case remains source-authored and unrun.
