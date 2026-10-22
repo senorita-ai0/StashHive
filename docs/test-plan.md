@@ -302,3 +302,12 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Share a URL at 4,097 characters; confirm intake rejects it with a clear limit message.
 - Share a valid URL with accompanying text at 1,000,001 characters; confirm the draft is rejected using the stated text-character limit.
 - Unit regression source is authored but unrun; cross-check the caps with backup decode/encode limits.
+
+
+### TC-047 — Shared image/document byte intake
+
+- Share a small TXT document with generic MIME metadata and confirm extension-based MIME fallback, filename, bytes and document type.
+- Share a small PNG image and confirm image type, filename, MIME and bytes.
+- Share an unsupported `.exe` file and confirm a recoverable unsupported-type error.
+- Create a file one byte over the 15 MiB limit and confirm intake rejects it using the length check before reading the full payload.
+- Unit regression source is committed but unrun. Android content URI permissions, source-app chooser and actual attachment persistence remain NOT STARTED.
