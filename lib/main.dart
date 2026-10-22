@@ -2104,6 +2104,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
             icon: const Icon(Icons.ios_share_rounded),
           ),
           PopupMenuButton<String>(
+            tooltip: 'Item actions',
             onSelected: (value) {
               if (value == 'edit') _edit();
               if (value == 'delete') _delete();
@@ -2576,6 +2577,7 @@ class _CollectionsPageState extends State<CollectionsPage> {
                           (count == 1 ? ' saved item' : ' saved items'),
                     ),
                     trailing: PopupMenuButton<String>(
+                      tooltip: 'Actions for $name collection',
                       onSelected: (action) {
                         if (action == 'rename') _newCollection(oldName: name);
                         if (action == 'delete') _deleteCollection(name);
