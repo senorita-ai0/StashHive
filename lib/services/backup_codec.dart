@@ -40,6 +40,55 @@ class BackupCodec {
   static const int maxTotalAttachmentBytes = 100 * 1024 * 1024;
   static const int maxJsonCharacters = 145 * 1024 * 1024;
 
+  /// Validates item fields shared by repository saves and backup export/import.
+  /// Keeping these constraints aligned prevents StashHive from exporting a
+  /// backup that its own decoder would later reject.
+  static void validateSavedItem(SavedItem item) {
+    _validateSavedItemMap(item.toMap());
+
+    if (item.id.isEmpty || item.id.length > 128) {
+      throw const FormatException('A saved item has an invalid identifier.');
+    }
+    if (item.title.trim().isEmpty || item.title.length > 500) {
+      throw const FormatException('A saved item has an invalid title.');
+    }
+    if (item.content.length > 1000000 ||
+        (item.url?.length ?? 0) > maxSavedItemUrlCharacters ||
+        item.tags.length > 100 ||
+        item.tags.any((tag) => tag.length > 100)) {
+      throw const FormatException('A saved item exceeds supported limits.');
+    }
+    final collection = item.collection;
+    if (collection != null &&
+        (collection.trim().isEmpty ||
+            collection.trim() != collection ||
+            collection.length > 80)) {
+      throw const FormatException('A saved item has an invalid collection name.');
+    }
+    if (item.attachmentKey != null &&
+        item.kind != ItemKind.image &&
+        item.kind != ItemKind.document) {
+      throw const FormatException(
+        'Only image and document items can contain an attachment.',
+      );
+    }
+    if (item.kind == ItemKind.link) {
+      final uri = Uri.tryParse(item.url ?? '');
+      if (uri == null ||
+          (uri.scheme.toLowerCase() != 'https' &&
+              uri.scheme.toLowerCase() != 'http') ||
+          uri.host.isEmpty) {
+        throw const FormatException('A saved link in the backup is invalid.');
+      }
+    }
+    if ((item.kind == ItemKind.image || item.kind == ItemKind.document) &&
+        !item.hasAttachment) {
+      throw const FormatException(
+        'An image or document item has no local attachment reference.',
+      );
+    }
+  }
+
   static String encode({
     required List<SavedItem> items,
     required Map<String, Uint8List> attachmentBytes,
@@ -179,7 +228,7 @@ class BackupCodec {
         throw const FormatException('The backup contains duplicate item IDs.');
       }
       if (item.content.length > 1000000 ||
-          (item.url?.length ?? 0) > 4096 ||
+          (item.url?.length ?? 0) > maxSavedItemUrlCharacters ||
           item.tags.length > 100 ||
           item.tags.any((tag) => tag.length > 100)) {
         throw const FormatException('A saved item exceeds supported limits.');
