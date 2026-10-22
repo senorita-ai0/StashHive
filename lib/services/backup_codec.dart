@@ -40,6 +40,8 @@ class BackupCodec {
   static const int maxAttachmentBytes = 15 * 1024 * 1024;
   static const int maxTotalAttachmentBytes = 100 * 1024 * 1024;
   static const int maxJsonCharacters = 145 * 1024 * 1024;
+  static const int minSupportedTimestampMs = -8640000000000000;
+  static const int maxSupportedTimestampMs = 8640000000000000;
 
   /// Validates item fields shared by repository saves and backup export/import.
   /// Keeping these constraints aligned prevents StashHive from exporting a
@@ -55,6 +57,14 @@ class BackupCodec {
     }
     if (item.kind == ItemKind.note && item.content.trim().isEmpty) {
       throw const FormatException('A saved note must contain some text.');
+    }
+    if (item.createdAtMs < minSupportedTimestampMs ||
+        item.createdAtMs > maxSupportedTimestampMs ||
+        item.updatedAtMs < minSupportedTimestampMs ||
+        item.updatedAtMs > maxSupportedTimestampMs) {
+      throw const FormatException(
+        'A saved item has a timestamp outside the supported date range.',
+      );
     }
     if (item.content.length > 1000000 ||
         (item.url?.length ?? 0) > maxSavedItemUrlCharacters ||
@@ -387,6 +397,16 @@ class BackupCodec {
     final attachmentKey = value['attachmentKey'] as String?;
     final attachmentName = value['attachmentName'] as String?;
     final attachmentMimeType = value['attachmentMimeType'] as String?;
+    final createdAtMs = value['createdAtMs'] as int;
+    final updatedAtMs = value['updatedAtMs'] as int;
+    if (createdAtMs < minSupportedTimestampMs ||
+        createdAtMs > maxSupportedTimestampMs ||
+        updatedAtMs < minSupportedTimestampMs ||
+        updatedAtMs > maxSupportedTimestampMs) {
+      throw const FormatException(
+        'A saved item has a timestamp outside the supported date range.',
+      );
+    }
     if (id.isEmpty ||
         id.length > 128 ||
         title.length > 500 ||
