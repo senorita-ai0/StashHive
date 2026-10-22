@@ -34,6 +34,15 @@ enum ItemKind {
         ItemKind.document => const Color(0xFF3673BE),
       };
 
+  /// Darker foreground colours for small labels over each pastel chip fill.
+  /// [accent] remains the more flexible icon/border colour used on other surfaces.
+  Color get readableTextAccent => switch (this) {
+        ItemKind.link => const Color(0xFF5152C5),
+        ItemKind.note => const Color(0xFF8B5614),
+        ItemKind.image => const Color(0xFF176B61),
+        ItemKind.document => const Color(0xFF2B5F9F),
+      };
+
   Color get softAccent => switch (this) {
         ItemKind.link => const Color(0xFFEEF0FF),
         ItemKind.note => const Color(0xFFFFF2DF),
