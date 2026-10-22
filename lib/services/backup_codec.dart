@@ -576,16 +576,6 @@ class BackupCodec {
     final attachmentKey = value['attachmentKey'] as String?;
     final attachmentName = value['attachmentName'] as String?;
     final attachmentMimeType = value['attachmentMimeType'] as String?;
-    final createdAtMs = value['createdAtMs'] as int;
-    final updatedAtMs = value['updatedAtMs'] as int;
-    if (createdAtMs < minSupportedTimestampMs ||
-        createdAtMs > maxSupportedTimestampMs ||
-        updatedAtMs < minSupportedTimestampMs ||
-        updatedAtMs > maxSupportedTimestampMs) {
-      throw const FormatException(
-        'A saved item has a timestamp outside the supported date range.',
-      );
-    }
     if (id.isEmpty ||
         id.length > 128 ||
         title.length > 500 ||
