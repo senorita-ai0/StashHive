@@ -440,3 +440,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Enter a URL that exceeds the supported 4,096-character limit, attempt to save, and confirm the field exposes the specific limit message.
 - Confirm no record is written and the user remains on the form to edit the value.
 - Widget source is committed but unrun; repeat at narrow width and enlarged text scale to review error-message wrapping.
+
+
+### TC-065 — Tag field integrity
+
+- Attempt to save/export tags that are empty, whitespace-only, or have leading/trailing whitespace.
+- Confirm the repository and backup encoder reject malformed tags before persistence/export, while Quick Save's comma-separated input continues to trim entries and ignore empty separators.
+- Regression source is committed but unrun.
