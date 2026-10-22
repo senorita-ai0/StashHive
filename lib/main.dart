@@ -1418,7 +1418,10 @@ class _QuickSavePageState extends State<QuickSavePage> {
       // user chooses replacement bytes, use this item's ID as a new key so
       // changing one item does not overwrite the bytes shared by other items.
       final String? attachmentKey = _selectedBytes != null
-          ? id
+          ? widget.repository.attachmentKeyForReplacement(
+              id,
+              currentAttachmentKey: existing?.attachmentKey,
+            )
           : preservesExistingAttachment
               ? existing!.attachmentKey
               : null;
