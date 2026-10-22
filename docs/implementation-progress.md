@@ -141,6 +141,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Centralized attachment byte-list validation, including a pre-iteration length cap for oversized legacy payloads.
 - [x] Bound raw local record field sizes during recovery so oversized records are skipped and counted while parseable legacy records with safe-to-display field sizes remain visible.
 - [x] Added Item Details regression source for missing legacy image/document payloads and restore guidance.
+- [x] Added a common 10,000-item cap enforced before new saves and restore writes, keeping local data representable in the versioned backup format.
 - [x] Share-event canonicalization now follows each media type's effective draft fields; regressions cover equivalent text payloads and ignored file-message metadata.
 - [x] Aligned tag normalization/validation across saved-item deserialization, repository writes and backup encode/decode, with case-insensitive duplicate regressions.
 - [x] Incoming file shares now bound filename/MIME metadata before file I/O; regressions cover the oversize cases.
