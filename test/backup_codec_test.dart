@@ -374,6 +374,22 @@ void main() {
       );
     });
 
+    test('rejects attachment metadata without an attachment reference', () {
+      final linkWithStaleMetadata = sampleLink().copyWith(
+        attachmentName: 'old-image.png',
+        attachmentMimeType: 'image/png',
+      );
+
+      expect(
+        () => BackupCodec.encode(
+          items: [linkWithStaleMetadata],
+          attachmentBytes: const {},
+          collections: const ['Learning'],
+        ),
+        throwsFormatException,
+      );
+    });
+
     test('rejects files which are not StashHive backups', () {
       expect(
         () => BackupCodec.decode(jsonEncode({'app': 'OtherApp', 'formatVersion': 1})),
