@@ -527,3 +527,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Deserialize a legacy item with `Reading`, `reading`, `Work`, blank entries and padded duplicates; confirm it normalizes to `Reading`, `Work`.
 - Attempt to save/export an item containing both `Reading` and `reading`; strict validation must reject it.
 - Test source is committed but unrun; confirm tag chips/counts remain stable after restart and backup restore.
+
+
+### TC-077 — Incoming attachment metadata limits
+
+- Share a file with a filename longer than 255 characters and verify a clear filename-limit rejection before reading bytes.
+- Share an otherwise image-classified file with MIME metadata longer than 128 characters and verify the metadata limit is reported before file I/O.
+- Confirm valid file shares continue to preserve their name/MIME/bytes. Test source is committed but unrun.
