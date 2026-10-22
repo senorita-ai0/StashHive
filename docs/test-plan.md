@@ -859,3 +859,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Decode a backup with one or more attachments and confirm the stored byte sequences match the original source.
 - Confirm SHA-256 tamper detection, empty-payload rejection and combined-byte-limit preflight continue to apply.
 - Existing codec tests cover the behaviors; execution and near-limit memory profiling remain pending.
+
+
+### TC-113 — Collection row counts match case-insensitive contents
+
+- Create a visible `Learning` collection and an item whose legacy assignment is `learning`.
+- Confirm the collection row displays `1 saved item`, and that Collection Contents also lists it.
+- Widget regression source is committed but unrun.
