@@ -947,8 +947,8 @@ class _SearchPageState extends State<SearchPage> {
                                           crossAxisCount: columns,
                                           mainAxisExtent: savedItemCardExtentForTextScale(
                                             savedItemTextScaleFactor(
-                                  MediaQuery.textScalerOf(context).scale(14.0),
-                                ),
+                                              MediaQuery.textScalerOf(context).scale(14.0),
+                                            ),
                                           ),
                                           crossAxisSpacing: 12,
                                           mainAxisSpacing: 10,
