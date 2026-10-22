@@ -140,10 +140,15 @@ class LibraryRepository {
   }) {
     final targetHasStoredPayload = _attachmentsBox.containsKey(itemId);
     final targetIsCurrentKey = currentAttachmentKey == itemId;
-    final targetIsShared = targetIsCurrentKey &&
+    final targetIsReferencedByOther =
         isAttachmentReferencedByOtherItem(itemId, itemId);
 
-    if (!targetHasStoredPayload || (targetIsCurrentKey && !targetIsShared)) {
+    if (!targetHasStoredPayload && !targetIsReferencedByOther) {
+      return itemId;
+    }
+    if (targetIsCurrentKey &&
+        targetHasStoredPayload &&
+        !targetIsReferencedByOther) {
       return itemId;
     }
 
