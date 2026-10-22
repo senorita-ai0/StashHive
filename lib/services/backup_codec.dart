@@ -456,7 +456,7 @@ class BackupCodec {
       }
       final Uint8List bytes;
       try {
-        bytes = Uint8List.fromList(base64Decode(encoded));
+        bytes = base64Decode(encoded);
       } on FormatException {
         throw const FormatException('An attachment contains invalid base64 data.');
       }
