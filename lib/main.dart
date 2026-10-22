@@ -614,7 +614,7 @@ class _StorageSafetyReminder extends StatelessWidget {
                 ),
                 FilledButton.tonal(
                   onPressed: onCreateBackup,
-                  child: const Text('Create backup'),
+                  child: const Text('Backup options'),
                 ),
               ],
             ),
