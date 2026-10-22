@@ -128,7 +128,7 @@ void main() {
 
     expect(
       find.text(
-        'This item needs repair before it can be updated. Edit it to correct its URL or reselect a missing file.',
+        'Could not update this item. Open Edit to review its saved details and repair any invalid URL or missing file.',
       ),
       findsOneWidget,
     );
