@@ -632,3 +632,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-008–009 (consistent incoming file classification and metadata).
 - Test: TC-094 in `test/share_intake_test.dart`.
 - Verification: source/test committed but unrun; device-level source metadata remains unverified.
+
+
+### TSK-388 — Collection creation rollback
+
+- Implementation: `LibraryRepository.addCollection`, with `addCollectionAfterWriteForTesting` fault-injection seam.
+- Requirements: FR-010, FR-012–013 and NFR-003 (local persistence recovery).
+- Test: TC-095 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
