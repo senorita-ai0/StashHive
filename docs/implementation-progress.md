@@ -157,6 +157,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Quick Save and backup restore now consume picker byte streams through the shared hard-capped reader, complementing bounded OS-share reads.
 - [x] Quick Save and OS-share intake now reuse the backup codec's single attachment-byte limit instead of duplicating the 15 MiB literal.
 - [x] Backup decode now rejects base64 payloads that cannot fit the remaining combined byte budget before allocating decoded attachment buffers.
+- [x] Item Details now handles image decoder failures with a recoverable preview-unavailable message while keeping the original attachment saved/shareable.
 - [x] Kept older version-1 backups with case-only duplicate collection labels importable; restore normalizes the names during merge.
 - [x] Collection creation now rolls back preference writes when the storage future reports a late failure; a fault-injection regression covers the no-prior-key case.
 - [x] Backup restore now fully validates once before showing confirmation, retains only the decoded backup for the accepted restore, and removes the second full JSON decode.
