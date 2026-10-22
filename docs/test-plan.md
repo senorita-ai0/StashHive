@@ -381,3 +381,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Corrupt an existing attachment record with a non-integer list entry and confirm `readAttachment` returns no payload rather than silently dropping invalid bytes.
 - Attempt backup export and confirm it fails with a useful damaged-attachment message instead of exporting mutated bytes.
 - Regression source is committed but unrun; verify recovery instructions and backup/restore from a known-good backup manually.
+
+
+### TC-057 — Copy-on-write attachment replacement
+
+- Create two saved items sharing a payload whose key equals the owner item's ID.
+- Request a replacement key for the owner; it must not equal the shared key, and the original bytes must remain unchanged for the dependent item.
+- Verify an unshared item may keep its own key and an existing orphan payload is never silently overwritten by an unrelated new attachment.
+- Repository regression source is committed but unrun; perform actual replacement-file workflow on Android and web.
