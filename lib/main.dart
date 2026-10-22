@@ -18,7 +18,11 @@ import 'ui/layout_metrics.dart';
 
 const Color kBrand = Color(0xFF5B5CE2);
 const Color kInk = Color(0xFF1B2340);
-const Color kMuted = Color(0xFF7B849D);
+const Color kMutedLight = Color(0xFF646C82);
+const Color kMutedDark = Color(0xFFAAB2C5);
+
+Color mutedTextColor(BuildContext context) =>
+    Theme.of(context).brightness == Brightness.dark ? kMutedDark : kMutedLight;
 const Color kCanvas = Color(0xFFF8F9FD);
 const Color kBorder = Color(0xFFE7E9F2);
 const int kMaxAttachmentBytes = 15 * 1024 * 1024;
@@ -183,7 +187,7 @@ ThemeData buildLightTheme() {
       selectedColor: const Color(0xFFEEF0FF),
       side: const BorderSide(color: kBorder),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      labelStyle: const TextStyle(fontSize: 12, color: kMuted),
+      labelStyle: const TextStyle(fontSize: 12, color: kMutedLight),
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
     ),
     navigationBarTheme: NavigationBarThemeData(
@@ -795,7 +799,7 @@ class EmptyLibraryState extends StatelessWidget {
                 isFiltered
                     ? 'Try another filter or add something new to this library.'
                     : 'Links, ideas, screenshots and files—all in one calm, searchable place.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: kMuted),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: mutedTextColor(context)),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 18),
@@ -866,7 +870,7 @@ class _SearchPageState extends State<SearchPage> {
                         )),
                 const SizedBox(height: 6),
                 Text('Find something you saved, without remembering where.',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: kMuted)),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: mutedTextColor(context))),
                 const SizedBox(height: 18),
                 TextField(
                   controller: _controller,
@@ -922,7 +926,7 @@ class _SearchPageState extends State<SearchPage> {
                               child: Text(
                                 '${results.length} ${results.length == 1 ? 'result' : 'results'}',
                                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                      color: kMuted,
+                                      color: mutedTextColor(context),
                                       fontWeight: FontWeight.w600,
                                     ),
                               ),
@@ -991,7 +995,7 @@ class EmptySearchState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.search_off_rounded, size: 46, color: kMuted),
+            Icon(Icons.search_off_rounded, size: 46, color: mutedTextColor(context)),
             const SizedBox(height: 12),
             Text(hasQuery ? 'No matches found' : 'Your search starts here',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
@@ -1001,7 +1005,7 @@ class EmptySearchState extends StatelessWidget {
                   ? 'Try a different word, a URL, a note or a tag.'
                   : 'Your saved items will appear here as soon as you add them.',
               textAlign: TextAlign.center,
-              style: const TextStyle(color: kMuted),
+              style: TextStyle(color: mutedTextColor(context)),
             ),
             if (hasQuery) ...[
               const SizedBox(height: 14),
@@ -1082,7 +1086,7 @@ class SavedItemTile extends StatelessWidget {
                       _summary(item),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(color: kMuted),
+                      style: theme.textTheme.bodySmall?.copyWith(color: mutedTextColor(context)),
                     ),
                     const SizedBox(height: 7),
                     Row(
@@ -1109,7 +1113,7 @@ class SavedItemTile extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: kMuted,
+                              color: mutedTextColor(context),
                               fontSize: 10,
                             ),
                           ),
@@ -1121,7 +1125,7 @@ class SavedItemTile extends StatelessWidget {
               ),
               PopupMenuButton<String>(
                 tooltip: 'Actions for ${item.title}',
-                icon: const Icon(Icons.more_horiz_rounded, color: kMuted),
+                icon: Icon(Icons.more_horiz_rounded, color: mutedTextColor(context)),
                 onSelected: (action) async {
                   if (action == 'favorite') {
                     await repository.toggleFavorite(item.id);
@@ -1453,7 +1457,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                   const SizedBox(height: 6),
                   const Text(
                     'Keep the things you want to find again.',
-                    style: TextStyle(color: kMuted),
+                    style: TextStyle(color: mutedTextColor(context)),
                   ),
                   if ((widget.initialShare?.shareTotal ?? 1) > 1) ...[
                     const SizedBox(height: 14),
@@ -1703,7 +1707,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                   const SizedBox(height: 4),
                   Text(
                     hasCurrent ? 'Tap to choose a replacement file' : 'Select a file up to 15 MB',
-                    style: const TextStyle(color: kMuted, fontSize: 12),
+                    style: TextStyle(color: mutedTextColor(context), fontSize: 12),
                   ),
                 ],
               ),
@@ -1975,7 +1979,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                 ),
                 const SizedBox(height: 7),
                 Text('Saved ' + _formatDate(item.createdAt),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: kMuted)),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: mutedTextColor(context))),
                 const SizedBox(height: 18),
                 Wrap(
                   spacing: 8,
@@ -2135,8 +2139,8 @@ class DetailSectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         label,
-        style: const TextStyle(
-          color: kMuted,
+        style: TextStyle(
+          color: mutedTextColor(context),
           fontSize: 11,
           fontWeight: FontWeight.w800,
           letterSpacing: 1.2,
@@ -2253,7 +2257,7 @@ class _CollectionsPageState extends State<CollectionsPage> {
                   ],
                 ),
                 const SizedBox(height: 5),
-                const Text('Bring related things together.', style: TextStyle(color: kMuted)),
+                Text('Bring related things together.', style: TextStyle(color: mutedTextColor(context))),
                 const SizedBox(height: 18),
                 SegmentedButton<bool>(
                   segments: const [
@@ -2298,7 +2302,7 @@ class _CollectionsPageState extends State<CollectionsPage> {
                   const Text(
                     'Collections group related items. Tags can still help you connect ideas across collections.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: kMuted, height: 1.4),
+                    style: TextStyle(color: mutedTextColor(context), height: 1.4),
                   ),
                   const SizedBox(height: 18),
                   FilledButton.icon(
@@ -2426,7 +2430,7 @@ class _CollectionsPageState extends State<CollectionsPage> {
                   const Text(
                     'Add comma-separated tags while saving or editing an item. They will be collected here automatically.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: kMuted),
+                    style: TextStyle(color: mutedTextColor(context)),
                   ),
                 ],
               ),
@@ -2450,7 +2454,7 @@ class _CollectionsPageState extends State<CollectionsPage> {
               child: ListTile(
                 leading: const Icon(Icons.sell_outlined, color: kBrand),
                 title: Text(tag, style: const TextStyle(fontWeight: FontWeight.w600)),
-                trailing: Text(counts[tag].toString(), style: const TextStyle(color: kMuted)),
+                trailing: Text(counts[tag].toString(), style: TextStyle(color: mutedTextColor(context))),
                 onTap: () => Navigator.of(context).push<void>(
                   MaterialPageRoute(
                     builder: (_) => CollectionContentsPage(
@@ -2585,7 +2589,7 @@ class SettingsPage extends StatelessWidget {
                         letterSpacing: -0.7,
                       )),
               const SizedBox(height: 5),
-              const Text('Make StashHive feel like yours.', style: TextStyle(color: kMuted)),
+              Text('Make StashHive feel like yours.', style: TextStyle(color: mutedTextColor(context))),
               const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(16),
@@ -2605,7 +2609,7 @@ class SettingsPage extends StatelessWidget {
                               style: TextStyle(color: kInk, fontWeight: FontWeight.w700)),
                           SizedBox(height: 4),
                           Text('Local-first · No account required',
-                              style: TextStyle(color: kMuted, fontSize: 12)),
+                              style: TextStyle(color: mutedTextColor(context), fontSize: 12)),
                         ],
                       ),
                     ),
@@ -2683,7 +2687,7 @@ class SettingsPage extends StatelessWidget {
               const Center(
                 child: Text(
                   'Made for the things you want to keep.',
-                  style: TextStyle(color: kMuted, fontSize: 12),
+                  style: TextStyle(color: mutedTextColor(context), fontSize: 12),
                 ),
               ),
             ],
@@ -2748,7 +2752,7 @@ class SettingsRow extends StatelessWidget {
         ),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
-        trailing: const Icon(Icons.chevron_right_rounded, color: kMuted),
+        trailing: Icon(Icons.chevron_right_rounded, color: mutedTextColor(context)),
       ),
     );
   }
@@ -2888,7 +2892,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 Text('in your control.',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
                 const SizedBox(height: 7),
-                const Text('Keep a safe copy you can restore later.', style: TextStyle(color: kMuted)),
+                Text('Keep a safe copy you can restore later.', style: TextStyle(color: mutedTextColor(context))),
                 const SizedBox(height: 20),
                 Container(
                   padding: const EdgeInsets.all(15),
@@ -2913,7 +2917,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                               kIsWeb
                                   ? 'Your library stays in this browser profile; it is not synced to the cloud.'
                                   : 'StashHive does not sync your library to the cloud.',
-                              style: TextStyle(color: kMuted, fontSize: 12),
+                              style: TextStyle(color: mutedTextColor(context), fontSize: 12),
                             ),
                           ],
                         ),
@@ -2925,7 +2929,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 Text('Backup', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 5),
                 const Text('Export your metadata and copied attachments into a portable file.',
-                    style: TextStyle(color: kMuted)),
+                    style: TextStyle(color: mutedTextColor(context))),
                 const SizedBox(height: 12),
                 ValueListenableBuilder<List<SavedItem>>(
                   valueListenable: widget.repository.items,
@@ -2942,7 +2946,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 Text('Restore', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 5),
                 const Text('Bring a previous StashHive backup into this library.',
-                    style: TextStyle(color: kMuted)),
+                    style: TextStyle(color: mutedTextColor(context))),
                 const SizedBox(height: 12),
                 _BackupCard(
                   icon: Icons.file_upload_outlined,
@@ -2988,7 +2992,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 const SizedBox(height: 8),
                 const Text(
                   'Version 1 JSON backup. Includes saved metadata, tags, collections, and copied attachments up to 15 MB each and 100 MB combined. Import validates the version, IDs, URL schemes, file sizes and attachment data before writing.',
-                  style: TextStyle(color: kMuted, fontSize: 12, height: 1.5),
+                  style: TextStyle(color: mutedTextColor(context), fontSize: 12, height: 1.5),
                 ),
               ],
             ),
@@ -3048,7 +3052,7 @@ class _BackupCard extends StatelessWidget {
                     children: [
                       Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
                       const SizedBox(height: 4),
-                      Text(subtitle, style: const TextStyle(fontSize: 12, color: kMuted)),
+                      Text(subtitle, style: TextStyle(fontSize: 12, color: mutedTextColor(context))),
                     ],
                   ),
                 ),
