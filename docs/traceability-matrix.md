@@ -552,3 +552,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003, FR-012–013 and NFR-003 (portable, bounded library data).
 - Test: TC-084 in `test/backup_codec_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-378 — Reserve dangling attachment keys during restore
+
+- Implementation: `LibraryRepository.restoreBackup` reserves raw `attachmentKey` values as well as existing box keys before resolving ID collisions.
+- Requirements: FR-008, FR-011–013 and NFR-003 (preserve attachment identity during recovery).
+- Test: TC-085 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
