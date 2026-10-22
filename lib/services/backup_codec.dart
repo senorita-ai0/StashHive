@@ -274,8 +274,12 @@ class BackupCodec {
     if (items.length > maxItems) {
       throw const FormatException('The library contains too many items to export.');
     }
+    final ids = <String>{};
     for (final item in items) {
       validateSavedItem(item);
+      if (!ids.add(item.id)) {
+        throw const FormatException('The library contains duplicate item IDs.');
+      }
     }
     final safeCollections = _normalizeCollectionNames(
       collections,
