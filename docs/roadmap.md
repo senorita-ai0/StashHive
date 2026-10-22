@@ -628,3 +628,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-395:** `LibraryRepository.readAttachment` now returns a validated `Uint8List`; Library thumbnails, Item Details previews and file sharing consume that buffer directly instead of wrapping it in a second `Uint8List.fromList` copy.
 - Existing repository byte-integrity assertions remain applicable. Test source is committed but unrun; preview/rebuild memory behavior still needs device profiling.
+
+
+### Phase 2 — remove the duplicate byte buffer during backup export (2026-10-22)
+
+- **TSK-396:** Backup & Privacy now passes the byte list returned by `utf8.encode` directly to `XFile.fromData` instead of copying the entire backup into a second `Uint8List`. This reduces peak allocation pressure for exports near the 145 MiB cap.
+- Existing export/restore round-trip tests cover content integrity; source is committed but tests and large-backup memory profiling remain pending.
