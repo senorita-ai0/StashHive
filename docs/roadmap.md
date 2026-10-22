@@ -562,3 +562,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-384:** Collection reload now merges valid collection names assigned on visible saved items with the preference list, deduplicating case-insensitively and preserving the 500-name cap. Legacy collection strings are trimmed in model deserialization; whitespace-only assignments normalize to unassigned. Save/delete refresh both item and collection notifiers so navigation stays current.
 - Added model and repository regressions for collection normalization, preference-less assignments and backup portability. Test source is committed but unrun.
+
+
+### Phase 2 — enforce collection cap through item assignment (2026-10-22)
+
+- **TSK-385:** Repository save now rejects an item whose collection assignment would introduce a new name after the collection list reaches 500, closing a bypass around the Add Collection limit.
+- Added a regression that seeds 500 collections, attempts a save with a new assigned name, and confirms no item is written. Test source is committed but unrun.
