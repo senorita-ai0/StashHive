@@ -601,3 +601,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed an unknown-kind record, an oversized-content record and a record whose Hive key differs from the embedded ID.
 - Trigger refresh and verify all are skipped and counted; `findById` using each raw Hive key must also return null.
 - Confirm parseable legacy records with valid field shape but unsafe URLs/missing attachments remain directly retrievable for repair. Regression source is committed but unrun.
+
+
+### TC-087 — Invalid legacy item update feedback
+
+- Seed a parseable saved link with a non-web URL, open Item Details and activate Favorite.
+- Confirm the repository rejects the invalid record update safely, the favorite flag remains unchanged, repair guidance appears, and no widget exception escapes.
+- Widget regression source is committed but unrun; test the equivalent Library card menu on Android/web during the manual checkpoint.
