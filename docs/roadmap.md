@@ -242,3 +242,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-331:** Newly encoded backups now carry a SHA-256 checksum for each unique attachment payload. Restore validates the checksum after base64 decoding, detecting changed bytes even when the payload remains syntactically valid base64. Existing version-1 backups without the optional checksum remain importable.
 - Added regressions for checksum output, modified-byte rejection and legacy version-1 compatibility. Tests are authored but unrun; backup recovery is not marked verified until manual validation.
+
+
+### Phase 2 — precise shared-text limit messaging (2026-10-22)
+
+- **TSK-332:** The intake guard is character-count based, so its error now says “1,000,000-character limit” rather than “1 MB,” which is misleading for non-ASCII and emoji content.
+- The unit regression now checks the actual error copy. Test source is committed but unrun.
