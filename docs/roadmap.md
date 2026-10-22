@@ -550,3 +550,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-382:** Collection reload now trims names, de-duplicates them case-insensitively, rejects malformed/oversized entries, and caps the visible list at the 500-collection backup limit. It exposes a skipped-entry count and shares the Library's live-region recovery banner with malformed saved records.
 - Added repository tests for duplicate/malformed entries and a 501st legacy collection, plus a widget regression for the warning. Source/tests are committed but unrun.
+
+
+### Phase 2 — avoid redundant attachment-buffer copies (2026-10-22)
+
+- **TSK-383:** Shared-file intake now retains the buffer returned by `XFile.readAsBytes()`; Quick Save passes its picked `Uint8List` directly to the repository; restore staging reuses decoded attachment buffers rather than copying each payload again. This lowers peak allocation pressure near the 15 MiB per-file / 100 MiB combined limits.
+- Existing intake, repository and backup round-trip tests already assert byte-for-byte preservation; source is committed but those tests remain unrun.
