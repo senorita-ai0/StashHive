@@ -34,7 +34,7 @@ Color favoriteStarColor(BuildContext context) =>
         : const Color(0xFF996400);
 const Color kCanvas = Color(0xFFF8F9FD);
 const Color kBorder = Color(0xFFE7E9F2);
-const int kMaxAttachmentBytes = 15 * 1024 * 1024;
+const int kMaxAttachmentBytes = BackupCodec.maxAttachmentBytes;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
