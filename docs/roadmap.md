@@ -224,3 +224,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-328:** The canonical share fingerprint now includes the platform-provided message as well as media type, path and MIME type. Two intentional shares of the same URL with different accompanying text are no longer collapsed as duplicates, while identical initial-intent/stream deliveries remain deduplicated.
 - Added a regression for same-path/different-message events. Test source is committed but unrun; confirm message parity from real Android source apps during device validation.
+
+
+### Phase 3 — theme-aware muted-text contrast (2026-10-22)
+
+- **TSK-329:** Replaced the single muted foreground color with theme-aware colors. Light theme muted text now uses `#646C82` (about 5.0:1 on the `#F8F9FD` canvas and 5.2:1 on white); dark theme uses `#AAB2C5` (about 8.4:1 on `#131724` and 7.1:1 on `#202638`). This addresses the previous muted color's 3.5:1 contrast on the light canvas.
+- Added widget regressions that calculate contrast against the actual theme canvas and input surface. Test source is committed but unrun; full visual/assistive-technology review remains pending.
