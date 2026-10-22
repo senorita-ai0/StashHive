@@ -337,6 +337,42 @@ class BackupCodec {
       exportedAt: decoded['exportedAt'] is String ? decoded['exportedAt'] as String : '',
     );
   }
+  /// Validates only the on-disk field types and collection sizes needed to
+  /// safely materialize a legacy record for recovery. Business invariants such
+  /// as URL scheme, required attachment reference and tag normalization belong
+  /// to save/export validation, not to hiding an otherwise viewable local item.
+  static void validateStoredRecordMap(Map<dynamic, dynamic> value) {
+    if (value['id'] is! String ||
+        value['kind'] is! String ||
+        value['title'] is! String ||
+        value['content'] is! String ||
+        value['tags'] is! List ||
+        value['isFavorite'] is! bool ||
+        value['createdAtMs'] is! int ||
+        value['updatedAtMs'] is! int) {
+      throw const FormatException(
+        'A saved item is missing required fields or has invalid field types.',
+      );
+    }
+    if ((value['url'] != null && value['url'] is! String) ||
+        (value['collection'] != null && value['collection'] is! String) ||
+        (value['attachmentKey'] != null && value['attachmentKey'] is! String) ||
+        (value['attachmentName'] != null && value['attachmentName'] is! String) ||
+        (value['attachmentMimeType'] != null &&
+            value['attachmentMimeType'] is! String)) {
+      throw const FormatException(
+        'A saved item contains invalid optional field types.',
+      );
+    }
+    final tags = value['tags'] as List;
+    if (tags.length > 100 ||
+        tags.any((tag) => tag is! String || (tag as String).length > 100)) {
+      throw const FormatException(
+        'A saved item contains an invalid or oversized tag list.',
+      );
+    }
+  }
+
   /// Validates the raw record shape before model parsing can normalize
   /// malformed field values into defaults.
   static void validateSavedItemMap(Map<dynamic, dynamic> value) {
