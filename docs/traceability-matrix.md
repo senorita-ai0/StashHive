@@ -824,3 +824,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008, FR-013 and NFR-003 (bounded attachment/backup memory).
 - Test: TC-098 and helper regressions in `test/attachment_bytes_test.dart`.
 - Verification: source/test committed but unrun; Android/web provider memory behavior remains pending.
+
+
+### TSK-392 — Centralized attachment size limit
+
+- Implementation: `BackupCodec.maxAttachmentBytes` referenced by Quick Save and `ShareIntake`.
+- Requirements: FR-008–009, FR-012–013 and NFR-003 (consistent bounded import/export).
+- Test: TC-099 plus stream-boundary tests in `test/attachment_bytes_test.dart`.
+- Verification: source committed; test execution remains pending.
