@@ -356,8 +356,8 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — copy-on-write keys for shared attachment replacements (2026-10-22)
 
-- **TSK-350:** Quick Save now asks the repository for a safe attachment key before writing replacement bytes. If the preferred item-ID key already stores an orphaned payload or is shared by another raw record, it allocates an unused key rather than overwriting data owned by another saved item.
-- Added repository tests for shared-key preservation, the normal unshared-key path and collisions with orphaned payloads. Source/test are committed but unrun; validate replacement-file behavior on Android/web during the manual checkpoint.
+- **TSK-350:** Quick Save now asks the repository for a safe attachment key before writing replacement bytes. If the preferred item-ID key already stores an orphaned payload or is referenced by another raw record (even when that record's bytes are missing), it allocates an unused key rather than overwriting or healing data under another saved item's reference.
+- Added repository tests for shared-key preservation, the normal unshared-key path, collisions with orphaned payloads, and missing-but-still-referenced legacy keys. Source/test are committed but unrun; validate replacement-file behavior on Android/web during the manual checkpoint.
 
 
 ### Phase 3 — selected item-kind semantics in Quick Save (2026-10-22)
