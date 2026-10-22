@@ -475,6 +475,43 @@ void main() {
       }
     });
 
+    test('uses recognized file extension when shared MIME conflicts', () async {
+      final directory =
+          await Directory.systemTemp.createTemp('stashhive_share_mime_conflict_');
+      try {
+        final imageFile = File('${directory.path}/reference.png');
+        final imageBytes = [137, 80, 78, 71];
+        await imageFile.writeAsBytes(imageBytes);
+        final image = await ShareIntake.fromSharedMedia(
+          SharedMediaFile(
+            path: imageFile.path,
+            type: SharedMediaType.file,
+            mimeType: 'text/plain',
+          ),
+        );
+
+        final textFile = File('${directory.path}/notes.txt');
+        final textBytes = [72, 105, 10];
+        await textFile.writeAsBytes(textBytes);
+        final document = await ShareIntake.fromSharedMedia(
+          SharedMediaFile(
+            path: textFile.path,
+            type: SharedMediaType.file,
+            mimeType: 'image/png',
+          ),
+        );
+
+        expect(image?.kind, ItemKind.image);
+        expect(image?.mimeType, 'image/png');
+        expect(image?.bytes, orderedEquals(imageBytes));
+        expect(document?.kind, ItemKind.document);
+        expect(document?.mimeType, 'text/plain');
+        expect(document?.bytes, orderedEquals(textBytes));
+      } finally {
+        await directory.delete(recursive: true);
+      }
+    });
+
     test('reads a supported image share into an image draft', () async {
       final directory =
           await Directory.systemTemp.createTemp('stashhive_share_image_test_');
