@@ -18,7 +18,7 @@
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415 | TC-012, TC-117, TC-119, TC-120 | IN PROGRESS — bounded-size source added; execution and platform export pending |
 | FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415 | TC-013, TC-117, TC-119, TC-120 | IN PROGRESS — codec/source added; restore tests pending |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | IN PROGRESS — local-first flows are implemented in source; offline/restart tests pending |
-| FR-015 | SCR-006, SCR-001 | TSK-003, TSK-303, TSK-422 | TC-015, TC-130 | IN PROGRESS — local-storage reminder source added; browser restart/storage verification pending |
+| FR-015 | SCR-006, SCR-001, SCR-004 | TSK-003, TSK-303, TSK-422, TSK-425 | TC-015, TC-130, TC-133 | IN PROGRESS — storage reminders and platform-specific attachment copy added; browser restart/platform review pending |
 | FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205 | TC-016 | BLOCKED pending POC |
 | FR-017 | SCR-004 | TSK-203 | TC-017 | IN PROGRESS — URLs remain bookmarks without page scraping/capture; acceptance check pending |
 | FR-018 | SCR-006 | TSK-304 | TC-018 | IN PROGRESS — local-only UI/source added; privacy checks pending |
@@ -992,3 +992,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-003; when repository deletion fails, remain on Item Details and display a recoverable error rather than allowing an uncaught exception to escape.
 - Regression: TC-132 in `test/accessibility_widgets_test.dart` injects an error after attachment removal and checks that the item and bytes are restored by the repository rollback path.
 - Verification: test source authored but unrun; rollback remains best-effort under real storage interruption.
+
+
+### TSK-425 — Platform-specific Item Details attachment location
+
+- Implementation: `lib/main.dart`, Item Details attachment metadata.
+- Requirement: FR-015/NFR-004; web describes data as stored in the current browser profile while Android describes device-local storage.
+- Regression: `test/accessibility_widgets_test.dart` checks the native label; TC-133 explicitly checks both platforms.
+- Verification: source is committed; widget test is unrun, and browser/native copy still needs visual confirmation.
