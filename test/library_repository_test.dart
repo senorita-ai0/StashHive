@@ -107,6 +107,51 @@ void main() {
     );
   });
 
+  test('restore rejects a merged collection count over the backup limit before writes', () async {
+    await Hive.box<dynamic>('stashhive_preferences_v1').put(
+      'collections',
+      List<String>.generate(
+        BackupCodec.maxCollections,
+        (index) => 'Collection $index',
+      ),
+    );
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+    await repository.save(buildLink(
+      id: 'existing-before-overlimit-restore',
+      collection: 'Collection 0',
+    ));
+
+    final incoming = buildLink(
+      id: 'incoming-overlimit-restore',
+      collection: 'New imported collection',
+    );
+    final backup = BackupCodec.encode(
+      items: [incoming],
+      attachmentBytes: const {},
+      collections: const ['New imported collection'],
+    );
+
+    await expectLater(
+      repository.restoreBackup(backup),
+      throwsA(
+        isA<FormatException>().having(
+          (error) => error.message,
+          'message',
+          contains('500-collection limit'),
+        ),
+      ),
+    );
+
+    expect(repository.items.value, hasLength(1));
+    expect(repository.findById('existing-before-overlimit-restore'), isNotNull);
+    expect(repository.findById('incoming-overlimit-restore'), isNull);
+    expect(
+      repository.collections.value,
+      hasLength(BackupCodec.maxCollections),
+    );
+  });
+
   test('collection creation stops at the portable backup limit', () async {
     await Hive.box<dynamic>('stashhive_preferences_v1').put(
       'collections',
