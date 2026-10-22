@@ -1385,6 +1385,14 @@ class _QuickSavePageState extends State<QuickSavePage> {
             : const ['pdf', 'txt', 'doc', 'docx', 'rtf', 'csv'],
       );
       if (!mounted || file == null) return;
+      if (file.name.trim().isEmpty) {
+        _showMessage('The selected file has no usable filename. Rename it and try again.');
+        return;
+      }
+      if (file.name.length > 255) {
+        _showMessage('Filenames must be 255 characters or shorter.');
+        return;
+      }
 
       // Inspect file length before allocating the full byte buffer. On web and
       // mobile this keeps oversized selections from consuming unbounded memory.
