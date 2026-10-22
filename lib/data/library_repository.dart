@@ -107,8 +107,8 @@ class LibraryRepository {
   void _refreshItems() {
     final result = <SavedItem>[];
     var skipped = 0;
-    for (final entry in _itemsBox.toMap().entries) {
-      final value = entry.value;
+    for (final storedId in _itemsBox.keys) {
+      final value = _itemsBox.get(storedId);
       if (value is! Map) {
         skipped++;
         continue;
@@ -119,7 +119,7 @@ class LibraryRepository {
         // strict save/export rules must not make such records disappear.
         BackupCodec.validateStoredRecordMap(value);
         final item = SavedItem.fromMap(value);
-        if (entry.key is! String || entry.key != item.id) {
+        if (storedId is! String || storedId != item.id) {
           throw const FormatException(
             'A saved item key does not match its item identifier.',
           );
