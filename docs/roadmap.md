@@ -786,3 +786,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-414:** Expanded the saved-item model search regression matrix to explicitly cover case-insensitive accented words, emoji, hash/punctuation tokens and bracketed text, alongside the existing English, Urdu-script and Roman Urdu coverage. This is intended to protect stored user-entered text; it does not promise OCR or accent-folding across different Unicode normalization forms.
 - Added **TC-118** in `test/saved_item_test.dart`. Regression source is committed but unrun; NFR-005 remains IN PROGRESS until the manual test checkpoint and target-platform search review.
+
+
+### Phase 2 — reject duplicate IDs during backup export (2026-10-22)
+
+- **TSK-412:** The backup encoder now checks item-ID uniqueness before writing JSON, matching the decoder's rule. A direct encoder caller can no longer create a backup with duplicate IDs that StashHive will later reject during restore.
+- Added a codec regression using two different records with the same ID. Test source is committed but unrun.
