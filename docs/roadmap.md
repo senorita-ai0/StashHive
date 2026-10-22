@@ -758,7 +758,7 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 3 — Search result sorting parity (2026-10-22)
 
-- **TSK-413:** Search Results now has the sort control specified by SCR-003 and mirrors Library's three options: Recently saved (most recently updated first), Oldest first (creation timestamp ascending), and Title A–Z (case-insensitive). The result count and sort control use a wrapping layout so they can separate cleanly at narrow widths or enlarged text.
+- **TSK-416:** Search Results now has the sort control specified by SCR-003 and mirrors Library's three options: Recently saved (most recently updated first), Oldest first (creation timestamp ascending), and Title A–Z (case-insensitive). The result count and sort control use a wrapping layout so they can separate cleanly at narrow widths or enlarged text.
 - Added widget regression source for all three ordering modes. Source/test are committed but unrun; visual comparison, large-text checks and screen-reader review remain pending. CI stays manual-only.
 
 
@@ -797,10 +797,4 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 ### Phase 2 — preflight backup JSON size before full serialization (2026-10-22)
 
 - **TSK-413:** The encoder now measures per-item JSON and attachment-entry/base64 sizes against the 145 MiB portable cap before constructing the full backup JSON or allocating each base64 string. This catches large aggregate note metadata early instead of allocating an oversized JSON string and only then rejecting it.
-- Added a boundary regression with shared large source text across many items so escaped JSON exceeds the cap without requiring a huge input fixture. Test source is committed but unrun; peak-memory profiling remains pending.
-
-
-### Phase 2 — preflight portable backup size before JSON/base64 allocation (2026-10-22)
-
-- **TSK-416:** Backup encoding now estimates UTF-8 size incrementally from the root structure, separately encoded item maps, attachment metadata and exact base64 character counts. It rejects a backup that exceeds the 145 MiB portable limit before allocating the large base64 strings or the final JSON string, while retaining a final exact-size guard.
-- Added **TC-120** to cover UTF-8/escaped metadata, attachment key quoting, per-payload byte round-trips and valid output-size parity. It is a bounded happy-path regression; oversized-boundary rejection and memory behavior still require deliberate validation. Test source is committed but unrun.
+- Added **TC-117**, a boundary regression with shared large source text across enough valid records that escaped JSON exceeds the cap without requiring a huge input fixture, plus **TC-120** for UTF-8/escaped attachment metadata and output-size parity. Test sources are committed but unrun; peak-memory profiling remains pending.
