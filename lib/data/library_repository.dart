@@ -202,6 +202,12 @@ class LibraryRepository {
   Future<void> save(SavedItem item, {List<int>? attachmentBytes}) async {
     BackupCodec.validateSavedItem(item);
     final key = item.attachmentKey;
+    final hadPreviousItem = _itemsBox.containsKey(item.id);
+    final previousItemValue = _itemsBox.get(item.id);
+    final previousAttachmentKey = previousItemValue is Map &&
+            previousItemValue['attachmentKey'] is String
+        ? previousItemValue['attachmentKey'] as String
+        : null;
     final requiresAttachment =
         item.kind == ItemKind.image || item.kind == ItemKind.document;
 
@@ -229,28 +235,27 @@ class LibraryRepository {
         'The selected attachment is empty or contains invalid byte values.',
       );
     }
-    if (key != null &&
-        attachmentBytes != null &&
-        isAttachmentReferencedByOtherItem(item.id, key)) {
-      throw const FormatException(
-        'This attachment is shared with another item. Use a new attachment key when replacing its bytes.',
-      );
+    if (key != null && attachmentBytes != null) {
+      if (_attachmentsBox.containsKey(key) && previousAttachmentKey != key) {
+        throw const FormatException(
+          'That attachment key already contains another payload. Choose a new key rather than overwriting it.',
+        );
+      }
+      if (isAttachmentReferencedByOtherItem(item.id, key)) {
+        throw const FormatException(
+          'This attachment is shared with another item. Use a new attachment key when replacing its bytes.',
+        );
+      }
     }
     if (key != null && attachmentBytes == null) {
       final stored = _attachmentsBox.get(key);
-      if (!_isValidAttachmentBytes(stored)) {
+      if (!isValidAttachmentByteList(stored)) {
         throw StateError(
           'The selected attachment is missing or unreadable. Please select it again.',
         );
       }
     }
 
-    final hadPreviousItem = _itemsBox.containsKey(item.id);
-    final previousItemValue = _itemsBox.get(item.id);
-    final previousAttachmentKey = previousItemValue is Map &&
-            previousItemValue['attachmentKey'] is String
-        ? previousItemValue['attachmentKey'] as String
-        : null;
     final hadPreviousAttachment =
         key != null && _attachmentsBox.containsKey(key);
     final previousAttachment =
