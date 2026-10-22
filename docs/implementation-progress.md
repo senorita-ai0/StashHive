@@ -146,6 +146,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Direct repository lookups now apply the same raw type/size and box-key/embedded-ID checks as refresh, while retaining recoverable parseable legacy records.
 - [x] Library card and Item Details favorite actions now show repair guidance when strict saves reject a recoverable but invalid legacy record.
 - [x] Backup restore now uses the file_picker single-file API, rejects oversized/unknown-size backups before bulk reads, and repeats the cap check after loading bytes.
+- [x] Legacy collection preferences are normalized case-insensitively and capped at 500 on reload; skipped entries share the accessible recovery warning.
 - [x] Share-event canonicalization now follows each media type's effective draft fields; regressions cover equivalent text payloads and ignored file-message metadata.
 - [x] Aligned tag normalization/validation across saved-item deserialization, repository writes and backup encode/decode, with case-insensitive duplicate regressions.
 - [x] Incoming file shares now bound filename/MIME metadata before file I/O; regressions cover the oversize cases.
