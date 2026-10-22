@@ -1,4 +1,4 @@
-# StashHive — Cost and Monetization Plan
+# StashTrail — Cost and Monetization Plan
 
 **Status:** Strategy draft; monetization is not part of the first implementation increment.
 
