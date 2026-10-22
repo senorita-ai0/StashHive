@@ -416,3 +416,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003, FR-012–013 and NFR-003 (recover from malformed local data).
 - Test: TC-067 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-361 — Visible recovery warning for skipped local records
+
+- Implementation: `LibraryRepository.skippedRecordCount` / `_refreshItems`, and Library page warning in `lib/main.dart`.
+- Requirements: FR-012–013 and NFR-003 (transparent recovery/data-loss handling).
+- Test: TC-068 in `test/library_repository_test.dart` and `test/accessibility_widgets_test.dart`.
+- Verification: source/test committed but unrun.
