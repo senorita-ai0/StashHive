@@ -448,3 +448,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: NFR-006 (text contrast and theme support).
 - Test: TC-071 in `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun; manual visual review remains pending.
+
+
+### TSK-365 — Bounded stored attachment byte validation
+
+- Implementation: `lib/services/attachment_bytes.dart`, used by `LibraryRepository.readAttachment`, `save` existing-key checks and `createBackup`.
+- Requirements: FR-008, FR-011–013 and NFR-003 (bounded, safe attachment recovery).
+- Test: TC-072 in `test/attachment_bytes_test.dart`.
+- Verification: source/test committed but unrun.
