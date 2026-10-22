@@ -308,6 +308,12 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added a widget regression for the native subtitle and the disclosed search fields, plus manual case **TC-135** for web wording and no-OCR/no-sync clarity.
 - [ ] Run TC-135 and review the Settings wording on web and Android at the manual checkpoint.
 
+## Phase 3 — safe user-facing operation error messages (2026-10-22)
+
+- [x] Unexpected errors in file selection, save, item/collection deletion, backup export and restore now use actionable fallback text rather than raw plugin/storage exception details; app-defined `FormatException` guidance is retained.
+- [x] Updated TC-131/TC-132 widget regression assertions so injected internal exception text must not appear to the user; added manual case **TC-136** for the wider error-path review.
+- [ ] Run the regressions and review remaining startup/platform-provided messages at the manual privacy checkpoint.
+
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-135 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-135 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-136 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-136 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
