@@ -205,3 +205,44 @@ class SavedItem {
     );
   }
 }
+
+
+/// Stable ordering for the Library and Search views. The primary key matches
+/// the visible sort label; equal primary values use deterministic secondary
+/// fields and finish with the persisted item ID so list order doesn't flicker.
+enum SavedItemSort {
+  recentlySaved,
+  oldestFirst,
+  titleAZ,
+}
+
+int compareSavedItemsForSort(
+  SavedItem a,
+  SavedItem b,
+  SavedItemSort sort,
+) {
+  final primary = switch (sort) {
+    SavedItemSort.recentlySaved =>
+      b.updatedAtMs.compareTo(a.updatedAtMs),
+    SavedItemSort.oldestFirst =>
+      a.createdAtMs.compareTo(b.createdAtMs),
+    SavedItemSort.titleAZ =>
+      a.title.toLowerCase().compareTo(b.title.toLowerCase()),
+  };
+  if (primary != 0) return primary;
+
+  if (sort == SavedItemSort.recentlySaved) {
+    final byCreation = b.createdAtMs.compareTo(a.createdAtMs);
+    if (byCreation != 0) return byCreation;
+  } else if (sort == SavedItemSort.oldestFirst) {
+    final byUpdated = a.updatedAtMs.compareTo(b.updatedAtMs);
+    if (byUpdated != 0) return byUpdated;
+  }
+
+  final byFoldedTitle =
+      a.title.toLowerCase().compareTo(b.title.toLowerCase());
+  if (byFoldedTitle != 0) return byFoldedTitle;
+  final byExactTitle = a.title.compareTo(b.title);
+  if (byExactTitle != 0) return byExactTitle;
+  return a.id.compareTo(b.id);
+}
