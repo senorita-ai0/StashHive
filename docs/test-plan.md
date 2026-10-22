@@ -658,3 +658,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Share an extensionless binary image via the OS image-share intent with `text/plain` MIME metadata.
 - Confirm the draft remains an image, its MIME is not falsely stored as `text/plain`, and bytes are preserved.
 - Regression source is committed but unrun; validate against real image-source apps on Android.
+
+
+### TC-095 — Collection creation post-write rollback
+
+- Start with no collection preference key.
+- Inject an error after the collection preference write has completed, then attempt to add a collection.
+- Confirm the API reports the original error, removes the partially committed preference key, and exposes no new collection in the notifier. Regression source is committed but unrun.
