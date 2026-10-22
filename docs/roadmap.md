@@ -448,3 +448,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-365:** Extracted stored attachment byte checks into `isValidAttachmentByteList`. It rejects empty, malformed, out-of-range and oversized payloads, checks the 15 MiB length cap before iterating the list, and is reused by repository reads/backup.
 - Added unit coverage using a lazy oversized list to verify the size guard does not enumerate elements. Test source is committed but unrun.
+
+
+### Phase 2 — missing attachment recovery feedback in Item Details (2026-10-22)
+
+- **TSK-366:** Added widget regressions for parseable legacy image/document records whose referenced bytes are missing. Image details should show the missing-image state; document open/share should advise restoring a backup, without throwing or silently removing the record.
+- Test source is committed but unrun; actual corrupted storage and user recovery behavior remain pending.
