@@ -7,7 +7,7 @@
 | FR-001 | SCR-001, SCR-004 | TSK-102, TSK-105 | TC-001 | IN PROGRESS — source added; build/test pending |
 | FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104 | TC-002 | IN PROGRESS — source added; build/test pending |
 | FR-003 | SCR-004 | TSK-102, TSK-105 | TC-003 | IN PROGRESS — source added; build/test pending |
-| FR-004 | SCR-001, SCR-003 | TSK-103, TSK-201, TSK-411 | TC-004, TC-115 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
+| FR-004 | SCR-001, SCR-003 | TSK-103, TSK-201, TSK-413 | TC-004, TC-117 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
 | FR-005 | SCR-001, SCR-003 | TSK-202 | TC-005 | IN PROGRESS — source added; build/test pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
@@ -866,11 +866,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Verification: source/test committed but unrun.
 
 
-### TSK-411 — Search result sorting parity
+### TSK-413 — Search result sorting parity
 
 - Implementation: `lib/main.dart`, `_SearchPageState` filtering and sort control.
 - Requirements: FR-004 and SCR-003 (consistent retrieval controls, result count and sorting).
-- Test: TC-115 in `test/accessibility_widgets_test.dart`.
+- Test: TC-117 in `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun; responsive visual and screen-reader checks remain pending.
 
 
