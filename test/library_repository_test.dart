@@ -463,6 +463,25 @@ void main() {
     );
   });
 
+  test('new IDs avoid existing item IDs and attachment keys', () async {
+    await repository.save(buildLink(id: 'reserved-item-id'));
+    await Hive.box<dynamic>('stashhive_attachments_v1')
+        .put('reserved-attachment-id', <int>[1, 2, 3]);
+
+    final id = repository.createUniqueId();
+
+    expect(id, isNot('reserved-item-id'));
+    expect(id, isNot('reserved-attachment-id'));
+    expect(
+      Hive.box<dynamic>('stashhive_items_v1').containsKey(id),
+      isFalse,
+    );
+    expect(
+      Hive.box<dynamic>('stashhive_attachments_v1').containsKey(id),
+      isFalse,
+    );
+  });
+
   test('replacement key avoids overwriting bytes shared by other items', () async {
     const sharedKey = 'owner-image';
     final bytes = Uint8List.fromList([11, 22, 33, 44]);
