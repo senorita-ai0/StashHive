@@ -1455,7 +1455,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                             letterSpacing: -0.5,
                           )),
                   const SizedBox(height: 6),
-                  const Text(
+                  Text(
                     'Keep the things you want to find again.',
                     style: TextStyle(color: mutedTextColor(context)),
                   ),
@@ -2928,7 +2928,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 const SizedBox(height: 26),
                 Text('Backup', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 5),
-                const Text('Export your metadata and copied attachments into a portable file.',
+                Text('Export your metadata and copied attachments into a portable file.',
                     style: TextStyle(color: mutedTextColor(context))),
                 const SizedBox(height: 12),
                 ValueListenableBuilder<List<SavedItem>>(
@@ -2945,7 +2945,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 const SizedBox(height: 24),
                 Text('Restore', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 5),
-                const Text('Bring a previous StashHive backup into this library.',
+                Text('Bring a previous StashHive backup into this library',
                     style: TextStyle(color: mutedTextColor(context))),
                 const SizedBox(height: 12),
                 _BackupCard(
