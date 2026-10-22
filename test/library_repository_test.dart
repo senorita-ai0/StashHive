@@ -486,6 +486,18 @@ void main() {
     ]));
   });
 
+  test('rejects an out-of-range saved timestamp before writing', () async {
+    final invalidDate = buildLink(id: 'invalid-date').copyWith(
+      updatedAtMs: 9000000000000000,
+    );
+
+    await expectLater(
+      repository.save(invalidDate),
+      throwsFormatException,
+    );
+    expect(repository.findById(invalidDate.id), isNull);
+  });
+
   test('rejects an empty note before writing it', () async {
     final emptyNote = SavedItem(
       id: 'empty-note',
