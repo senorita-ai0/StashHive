@@ -912,3 +912,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003 and FR-012–013 (stable saved-item identity across portable backup/restore).
 - Test: TC-119 in `test/backup_codec_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-413 — Preflight JSON output size before serialization
+
+- Implementation: `BackupCodec.encode`, counting item JSON bytes and predicted attachment JSON/base64 bytes before final serialization.
+- Requirements: FR-012–013 and NFR-003 (portable backup bounds and predictable memory use).
+- Test: TC-117 in `test/backup_codec_test.dart`.
+- Verification: source/test committed but unrun; memory profiling remains pending.
