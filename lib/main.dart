@@ -1530,9 +1530,15 @@ class _QuickSavePageState extends State<QuickSavePage> {
                         prefixIcon: Icon(Icons.link_rounded),
                       ),
                       validator: (value) {
-                        if ((value ?? '').trim().isEmpty) return 'Enter a website URL.';
-                        if (parseUserWebUrl(value) == null) {
+                        if ((value ?? '').trim().isEmpty) {
+                          return 'Enter a website URL.';
+                        }
+                        final uri = parseUserWebUrl(value);
+                        if (uri == null) {
                           return 'Enter a valid http or https URL.';
+                        }
+                        if (uri.toString().length > maxSavedItemUrlCharacters) {
+                          return 'Website URLs must be 4,096 characters or shorter.';
                         }
                         return null;
                       },
