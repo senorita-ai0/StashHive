@@ -5,6 +5,67 @@ import 'package:stashhive/services/share_intake.dart';
 
 void main() {
   group('ShareIntake', () {
+    test('accepts the URL length supported by backup format', () async {
+      const prefix = 'https://example.com/';
+      final url = prefix +
+          List<String>.filled(maxIncomingUrlCharacters - prefix.length, 'a').join();
+      expect(url.length, maxIncomingUrlCharacters);
+
+      final result = await ShareIntake.fromSharedMedia(
+        SharedMediaFile(
+          path: url,
+          type: SharedMediaType.url,
+          mimeType: 'text/uri-list',
+        ),
+      );
+
+      expect(result, isNotNull);
+      expect(result!.url!.length, maxIncomingUrlCharacters);
+    });
+
+    test('rejects shared URLs beyond backup-supported length', () async {
+      const prefix = 'https://example.com/';
+      final url = prefix +
+          List<String>.filled(maxIncomingUrlCharacters + 1 - prefix.length, 'a').join();
+
+      await expectLater(
+        ShareIntake.fromSharedMedia(
+          SharedMediaFile(
+            path: url,
+            type: SharedMediaType.url,
+            mimeType: 'text/uri-list',
+          ),
+        ),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            contains('4,096 characters'),
+          ),
+        ),
+      );
+    });
+
+    test('limits context attached to a typed URL share', () async {
+      await expectLater(
+        ShareIntake.fromSharedMedia(
+          SharedMediaFile(
+            path: 'https://example.com/',
+            type: SharedMediaType.url,
+            mimeType: 'text/uri-list',
+            message: List<String>.filled(maxIncomingTextCharacters + 1, 'x').join(),
+          ),
+        ),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            contains('1,000,000-character'),
+          ),
+        ),
+      );
+    });
+
     test('normalizes a shared URL into an editable link draft', () async {
       final result = await ShareIntake.fromSharedMedia(
         SharedMediaFile(
