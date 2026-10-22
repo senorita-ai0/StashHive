@@ -45,6 +45,8 @@ FILTERS = (
     ),
     (SEND_MULTIPLE, "application/rtf"),
     (SEND_MULTIPLE, "text/csv"),
+    # Android commonly uses */* when a batch contains mixed MIME types.
+    (SEND_MULTIPLE, "*/*"),
 )
 
 
