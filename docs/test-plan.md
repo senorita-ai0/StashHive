@@ -866,3 +866,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Create a visible `Learning` collection and an item whose legacy assignment is `learning`.
 - Confirm the collection row displays `1 saved item`, and that Collection Contents also lists it.
 - Widget regression source is committed but unrun.
+
+
+### TC-114 — Search result sorting parity
+
+- Save three items with deliberately different titles, creation timestamps and update timestamps.
+- Confirm the default Recently saved order uses newest updates first, Title A–Z uses a case-insensitive title comparison, and Oldest first uses creation timestamps ascending.
+- Confirm changing sort order does not change saved-item metadata. The widget regression source is committed but unrun; check menu usability at narrow width and enlarged text during manual visual/accessibility review.
