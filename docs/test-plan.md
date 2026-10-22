@@ -483,3 +483,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Seed the local store with a structurally valid record whose note content exceeds the one-million-character storage limit, alongside a valid item.
 - Trigger repository refresh and confirm the oversized record is skipped, the valid item stays available, and the skipped-record warning count increases.
 - Test source is committed but unrun.
+
+
+### TC-071 — Quick Save kind-label contrast by theme/state
+
+- Check all four item-type labels when selected and unselected in light and dark themes.
+- Require at least 4.5:1 contrast for normal-sized label text against the corresponding light surface, selected pastel fill, or dark surface.
+- Unit regression source is committed but unrun; confirm visual consistency and icon distinction during manual theme review.
