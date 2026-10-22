@@ -904,3 +904,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-005 and NFR-005 (preserve and find user-entered text across English, Urdu-script, Roman Urdu, emoji, accents and punctuation).
 - Test: TC-118 in `test/saved_item_test.dart`.
 - Verification: regression source committed but unrun; no OCR or canonical Unicode normalization guarantee is implied.
+
+
+### TSK-412 — Unique item IDs in exported backups
+
+- Implementation: `BackupCodec.encode`, validation alongside the saved-item loop.
+- Requirements: FR-001–003 and FR-012–013 (stable saved-item identity across portable backup/restore).
+- Test: TC-116 in `test/backup_codec_test.dart`.
+- Verification: source/test committed but unrun.
