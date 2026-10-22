@@ -114,6 +114,30 @@ void main() {
       expect(result.content, '');
     });
 
+    test('accepts shared text at the documented character limit', () async {
+      final firstHalf = List<String>.filled(
+        maxIncomingTextCharacters ~/ 2,
+        'x',
+      ).join();
+      final secondHalf = List<String>.filled(
+        maxIncomingTextCharacters ~/ 2 - 1,
+        'y',
+      ).join();
+      final sharedText = '$firstHalf $secondHalf';
+
+      expect(sharedText.length, maxIncomingTextCharacters);
+      final result = await ShareIntake.fromSharedMedia(
+        SharedMediaFile(
+          path: sharedText,
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      );
+
+      expect(result, isNotNull);
+      expect(result!.kind, ItemKind.note);
+      expect(result.content.length, maxIncomingTextCharacters);
+    });
     test('rejects shared text beyond the documented character limit', () async {
       await expectLater(
         ShareIntake.fromSharedMedia(
