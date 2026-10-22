@@ -20,6 +20,28 @@ void main() {
       expect(result.title, 'example.com');
     });
 
+    test('trims wrapping punctuation but retains balanced URL parentheses', () async {
+      final wrapped = await ShareIntake.fromSharedMedia(
+        SharedMediaFile(
+          path: 'Read this (https://example.com/articles/readme_(v2)).',
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      );
+      final standalone = await ShareIntake.fromSharedMedia(
+        SharedMediaFile(
+          path: 'https://en.wikipedia.org/wiki/Function_(mathematics)',
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      );
+
+      expect(wrapped?.url, 'https://example.com/articles/readme_(v2)');
+      expect(
+        standalone?.url,
+        'https://en.wikipedia.org/wiki/Function_(mathematics)',
+      );
+    });
     test('recognizes a URL inside shared title and text', () async {
       final result = await ShareIntake.fromSharedMedia(
         SharedMediaFile(
