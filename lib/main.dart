@@ -2581,7 +2581,7 @@ class _CollectionsPageState extends State<CollectionsPage> {
                 }
                 final name = names[index];
                 final count =
-                    items.where((item) => item.collection == name).length;
+                    items.where((item) => item.collection?.toLowerCase() == name.toLowerCase()).length;
                 final palette = [
                   const Color(0xFF5B5CE2),
                   const Color(0xFF3673BE),
