@@ -124,7 +124,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
 - [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
 - [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
-- [x] Progress/test docs updated through TSK-392 and TC-099.
+- [x] Progress/test docs updated through TSK-393 and TC-100.
 
 ## Phase 2/3 latest source increments — 2026-10-22
 
@@ -156,6 +156,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Legacy item deserialization now trims title/URL/filename metadata and lowercases MIME type values, with model regression coverage.
 - [x] Quick Save and backup restore now consume picker byte streams through the shared hard-capped reader, complementing bounded OS-share reads.
 - [x] Quick Save and OS-share intake now reuse the backup codec's single attachment-byte limit instead of duplicating the 15 MiB literal.
+- [x] Backup decode now rejects base64 payloads that cannot fit the remaining combined byte budget before allocating decoded attachment buffers.
 - [x] Kept older version-1 backups with case-only duplicate collection labels importable; restore normalizes the names during merge.
 - [x] Collection creation now rolls back preference writes when the storage future reports a late failure; a fault-injection regression covers the no-prior-key case.
 - [x] Backup restore now fully validates once before showing confirmation, retains only the decoded backup for the accepted restore, and removes the second full JSON decode.
