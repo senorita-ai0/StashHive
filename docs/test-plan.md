@@ -374,3 +374,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Attempt to save an image with no bytes, with a byte value outside 0–255, and with an existing stored attachment record that is empty; all must be rejected before the item record is written.
 - Attempt to export and restore an image/document with an empty attachment payload; both paths must reject it rather than treating it as a valid saved file.
 - Regression source is committed but unrun; also verify rollback behavior when the underlying storage fails during byte writes.
+
+
+### TC-056 — Damaged legacy attachment handling
+
+- Corrupt an existing attachment record with a non-integer list entry and confirm `readAttachment` returns no payload rather than silently dropping invalid bytes.
+- Attempt backup export and confirm it fails with a useful damaged-attachment message instead of exporting mutated bytes.
+- Regression source is committed but unrun; verify recovery instructions and backup/restore from a known-good backup manually.
