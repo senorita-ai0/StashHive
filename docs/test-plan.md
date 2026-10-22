@@ -207,3 +207,12 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Run the manifest configurator against a generated runner and verify SEND_MULTIPLE intent filters exist for every supported SEND MIME family.
 - Confirm the configurator remains idempotent and preserves singleTask launch mode.
 - Python test source is authored but unrun. Verify in Android's chooser that multi-select text/URL/document batches can target StashHive, then confirm each item is presented sequentially and unsupported items are skipped with feedback; status remains NOT STARTED.
+
+
+### TC-034 — Shared attachment backup and restore
+
+- Save two image/document items that point to the same attachment key; export and decode the backup.
+- Verify the backup contains one payload for the shared key and both item records preserve that reference.
+- Restore into a library where the original IDs and attachment key already exist; confirm the restored items still share one newly mapped key, bytes remain readable, and the shared payload is written only once.
+- Verify export rejects image/document items with missing or empty attachment keys and rejects unsupported item kinds carrying attachments.
+- Unit/repository regression source is authored but unrun; manual storage interruption and device persistence checks remain NOT STARTED.
