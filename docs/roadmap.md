@@ -290,3 +290,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-339:** Incoming URL shares and URLs embedded in shared text now enforce the backup format's 4,096-character URL maximum. Typed URL shares also enforce the existing 1,000,000-character limit on accompanying message/context text, preventing drafts that would later be rejected by backup validation.
 - Added boundary coverage for a 4,096-character URL, an over-limit URL, and oversized context attached to a URL share. Test source is committed but unrun.
+
+
+### Phase 2 — shared attachment intake regression coverage (2026-10-22)
+
+- **TSK-340:** Expanded share-intake regression coverage to exercise actual local file reads for a text document and an image, reject an unsupported `.exe` share, and reject a file larger than 15 MiB based on its length before reading its contents.
+- Tests use isolated temporary directories and clean them up even when assertions fail. Source is committed but unrun; Android content URI/permission behavior remains a device-validation requirement.
