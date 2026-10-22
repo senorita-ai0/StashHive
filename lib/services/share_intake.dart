@@ -278,8 +278,14 @@ class ShareIntake {
         : '';
     final sharedMime = media.mimeType?.toLowerCase().trim() ?? '';
     final guessedMime = guessMimeTypeFromExtension(extension);
-    final mimeType =
-        sharedMime.isEmpty || sharedMime == 'application/octet-stream'
+    final hasRecognizedExtension =
+        guessedMime != defaultBinaryMimeType;
+    // Known supported extensions determine the stored type when the share
+    // source provides a conflicting MIME header. Otherwise an incorrect header
+    // can classify a text file as an image (or vice versa).
+    final mimeType = hasRecognizedExtension
+        ? guessedMime
+        : sharedMime.isEmpty || sharedMime == defaultBinaryMimeType
             ? guessedMime
             : sharedMime;
 
