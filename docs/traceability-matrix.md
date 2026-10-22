@@ -864,3 +864,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-010–011 and NFR-003 (consistent collection metadata and counts).
 - Test: TC-113 in `test/accessibility_widgets_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-410 — Search result sorting parity
+
+- Implementation: `lib/main.dart`, `_SearchPageState` filtering and sort control.
+- Requirements: FR-004 and SCR-003 (consistent retrieval controls, result count and sorting).
+- Test: TC-114 in `test/accessibility_widgets_test.dart`.
+- Verification: source/test committed but unrun; responsive visual and screen-reader checks remain pending.
