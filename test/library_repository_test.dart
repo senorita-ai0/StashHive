@@ -353,6 +353,57 @@ void main() {
     expect(decoded.omittedCollectionEntryCount, 2);
   });
 
+  test('partial backup omits unsafe legacy items and preserves their local records', () async {
+    const unsafeId = 'legacy-unsafe-url-for-backup';
+    final unsafe = buildLink(
+      id: unsafeId,
+      url: 'javascript:alert(1)',
+    );
+    await Hive.box<dynamic>('stashhive_items_v1').put(
+      unsafeId,
+      unsafe.toMap(),
+    );
+    await repository.save(
+      buildLink(id: 'valid-item-next-to-unsafe-legacy'),
+    );
+
+    expect(repository.findById(unsafeId), isNotNull);
+    expect(repository.unexportableRecordCount, 1);
+
+    final decoded = BackupCodec.decode(await repository.createBackup());
+    expect(
+      decoded.items.map((item) => item.id),
+      contains('valid-item-next-to-unsafe-legacy'),
+    );
+    expect(decoded.items.any((item) => item.id == unsafeId), isFalse);
+    expect(decoded.omittedUnexportableRecordCount, 1);
+    expect(repository.findById(unsafeId), isNotNull);
+  });
+
+  test('partial backup omits missing-payload images without deleting them', () async {
+    const imageId = 'legacy-image-with-no-bytes';
+    final missingImage = buildImage(id: imageId);
+    await Hive.box<dynamic>('stashhive_items_v1').put(
+      imageId,
+      missingImage.toMap(),
+    );
+    await repository.save(
+      buildLink(id: 'valid-item-next-to-missing-image'),
+    );
+
+    expect(repository.findById(imageId), isNotNull);
+    expect(repository.unexportableRecordCount, 1);
+
+    final decoded = BackupCodec.decode(await repository.createBackup());
+    expect(
+      decoded.items.map((item) => item.id),
+      contains('valid-item-next-to-missing-image'),
+    );
+    expect(decoded.items.any((item) => item.id == imageId), isFalse);
+    expect(decoded.omittedUnexportableRecordCount, 1);
+    expect(repository.findById(imageId), isNotNull);
+  });
+
   test('backup gives repair guidance for item assignments beyond collection cap', () async {
     await Hive.box<dynamic>('stashhive_preferences_v1').put(
       'collections',
