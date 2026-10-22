@@ -29,7 +29,7 @@
 | NFR-004 | SCR-004 | TSK-203 | TC-006, TC-017 | NOT STARTED |
 | NFR-005 | SCR-001, SCR-003 | TSK-202 | TC-005, TC-016 | NOT STARTED |
 | NFR-006 | All screens | TSK-103, TSK-304 | UI/accessibility checklist | IN PROGRESS — text scaling, semantics and contrast source/tests added; execution and platform checks pending |
-| NFR-007 | Search/list | TSK-003, TSK-305 | Performance benchmark | NOT STARTED |
+| NFR-007 | Search/list | TSK-003, TSK-305, TSK-411 | TC-115 / Performance baseline | IN PROGRESS — non-gating harness added; measurements pending |
 | NFR-008 | Attachments / OCR | TSK-005, TSK-305 | Package-size benchmark | NOT STARTED |
 | NFR-009 | Architecture | TSK-002, TSK-101 | Static checks/build | NOT STARTED |
 | NFR-010 | Dependency register | TSK-003, TSK-403 | License review | NOT STARTED |
@@ -880,3 +880,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (transparent backup completeness and local data preservation).
 - Tests: TC-114 in `test/library_repository_test.dart`, `test/backup_codec_test.dart`, and `test/accessibility_widgets_test.dart`.
 - Verification: source/tests committed but unrun.
+
+
+### TSK-411 — Metadata-only performance baseline harness
+
+- Implementation: `tool/benchmark_library_repository.dart`; run procedure in `docs/performance-benchmark.md`.
+- Requirements: NFR-007 (measured baseline for realistic local-library sizes), with NFR-003 platform/recovery verification still tracked separately.
+- Test/measurement: TC-115 in `docs/test-plan.md`; execute deliberately on a representative machine and record environment details with JSON output.
+- Verification: harness is source only; no benchmark measurements have been run and no performance pass is claimed.
