@@ -77,12 +77,23 @@ void main() {
     expect(_contrastRatio(darkStar, darkField), greaterThanOrEqualTo(3));
   });
 
-  test('item-type text accents meet contrast against their pastel fills', () {
+  test('item-type labels meet contrast on their light and dark surfaces', () {
+    const darkSurface = Color(0xFF202638);
     for (final kind in ItemKind.values) {
+      expect(
+        _contrastRatio(kind.readableTextAccent, Colors.white),
+        greaterThanOrEqualTo(4.5),
+        reason: '${kind.label} must remain readable when unselected on a light surface.',
+      );
       expect(
         _contrastRatio(kind.readableTextAccent, kind.softAccent),
         greaterThanOrEqualTo(4.5),
-        reason: '${kind.label} badge text must meet normal-text contrast.',
+        reason: '${kind.label} selected badge text must meet normal-text contrast.',
+      );
+      expect(
+        _contrastRatio(kind.softAccent, darkSurface),
+        greaterThanOrEqualTo(4.5),
+        reason: '${kind.label} must remain readable when unselected on a dark surface.',
       );
     }
   });
