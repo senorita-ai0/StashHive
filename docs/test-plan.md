@@ -804,3 +804,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Construct a valid item assigned to a collection absent from the declared collection list; confirm restore includes the assignment in navigation/backup metadata.
 - At 500 existing collections, construct a backup whose item alone introduces a new assignment; confirm restore fails before writing the item.
 - Regression source is committed but unrun.
+
+
+### TC-095 — Legacy case-only duplicate collections remain importable
+
+- Start with a valid version-1 backup, change its collection list to contain `Learning` and `learning`, and decode it.
+- Confirm decoded-backup preflight permits the historical case-only duplicate and repository merge produces one canonical collection label.
+- Regression source is committed but unrun.
