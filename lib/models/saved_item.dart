@@ -151,7 +151,11 @@ class SavedItem {
       content: raw['content'] is String ? raw['content'] as String : '',
       url: raw['url'] is String ? raw['url'] as String : null,
       tags: List<String>.unmodifiable(tags),
-      collection: raw['collection'] is String ? raw['collection'] as String : null,
+      collection: raw['collection'] is String
+          ? (raw['collection'] as String).trim().isEmpty
+              ? null
+              : (raw['collection'] as String).trim()
+          : null,
       isFavorite: raw['isFavorite'] == true,
       createdAtMs: raw['createdAtMs'] is int ? raw['createdAtMs'] as int : 0,
       updatedAtMs: raw['updatedAtMs'] is int ? raw['updatedAtMs'] as int : 0,
