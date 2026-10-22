@@ -955,7 +955,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - Open the Library and confirm the visible header says `StashTrail`.
 - Confirm the widget builds without layout exceptions; review the web-installed name and Android launcher label after the manual runner/build checkpoint.
-- Widget regression source is committed but unrun.
+- The Android configurator's Python regression also asserts the generated manifest application label is StashTrail and remains idempotent. Test source is committed but unrun.
 
 
 ### TC-126 — Version-1 backup identifier remains backward compatible
