@@ -197,8 +197,34 @@ class LibraryRepository {
     }
 
     names.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    final canonicalNames = <String, String>{
+      for (final name in names) name.toLowerCase(): name,
+    };
+    final normalizedItems = items.value.map((item) {
+      final assigned = item.collection;
+      if (assigned == null) return item;
+      final canonical = canonicalNames[assigned.toLowerCase()];
+      if (canonical == null || canonical == assigned) return item;
+      return item.copyWith(collection: canonical);
+    }).toList(growable: false);
+    if (normalizedItems.indexed.any(
+      (entry) => !identical(entry.$2, items.value[entry.$1]),
+    )) {
+      items.value = List<SavedItem>.unmodifiable(normalizedItems);
+    }
     skippedCollectionCount.value = skipped;
     collections.value = List<String>.unmodifiable(names);
+  }
+
+  SavedItem _canonicalizeCollectionAssignment(SavedItem item) {
+    final assigned = item.collection;
+    if (assigned == null) return item;
+    for (final name in collections.value) {
+      if (name.toLowerCase() == assigned.toLowerCase()) {
+        return name == assigned ? item : item.copyWith(collection: name);
+      }
+    }
+    return item;
   }
 
   SavedItem? findById(String id) {
@@ -208,7 +234,7 @@ class LibraryRepository {
       BackupCodec.validateStoredRecordMap(value);
       final item = SavedItem.fromMap(value);
       if (item.id != id) return null;
-      return item;
+      return _canonicalizeCollectionAssignment(item);
     } catch (_) {
       return null;
     }
@@ -251,13 +277,14 @@ class LibraryRepository {
   }
 
   Future<void> save(SavedItem item, {List<int>? attachmentBytes}) async {
-    BackupCodec.validateSavedItem(item);
-    final alreadyVisible = items.value.any((saved) => saved.id == item.id);
+    final saveItem = _canonicalizeCollectionAssignment(item);
+    BackupCodec.validateSavedItem(saveItem);
+    final alreadyVisible = items.value.any((saved) => saved.id == saveItem.id);
     BackupCodec.validateItemCount(
       currentCount: items.value.length,
       incomingCount: alreadyVisible ? 0 : 1,
     );
-    final assignedCollection = item.collection;
+    final assignedCollection = saveItem.collection;
     if (assignedCollection != null &&
         !collections.value.any(
           (name) =>
@@ -269,15 +296,15 @@ class LibraryRepository {
         'Choose an existing collection before saving this item.',
       );
     }
-    final key = item.attachmentKey;
-    final hadPreviousItem = _itemsBox.containsKey(item.id);
-    final previousItemValue = _itemsBox.get(item.id);
+    final key = saveItem.attachmentKey;
+    final hadPreviousItem = _itemsBox.containsKey(saveItem.id);
+    final previousItemValue = _itemsBox.get(saveItem.id);
     final previousAttachmentKey = previousItemValue is Map &&
             previousItemValue['attachmentKey'] is String
         ? previousItemValue['attachmentKey'] as String
         : null;
     final requiresAttachment =
-        item.kind == ItemKind.image || item.kind == ItemKind.document;
+        saveItem.kind == ItemKind.image || saveItem.kind == ItemKind.document;
 
     if (requiresAttachment != (key != null)) {
       throw const FormatException(
@@ -309,7 +336,7 @@ class LibraryRepository {
           'That attachment key already contains another payload. Choose a new key rather than overwriting it.',
         );
       }
-      if (isAttachmentReferencedByOtherItem(item.id, key)) {
+      if (isAttachmentReferencedByOtherItem(saveItem.id, key)) {
         throw const FormatException(
           'This attachment is shared with another item. Use a new attachment key when replacing its bytes.',
         );
@@ -342,7 +369,7 @@ class LibraryRepository {
       if (beforeItemCommit != null) await beforeItemCommit();
 
       itemWriteAttempted = true;
-      await _itemsBox.put(item.id, item.toMap());
+      await _itemsBox.put(saveItem.id, saveItem.toMap());
       final afterItemCommit = saveAfterItemCommitForTesting;
       if (afterItemCommit != null) await afterItemCommit();
     } catch (_) {
@@ -351,9 +378,9 @@ class LibraryRepository {
       if (itemWriteAttempted) {
         try {
           if (hadPreviousItem) {
-            await _itemsBox.put(item.id, previousItemValue);
+            await _itemsBox.put(saveItem.id, previousItemValue);
           } else {
-            await _itemsBox.delete(item.id);
+            await _itemsBox.delete(saveItem.id);
           }
         } catch (_) {
           // Best-effort recovery; continue restoring any staged attachment.
