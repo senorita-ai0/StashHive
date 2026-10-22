@@ -704,3 +704,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (backup integrity and bounded memory).
 - Test: TC-103 references existing backup round-trip tests in `test/backup_codec_test.dart`.
 - Verification: source committed; tests and profiling remain pending.
+
+
+### TSK-397 — Confirm before exporting a partial readable library
+
+- Implementation: `BackupPrivacyPage` recovery banner and `_export` confirmation in `lib/main.dart`.
+- Requirements: FR-012–013 and NFR-003 (transparent recovery and backup completeness).
+- Test: TC-104 in `test/accessibility_widgets_test.dart`.
+- Verification: source/test committed but unrun.
