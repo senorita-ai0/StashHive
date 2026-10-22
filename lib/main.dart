@@ -2984,6 +2984,18 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
     if (_exporting) return;
     setState(() => _exporting = true);
     try {
+      final unrepresentedAssignments =
+          widget.repository.unrepresentedCollectionAssignmentCount;
+      if (unrepresentedAssignments > 0) {
+        final message = unrepresentedAssignments == 1
+            ? '1 saved item uses a collection name beyond the backup limit.'
+            : '$unrepresentedAssignments saved items use collection names beyond the backup limit.';
+        _message(
+          '$message Edit those items and choose an available collection or No collection before exporting.',
+        );
+        return;
+      }
+
       final skippedRecords = widget.repository.skippedRecordCount.value;
       final skippedCollections =
           widget.repository.skippedCollectionCount.value;
