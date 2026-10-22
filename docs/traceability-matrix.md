@@ -11,7 +11,7 @@
 | FR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-118 | IN PROGRESS — Unicode regression source added; execution/platform review pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
-| FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105 | TC-008 | IN PROGRESS — source added; real platform test pending |
+| FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417 | TC-008, TC-122 | IN PROGRESS — repository-owned byte snapshot source/test added; platform validation pending |
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204 | TC-009 | IN PROGRESS — source added, build/device test pending |
 | FR-010 | SCR-005 | TSK-203 | TC-010 | IN PROGRESS — source added; build/test pending |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
@@ -25,7 +25,7 @@
 | FR-019 | SCR-001, SCR-002 | Later if approved | TC-019 | NOT STARTED / Could |
 | NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | NOT STARTED |
 | NFR-002 | SCR-006 | TSK-304 | TC-018 | NOT STARTED |
-| NFR-003 | SCR-006 | TSK-006, TSK-301–305, TSK-413, TSK-415 | TC-012–015, TC-117, TC-120 | IN PROGRESS — backup byte-limit source/test added; memory/platform verification pending |
+| NFR-003 | SCR-006 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417 | TC-012–015, TC-117, TC-120, TC-122 | IN PROGRESS — backup byte-limit source/test added; memory/platform verification pending |
 | NFR-004 | SCR-004 | TSK-203 | TC-006, TC-017 | NOT STARTED |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
 | NFR-006 | All screens | TSK-103, TSK-304 | UI/accessibility checklist | IN PROGRESS — text scaling, semantics and contrast source/tests added; execution and platform checks pending |
@@ -928,3 +928,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008, FR-011–013 and NFR-003 (attachment integrity and rollback consistency).
 - Test: TC-118 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-417 — Repository-owned attachment input snapshots
+
+- Implementation: `LibraryRepository.save` copies caller-provided attachment bytes after validation and before the first storage await.
+- Requirements: FR-008 and NFR-003 (stable imported attachment data after save and recoverable local persistence).
+- Test: TC-122 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun; actual Android/web picker and storage behavior remains pending.
