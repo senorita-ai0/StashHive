@@ -272,3 +272,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003, FR-012–013 and NFR-003 (valid save/export/restore data).
 - Test: TC-049, `test/backup_codec_test.dart`, and `test/library_repository_test.dart`.
 - Verification: implementation and regression source committed; execution remains pending manual validation.
+
+
+### TSK-343 — Quick Save shared attachment consistency
+
+- Implementation: `lib/main.dart`, Quick Save `_save` attachment key selection.
+- Requirements: FR-001–003, FR-008 and NFR-003.
+- Test: TC-050 in `test/quick_save_test.dart`.
+- Verification: source and widget test committed; execution/platform checks remain pending.
