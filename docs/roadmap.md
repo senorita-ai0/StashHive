@@ -532,3 +532,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-379:** `findById` now validates raw record field types/size and confirms the requested Hive key matches the embedded ID before returning a model. Malformed or mismatched raw entries cannot bypass `_refreshItems` by being queried directly, while parseable legacy records with unsafe URLs/missing payloads remain available for recovery feedback.
 - The existing malformed-record repository regression now covers this lookup boundary too. Tests are committed but unrun.
+
+
+### Phase 2 — recoverable update feedback for invalid legacy records (2026-10-22)
+
+- **TSK-380:** Favorite actions in the Library card menu and Item Details now catch repository validation failures for parseable but invalid legacy data and explain that the item needs repair (correct URL or reselect missing file) instead of surfacing an unhandled exception.
+- Added a widget regression that attempts to favorite an unsafe legacy URL and confirms the item remains unchanged while repair guidance is shown. Test source is committed but unrun.
