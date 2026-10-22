@@ -1,14 +1,14 @@
-# StashHive — Security and Privacy Plan
+# StashTrail — Security and Privacy Plan
 
 **Status:** Design plan only, not a claim of audited security or legal compliance.
 
 ## Privacy promises proposed for MVP
 
 - No account is required for local library use.
-- The core library stays on the device/browser; saved items are not uploaded to StashHive servers because no such service is planned for the MVP.
+- The core library stays on the device/browser; saved items are not uploaded to StashTrail servers because no such service is planned for the MVP.
 - No saved URLs, titles, notes, filenames, image text, or document text are written to diagnostic logs or analytics.
 - Only request the platform access necessary for a user-selected import/share action; no location or contacts permission.
-- Opening a link sends the user to an external website. That website has its own privacy/network behavior; StashHive does not promise the destination itself is private.
+- Opening a link sends the user to an external website. That website has its own privacy/network behavior; StashTrail does not promise the destination itself is private.
 - Local storage can be lost if the app is uninstalled or browser/site data is cleared. Export/restore is the planned portability mechanism.
 
 ## Threats and protections
