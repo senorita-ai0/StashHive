@@ -232,3 +232,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: NFR-006 (non-text contrast and accessible state indication).
 - Test: TC-044 in `test/accessibility_widgets_test.dart`.
 - Verification: source and regression committed; test execution and manual theme review remain pending.
+
+
+### TSK-338 — Standalone shared URL punctuation
+
+- Implementation: `lib/services/share_intake.dart`, standalone URL path through `_trimTrailingShareUrlPunctuation`.
+- Requirement: FR-009 (incoming URL/text shares).
+- Test: TC-045 in `test/share_intake_test.dart`.
+- Verification: source/test committed; execution and Android source-app checks remain pending.
