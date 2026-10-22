@@ -417,6 +417,11 @@ class LibraryRepository {
     if (current.any((item) => item.toLowerCase() == cleaned.toLowerCase())) {
       throw const FormatException('A collection with this name already exists.');
     }
+    if (current.length >= BackupCodec.maxCollections) {
+      throw const FormatException(
+        'StashHive supports up to 500 collections so library backups remain portable.',
+      );
+    }
     current.add(cleaned);
     await _preferencesBox.put('collections', current);
     _refreshCollections();
