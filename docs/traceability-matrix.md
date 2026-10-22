@@ -167,3 +167,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: NFR-006 (accessible contrast).
 - Test: TC-036 in `test/accessibility_widgets_test.dart` checks muted text against canvas and input surfaces with a 4.5:1 threshold.
 - Verification: code and widget-test source committed; automated execution and full surface-by-surface manual review remain pending.
+
+
+### TSK-330 — Shared URL trailing punctuation
+
+- Implementation: `lib/services/share_intake.dart`, `_trimTrailingShareUrlPunctuation`.
+- Requirement: FR-009 (shared URL/text intake).
+- Test: TC-037 in `test/share_intake_test.dart`.
+- Verification: source and test committed; unit execution and real Android source-app checks remain pending.
