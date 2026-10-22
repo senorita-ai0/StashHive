@@ -460,6 +460,28 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Quick Save attachment picker exposes a named accessible button', (tester) async {
+    final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.QuickSavePage(
+          repository: repository,
+          initialKind: ItemKind.image,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final picker = find.bySemanticsLabel('Choose an image');
+    expect(picker, findsOneWidget);
+    final node = tester.getSemantics(picker);
+    expect(node.hasFlag(SemanticsFlag.isButton), isTrue);
+    expect(node.hasAction(SemanticsAction.tap), isTrue);
+    expect(node.getSemanticsData().hint, 'Select a file, up to 15 megabytes');
+  });
+
   testWidgets('Collection contents match assignments ignoring casing', (tester) async {
     repository.items.value = const [
       SavedItem(
