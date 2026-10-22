@@ -90,6 +90,12 @@ class BackupCodec {
         'Only image and document items can contain an attachment.',
       );
     }
+    if (item.attachmentKey == null &&
+        (item.attachmentName != null || item.attachmentMimeType != null)) {
+      throw const FormatException(
+        'Attachment filename and MIME metadata require an attachment reference.',
+      );
+    }
     if (item.kind == ItemKind.link && parseHttpUrl(item.url) == null) {
       throw const FormatException('A saved link is not a valid HTTP or HTTPS URL.');
     }
