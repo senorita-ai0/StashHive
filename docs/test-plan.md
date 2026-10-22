@@ -630,3 +630,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Import a shared image/document and confirm the stored bytes match the source exactly.
 - Save a picked file and restore a backup containing attachments; confirm every byte remains identical and shared-payload relationships remain intact.
 - Existing assertions live in `test/share_intake_test.dart`, `test/library_repository_test.dart`, and `test/backup_codec_test.dart`; execution is pending. Profile peak memory only during the manual performance checkpoint.
+
+
+### TC-091 — Item-assigned collection reachability
+
+- Save a valid item assigned to a collection that is not yet present in the preference list; confirm the collection appears in navigation and remains represented in backup metadata.
+- Deserialize a legacy padded collection name and a whitespace-only assignment; confirm the first is trimmed and the latter becomes unassigned.
+- Verify saving/deleting items refreshes inferred collection entries without disturbing explicitly stored collections. Test source is committed but unrun.
