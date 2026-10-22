@@ -304,3 +304,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-008 and NFR-003 (safe attachment import and memory use).
 - Test: TC-053 manual Android/web selection; automated share-intake size regression is in `test/share_intake_test.dart`.
 - Verification: source committed; plugin behavior and memory usage remain unverified until the manual validation checkpoint.
+
+
+### TSK-347 — Strict URL parsing before external navigation
+
+- Implementation: `lib/services/web_url.dart`, used by Quick Save, `BackupCodec.validateSavedItem`, share parsing and Item Details.
+- Requirements: FR-006, FR-017 and FR-018 (external link behavior and safety boundaries).
+- Test: TC-054 in `test/web_url_test.dart`.
+- Verification: source/test committed; test execution and real external-launch validation remain pending.
