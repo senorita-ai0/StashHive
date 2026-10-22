@@ -320,8 +320,13 @@ class ShareIntake {
   static Uri? _parseWebUrl(String value) {
     final text = value.trim();
     if (text.isEmpty || text.contains(RegExp(r'\s'))) return null;
+    final hostPort = RegExp(r'^([a-zA-Z0-9.-]+):[0-9]+').firstMatch(text);
+    final hostPortName = hostPort?.group(1)?.toLowerCase();
+    final hasBareHostPort = hostPortName != null &&
+        (hostPortName.contains('.') || hostPortName == 'localhost');
     final explicitScheme =
-        RegExp(r'^[a-zA-Z][a-zA-Z0-9+.-]*:').hasMatch(text);
+        RegExp(r'^[a-zA-Z][a-zA-Z0-9+.-]*:').hasMatch(text) &&
+            !hasBareHostPort;
     if (explicitScheme &&
         !text.toLowerCase().startsWith('http://') &&
         !text.toLowerCase().startsWith('https://')) {
