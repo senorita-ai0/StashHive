@@ -1028,3 +1028,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Open Settings → Search & saved content. Confirm its subtitle distinguishes browser-local scope on web from device-local scope on Android.
 - Open the explanation and confirm it lists titles, URLs, notes, tags and collection names. Confirm it does not imply OCR/PDF extraction or cross-device search.
 - Widget regression currently asserts the native copy and searchable-field explanation; the web-specific label and end-to-end behavior need manual platform review. Test source is committed but unrun.
+
+
+### TC-136 — Unexpected storage/plugin errors use safe user-facing messages
+
+- Inject a repository error during item deletion and collection deletion. Confirm the user sees a clear retry message, the underlying exception text is not displayed, and the rollback regression continues to preserve affected data.
+- Cause unexpected errors during file selection, save, backup export and restore. Confirm raw plugin/storage details are not rendered into normal operation messages. App-defined `FormatException` validation guidance should remain actionable (including file/backup limits and invalid fields).
+- The collection/item deletion widget regressions assert generic fallback text and that the injected exception is absent. Remaining error branches and platform-provided messages need manual review; test source is committed but unrun.
