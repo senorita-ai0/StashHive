@@ -1021,3 +1021,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Start with the dark-mode preference absent/false and request dark appearance.
 - Inject a storage failure after the preference write takes effect. Confirm repository rollback returns to the previous preference, the UI switch reverts to the persisted value, and no unhandled exception reaches the widget test.
 - Regression source is committed but unrun; actual browser/device preference persistence remains pending the manual validation checkpoint.
+
+
+### TC-135 — Search help copy reflects searchable fields and platform
+
+- Open Settings → Search & saved content. Confirm its subtitle distinguishes browser-local scope on web from device-local scope on Android.
+- Open the explanation and confirm it lists titles, URLs, notes, tags and collection names. Confirm it does not imply OCR/PDF extraction or cross-device search.
+- Widget regression currently asserts the native copy and searchable-field explanation; the web-specific label and end-to-end behavior need manual platform review. Test source is committed but unrun.
