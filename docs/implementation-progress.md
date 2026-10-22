@@ -162,6 +162,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Attachment reads now return validated Uint8List buffers used directly by image preview and file-sharing widgets, avoiding additional UI-side full-payload copies.
 - [x] Backup export now reuses the UTF-8 encoder's byte list directly instead of making a second full-size `Uint8List` copy.
 - [x] Backup & Privacy now repeats the skipped-record warning and requires explicit confirmation before sharing an export that omits unreadable raw records.
+- [x] Backup & Privacy also warns about malformed/duplicate/over-limit collection entries that will be normalized in exports, and requires confirmation before sharing the partial/normalized backup.
 - [x] Share-event canonicalization now follows each media type's effective draft fields; regressions cover equivalent text payloads and ignored file-message metadata.
 - [x] Aligned tag normalization/validation across saved-item deserialization, repository writes and backup encode/decode, with case-insensitive duplicate regressions.
 - [x] Incoming file shares now bound filename/MIME metadata before file I/O; regressions cover the oversize cases.
