@@ -722,3 +722,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Export a backup containing non-ASCII metadata and attachment payloads; confirm the shareable JSON bytes decode to the same backup content.
 - Confirm export no longer creates an additional `Uint8List.fromList` copy after UTF-8 encoding.
 - Existing codec/restore byte-integrity tests apply but are unrun; profile large exports during the manual checkpoint.
+
+
+### TC-104 — Explicit confirmation before partial backup export
+
+- Seed local storage with a malformed raw record alongside one readable saved item.
+- Open Backup & Privacy and confirm it displays the skipped-record count and states that an export will omit unreadable records.
+- Start export; confirm the partial-export dialog appears. Cancel and confirm the dialog closes without invoking the share sheet or creating the backup.
+- Widget source is committed but unrun; verify the affirmative path exports only after explicit acknowledgement.
