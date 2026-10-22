@@ -706,6 +706,9 @@ class LibraryRepository {
         'Remove some collections before restoring this backup.',
       );
     }
+    final canonicalMergedCollections = <String, String>{
+      for (final name in mergedCollections) name.toLowerCase(): name,
+    };
     final staged = <({SavedItem item, List<int>? bytes})>[];
     // Reserve raw box keys too, including keys belonging to unreadable records
     // or orphaned attachments, so rollback can safely delete every staged ID.
@@ -746,6 +749,12 @@ class LibraryRepository {
           bytesToWrite = attachment.bytes;
         }
       }
+      final incomingCollection = item.collection;
+      final canonicalCollection = incomingCollection == null
+          ? null
+          : canonicalMergedCollections[
+                  incomingCollection.toLowerCase()] ??
+              incomingCollection;
       final restored = SavedItem(
         id: newId,
         kind: item.kind,
@@ -753,7 +762,7 @@ class LibraryRepository {
         content: item.content,
         url: item.url,
         tags: item.tags,
-        collection: item.collection,
+        collection: canonicalCollection,
         isFavorite: item.isFavorite,
         createdAtMs: item.createdAtMs,
         updatedAtMs: DateTime.now().toUtc().millisecondsSinceEpoch,
