@@ -408,3 +408,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-001–003 and NFR-003 (prevent unintended overwrite of local records/payloads).
 - Test: TC-066 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
+
+
+### TSK-360 — Strict local record reload
+
+- Implementation: `LibraryRepository._refreshItems` and `BackupCodec.validateSavedItemMap`.
+- Requirements: FR-001–003, FR-012–013 and NFR-003 (recover from malformed local data).
+- Test: TC-067 in `test/library_repository_test.dart`.
+- Verification: source/test committed but unrun.
