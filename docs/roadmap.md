@@ -388,3 +388,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-355:** Added shared `parseUserWebUrl` logic for URL fields and incoming shares. It supports ordinary bare domains and numeric host ports by applying HTTPS, but rejects explicit schemes such as `javascript:`, `file:`, `mailto:`, and malformed `http:example.com` instead of trying to reinterpret them as hosts.
 - Quick Save's field validator and save handler, plus ShareIntake, now use the same parser; strict `parseHttpUrl` remains the separate boundary for persisted URLs and external navigation. Added unit/widget regressions; tests are committed but unrun.
+
+
+### Phase 2/3 — reject credential-bearing saved URLs (2026-10-22)
+
+- **TSK-356:** The strict HTTP/HTTPS parser now rejects URL user-info such as embedded usernames/passwords. This applies to Quick Save, shared URL intake, backup validation and external launch because they share the same parsing boundary.
+- Added a unit regression for a credential-bearing URL. Test source is committed but unrun.
