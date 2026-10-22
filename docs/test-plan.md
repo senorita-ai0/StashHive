@@ -512,3 +512,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Check Link, Note, Image and Document icons when selected/unselected in light/dark themes.
 - Require at least 3:1 non-text contrast for decorative icons, with normal-text labels retaining at least 4.5:1 where applicable.
 - Unit regression source is committed but unrun; manually confirm visual consistency with borders and selected state.
+
+
+### TC-075 — Effective-content share-event deduplication
+
+- Deliver text shares with the same effective draft text but different path/message representation; confirm the duplicate is suppressed.
+- Deliver file shares with the same path and MIME but different unused message metadata; confirm the duplicate is suppressed.
+- Confirm URL shares with different accompanying context are still treated as distinct events and batch ordering is preserved.
+- Regression source is committed but unrun; confirm actual initial-intent/stream parity on Android.
