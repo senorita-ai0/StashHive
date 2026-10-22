@@ -416,5 +416,5 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — strict validation while reloading local records (2026-10-22)
 
-- **TSK-360:** Repository reload now validates raw saved-item fields before the model can silently normalize bad data, checks the model against the shared save/backup constraints, and confirms each Hive key matches the record ID. Malformed records are skipped without preventing valid entries from loading.
+- **TSK-360:** Repository reload validates raw field types and confirms each Hive key matches the record ID. It keeps parseable legacy records visible—even when a URL or attachment is invalid—so Item Details can show safe open/missing-file feedback; truly malformed shapes are skipped without preventing valid entries from loading.
 - Added a repository regression that seeds an unknown item kind and a box-key/record-ID mismatch, then verifies the valid record still loads. Test source is committed but unrun.
