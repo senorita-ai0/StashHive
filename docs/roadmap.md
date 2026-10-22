@@ -382,3 +382,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-354:** The Link/Note/Image/Document selector now wraps into two columns on narrow layouts or when enlarged system text would crowd the labels; roomy desktop layouts retain four columns. Labels can occupy two lines instead of always truncating after one.
 - Added a widget regression at 2× text scale to verify the second row exists, all four controls remain semantically available and no layout exception is reported. Source/test committed but unrun; device visual checks remain pending.
+
+
+### Phase 2 — distinguish bare web addresses from explicit URI schemes (2026-10-22)
+
+- **TSK-355:** Added shared `parseUserWebUrl` logic for URL fields and incoming shares. It supports ordinary bare domains and numeric host ports by applying HTTPS, but rejects explicit schemes such as `javascript:`, `file:`, `mailto:`, and malformed `http:example.com` instead of trying to reinterpret them as hosts.
+- Quick Save's field validator and save handler, plus ShareIntake, now use the same parser; strict `parseHttpUrl` remains the separate boundary for persisted URLs and external navigation. Added unit/widget regressions; tests are committed but unrun.
