@@ -24,12 +24,17 @@ class DecodedBackup {
     required this.attachments,
     required this.collections,
     required this.exportedAt,
+    this.omittedUnreadableRecordCount = 0,
   });
 
   final List<SavedItem> items;
   final Map<String, BackupAttachment> attachments;
   final List<String> collections;
   final String exportedAt;
+
+  /// Number of local records explicitly omitted by the exporter because their
+  /// stored shape could not be decoded. Zero for old/complete backups.
+  final int omittedUnreadableRecordCount;
 }
 
 class BackupCodec {
@@ -162,7 +167,11 @@ class BackupCodec {
     required List<SavedItem> items,
     required Map<String, Uint8List> attachmentBytes,
     required List<String> collections,
+    int omittedUnreadableRecordCount = 0,
   }) {
+    if (omittedUnreadableRecordCount < 0) {
+      throw const FormatException('The backup omission count is invalid.');
+    }
     if (items.length > maxItems) {
       throw const FormatException('The library contains too many items to export.');
     }
@@ -231,6 +240,8 @@ class BackupCodec {
       'collections': safeCollections,
       'items': items.map((item) => item.toMap()).toList(),
       'attachments': attachments,
+      if (omittedUnreadableRecordCount > 0)
+        'omittedUnreadableRecordCount': omittedUnreadableRecordCount,
     });
     if (output.length > maxJsonCharacters ||
         utf8ByteLength(output) > maxBackupBytes) {
@@ -261,6 +272,13 @@ class BackupCodec {
     if (decoded['formatVersion'] != formatVersion) {
       throw FormatException(
         'Unsupported backup version: ' + (decoded['formatVersion']?.toString() ?? 'unknown') + '.',
+      );
+    }
+    final omittedRecordValue = decoded['omittedUnreadableRecordCount'];
+    if (omittedRecordValue != null &&
+        (omittedRecordValue is! int || omittedRecordValue < 0)) {
+      throw const FormatException(
+        'The backup omission metadata is invalid.',
       );
     }
     final itemsValue = decoded['items'];
@@ -404,6 +422,8 @@ class BackupCodec {
       attachments: Map<String, BackupAttachment>.unmodifiable(attachments),
       collections: safeRestoredCollections,
       exportedAt: decoded['exportedAt'] is String ? decoded['exportedAt'] as String : '',
+      omittedUnreadableRecordCount:
+          omittedRecordValue is int ? omittedRecordValue : 0,
     );
   }
   /// Validates only the on-disk field types and collection sizes needed to
