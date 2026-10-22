@@ -804,3 +804,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-417:** `LibraryRepository.save` now copies incoming bytes once after validation and before the first storage await. Quick Save can avoid a pre-call copy, while the repository still owns a stable snapshot that callers cannot mutate after passing it in.
 - Added **TC-122**, which mutates the original buffer during the save pre-commit hook and verifies that stored attachment bytes remain unchanged. Test source is committed but unrun.
+
+
+### Phase 2 — reject unreferenced attachment payloads before decode (2026-10-22)
+
+- **TSK-418:** Backup decode now checks attachment keys against the validated items before base64 decoding payloads. In-memory restore preflight enforces the same invariant, so unused attachment bytes cannot consume the 100 MiB allowance or memory without being associated with any item.
+- Added regressions for invalid-base64 orphan payloads (proving reference rejection precedes decoding) and direct `DecodedBackup` construction. Test source is committed but unrun.
