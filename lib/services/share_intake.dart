@@ -6,11 +6,12 @@ import 'package:cross_file/cross_file.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 import '../models/saved_item.dart';
+import 'backup_codec.dart';
 import 'mime_types.dart';
 import 'web_url.dart';
 import 'bounded_bytes_reader.dart';
 
-const int maxIncomingAttachmentBytes = 15 * 1024 * 1024;
+const int maxIncomingAttachmentBytes = BackupCodec.maxAttachmentBytes;
 const int maxIncomingUrlCharacters = maxSavedItemUrlCharacters;
 const int maxIncomingTextCharacters = 1000000;
 
