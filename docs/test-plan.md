@@ -881,3 +881,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the repository's export preflight counts the two unexportable records, creates a backup containing only valid records, records the omission count in optional metadata, and keeps the original records unchanged locally.
 - On Backup & Privacy, attempt export and confirm the dialog explains invalid fields/missing attachments and asks before omission; cancel and confirm no share flow starts.
 - Confirm restore displays that unexportable items omitted from the source backup cannot be recovered from that file. Regression source is committed but unrun.
+
+
+### TC-115 — Metadata-only performance baseline
+
+- After dependencies are resolved, run `dart run tool/benchmark_library_repository.dart` from the repository root when the owner requests a measurement checkpoint.
+- Capture output for 100, 1,000 and 10,000 metadata-only items. Record the date, OS, Flutter/Dart versions and JSON output; note the runtime mode and any unusual machine load.
+- Review repository open/validation, repeated search and favorites filtering, an existing-item edit, and backup encoding results. Rerun surprising results on the same environment before comparison.
+- The harness imposes no latency threshold and must not be used to claim attachment or Android/web performance. Source is committed; measurements are pending. This is a deliberate local command, not an automatically triggered CI job.
