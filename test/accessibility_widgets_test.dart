@@ -139,6 +139,58 @@ void main() {
     expect(_contrastRatio(muted, field), greaterThanOrEqualTo(4.5));
   });
 
+  testWidgets('Library warns when malformed local records were skipped', (tester) async {
+    await Hive.box<dynamic>('stashhive_items_v1').put(
+      'unreadable-legacy-record',
+      <String, Object?>{
+        'id': 'unreadable-legacy-record',
+        'kind': 'not-a-supported-kind',
+        'title': 'Legacy record',
+        'content': '',
+        'tags': <String>[],
+        'isFavorite': false,
+        'createdAtMs': 1,
+        'updatedAtMs': 2,
+      },
+    );
+    await repository.save(
+      const SavedItem(
+        id: 'valid-after-corruption',
+        kind: ItemKind.link,
+        title: 'Valid saved link',
+        content: '',
+        url: 'https://example.com',
+        tags: [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 2,
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: app.LibraryPage(
+            repository: repository,
+            onAdd: (_) {},
+            onSearch: (_) {},
+            onOpenItem: (_) {},
+          ),
+        ),
+      ),
+    );
+
+    expect(repository.skippedRecordCount.value, 1);
+    expect(find.textContaining('1 saved record could not be read.'), findsOneWidget);
+    expect(
+      find.textContaining('use a previous backup'),
+      findsOneWidget,
+      reason: 'The warning should tell the user how to recover skipped records.',
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Library search teaser exposes and handles semantic activation', (tester) async {
     final semantics = tester.ensureSemantics();
     addTearDown(semantics.dispose);
