@@ -42,7 +42,7 @@
 |---|---|---|---|---|
 | TSK-301 | Implement versioned export archive | FR-012 | IN PROGRESS | Backup contains manifest, metadata, attachments and version; paths and sizes validated. |
 | TSK-302 | Implement restore and conflict strategy | FR-013 | IN PROGRESS | Valid archive restored; corrupt/unknown-version archives rejected with no partial corruption. |
-| TSK-303 | Platform-specific web persistence and data-loss messaging | FR-015 | NOT STARTED | Same browser profile reload retains test data; different browser does not imply sync; clearing-data warning is clear. |
+| TSK-303 | Platform-specific web persistence and data-loss messaging | FR-015 | IN PROGRESS — platform-specific data-loss copy and first-launch reminder added; browser restart/quota verification pending | Same browser profile reload retains test data; different browser does not imply sync; clearing-data warning is clear. |
 | TSK-304 | Privacy, accessibility and security review | FR-018, NFR-002, NFR-006 | NOT STARTED | Permission list justified; no saved-content logs; keyboard/contrast/large-text checklist complete. |
 | TSK-305 | Performance and recovery regression suite | NFR-003, NFR-007–009 | IN PROGRESS — baseline harness added; measurements and recovery verification pending | Capture 100/1,000/10,000-item baseline and verify recovery flows at the manual checkpoint. |
 
