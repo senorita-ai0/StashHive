@@ -285,7 +285,38 @@ class BackupCodec {
       collections,
       items.map((item) => item.collection),
     );
+    final itemMaps = items
+        .map((item) => item.toMap())
+        .toList(growable: false);
     final attachments = <String, Object?>{};
+    final exportedAt = DateTime.now().toUtc().toIso8601String();
+    // Build a tiny root skeleton and count each item JSON separately. A
+    // full jsonEncode(items) here could allocate gigabytes before the final
+    // 145 MiB cap is checked.
+    final outputValue = <String, Object?>{
+      'app': 'StashHive',
+      'formatVersion': formatVersion,
+      'exportedAt': exportedAt,
+      'collections': safeCollections,
+      'items': <Object?>[],
+      'attachments': attachments,
+      if (omittedUnreadableRecordCount > 0)
+        'omittedUnreadableRecordCount': omittedUnreadableRecordCount,
+      if (omittedCollectionEntryCount > 0)
+        'omittedCollectionEntryCount': omittedCollectionEntryCount,
+      if (omittedUnexportableRecordCount > 0)
+        'omittedUnexportableRecordCount': omittedUnexportableRecordCount,
+    };
+    var estimatedJsonBytes = utf8ByteLength(jsonEncode(outputValue));
+    for (var index = 0; index < itemMaps.length; index++) {
+      estimatedJsonBytes += utf8ByteLength(jsonEncode(itemMaps[index]));
+      if (index > 0) estimatedJsonBytes++; // Array comma.
+      if (estimatedJsonBytes > maxBackupBytes) {
+        throw const FormatException('The backup is too large to share or restore.');
+      }
+    }
+    outputValue['items'] = itemMaps;
+
     final includedAttachmentKeys = <String>{};
     var totalBytes = 0;
     for (final item in items) {
@@ -329,27 +360,36 @@ class BackupCodec {
       if (totalBytes > maxTotalAttachmentBytes) {
         throw const FormatException('The combined attachments exceed 100 MB.');
       }
+
+      final name = item.attachmentName ?? 'attachment';
+      final mimeType = item.attachmentMimeType ?? 'application/octet-stream';
+      final checksum = sha256.convert(bytes).toString();
+      // Base64 output is ASCII and never needs JSON escaping. Measure the
+      // attachment object with an empty base64 value, then add the exact
+      // encoded character count before allocating the base64 string itself.
+      final emptyPayloadValue = jsonEncode(<String, Object?>{
+        'name': name,
+        'mimeType': mimeType,
+        'base64': '',
+        'sha256': checksum,
+      });
+      estimatedJsonBytes += utf8ByteLength(jsonEncode(key)) +
+          1 +
+          utf8ByteLength(emptyPayloadValue) +
+          maxBase64CharactersForDecodedBytes(bytes.length) +
+          (attachments.isEmpty ? 0 : 1);
+      if (estimatedJsonBytes > maxBackupBytes) {
+        throw const FormatException('The backup is too large to share or restore.');
+      }
+
       attachments[key] = <String, Object?>{
-        'name': item.attachmentName ?? 'attachment',
-        'mimeType': item.attachmentMimeType ?? 'application/octet-stream',
+        'name': name,
+        'mimeType': mimeType,
         'base64': base64Encode(bytes),
-        'sha256': sha256.convert(bytes).toString(),
+        'sha256': checksum,
       };
     }
-    final output = jsonEncode(<String, Object?>{
-      'app': 'StashHive',
-      'formatVersion': formatVersion,
-      'exportedAt': DateTime.now().toUtc().toIso8601String(),
-      'collections': safeCollections,
-      'items': items.map((item) => item.toMap()).toList(),
-      'attachments': attachments,
-      if (omittedUnreadableRecordCount > 0)
-        'omittedUnreadableRecordCount': omittedUnreadableRecordCount,
-      if (omittedCollectionEntryCount > 0)
-        'omittedCollectionEntryCount': omittedCollectionEntryCount,
-      if (omittedUnexportableRecordCount > 0)
-        'omittedUnexportableRecordCount': omittedUnexportableRecordCount,
-    });
+    final output = jsonEncode(outputValue);
     if (output.length > maxJsonCharacters ||
         utf8ByteLength(output) > maxBackupBytes) {
       throw const FormatException('The backup is too large to share or restore.');
