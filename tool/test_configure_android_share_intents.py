@@ -37,6 +37,7 @@ class ConfigureAndroidShareIntentsTests(unittest.TestCase):
         activity = root.find("application/activity")
 
         self.assertEqual(added, len(FILTERS))
+        self.assertEqual(root.find("application").get(ANDROID + "label"), "StashTrail")
         self.assertEqual(activity.get(ANDROID + "launchMode"), "singleTask")
         filters = activity.findall("intent-filter")
         self.assertEqual(len(filters), len(FILTERS))
@@ -76,6 +77,10 @@ class ConfigureAndroidShareIntentsTests(unittest.TestCase):
         self.assertEqual(second_added, 0)
         activity = ET.parse(self.path).getroot().find("application/activity")
         self.assertEqual(len(activity.findall("intent-filter")), len(FILTERS))
+        self.assertEqual(
+            ET.parse(self.path).getroot().find("application").get(ANDROID + "label"),
+            "StashTrail",
+        )
 
     def test_fails_clearly_when_main_activity_is_missing(self):
         self.path.write_text(
