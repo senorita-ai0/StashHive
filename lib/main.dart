@@ -1205,7 +1205,7 @@ class SavedItemTile extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                              'This item needs repair before it can be updated. Edit it to correct its URL or reselect a missing file.',
+                              'Could not update this item. Open Edit to review its saved details and repair any invalid URL or missing file.',
                             ),
                           ),
                         );
@@ -2023,7 +2023,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
       if (mounted) setState(_reload);
     } catch (_) {
       _message(
-        'This item needs repair before it can be updated. Edit it to correct its URL or reselect a missing file.',
+        'Could not update this item. Open Edit to review its saved details and repair any invalid URL or missing file.',
       );
     }
   }
