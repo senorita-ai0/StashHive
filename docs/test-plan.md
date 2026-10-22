@@ -694,3 +694,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Select a file with a normal filename and confirm it continues to the size-first read flow.
 - With a platform/mocked picker fixture returning an empty or more-than-255-character name, confirm the specific filename message appears before `length()` or `readAsBytes()` is called.
 - Source is committed; exercise actual picker/provider behavior on Android and web during the manual validation checkpoint.
+
+
+### TC-100 — MIME-equivalent incoming file events deduplicate
+
+- Deliver the same `.png` file event twice in the duplicate window, once with `text/plain` and once with `image/png` MIME metadata.
+- Confirm the first event is accepted and the second is suppressed because both resolve to `image/png` under extension-first intake.
+- Regression source is committed but unrun; validate the equivalent provider behavior on Android.
