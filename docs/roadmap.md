@@ -322,3 +322,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-344:** Centralized extension-to-MIME guessing in `lib/services/mime_types.dart`; Quick Save's file picker and OS share intake now use the same mapping. Added BMP, HEIC/HEIF and TIFF mappings that were previously missing or inconsistent.
 - Added direct MIME-helper tests and a share-intake regression for TIFF content with generic MIME metadata. Tests are committed but unrun; actual platform file support still needs device verification.
+
+
+### Phase 2 — Quick Save validation feedback (2026-10-22)
+
+- **TSK-345:** Quick Save now normalizes URL scheme casing before persistence and validates the same tag count/length limits enforced by repository/backup validation. It shows actionable messages for URLs that exceed 4,096 characters and tags beyond 100 tags / 100 characters per tag.
+- Added widget regressions for uppercase HTTPS input and both tag-boundary errors. Source and tests are committed but unrun.
