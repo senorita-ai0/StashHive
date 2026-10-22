@@ -2974,20 +2974,33 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
     if (_choosingBackup || _restoring) return;
     setState(() => _choosingBackup = true);
     try {
-      final picked = await FilePicker.pickFiles(
+      final file = await FilePicker.pickFile(
         type: FileType.custom,
         allowedExtensions: const ['json'],
-        allowMultiple: false,
-        withData: true,
       );
-      if (picked == null || picked.files.isEmpty) return;
-      final file = picked.files.first;
-      final bytes = file.bytes;
-      if (bytes == null) {
+      if (!mounted || file == null) return;
+
+      // Check the selected file's size before allocating the entire backup
+      // buffer; keep a post-read check in case the provider reports a stale
+      // or unavailable length.
+      final length = await file.length();
+      if (!mounted) return;
+      if (length == 0) {
+        _message('The selected backup is empty or its size is unavailable.');
+        return;
+      }
+      const maxBackupBytes = 145 * 1024 * 1024;
+      if (length > maxBackupBytes) {
+        _message('That backup is too large to import in this version.');
+        return;
+      }
+      final bytes = await file.readAsBytes();
+      if (!mounted) return;
+      if (bytes.isEmpty) {
         _message('Could not read the selected backup file.');
         return;
       }
-      if (bytes.length > 145 * 1024 * 1024) {
+      if (bytes.length > maxBackupBytes) {
         _message('That backup is too large to import in this version.');
         return;
       }
