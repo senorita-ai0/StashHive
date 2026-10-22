@@ -1,4 +1,4 @@
-# StashHive — Proposed Architecture
+# StashTrail — Proposed Architecture
 
 **Status:** Draft architecture for approval; storage choice remains provisional until a proof of concept passes.  
 **Date checked for technical references:** 2026-10-21
@@ -26,7 +26,7 @@ flowchart TD
     BAK --> DB
     BAK --> FILES
     UI --> EXT[External browser / file viewer]
-    EXT -. URLs require network .-> NET[(Internet site, outside StashHive)]
+    EXT -. URLs require network .-> NET[(Internet site, outside StashTrail)]
 ```
 
 ## Logical components
@@ -159,3 +159,8 @@ Core source now includes sequential incoming-share review, bounded/collision-res
 The implemented JSON v1 backup format may include two optional non-negative counters: `omittedUnreadableRecordCount` for raw local records that could not be materialized, and `omittedCollectionEntryCount` for legacy collection entries/assignments normalized or omitted during collection recovery. Export includes the counters when non-zero; decode defaults either missing field to zero so existing v1 backups remain compatible. Restore confirmation must explain these counts, because a backup cannot reconstruct raw records or collection data that were omitted from its contents.
 
 Before export, the repository blocks any remaining visible item assignment that cannot be represented within the portable 500-collection cap. Collection assignments are canonicalized against the merged collection list during restore. These changes are implemented in source with regression cases, but the tests and Android/web restore flows remain unverified until the manual validation checkpoint.
+
+
+## Product identity and compatibility
+
+The user-facing product brand is StashTrail. Do not rename the existing `stashhive` Dart package identifier, Hive store keys (`stashhive_*_v1`) or version-1 JSON backup marker (`StashHive`) as part of a visual brand change. Existing local data and older backups must remain readable; changing these identifiers requires an explicit migration and compatibility plan.
