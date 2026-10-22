@@ -177,6 +177,7 @@ void main() {
       final completeDecoded = BackupCodec.decode(completeBackup);
       expect(completeDecoded.omittedUnreadableRecordCount, 0);
       expect(completeDecoded.omittedCollectionEntryCount, 0);
+      expect(completeDecoded.omittedUnexportableRecordCount, 0);
 
       final partialBackup = BackupCodec.encode(
         items: [sampleLink()],
@@ -184,10 +185,12 @@ void main() {
         collections: const ['Learning'],
         omittedUnreadableRecordCount: 3,
         omittedCollectionEntryCount: 2,
+        omittedUnexportableRecordCount: 4,
       );
       final partialDecoded = BackupCodec.decode(partialBackup);
       expect(partialDecoded.omittedUnreadableRecordCount, 3);
       expect(partialDecoded.omittedCollectionEntryCount, 2);
+      expect(partialDecoded.omittedUnexportableRecordCount, 4);
     });
 
     test('rejects malformed partial-backup omission metadata', () {
@@ -212,6 +215,14 @@ void main() {
           () => BackupCodec.decode(jsonEncode(badRecordCount)),
           throwsFormatException,
           reason: 'Record omission metadata must be a non-negative integer.',
+        );
+
+        final badUnexportableCount = jsonDecode(valid) as Map<String, dynamic>;
+        badUnexportableCount['omittedUnexportableRecordCount'] = invalidCount;
+        expect(
+          () => BackupCodec.decode(jsonEncode(badUnexportableCount)),
+          throwsFormatException,
+          reason: 'Unexportable record metadata must be a non-negative integer.',
         );
       }
     });
