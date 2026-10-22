@@ -760,3 +760,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-012–013 and NFR-003 (transparent backup completeness and recovery).
 - Test: TC-110 in `test/backup_codec_test.dart` and `test/library_repository_test.dart`.
 - Verification: source/tests committed but unrun; restore interaction remains unverified on device.
+
+
+### TSK-407 — Case-insensitive Collection Contents lookup
+
+- Implementation: `CollectionContentsPage` filter in `lib/main.dart`.
+- Requirements: FR-010–011 and NFR-003 (consistent collection retrieval across legacy data).
+- Test: TC-111 in `test/accessibility_widgets_test.dart`.
+- Verification: source/test committed but unrun.
