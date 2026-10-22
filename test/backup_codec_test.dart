@@ -69,27 +69,26 @@ void main() {
       );
     });
 
-    test('round-trips partial-backup omission metadata and old backups default to complete', () {
+    test('round-trips omission metadata and old backups default to complete', () {
       final completeBackup = BackupCodec.encode(
         items: [sampleLink()],
         attachmentBytes: const {},
         collections: const ['Learning'],
       );
-      expect(
-        BackupCodec.decode(completeBackup).omittedUnreadableRecordCount,
-        0,
-      );
+      final completeDecoded = BackupCodec.decode(completeBackup);
+      expect(completeDecoded.omittedUnreadableRecordCount, 0);
+      expect(completeDecoded.omittedCollectionEntryCount, 0);
 
       final partialBackup = BackupCodec.encode(
         items: [sampleLink()],
         attachmentBytes: const {},
         collections: const ['Learning'],
         omittedUnreadableRecordCount: 3,
+        omittedCollectionEntryCount: 2,
       );
-      expect(
-        BackupCodec.decode(partialBackup).omittedUnreadableRecordCount,
-        3,
-      );
+      final partialDecoded = BackupCodec.decode(partialBackup);
+      expect(partialDecoded.omittedUnreadableRecordCount, 3);
+      expect(partialDecoded.omittedCollectionEntryCount, 2);
     });
 
     test('round-trips items and collection names', () {
