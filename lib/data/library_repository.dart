@@ -81,6 +81,16 @@ class LibraryRepository {
     return time + '-' + suffix;
   }
 
+  /// Generates an ID not currently used by either records or attachment keys.
+  /// Item IDs often double as attachment keys, so reserve against both boxes.
+  String createUniqueId() {
+    var id = createId();
+    while (_itemsBox.containsKey(id) || _attachmentsBox.containsKey(id)) {
+      id = createId();
+    }
+    return id;
+  }
+
   void _refreshItems() {
     final result = <SavedItem>[];
     for (final value in _itemsBox.values) {
@@ -137,12 +147,7 @@ class LibraryRepository {
       return itemId;
     }
 
-    var candidate = createId();
-    while (_itemsBox.containsKey(candidate) ||
-        _attachmentsBox.containsKey(candidate)) {
-      candidate = createId();
-    }
-    return candidate;
+    return createUniqueId();
   }
 
   /// True if a raw item record other than [itemId] references [key].
