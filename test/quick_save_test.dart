@@ -106,7 +106,7 @@ void main() {
   testWidgets('normalizes uppercase URL schemes before saving', (tester) async {
     await openNewLink(tester);
     await tester.enterText(
-      find.byType(TextFormField).at(1),
+      find.byType(TextFormField).at(0),
       'HTTPS://EXAMPLE.COM/Guide',
     );
     await tester.ensureVisible(find.text('Save to StashHive'));
@@ -120,7 +120,7 @@ void main() {
   testWidgets('shows a clear error when too many tags are entered', (tester) async {
     await openNewLink(tester);
     await tester.enterText(
-      find.byType(TextFormField).at(1),
+      find.byType(TextFormField).at(0),
       'https://example.com/',
     );
     await tester.enterText(
@@ -138,7 +138,7 @@ void main() {
   testWidgets('shows a clear error when a tag exceeds 100 characters', (tester) async {
     await openNewLink(tester);
     await tester.enterText(
-      find.byType(TextFormField).at(1),
+      find.byType(TextFormField).at(0),
       'https://example.com/',
     );
     await tester.enterText(
