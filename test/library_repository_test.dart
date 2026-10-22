@@ -473,6 +473,27 @@ void main() {
     ]));
   });
 
+  test('rejects an empty note before writing it', () async {
+    final emptyNote = SavedItem(
+      id: 'empty-note',
+      kind: ItemKind.note,
+      title: 'Blank note',
+      content: '   ',
+      tags: const [],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 1000,
+    );
+
+    await expectLater(
+      repository.save(emptyNote),
+      throwsFormatException,
+    );
+    expect(repository.findById(emptyNote.id), isNull);
+    expect(repository.items.value, isEmpty);
+  });
+
   test('rejects empty or untrimmed tags before repository writes', () async {
     await expectLater(
       repository.save(buildLink(id: 'empty-tag').copyWith(tags: const [''])),
