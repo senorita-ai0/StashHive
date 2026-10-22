@@ -34,7 +34,7 @@ Color favoriteStarColor(BuildContext context) =>
         : const Color(0xFF996400);
 
 /// Preserve app-defined validation guidance without exposing raw plugin or
-storage exception details in normal user-facing messages.
+/// storage exception details in normal user-facing messages.
 String _messageForOperationError(
   Object error, {
   required String fallback,
@@ -54,7 +54,7 @@ Future<void> main() async {
       repository: repository,
       initialDarkMode: repository.darkMode,
     ));
-  } catch (error) {
+  } catch (_) {
     runApp(const StartupFailureApp());
   }
 }
