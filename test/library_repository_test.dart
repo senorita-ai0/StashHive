@@ -383,6 +383,20 @@ void main() {
     expect(repository.items.value, isEmpty);
   });
 
+  test('rejects empty or untrimmed tags before repository writes', () async {
+    await expectLater(
+      repository.save(buildLink(id: 'empty-tag').copyWith(tags: const [''])),
+      throwsFormatException,
+    );
+    await expectLater(
+      repository.save(
+        buildLink(id: 'spaced-tag').copyWith(tags: const [' Reading']),
+      ),
+      throwsFormatException,
+    );
+    expect(repository.items.value, isEmpty);
+  });
+
   test('removing an item attachment reference reclaims unused bytes', () async {
     final original = buildImage(id: 'convertible-image');
     final originalBytes = Uint8List.fromList([1, 4, 9, 16]);
