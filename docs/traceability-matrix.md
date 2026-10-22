@@ -208,3 +208,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009 (duplicate-free incoming-share handling).
 - Test: TC-041 in `test/share_intake_test.dart`.
 - Verification: source and test committed; test and Android device verification remain pending.
+
+
+### TSK-335 — Mixed-MIME Android share target
+
+- Implementation: `tool/configure_android_share_intents.py`, wildcard `SEND_MULTIPLE` filter.
+- Requirement: FR-009 (multi-item incoming share).
+- Test: TC-042 and `tool/test_configure_android_share_intents.py`.
+- Verification: source/regression committed; Android chooser and content URI behavior remain unverified.
