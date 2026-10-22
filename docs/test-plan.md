@@ -1014,3 +1014,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Open Item Details for an image or document on Android and confirm the attachment section describes storage inside StashTrail on the device.
 - Open the same screen in the web app and confirm the label says the file is stored in this browser profile, not on the device or in the cloud.
 - Check this copy together with Backup & privacy's local-storage warning. Widget source currently asserts the native label; both platform branches still require manual review because tests/builds have not been run.
+
+
+### TC-134 — Dark-mode preference write failure is recoverable
+
+- Start with the dark-mode preference absent/false and request dark appearance.
+- Inject a storage failure after the preference write takes effect. Confirm repository rollback returns to the previous preference, the UI switch reverts to the persisted value, and no unhandled exception reaches the widget test.
+- Regression source is committed but unrun; actual browser/device preference persistence remains pending the manual validation checkpoint.
