@@ -6,6 +6,7 @@ import 'package:cross_file/cross_file.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 import '../models/saved_item.dart';
+import 'mime_types.dart';
 
 const int maxIncomingAttachmentBytes = 15 * 1024 * 1024;
 const int maxIncomingUrlCharacters = maxSavedItemUrlCharacters;
@@ -270,7 +271,7 @@ class ShareIntake {
         ? fileName.split('.').last.toLowerCase()
         : '';
     final sharedMime = media.mimeType?.toLowerCase().trim() ?? '';
-    final guessedMime = _guessMimeType(extension);
+    final guessedMime = guessMimeTypeFromExtension(extension);
     final mimeType =
         sharedMime.isEmpty || sharedMime == 'application/octet-stream'
             ? guessedMime
@@ -386,88 +387,5 @@ class ShareIntake {
     return parts.isEmpty ? '' : parts.last;
   }
 
-  static String _guessMimeType(String extension) {
-    return switch (extension) {
-      'jpg' || 'jpeg' => 'image/jpeg',
-      'png' => 'image/png',
-      'gif' => 'image/gif',
-      'webp' => 'image/webp',
-      'bmp' => 'image/bmp',
-      'heic' => 'image/heic',
-      'heif' => 'image/heif',
-      'pdf' => 'application/pdf',
-      'txt' => 'text/plain',
-      'csv' => 'text/csv',
-      'doc' => 'application/msword',
-      'docx' =>
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'rtf' => 'application/rtf',
-      _ => 'application/octet-stream',
-    };
-  }
-}
-), '');
-    const pairs = <String, String>{')': '(', ']': '[', '}': '{'};
-    while (result.isNotEmpty) {
-      final closing = result.substring(result.length - 1);
-      final opening = pairs[closing];
-      if (opening == null) break;
-      var openCount = 0;
-      var closeCount = 0;
-      for (final character in result.split('')) {
-        if (character == opening) openCount++;
-        if (character == closing) closeCount++;
-      }
-      if (closeCount <= openCount) break;
-      result = result.substring(0, result.length - 1);
-    }
-    return result;
-  }
 
-  static Uri? _parseWebUrl(String value) {
-    final text = value.trim();
-    if (text.isEmpty || text.contains(RegExp(r'\s'))) return null;
-    final explicitScheme =
-        RegExp(r'^[a-zA-Z][a-zA-Z0-9+.-]*:').hasMatch(text);
-    if (explicitScheme &&
-        !text.toLowerCase().startsWith('http://') &&
-        !text.toLowerCase().startsWith('https://')) {
-      return null;
-    }
-    final candidate = text.contains('://') ? text : 'https://' + text;
-    final uri = Uri.tryParse(candidate);
-    if (uri == null ||
-        (uri.scheme.toLowerCase() != 'http' &&
-            uri.scheme.toLowerCase() != 'https') ||
-        uri.host.isEmpty) {
-      return null;
-    }
-    return uri;
-  }
-
-  static String _basename(String path) {
-    final normalized = path.replaceAll('\\', '/');
-    final parts = normalized.split('/').where((part) => part.isNotEmpty);
-    return parts.isEmpty ? '' : parts.last;
-  }
-
-  static String _guessMimeType(String extension) {
-    return switch (extension) {
-      'jpg' || 'jpeg' => 'image/jpeg',
-      'png' => 'image/png',
-      'gif' => 'image/gif',
-      'webp' => 'image/webp',
-      'bmp' => 'image/bmp',
-      'heic' => 'image/heic',
-      'heif' => 'image/heif',
-      'pdf' => 'application/pdf',
-      'txt' => 'text/plain',
-      'csv' => 'text/csv',
-      'doc' => 'application/msword',
-      'docx' =>
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'rtf' => 'application/rtf',
-      _ => 'application/octet-stream',
-    };
-  }
 }
