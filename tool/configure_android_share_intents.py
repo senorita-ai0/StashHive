@@ -31,7 +31,20 @@ FILTERS = (
     ),
     (SEND, "application/rtf"),
     (SEND, "text/csv"),
+    # Multiple selection is exposed for every supported media family, not
+    # only images, so homogeneous document/text batches can reach sequential
+    # Quick Save review too.
+    (SEND_MULTIPLE, "text/*"),
+    (SEND_MULTIPLE, "text/uri-list"),
     (SEND_MULTIPLE, "image/*"),
+    (SEND_MULTIPLE, "application/pdf"),
+    (SEND_MULTIPLE, "application/msword"),
+    (
+        SEND_MULTIPLE,
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ),
+    (SEND_MULTIPLE, "application/rtf"),
+    (SEND_MULTIPLE, "text/csv"),
 )
 
 
