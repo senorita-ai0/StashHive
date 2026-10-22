@@ -2485,7 +2485,11 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                     ),
                     leading: Icon(item.kind.icon, color: item.kind.accent),
                     title: Text(item.attachmentName!, maxLines: 2, overflow: TextOverflow.ellipsis),
-                    subtitle: const Text('Stored inside StashTrail on this device'),
+                    subtitle: Text(
+                      kIsWeb
+                          ? 'Stored in this browser profile'
+                          : 'Stored inside StashTrail on this device',
+                    ),
                     trailing: const Icon(Icons.more_horiz_rounded),
                   ),
                 ],
