@@ -457,6 +457,16 @@ class BackupCodec {
         'A saved item is missing required fields or has invalid field types.',
       );
     }
+    final createdAtMs = value['createdAtMs'] as int;
+    final updatedAtMs = value['updatedAtMs'] as int;
+    if (createdAtMs < minSupportedTimestampMs ||
+        createdAtMs > maxSupportedTimestampMs ||
+        updatedAtMs < minSupportedTimestampMs ||
+        updatedAtMs > maxSupportedTimestampMs) {
+      throw const FormatException(
+        'A saved item has a timestamp outside the supported date range.',
+      );
+    }
     if ((value['url'] != null && value['url'] is! String) ||
         (value['collection'] != null && value['collection'] is! String) ||
         (value['attachmentKey'] != null && value['attachmentKey'] is! String) ||
