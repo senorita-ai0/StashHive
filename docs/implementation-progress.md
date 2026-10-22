@@ -136,6 +136,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added a skipped-record counter and a Library live-region warning that explains recovery implications when malformed raw entries are not shown.
 - [x] Added repository/Library widget regression source for the count and visible recovery warning.
 - [x] Added a repository-level guard preventing any caller from writing replacement bytes to a key still referenced by another raw item, plus a test for unchanged records and payload after rejection.
+- [x] Bound raw local record field sizes during recovery so oversized records are skipped and counted while parseable legacy records with safe-to-display field sizes remain visible.
 - [x] Added credential-bearing URL, URL boundary, tag integrity, collision-safe ID and responsive kind-selector regression source.
 
 ## Current validation state — 2026-10-22
