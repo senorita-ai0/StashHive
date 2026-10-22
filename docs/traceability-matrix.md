@@ -240,3 +240,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirement: FR-009 (incoming URL/text shares).
 - Test: TC-045 in `test/share_intake_test.dart`.
 - Verification: source/test committed; execution and Android source-app checks remain pending.
+
+
+### TSK-339 — Share-intake length limits
+
+- Implementation: `lib/services/share_intake.dart`, URL maximum and typed-URL context validation.
+- Requirement: FR-009, aligned with backup URL limits in FR-012–013.
+- Test: TC-046 in `test/share_intake_test.dart`.
+- Verification: source/test committed, execution pending.
