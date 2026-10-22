@@ -706,3 +706,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **TSK-388:** The decoded-object validator now allows case-only duplicate collection labels that older version-1 exports could contain. Restore still de-duplicates names case-insensitively while merging, so recoverable legacy item data is not rejected just because the old collection list used inconsistent casing.
 - Added a regression that mutates an otherwise valid v1 export to include `Learning` and `learning`, decodes it and confirms the restore preflight accepts it for normalization. Test source is committed but unrun.
+
+
+### Phase 2 — bounded streaming reads for OS-shared files (2026-10-22)
+
+- **TSK-389:** Shared-file intake now reads via `XFile.openRead()` into a bounded byte reader. It cancels the stream as soon as cumulative bytes would exceed 15 MiB, so a stale or unavailable provider length cannot trigger an unbounded `readAsBytes()` allocation.
+- Added stream-reader tests for exact-limit acceptance and early cancellation at the first over-limit chunk. Test source is committed but unrun; real Android content-provider behavior remains pending.
