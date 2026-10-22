@@ -124,7 +124,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] MIME mappings: centralize supported image/document extension inference for both Quick Save and OS shares.
 - [x] URL safety: share a strict web URL parser across Quick Save, share intake, backup validation and external launch; reject credential-bearing URLs and explicit non-web schemes.
 - [x] Accessibility source: contrast-safe muted text, type badges and favorite state; semantic selected state for Quick Save kind options; wrapping kind selector for narrow or enlarged-text layouts; corresponding regression source added.
-- [x] Progress/test docs updated through TSK-416 and TC-120.
+- [x] Progress/test docs updated through TSK-416 and TC-121.
 
 ## Phase 2/3 latest source increments — 2026-10-22
 
@@ -206,8 +206,8 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added Search sort state and the three options already supported in Library: Recently saved, Oldest first and Title A–Z.
 - [x] Kept filtering and sort operations separate from persistence; changing sort order does not mutate saved items.
 - [x] Wrapped the result count/live status and sort control so they can reflow on narrow screens and at enlarged text sizes.
-- [x] Added TC-117 widget regression source for all three sort modes.
-- [ ] Execute TC-117 and review narrow-width/large-text layout at the manual validation checkpoint.
+- [x] Added TC-121 widget regression source for all three sort modes.
+- [ ] Execute TC-121 and review narrow-width/large-text layout at the manual validation checkpoint.
 - [ ] Complete keyboard and screen-reader checks; no visual or assistive-technology pass is claimed.
 
 ## Phase 3 — metadata performance baseline harness (2026-10-22)
@@ -233,9 +233,9 @@ The Library's search-shaped navigation control now exposes a button role, the la
 ## Phase 2 — portable backup size preflight (2026-10-22)
 
 - [x] Added incremental UTF-8 byte estimation for item JSON and attachment entries before allocating their base64 strings, with a final exact-size guard retained.
-- [x] Added TC-120 for multibyte/escaped metadata, base64 boundary lengths, output byte-count parity and attachment byte round-trip coverage.
-- [ ] Run TC-120 and validate over-limit export rejection plus peak-memory behavior at the manual checkpoint.
+- [x] Added TC-117 for the large-aggregate-metadata rejection boundary and TC-120 for multibyte/escaped metadata, base64 boundary lengths, output byte-count parity and attachment byte round-trip coverage.
+- [ ] Run TC-117 and TC-120; validate over-limit export rejection plus peak-memory behavior at the manual checkpoint.
 
 ## Current validation state — 2026-10-22
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-119 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-121 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
