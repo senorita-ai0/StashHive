@@ -1,4 +1,4 @@
-# StashHive — AI Project Workflow
+# StashTrail — AI Project Workflow
 
 Implementation was explicitly approved by the owner on 21 October 2026. BUILD mode is active for Phase 2; don't ask for the same approval again.
 
@@ -11,7 +11,7 @@ Implementation was explicitly approved by the owner on 21 October 2026. BUILD mo
 - **RELEASE:** prepare readiness, rollback and store/deploy documentation. Publishing/deployment requires separate explicit approval.
 - **AUDIT:** report findings by severity before performing broad rewrites.
 
-## StashHive implementation rules
+## StashTrail implementation rules
 
 1. Follow `docs/design/screen-reference.md` as the UI visual baseline; its mockups are static specs, not running app screenshots.
 2. First slice uses Hive CE behind `LibraryRepository`, but do not lock the persistence choice until CI and Android/web tests pass.
