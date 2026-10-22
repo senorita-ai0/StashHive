@@ -374,6 +374,13 @@ void main() {
       repository.save(buildImage().copyWith(clearAttachment: true)),
       throwsFormatException,
     );
+    await expectLater(
+      repository.save(
+        buildLink(id: 'stray-attachment-metadata')
+            .copyWith(attachmentName: 'stale.png'),
+      ),
+      throwsFormatException,
+    );
     final overlongUrl = 'https://example.com/' +
         List<String>.filled(4096, 'a').join();
     await expectLater(
