@@ -637,3 +637,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Save a valid item assigned to a collection that is not yet present in the preference list; confirm the collection appears in navigation and remains represented in backup metadata.
 - Deserialize a legacy padded collection name and a whitespace-only assignment; confirm the first is trimmed and the latter becomes unassigned.
 - Verify saving/deleting items refreshes inferred collection entries without disturbing explicitly stored collections. Test source is committed but unrun.
+
+
+### TC-092 — Collection cap cannot be bypassed through saved-item metadata
+
+- Seed 500 valid collections, then attempt to save an otherwise valid item assigned to a new, unlisted collection.
+- Confirm the repository rejects the save with the collection limit message, the item remains absent, and the existing collection list is unchanged.
+- Repository regression source is committed but unrun.
