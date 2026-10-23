@@ -1056,4 +1056,5 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Save a note, open Search with an empty query, and select a type that has no saved items (for example, Images).
 - Confirm the empty state says "No items in this filter", explains that another type can be chosen, and offers "Clear filter" instead of implying the whole library is empty.
 - Activate "Clear filter" and confirm the note and the overall result count return.
+- Enter a query that has no matches and select Images; confirm the recovery button says "Clear search and filter", then activate it and confirm the query is empty and all items return.
 - Widget regression source is committed but unrun; inspect the empty state with narrow widths, enlarged text, keyboard and screen-reader navigation during the manual checkpoint.
