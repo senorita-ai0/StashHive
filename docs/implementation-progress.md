@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-23
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-148 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-148 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-149 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-149 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -332,3 +332,11 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - [x] Reassigned the duplicate second-block test IDs TC-093–TC-102 to TC-138–TC-147 and the associated duplicate task IDs TSK-386–TSK-395 to TSK-430–TSK-439, preserving the original IDs for the earlier cases.
 - [x] Removed a redundant, misnumbered traceability row for attachment snapshots; the canonical entry is TSK-417 / TC-122.
 - [ ] Run TC-138–TC-148 and complete the pending manual platform/accessibility checkpoint. No tests, formatter, analyzer, or builds were run for this increment.
+
+
+## Phase 3 — actionable empty Search state (2026-10-23)
+
+- [x] Search's empty state now explains when the active content-type filter has no matches instead of implying that the library has no content.
+- [x] Added a clear-filter action for an unmatched type filter; if a query and filter both contribute to the empty result, the recovery action clears both.
+- [x] Added TC-149 widget regression source and TSK-441 traceability.
+- [ ] Run TC-149 and review the empty state at narrow widths, enlarged text, keyboard navigation and with a screen reader. Tests/builds remain unrun.
