@@ -791,14 +791,14 @@ The previous Android debug build failed when the generated plugin registrant cou
 - For an existing attachment, confirm the spoken label uses the filename and the hint announces replacement behavior. Widget source is committed but unrun; verify with TalkBack and a browser screen reader.
 
 
-### TC-093 — Out-of-range legacy timestamp recovery
+### TC-138 — Out-of-range legacy timestamp recovery
 
 - Seed local storage with an otherwise well-shaped record whose updated timestamp exceeds the supported DateTime range.
 - Trigger repository refresh and confirm it is skipped and included in the recovery count; direct lookup by its stored ID must also return null.
 - Verify valid records remain visible. Regression source is committed but unrun.
 
 
-### TC-094 — Revalidate in-memory decoded backups before restore
+### TC-139 — Revalidate in-memory decoded backups before restore
 
 - Construct a `DecodedBackup` directly rather than using JSON decode; include missing attachment bytes, invalid attachment metadata or duplicate item IDs and confirm validation fails before any storage write.
 - Construct a valid item assigned to a collection absent from the declared collection list; confirm restore includes the assignment in navigation/backup metadata.
@@ -806,55 +806,55 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Regression source is committed but unrun.
 
 
-### TC-095 — Legacy case-only duplicate collections remain importable
+### TC-140 — Legacy case-only duplicate collections remain importable
 
 - Start with a valid version-1 backup, change its collection list to contain `Learning` and `learning`, and decode it.
 - Confirm decoded-backup preflight permits the historical case-only duplicate and repository merge produces one canonical collection label.
 - Regression source is committed but unrun.
 
 
-### TC-096 — Shared-file streaming size enforcement
+### TC-141 — Shared-file streaming size enforcement
 
 - Feed a chunk stream whose total equals the cap and confirm bytes are returned intact.
 - Feed a stream whose next chunk would exceed the cap; confirm a clear format error and that the reader does not consume subsequent chunks.
 - Existing share-intake tests still cover an oversized local file. Test source is committed but unrun; validate Android content providers with unreliable length reporting during device verification.
 
 
-### TC-097 — Legacy item metadata normalization
+### TC-142 — Legacy item metadata normalization
 
 - Deserialize a stored item with whitespace around its title, URL and attachment filename, plus uppercase MIME metadata.
 - Confirm the loaded model contains trimmed strings and a lowercase MIME type, while note/content text remains unchanged.
 - Model regression source is committed but unrun; confirm the normalized values persist after edit/export/restore.
 
 
-### TC-098 — Picker imports stay bounded while streaming
+### TC-143 — Picker imports stay bounded while streaming
 
 - Confirm Quick Save uses `PlatformFile.readAsByteStream()` and the shared byte reader for the 15 MiB cap.
 - Confirm Backup & Privacy uses the same reader with the 145 MiB cap and still releases the raw byte buffer after decode/validation.
 - Run stream-reader boundary tests, then verify actual Android SAF, browser and cloud-backed files with unreliable length metadata. Source changes/tests are committed but unrun; platform validation remains NOT STARTED.
 
 
-### TC-099 — Attachment size limit consistency
+### TC-144 — Attachment size limit consistency
 
 - Confirm Quick Save, OS-share intake, bounded byte reads and backup codec all use the same attachment byte cap.
 - Boundary test source continues to assert the stream accepts exactly the cap and rejects a chunk that would cross it. Source inspection completed; tests remain unrun.
 
 
-### TC-100 — Preflight combined attachment bytes before decoding
+### TC-145 — Preflight combined attachment bytes before decoding
 
 - Verify the encoded-length helper rounds byte budgets up to base64's 4-character quantum for 0–4 decoded bytes and rejects negative budgets.
 - Confirm backup decoding checks each encoded payload against remaining combined bytes before base64 allocation, then still checks actual decoded sizes.
 - Helper regression source is committed but unrun; profile a near-100 MiB backup only at the manual performance checkpoint.
 
 
-### TC-101 — Unsupported image preview fallback
+### TC-146 — Unsupported image preview fallback
 
 - Save an image-kind item with bytes that the current decoder cannot display.
 - Open Item Details and activate View image; confirm a readable preview-unavailable message is shown, no widget exception escapes, and the saved attachment remains available for sharing.
 - Widget regression source is committed but unrun; verify real TIFF/HEIC behavior on Android/web because support varies by platform decoder.
 
 
-### TC-102 — Attachment bytes remain intact after base64 copy reduction
+### TC-147 — Attachment bytes remain intact after base64 copy reduction
 
 - Decode a backup with one or more attachments and confirm the stored byte sequences match the original source.
 - Confirm SHA-256 tamper detection, empty-payload rejection and combined-byte-limit preflight continue to apply.
@@ -1042,3 +1042,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Render the startup failure screen and confirm it gives platform-appropriate recovery instructions without a selectable/raw exception string.
 - Confirm web guidance refers to browser-profile storage and native guidance to device storage. Neither branch should display an exception that may include filesystem paths.
 - Widget regression source checks the fallback copy and absence of `SelectableText`; source is committed but unrun.
+
+
+
+### TC-148 — Search hint matches indexed metadata
+
+- Open Search and confirm the field hint lists titles, URLs, notes, tags and collections.
+- Confirm the disclosed collection search scope matches the actual saved-item search behavior and the Settings explanation.
+- Widget regression source is committed but unrun; visual wording review on web and Android remains pending.
