@@ -778,83 +778,83 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Verification: source/test committed but unrun; real assistive-technology check remains pending.
 
 
-### TSK-386 — Legacy timestamp range validation
+### TSK-430 — Legacy timestamp range validation
 
 - Implementation: `BackupCodec.validateStoredRecordMap`, reused by `LibraryRepository._refreshItems` and `findById`.
 - Requirements: FR-001–003 and NFR-003 (safe recovery from malformed local records).
-- Test: TC-093 in `test/library_repository_test.dart`.
+- Test: TC-138 in `test/library_repository_test.dart`.
 - Verification: source/test committed but unrun.
 
 
-### TSK-387 — Validate decoded backup objects before restore writes
+### TSK-431 — Validate decoded backup objects before restore writes
 
 - Implementation: `BackupCodec.validateDecodedBackup` called by `LibraryRepository.restoreDecodedBackup`; item-assigned collections participate in merge/capacity preflight.
 - Requirements: FR-010, FR-012–013 and NFR-003 (restore integrity and no partial writes from invalid inputs).
-- Test: TC-094 in `test/backup_codec_test.dart` and `test/library_repository_test.dart`.
+- Test: TC-139 in `test/backup_codec_test.dart` and `test/library_repository_test.dart`.
 - Verification: source/tests committed but unrun.
 
 
-### TSK-388 — Preserve legacy collection compatibility
+### TSK-432 — Preserve legacy collection compatibility
 
 - Implementation: `BackupCodec.validateDecodedBackup` accepts valid collection strings without requiring case-insensitive uniqueness; `LibraryRepository.restoreDecodedBackup` merges them case-insensitively.
 - Requirements: FR-010, FR-012–013 (portable collection metadata and backward-compatible restore).
-- Test: TC-095 in `test/backup_codec_test.dart`.
+- Test: TC-140 in `test/backup_codec_test.dart`.
 - Verification: source/test committed but unrun.
 
 
-### TSK-389 — Bound streamed shared-file reads
+### TSK-433 — Bound streamed shared-file reads
 
 - Implementation: `lib/services/bounded_bytes_reader.dart`, used by `ShareIntake._fromFile`.
 - Requirements: FR-008–009 and NFR-003 (safe attachment import and bounded memory).
-- Test: TC-096 in `test/attachment_bytes_test.dart`, alongside file intake boundaries in `test/share_intake_test.dart`.
+- Test: TC-141 in `test/attachment_bytes_test.dart`, alongside file intake boundaries in `test/share_intake_test.dart`.
 - Verification: source/test committed but unrun; device/provider behavior remains pending.
 
 
-### TSK-390 — Normalize legacy item metadata on load
+### TSK-434 — Normalize legacy item metadata on load
 
 - Implementation: `SavedItem.fromMap`.
 - Requirements: FR-001–003, FR-008–009 and FR-012–013 (consistent metadata across load/edit/share/backup).
-- Test: TC-097 in `test/saved_item_test.dart`.
+- Test: TC-142 in `test/saved_item_test.dart`.
 - Verification: source/test committed but unrun.
 
 
-### TSK-391 — Bound file-picker reads while streaming
+### TSK-435 — Bound file-picker reads while streaming
 
 - Implementation: `lib/main.dart`, Quick Save and `BackupPrivacyPage._restore`; common reader in `lib/services/bounded_bytes_reader.dart`.
 - Requirements: FR-008, FR-013 and NFR-003 (bounded attachment/backup memory).
-- Test: TC-098 and helper regressions in `test/attachment_bytes_test.dart`.
+- Test: TC-143 and helper regressions in `test/attachment_bytes_test.dart`.
 - Verification: source/test committed but unrun; Android/web provider memory behavior remains pending.
 
 
-### TSK-392 — Centralized attachment size limit
+### TSK-436 — Centralized attachment size limit
 
 - Implementation: `BackupCodec.maxAttachmentBytes` referenced by Quick Save and `ShareIntake`.
 - Requirements: FR-008–009, FR-012–013 and NFR-003 (consistent bounded import/export).
-- Test: TC-099 plus stream-boundary tests in `test/attachment_bytes_test.dart`.
+- Test: TC-144 plus stream-boundary tests in `test/attachment_bytes_test.dart`.
 - Verification: source committed; test execution remains pending.
 
 
-### TSK-393 — Preflight combined attachment size before base64 allocation
+### TSK-437 — Preflight combined attachment size before base64 allocation
 
 - Implementation: `BackupCodec.maxBase64CharactersForDecodedBytes`, used by `BackupCodec.decode` before decoding each attachment.
 - Requirements: FR-012–013 and NFR-003 (bounded backup import memory).
-- Test: TC-100 in `test/backup_codec_test.dart`.
+- Test: TC-145 in `test/backup_codec_test.dart`.
 - Verification: source/test committed but unrun; memory profile pending.
 
 
-### TSK-394 — Image preview decode failure handling
+### TSK-438 — Image preview decode failure handling
 
 - Implementation: `lib/main.dart`, Item Details full-size `Image.memory.errorBuilder`.
 - Requirements: FR-008–009 and NFR-003/NFR-006 (retain attachments and communicate preview limitations accessibly).
-- Test: TC-101 in `test/external_navigation_test.dart`.
+- Test: TC-146 in `test/external_navigation_test.dart`.
 - Verification: source/test committed but unrun; real platform codec coverage remains pending.
 
 
-### TSK-395 — Reduce attachment buffer copies during decode
+### TSK-439 — Reduce attachment buffer copies during decode
 
 - Implementation: `BackupCodec.decode`, retaining the typed result from `base64Decode`.
 - Requirements: FR-012–013 and NFR-003 (bounded memory with data integrity).
-- Test: TC-102 references existing round-trip/checksum assertions in `test/backup_codec_test.dart`.
+- Test: TC-147 references existing round-trip/checksum assertions in `test/backup_codec_test.dart`.
 - Verification: source committed; tests and memory profiling remain pending.
 
 
@@ -1032,3 +1032,12 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-018 and NFR-002. Startup recovery guidance distinguishes browser storage from native device storage and no longer renders the raw initialization exception into the UI.
 - Regression: TC-137 in `test/accessibility_widgets_test.dart` checks recovery copy and confirms the screen contains no selectable raw diagnostics.
 - Verification: test source added but unrun; startup failure simulation and full privacy review remain pending.
+
+
+
+### TSK-440 — Search hint matches indexed metadata
+
+- Implementation: `_SearchPageState` in `lib/main.dart`; the Search field hint now lists collections alongside titles, URLs, notes and tags.
+- Requirements: FR-005 and NFR-004 (retrieval clarity and accurate disclosure of searchable fields).
+- Regression: TC-148 in `test/accessibility_widgets_test.dart`.
+- Verification: source and regression are committed but unrun; web/Android wording and layout review remains pending.
