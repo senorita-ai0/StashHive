@@ -692,61 +692,61 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — bound legacy timestamps during local recovery (2026-10-22)
 
-- **TSK-386:** Local-record shape validation now checks created/updated timestamps against the supported date range before making the record available to date formatting and detail views. Records with unrepresentable timestamps are skipped and included in the recovery banner rather than risking a later date-conversion exception.
+- **TSK-430:** Local-record shape validation now checks created/updated timestamps against the supported date range before making the record available to date formatting and detail views. Records with unrepresentable timestamps are skipped and included in the recovery banner rather than risking a later date-conversion exception.
 - Extended the existing malformed-record regression to assert the bad timestamp is excluded from direct lookup too. Test source is committed but unrun.
 
 
 ### Phase 2 — validate decoded objects at the restore mutation boundary (2026-10-22)
 
-- **TSK-387:** `restoreDecodedBackup` now revalidates in-memory objects before writing. The guard checks item fields/unique IDs, required attachment payloads and metadata, byte caps, omission counts, and collection name constraints; restore preflight also merges collection names assigned on items before enforcing the 500-name limit.
+- **TSK-431:** `restoreDecodedBackup` now revalidates in-memory objects before writing. The guard checks item fields/unique IDs, required attachment payloads and metadata, byte caps, omission counts, and collection name constraints; restore preflight also merges collection names assigned on items before enforcing the 500-name limit.
 - Added codec/repository regressions for missing payloads, invalid attachment metadata, duplicate IDs, item-only collection assignments and pre-write collection overflow. Test source is committed but unrun.
 
 
 ### Phase 2 — preserve case-only collection duplicates in legacy backup restore (2026-10-22)
 
-- **TSK-388:** The decoded-object validator now allows case-only duplicate collection labels that older version-1 exports could contain. Restore still de-duplicates names case-insensitively while merging, so recoverable legacy item data is not rejected just because the old collection list used inconsistent casing.
+- **TSK-432:** The decoded-object validator now allows case-only duplicate collection labels that older version-1 exports could contain. Restore still de-duplicates names case-insensitively while merging, so recoverable legacy item data is not rejected just because the old collection list used inconsistent casing.
 - Added a regression that mutates an otherwise valid v1 export to include `Learning` and `learning`, decodes it and confirms the restore preflight accepts it for normalization. Test source is committed but unrun.
 
 
 ### Phase 2 — bounded streaming reads for OS-shared files (2026-10-22)
 
-- **TSK-389:** Shared-file intake now reads via `XFile.openRead()` into a bounded byte reader. It cancels the stream as soon as cumulative bytes would exceed 15 MiB, so a stale or unavailable provider length cannot trigger an unbounded `readAsBytes()` allocation.
+- **TSK-433:** Shared-file intake now reads via `XFile.openRead()` into a bounded byte reader. It cancels the stream as soon as cumulative bytes would exceed 15 MiB, so a stale or unavailable provider length cannot trigger an unbounded `readAsBytes()` allocation.
 - Added stream-reader tests for exact-limit acceptance and early cancellation at the first over-limit chunk. Test source is committed but unrun; real Android content-provider behavior remains pending.
 
 
 ### Phase 2 — normalize legacy item metadata on materialization (2026-10-22)
 
-- **TSK-390:** `SavedItem.fromMap` now trims legacy titles, URLs and attachment filenames, and normalizes attachment MIME metadata to lowercase. This matches the normalization already applied to tags and collections and prevents surrounding whitespace/case drift from being carried into later edits/exports; URL scheme safety remains enforced separately at save/open boundaries.
+- **TSK-434:** `SavedItem.fromMap` now trims legacy titles, URLs and attachment filenames, and normalizes attachment MIME metadata to lowercase. This matches the normalization already applied to tags and collections and prevents surrounding whitespace/case drift from being carried into later edits/exports; URL scheme safety remains enforced separately at save/open boundaries.
 - Added a model regression for padded title/URL/filename and mixed-case MIME metadata. Test source is committed but unrun.
 
 
 ### Phase 2 — bound file-picker streams for attachments and backups (2026-10-22)
 
-- **TSK-391:** Quick Save and Backup & Privacy now use `PlatformFile.readAsByteStream()` with the shared capped reader. The 15 MiB attachment limit and 145 MiB backup limit are enforced while chunks arrive; initial length checks remain as an early rejection path.
+- **TSK-435:** Quick Save and Backup & Privacy now use `PlatformFile.readAsByteStream()` with the shared capped reader. The 15 MiB attachment limit and 145 MiB backup limit are enforced while chunks arrive; initial length checks remain as an early rejection path.
 - This closes the same stale-length memory-risk for local picker inputs that was addressed for OS-shared files. Stream-reader boundary tests are committed but unrun; validate browser, Android SAF and cloud-provider implementations during the manual checkpoint.
 
 
 ### Phase 2 — one source of truth for attachment size limits (2026-10-22)
 
-- **TSK-392:** Quick Save and share intake now reference `BackupCodec.maxAttachmentBytes` rather than repeating the 15 MiB literal. The bounded byte reader uses the same cap and backup export/restore validates against that value.
+- **TSK-436:** Quick Save and share intake now reference `BackupCodec.maxAttachmentBytes` rather than repeating the 15 MiB literal. The bounded byte reader uses the same cap and backup export/restore validates against that value.
 - This prevents intake from accepting payloads that the portable backup layer would reject after a future limit change. Source committed; validation remains manual-only.
 
 
 ### Phase 2 — preflight base64 sizes against remaining backup budget (2026-10-22)
 
-- **TSK-393:** Backup decode now estimates the maximum encoded length for the remaining combined attachment budget before calling `base64Decode`. Payloads that cannot fit under the 100 MiB combined attachment limit are rejected before allocating their decoded buffer.
+- **TSK-437:** Backup decode now estimates the maximum encoded length for the remaining combined attachment budget before calling `base64Decode`. Payloads that cannot fit under the 100 MiB combined attachment limit are rejected before allocating their decoded buffer.
 - Added helper boundary tests for base64 quanta and negative inputs. Test source is committed but unrun; full-size backup memory profiling remains pending.
 
 
 ### Phase 3 — graceful fallback for image formats the platform cannot decode (2026-10-22)
 
-- **TSK-394:** The full-size image dialog now displays an accessible “Preview unavailable” message when Flutter cannot decode the stored bytes, while retaining the saved attachment for sharing. This prevents otherwise valid files in less-supported image formats from producing a broken preview surface.
+- **TSK-438:** The full-size image dialog now displays an accessible “Preview unavailable” message when Flutter cannot decode the stored bytes, while retaining the saved attachment for sharing. This prevents otherwise valid files in less-supported image formats from producing a broken preview surface.
 - Added an Item Details widget regression using invalid/unsupported encoded bytes; test source is committed but unrun.
 
 
 ### Phase 2 — avoid a redundant copy after base64 decoding (2026-10-22)
 
-- **TSK-395:** Backup decode now retains the typed byte buffer returned by `base64Decode()` directly instead of immediately copying it through `Uint8List.fromList`. This reduces peak memory for attachment-heavy backups while preserving existing checksum and byte-limit validation.
+- **TSK-439:** Backup decode now retains the typed byte buffer returned by `base64Decode()` directly instead of immediately copying it through `Uint8List.fromList`. This reduces peak memory for attachment-heavy backups while preserving existing checksum and byte-limit validation.
 - Existing codec regressions cover byte-for-byte round trips and checksum verification; they remain authored but unrun.
 
 
@@ -895,3 +895,12 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **Source:** Startup initialization failures now show browser- or device-specific recovery guidance without printing the raw exception, which may include local storage paths.
 - **Regression:** TC-137 checks that recovery guidance is displayed and raw selectable diagnostics are absent.
 - **Status:** Source/test committed but unrun; no privacy audit or startup failure injection is claimed.
+
+
+
+### TSK-440 — Search hint matches indexed metadata — 2026-10-23
+
+- **Requirement:** FR-005 / NFR-004 (search scope should be discoverable and accurately disclosed).
+- **Source:** The Search input hint now names collections, matching `SavedItem.matchesQuery` and the Settings search-scope explanation.
+- **Regression:** TC-148 checks the field hint text. Source/test are committed but unrun.
+- **Status:** Manual web/Android wording and layout review remains open; validation workflow stays manual-only.
