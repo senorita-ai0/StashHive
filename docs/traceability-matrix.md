@@ -1038,5 +1038,5 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 - Implementation: `EmptySearchState` and `_SearchPageState` in `lib/main.dart`; the empty state now distinguishes an unmatched type filter from a library with no saved items and provides an appropriate reset action.
 - Requirements: FR-004–005 and NFR-006 (understandable no-result state and accessible recovery).
-- Regression: TC-149 in `test/accessibility_widgets_test.dart`.
+- Regression: TC-149 in `test/accessibility_widgets_test.dart`; covers both an unmatched filter alone and a combined query-plus-filter reset.
 - Verification: source/test committed but unrun; narrow-width, large-text, keyboard and screen-reader review remains pending.
