@@ -1050,3 +1050,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Open Search and confirm the field hint lists titles, URLs, notes, tags and collections.
 - Confirm the disclosed collection search scope matches the actual saved-item search behavior and the Settings explanation.
 - Widget regression source is committed but unrun; visual wording review on web and Android remains pending.
+
+### TC-149 — Empty Search state explains and clears an unmatched type filter
+
+- Save a note, open Search with an empty query, and select a type that has no saved items (for example, Images).
+- Confirm the empty state says "No items in this filter", explains that another type can be chosen, and offers "Clear filter" instead of implying the whole library is empty.
+- Activate "Clear filter" and confirm the note and the overall result count return.
+- Widget regression source is committed but unrun; inspect the empty state with narrow widths, enlarged text, keyboard and screen-reader navigation during the manual checkpoint.
