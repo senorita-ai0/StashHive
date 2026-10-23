@@ -338,5 +338,5 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 
 - [x] Search's empty state now explains when the active content-type filter has no matches instead of implying that the library has no content.
 - [x] Added a clear-filter action for an unmatched type filter; if a query and filter both contribute to the empty result, the recovery action clears both.
-- [x] Added TC-149 widget regression source and TSK-441 traceability.
+- [x] Added TC-149 widget regression source and TSK-441 traceability; expanded the regression to cover clearing both a non-matching query and an unmatched type filter.
 - [ ] Run TC-149 and review the empty state at narrow widths, enlarged text, keyboard navigation and with a screen reader. Tests/builds remain unrun.
