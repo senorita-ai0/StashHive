@@ -330,4 +330,5 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - [x] Updated the Search input hint to disclose collection names, matching the fields already included by the saved-item matcher and the Settings explanation.
 - [x] Added TC-148 widget regression source and TSK-440 traceability.
 - [x] Reassigned the duplicate second-block test IDs TC-093–TC-102 to TC-138–TC-147 and the associated duplicate task IDs TSK-386–TSK-395 to TSK-430–TSK-439, preserving the original IDs for the earlier cases.
+- [x] Removed a redundant, misnumbered traceability row for attachment snapshots; the canonical entry is TSK-417 / TC-122.
 - [ ] Run TC-138–TC-148 and complete the pending manual platform/accessibility checkpoint. No tests, formatter, analyzer, or builds were run for this increment.
