@@ -1033,3 +1033,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-005 and NFR-004 (retrieval clarity and accurate disclosure of searchable fields).
 - Regression: TC-148 in `test/accessibility_widgets_test.dart`.
 - Verification: source and regression are committed but unrun; web/Android wording and layout review remains pending.
+
+### TSK-441 — Actionable empty Search state for type filters
+
+- Implementation: `EmptySearchState` and `_SearchPageState` in `lib/main.dart`; the empty state now distinguishes an unmatched type filter from a library with no saved items and provides an appropriate reset action.
+- Requirements: FR-004–005 and NFR-006 (understandable no-result state and accessible recovery).
+- Regression: TC-149 in `test/accessibility_widgets_test.dart`.
+- Verification: source/test committed but unrun; narrow-width, large-text, keyboard and screen-reader review remains pending.
