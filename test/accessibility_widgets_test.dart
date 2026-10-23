@@ -1239,4 +1239,24 @@ void main() {
     expect(metadataAfter, metadataBefore);
   });
 
+
+
+  testWidgets('Search hint lists all indexed metadata fields', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.SearchPage(
+          repository: repository,
+          initialQuery: '',
+          onOpenItem: (_) {},
+        ),
+      ),
+    );
+
+    final searchField = find.byType(TextField).first;
+    expect(
+      tester.widget<TextField>(searchField).decoration?.hintText,
+      'Search titles, URLs, notes, tags and collections',
+    );
+    expect(tester.takeException(), isNull);
+  });
 }
