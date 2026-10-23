@@ -909,5 +909,5 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 - **Requirements:** FR-004–005 and NFR-006 (clear retrieval states and accessible recovery).
 - **Source:** Search now distinguishes a type filter with no matching saved items from the empty-library state. It explains the mismatch and offers a one-tap clear-filter action; when both query and type filter are set, the action clears both.
-- **Regression:** TC-149 covers selecting an unmatched type, checking the guidance, and returning to all saved items.
+- **Regression:** TC-149 covers an unmatched type by itself and the combined query-plus-filter path, ensuring the reset makes existing saved items reachable again.
 - **Status:** Source/test committed but unrun; responsive, large-text, keyboard and screen-reader checks remain pending.
