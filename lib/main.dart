@@ -1092,7 +1092,7 @@ class _SearchPageState extends State<SearchPage> {
                   autofocus: widget.initialQuery.isNotEmpty,
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
-                    hintText: 'Search titles, URLs, notes and tags',
+                    hintText: 'Search titles, URLs, notes, tags and collections',
                     prefixIcon: const Icon(Icons.search_rounded),
                     suffixIcon: _controller.text.isEmpty
                         ? null
