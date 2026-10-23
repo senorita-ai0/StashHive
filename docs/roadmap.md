@@ -904,3 +904,10 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **Source:** The Search input hint now names collections, matching `SavedItem.matchesQuery` and the Settings search-scope explanation.
 - **Regression:** TC-148 checks the field hint text. Source/test are committed but unrun.
 - **Status:** Manual web/Android wording and layout review remains open; validation workflow stays manual-only.
+
+### TSK-441 — Actionable Search empty state for unmatched type filters — 2026-10-23
+
+- **Requirements:** FR-004–005 and NFR-006 (clear retrieval states and accessible recovery).
+- **Source:** Search now distinguishes a type filter with no matching saved items from the empty-library state. It explains the mismatch and offers a one-tap clear-filter action; when both query and type filter are set, the action clears both.
+- **Regression:** TC-149 covers selecting an unmatched type, checking the guidance, and returning to all saved items.
+- **Status:** Source/test committed but unrun; responsive, large-text, keyboard and screen-reader checks remain pending.
