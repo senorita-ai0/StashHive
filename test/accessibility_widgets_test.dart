@@ -1307,6 +1307,25 @@ void main() {
     expect(find.text('No items in this filter'), findsNothing);
     expect(find.text('Keep planning'), findsOneWidget);
     expect(find.bySemanticsLabel('1 result'), findsOneWidget);
+
+    // When a query and type filter both cause no results, the recovery action
+    // must clear both controls so the saved item is reachable again.
+    await tester.enterText(find.byType(TextField).first, 'missing phrase');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Images'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('No matches found'), findsOneWidget);
+    expect(find.text('Clear search and filter'), findsOneWidget);
+    await tester.tap(find.text('Clear search and filter'));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.widget<TextField>(find.byType(TextField).first).controller!.text,
+      isEmpty,
+    );
+    expect(find.text('Keep planning'), findsOneWidget);
+    expect(find.bySemanticsLabel('1 result'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
