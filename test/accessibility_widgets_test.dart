@@ -1259,4 +1259,54 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+
+  testWidgets('Search empty state explains and clears an unmatched type filter', (
+    tester,
+  ) async {
+    await repository.save(
+      const SavedItem(
+        id: 'search-filter-note',
+        kind: ItemKind.note,
+        title: 'Keep planning',
+        content: 'Weekend ideas',
+        tags: <String>[],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 100,
+        updatedAtMs: 101,
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.SearchPage(
+          repository: repository,
+          initialQuery: '',
+          onOpenItem: (_) {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Images'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('No items in this filter'), findsOneWidget);
+    expect(
+      find.text(
+        'Try another type or clear the filter to see all your saved items.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Clear filter'), findsOneWidget);
+
+    await tester.tap(find.text('Clear filter'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('No items in this filter'), findsNothing);
+    expect(find.text('Keep planning'), findsOneWidget);
+    expect(find.bySemanticsLabel('1 result'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
