@@ -1206,6 +1206,8 @@ class _SearchPageState extends State<SearchPage> {
                             child: results.isEmpty
                                 ? EmptySearchState(
                                     hasQuery: _controller.text.trim().isNotEmpty,
+                                    hasFilter: _filter != 'All',
+                                    hasLibraryItems: items.isNotEmpty,
                                     onClear: () {
                                       _controller.clear();
                                       setState(() => _filter = 'All');
@@ -1251,13 +1253,36 @@ class _SearchPageState extends State<SearchPage> {
 }
 
 class EmptySearchState extends StatelessWidget {
-  const EmptySearchState({required this.hasQuery, required this.onClear, super.key});
+  const EmptySearchState({
+    required this.hasQuery,
+    required this.hasFilter,
+    required this.hasLibraryItems,
+    required this.onClear,
+    super.key,
+  });
 
   final bool hasQuery;
+  final bool hasFilter;
+  final bool hasLibraryItems;
   final VoidCallback onClear;
 
   @override
   Widget build(BuildContext context) {
+    final filterHasNoMatches = hasFilter && hasLibraryItems;
+    final hasNoResults = hasQuery || filterHasNoMatches;
+    final actionLabel = hasQuery && hasFilter
+        ? 'Clear search and filter'
+        : hasQuery
+            ? 'Clear search'
+            : 'Clear filter';
+    final message = hasQuery && hasFilter
+        ? 'Try a different word or clear the search and type filter.'
+        : hasQuery
+            ? 'Try a different word, a URL, a note or a tag.'
+            : filterHasNoMatches
+                ? 'Try another type or clear the filter to see all your saved items.'
+                : 'Your saved items will appear here as soon as you add them.';
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -1266,19 +1291,26 @@ class EmptySearchState extends StatelessWidget {
           children: [
             Icon(Icons.search_off_rounded, size: 46, color: mutedTextColor(context)),
             const SizedBox(height: 12),
-            Text(hasQuery ? 'No matches found' : 'Your search starts here',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-            const SizedBox(height: 6),
             Text(
               hasQuery
-                  ? 'Try a different word, a URL, a note or a tag.'
-                  : 'Your saved items will appear here as soon as you add them.',
+                  ? 'No matches found'
+                  : filterHasNoMatches
+                      ? 'No items in this filter'
+                      : 'Your search starts here',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              message,
               textAlign: TextAlign.center,
               style: TextStyle(color: mutedTextColor(context)),
             ),
-            if (hasQuery) ...[
+            if (hasNoResults || hasFilter) ...[
               const SizedBox(height: 14),
-              OutlinedButton(onPressed: onClear, child: const Text('Clear search')),
+              OutlinedButton(onPressed: onClear, child: Text(actionLabel)),
             ],
           ],
         ),
