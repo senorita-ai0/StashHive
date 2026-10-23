@@ -1276,7 +1276,7 @@ class EmptySearchState extends StatelessWidget {
             ? 'Clear search'
             : 'Clear filter';
     final message = hasQuery && hasFilter
-        ? 'Try a different word or clear the search and type filter.'
+        ? 'Try a different word, or clear both the search and type filter.'
         : hasQuery
             ? 'Try a different word, a URL, a note or a tag.'
             : filterHasNoMatches
