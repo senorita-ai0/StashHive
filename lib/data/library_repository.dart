@@ -319,7 +319,7 @@ class LibraryRepository {
         ) &&
         collections.value.length >= BackupCodec.maxCollections) {
       throw const FormatException(
-        'StashTrail supports up to 500 collections. '
+        'StashHive supports up to 500 collections. '
         'Choose an existing collection before saving this item.',
       );
     }
@@ -609,7 +609,7 @@ class LibraryRepository {
     }
     if (current.length >= BackupCodec.maxCollections) {
       throw const FormatException(
-        'StashTrail supports up to 500 collections so library backups remain portable.',
+        'StashHive supports up to 500 collections so library backups remain portable.',
       );
     }
     current.add(cleaned);
@@ -884,7 +884,7 @@ class LibraryRepository {
     }
     if (mergedCollections.length > BackupCodec.maxCollections) {
       throw const FormatException(
-        'Restore would exceed StashTrail’s 500-collection limit. '
+        'Restore would exceed StashHive’s 500-collection limit. '
         'Remove some collections before restoring this backup.',
       );
     }
