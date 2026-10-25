@@ -1058,3 +1058,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Activate "Clear filter" and confirm the note and the overall result count return.
 - Enter a query that has no matches and select Images; confirm the recovery button says "Clear search and filter", then activate it and confirm the query is empty and all items return.
 - Widget regression source is committed but unrun; inspect the empty state with narrow widths, enlarged text, keyboard and screen-reader navigation during the manual checkpoint.
+
+### TC-150 — Favorite update storage failure gives actionable safe feedback
+
+- Save a link that is not favorited, open its item-action menu, and select **Add to favorites** while injecting an error after the favorite record write.
+- Confirm the operation displays "Could not update this item. Check local storage and try again." rather than telling the user to repair unrelated URL/file fields.
+- Confirm the internal simulated storage exception text is not displayed and the repository rolls the favorite state back to false.
+- Widget regression source is committed but unrun; real storage failure behavior remains pending the manual platform validation checkpoint.
