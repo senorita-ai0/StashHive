@@ -188,6 +188,44 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Text size preference supports Extra large and resets to system default', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+    Future<void> openSettings() async {
+      await tester.pumpWidget(
+        app.StashHiveApp(repository: repository, initialDarkMode: false),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Settings').last);
+      await tester.pumpAndSettle();
+    }
+
+    await openSettings();
+    final control = find.byType(DropdownButtonFormField<double>);
+    await tester.tap(control);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Extra large').last);
+    await tester.pumpAndSettle();
+
+    expect(repository.textScaleMultiplier, 1.3);
+    expect(
+      tester.widget<DropdownButtonFormField<double>>(control).initialValue,
+      anyOf(1.3, null),
+    );
+
+    // Rebuild the app to exercise the persisted preference initialization.
+    await openSettings();
+    expect(repository.textScaleMultiplier, 1.3);
+    await tester.tap(find.byType(DropdownButtonFormField<double>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('System default').last);
+    await tester.pumpAndSettle();
+
+    expect(repository.textScaleMultiplier, 1.0);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Library and Search avoid layout exceptions at narrow width with large text', (tester) async {
     await tester.binding.setSurfaceSize(const Size(320, 568));
     addTearDown(() => tester.binding.setSurfaceSize(null));
