@@ -1431,12 +1431,17 @@ class SavedItemTile extends StatelessWidget {
                   if (action == 'favorite') {
                     try {
                       await repository.toggleFavorite(item.id);
-                    } catch (_) {
+                    } catch (error) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
+                          SnackBar(
                             content: Text(
-                              'Could not update this item. Open Edit to review its saved details and repair any invalid URL or missing file.',
+                              'Could not update this item. ' +
+                                  _messageForOperationError(
+                                    error,
+                                    fallback:
+                                        'Check local storage and try again.',
+                                  ),
                             ),
                           ),
                         );
