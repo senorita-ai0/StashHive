@@ -211,12 +211,21 @@ void main() {
     expect(repository.textScaleMultiplier, 1.3);
     expect(
       tester.widget<DropdownButtonFormField<double>>(control).initialValue,
-      anyOf(1.3, null),
+      1.3,
     );
 
-    // Rebuild the app to exercise the persisted preference initialization.
+    // Recreate the app state to exercise persisted preference initialization.
+    await tester.pumpWidget(const SizedBox.shrink());
     await openSettings();
     expect(repository.textScaleMultiplier, 1.3);
+    expect(
+      tester
+          .widget<DropdownButtonFormField<double>>(
+            find.byType(DropdownButtonFormField<double>),
+          )
+          .initialValue,
+      1.3,
+    );
     await tester.tap(find.byType(DropdownButtonFormField<double>));
     await tester.pumpAndSettle();
     await tester.tap(find.text('System default').last);
