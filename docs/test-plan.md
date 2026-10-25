@@ -1082,3 +1082,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the user sees "Could not update this item. Check local storage and try again." The message must not tell the user to repair unrelated URL/file fields.
 - Confirm the injected diagnostic text is not displayed and best-effort repository rollback leaves the item un-favorited.
 - Widget regression source is committed but unrun; real browser/device storage failure behavior remains pending the manual validation checkpoint.
+
+### TC-153 — Extra-large text preference persists and can be reset
+
+- Open Settings → Text size, select **Extra large**, and confirm the stored preference is `1.3`.
+- Recreate the app widget using the same repository and confirm the Settings control initializes to **Extra large** from the persisted preference.
+- Select **System default** and confirm the stored multiplier returns to `1.0` without an uncaught widget exception.
+- **Status:** Regression source is committed but unrun. Execute during the requested manual validation checkpoint; real browser/device restart behavior remains pending.
