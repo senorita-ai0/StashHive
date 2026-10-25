@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-25
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-150 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-150 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-151 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-151 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -346,3 +346,11 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - [x] Favorite-toggle failures now use the common safe-error helper: app-defined validation messages are retained, while unexpected storage errors show actionable local-storage/retry guidance.
 - [x] Added TC-150 widget regression and TSK-442 traceability. It injects a late item-write failure and checks that diagnostic details are hidden and favorite rollback leaves the record un-favorited.
 - [ ] Run TC-150 and verify favorite persistence under real browser/device storage failures at the manual checkpoint. No tests, formatter, analyzer, or builds were run for this increment.
+
+
+## Phase 3 — Settings text-size control (2026-10-25)
+
+- [x] Added System default, Large and Extra large choices to Settings, persisted in the local preferences box.
+- [x] Applied the choice as an additional multiplier over the platform-provided text scaler, retaining device/browser accessibility scaling.
+- [x] Added repository regression source for preference persistence and late-write rollback, plus widget regression **TC-151** for the Settings interaction and effective scale; traced as **TSK-443**.
+- [ ] Run TC-151 and inspect Settings/Library at narrow widths, with enlarged device text, keyboard navigation and screen readers on web and Android. Tests, formatter, analyzer and builds remain unrun.
