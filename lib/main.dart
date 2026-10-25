@@ -42,6 +42,31 @@ String _messageForOperationError(
   if (error is FormatException) return error.message.toString();
   return fallback;
 }
+
+/// Combines the platform accessibility scaler with StashTrail's optional
+/// extra text-size preference without lowering platform-provided scaling.
+class _PreferenceTextScaler extends TextScaler {
+  const _PreferenceTextScaler({
+    required this.system,
+    required this.multiplier,
+  });
+
+  final TextScaler system;
+  final double multiplier;
+
+  @override
+  double scale(double fontSize) => system.scale(fontSize) * multiplier;
+
+  @override
+  bool operator ==(Object other) =>
+      other is _PreferenceTextScaler &&
+      other.system == system &&
+      other.multiplier == multiplier;
+
+  @override
+  int get hashCode => Object.hash(system, multiplier);
+}
+
 const Color kCanvas = Color(0xFFF8F9FD);
 const Color kBorder = Color(0xFFE7E9F2);
 const int kMaxAttachmentBytes = BackupCodec.maxAttachmentBytes;
@@ -114,6 +139,20 @@ class StashHiveApp extends StatefulWidget {
 
 class _StashHiveAppState extends State<StashHiveApp> {
   late bool _darkMode = widget.initialDarkMode;
+  late double _textScaleMultiplier = widget.repository.textScaleMultiplier;
+
+  Future<void> _setTextScaleMultiplier(double value) async {
+    setState(() => _textScaleMultiplier = value);
+    try {
+      await widget.repository.setTextScaleMultiplier(value);
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _textScaleMultiplier = widget.repository.textScaleMultiplier;
+        });
+      }
+    }
+  }
 
   Future<void> _setDarkMode(bool value) async {
     setState(() => _darkMode = value);
@@ -137,10 +176,24 @@ class _StashHiveAppState extends State<StashHiveApp> {
       theme: buildLightTheme(),
       darkTheme: buildDarkTheme(),
       themeMode: _darkMode ? ThemeMode.dark : ThemeMode.light,
+      builder: (context, child) {
+        final mediaQuery = MediaQuery.of(context);
+        return MediaQuery(
+          data: mediaQuery.copyWith(
+            textScaler: _PreferenceTextScaler(
+              system: mediaQuery.textScaler,
+              multiplier: _textScaleMultiplier,
+            ),
+          ),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
       home: HomeShell(
         repository: widget.repository,
         darkMode: _darkMode,
         onDarkModeChanged: _setDarkMode,
+        textScaleMultiplier: _textScaleMultiplier,
+        onTextScaleChanged: _setTextScaleMultiplier,
       ),
     );
   }
@@ -282,12 +335,16 @@ class HomeShell extends StatefulWidget {
     required this.repository,
     required this.darkMode,
     required this.onDarkModeChanged,
+    required this.textScaleMultiplier,
+    required this.onTextScaleChanged,
     super.key,
   });
 
   final LibraryRepository repository;
   final bool darkMode;
   final ValueChanged<bool> onDarkModeChanged;
+  final double textScaleMultiplier;
+  final ValueChanged<double> onTextScaleChanged;
 
   @override
   State<HomeShell> createState() => _HomeShellState();
@@ -526,6 +583,8 @@ class _HomeShellState extends State<HomeShell> {
         repository: widget.repository,
         darkMode: widget.darkMode,
         onDarkModeChanged: widget.onDarkModeChanged,
+        textScaleMultiplier: widget.textScaleMultiplier,
+        onTextScaleChanged: widget.onTextScaleChanged,
       ),
     ];
     return Scaffold(
@@ -3075,12 +3134,16 @@ class SettingsPage extends StatelessWidget {
     required this.repository,
     required this.darkMode,
     required this.onDarkModeChanged,
+    required this.textScaleMultiplier,
+    required this.onTextScaleChanged,
     super.key,
   });
 
   final LibraryRepository repository;
   final bool darkMode;
   final ValueChanged<bool> onDarkModeChanged;
+  final double textScaleMultiplier;
+  final ValueChanged<double> onTextScaleChanged;
 
   Future<void> _openBackup(BuildContext context) async {
     await Navigator.of(context).push<void>(
@@ -3156,6 +3219,54 @@ class SettingsPage extends StatelessWidget {
                   subtitle: const Text('Use a darker surface throughout the app'),
                   value: darkMode,
                   onChanged: onDarkModeChanged,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Card(
+                elevation: 0,
+                margin: EdgeInsets.zero,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Text size',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        'Adds larger text on top of your device or browser text settings.',
+                        style: TextStyle(color: mutedTextColor(context)),
+                      ),
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<double>(
+                        value: textScaleMultiplier,
+                        decoration: const InputDecoration(
+                          labelText: 'App text size',
+                        ),
+                        items: const [
+                          DropdownMenuItem<double>(
+                            value: 1.0,
+                            child: Text('System default'),
+                          ),
+                          DropdownMenuItem<double>(
+                            value: 1.15,
+                            child: Text('Large'),
+                          ),
+                          DropdownMenuItem<double>(
+                            value: 1.3,
+                            child: Text('Extra large'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) onTextScaleChanged(value);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
