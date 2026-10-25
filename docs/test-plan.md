@@ -1065,3 +1065,12 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the operation displays "Could not update this item. Check local storage and try again." rather than telling the user to repair unrelated URL/file fields.
 - Confirm the internal simulated storage exception text is not displayed and the repository rolls the favorite state back to false.
 - Widget regression source is committed but unrun; real storage failure behavior remains pending the manual platform validation checkpoint.
+
+
+### TC-151 — Settings text-size preference persists and layers over system scaling
+
+- Open Settings and change **App text size** from **System default** to **Large**, then confirm the screen and other app routes render at the larger scale.
+- Confirm the selected size persists after closing and reopening the app/browser profile.
+- With device accessibility text scaling enabled, confirm the app preference adds scale without reducing the platform-provided scale; check long labels and Settings at a narrow viewport.
+- Change the preference back to **System default** and confirm the platform's text scale remains active.
+- **Status:** Repository and widget regression source is authored but unrun; narrow-width, Android and browser verification remains pending.
