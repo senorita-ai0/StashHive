@@ -381,3 +381,9 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - [x] Corrected remaining user-facing backup/share validation messages and inline source comments from StashTrail to StashHive; backup validation still preserves the stable version-1 `StashHive` schema marker.
 - [x] Corrected the test-plan and traceability document headings and TC-125 brand expectations to match the current StashHive product name.
 - [ ] Validation remains intentionally pending: no formatter, analyzer, test suite, Python configurator tests, web build, or Android build was run. CI stays manual-only as requested.
+
+## Product rename consistency — collection-limit recovery messages (2026-10-25)
+
+- [x] Updated collection-cap errors during save, collection creation, and backup restore to use the current StashHive brand rather than the retired product name.
+- [x] Existing repository regression cases already cover the collection-limit message shape; the expected limit wording remains unchanged.
+- [ ] No tests, formatting, analysis, or platform builds were run. Manual-only CI remains unchanged.
