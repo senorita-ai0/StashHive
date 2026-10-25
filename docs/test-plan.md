@@ -1074,3 +1074,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - With device accessibility text scaling enabled, confirm the app preference adds scale without reducing the platform-provided scale; check long labels and Settings at a narrow viewport.
 - Change the preference back to **System default** and confirm the platform's text scale remains active.
 - **Status:** Repository and widget regression source is authored but unrun; narrow-width, Android and browser verification remains pending.
+
+
+### TC-152 — Item Details favorite failure uses the same safe recovery message
+
+- Open a saved, non-favorite link in Item Details and tap **Favorite** while injecting a storage error after the favorite write.
+- Confirm the user sees "Could not update this item. Check local storage and try again." The message must not tell the user to repair unrelated URL/file fields.
+- Confirm the injected diagnostic text is not displayed and best-effort repository rollback leaves the item un-favorited.
+- Widget regression source is committed but unrun; real browser/device storage failure behavior remains pending the manual validation checkpoint.
