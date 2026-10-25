@@ -911,3 +911,10 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **Source:** Search now distinguishes a type filter with no matching saved items from the empty-library state. It explains the mismatch and offers a one-tap clear-filter action; when both query and type filter are set, the action clears both.
 - **Regression:** TC-149 covers an unmatched type by itself and the combined query-plus-filter path, ensuring the reset makes existing saved items reachable again.
 - **Status:** Source/test committed but unrun; responsive, large-text, keyboard and screen-reader checks remain pending.
+
+### TSK-442 — Actionable favorite-update error feedback — 2026-10-25
+
+- **Requirements:** FR-004, FR-018 and NFR-002–003 (reliable list actions, safe messaging and local persistence).
+- **Source:** Favorite toggling now reuses the privacy-safe operation error helper. Unexpected storage failures tell the user to check local storage and retry, rather than suggesting unrelated URL/file repairs.
+- **Regression:** TC-150 injects a late item-write failure, checks that raw diagnostic text is not rendered, and verifies best-effort rollback retains the non-favorite state.
+- **Status:** Source/test committed but unrun; real browser/Android persistence behavior remains unverified.
