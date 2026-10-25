@@ -375,3 +375,9 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - Updated widget test expectations and README product identity to match the renamed repository/application.
 - Source and test changes are committed, but tests and builds have not been executed; validation remains at the manual checkpoint.
 - Extended rename consistency to the generated Android launcher label (and its configurator regression tests), browser page title, installable web-app manifest, requirements, and roadmap. The configurator's Python tests have not been run; Android/web builds remain deferred.
+
+## Product rename consistency follow-up — 2026-10-25
+
+- [x] Corrected remaining user-facing backup/share validation messages and inline source comments from StashTrail to StashHive; backup validation still preserves the stable version-1 `StashHive` schema marker.
+- [x] Corrected the test-plan and traceability document headings and TC-125 brand expectations to match the current StashHive product name.
+- [ ] Validation remains intentionally pending: no formatter, analyzer, test suite, Python configurator tests, web build, or Android build was run. CI stays manual-only as requested.
