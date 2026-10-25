@@ -1,4 +1,4 @@
-# StashTrail — Implementation Progress
+# StashHive — Implementation Progress
 
 **As of:** 2026-10-25  
 **Active phase:** Phase 3 — Platform assurance (Phase 2 sharing/build validation remains pending)  
@@ -367,3 +367,10 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - Added TC-153 regression source for selecting **Extra large**, recreating app state using the same repository to check preference initialization, and returning to **System default**.
 - Updated the test plan and traceability matrix.
 - This is source-only progress. The test, analyzer, formatter, web build and Android build have not been run; CI remains manual-only.
+
+
+## Product rename consistency — 2026-10-25
+
+- Updated the app's user-facing labels and startup messages to StashHive while retaining explicit compatibility wording for importing legacy StashTrail backups.
+- Updated widget test expectations and README product identity to match the renamed repository/application.
+- Source and test changes are committed, but tests and builds have not been executed; validation remains at the manual checkpoint.
