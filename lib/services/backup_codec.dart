@@ -104,7 +104,7 @@ class BackupCodec {
         incomingCount < 0 ||
         currentCount + incomingCount > maxItems) {
       throw FormatException(
-        'StashTrail supports up to $maxItems saved items. '
+        'StashHive supports up to $maxItems saved items. '
         'Remove some items before saving or restoring more.',
       );
     }
@@ -428,7 +428,7 @@ class BackupCodec {
       throw const FormatException('The backup file has an invalid structure.');
     }
     if (decoded['app'] != _legacyBackupAppIdentifier) {
-      throw const FormatException('This file is not a recognized StashTrail or StashHive backup.');
+      throw const FormatException('This file is not a recognized StashHive backup.');
     }
     if (decoded['formatVersion'] != formatVersion) {
       throw FormatException(
