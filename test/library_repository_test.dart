@@ -111,6 +111,41 @@ void main() {
     );
   });
 
+  test('text-size preference persists across box reopen', () async {
+    expect(repository.textScaleMultiplier, 1.0);
+    await repository.setTextScaleMultiplier(1.15);
+    expect(repository.textScaleMultiplier, 1.15);
+
+    repository.dispose();
+    await Hive.close();
+    Hive.init(testDirectory.path);
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.textScaleMultiplier, 1.15);
+  });
+
+  test('text-size preference rolls back a late failed write', () async {
+    expect(repository.textScaleMultiplier, 1.0);
+    LibraryRepository.setTextScaleMultiplierAfterWriteForTesting = () async {
+      throw StateError('simulated text-size preference failure');
+    };
+    try {
+      await expectLater(
+        repository.setTextScaleMultiplier(1.3),
+        throwsA(isA<StateError>()),
+      );
+    } finally {
+      LibraryRepository.setTextScaleMultiplierAfterWriteForTesting = null;
+    }
+
+    expect(repository.textScaleMultiplier, 1.0);
+    expect(
+      Hive.box<dynamic>('stashhive_preferences_v1')
+          .containsKey('textScaleMultiplier'),
+      isFalse,
+    );
+  });
+
   test('storage reminder acknowledgement persists across box reopen', () async {
     expect(repository.hasSeenStorageReminder, isFalse);
     await repository.markStorageReminderSeen();
