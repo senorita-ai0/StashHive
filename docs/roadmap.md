@@ -923,3 +923,11 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 ### Phase 3 — Settings text-size control (TSK-443, 2026-10-25)
 
 Settings now includes a local **App text size** preference with System default, Large and Extra large choices. The selected multiplier is persisted in the existing preferences box and composed with the platform-provided text scaler, preserving Android/browser accessibility scaling while allowing users to enlarge app text further. Repository regressions cover persistence and rollback after a late write failure; a widget regression covers changing the size and checking the applied scaler. Tests and builds remain unrun, and the design still needs narrow-width, Android and browser review.
+
+
+### TSK-444 — Consistent favorite-update failure feedback in Item Details — 2026-10-25
+
+- **Requirements:** FR-004 / FR-018 and NFR-002–003 (reliable favorite action, safe error copy and recoverable local persistence).
+- **Source:** The Item Details favorite button now uses the shared safe-error helper, matching the Library tile. Unexpected failures recommend checking local storage and retrying, instead of suggesting unrelated URL/file repair.
+- **Regression:** TC-152 injects a late storage failure, confirms diagnostic details remain hidden, and checks the favorite state remains false.
+- **Status:** Source/test committed but unrun; real browser/Android storage recovery remains unverified.
