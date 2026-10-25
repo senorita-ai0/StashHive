@@ -1,6 +1,6 @@
 {
-  "name": "StashTrail",
-  "short_name": "StashTrail",
+  "name": "StashHive",
+  "short_name": "StashHive",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#F8F9FD",
