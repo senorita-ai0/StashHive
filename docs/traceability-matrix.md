@@ -7,7 +7,7 @@
 | FR-001 | SCR-001, SCR-004 | TSK-102, TSK-105 | TC-001 | IN PROGRESS — source added; build/test pending |
 | FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104 | TC-002 | IN PROGRESS — source added; build/test pending |
 | FR-003 | SCR-004 | TSK-102, TSK-105, TSK-424 | TC-003, TC-132 | IN PROGRESS — delete failure now reports feedback; rollback/platform validation pending |
-| FR-004 | SCR-001, SCR-003 | TSK-103, TSK-201, TSK-416 | TC-004, TC-121 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
+| FR-004 | SCR-001, SCR-003, SCR-004 | TSK-103, TSK-201, TSK-416, TSK-444 | TC-004, TC-121, TC-152 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
 | FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427 | TC-005, TC-118, TC-135 | IN PROGRESS — Unicode search source and search-scope explanation aligned; execution/platform review pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
@@ -21,11 +21,11 @@
 | FR-015 | SCR-006, SCR-001, SCR-004 | TSK-003, TSK-303, TSK-422, TSK-425 | TC-015, TC-130, TC-133 | IN PROGRESS — storage reminders and platform-specific attachment copy added; browser restart/platform review pending |
 | FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205 | TC-016 | BLOCKED pending POC |
 | FR-017 | SCR-004 | TSK-203 | TC-017 | IN PROGRESS — URLs remain bookmarks without page scraping/capture; acceptance check pending |
-| FR-018 | SCR-006 | TSK-304, TSK-428, TSK-429 | TC-018, TC-136, TC-137 | IN PROGRESS — normal-operation and startup errors use safe fallback copy; privacy/log/network review pending |
+| FR-018 | SCR-006, SCR-004 | TSK-304, TSK-428, TSK-429, TSK-444 | TC-018, TC-136, TC-137, TC-152 | IN PROGRESS — normal-operation and startup errors use safe fallback copy; privacy/log/network review pending |
 | FR-019 | SCR-001, SCR-002 | Later if approved | TC-019 | NOT STARTED / Could |
 | NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | IN PROGRESS — no backend/account integration in core source; offline and network inspection pending |
-| NFR-002 | SCR-006 | TSK-304, TSK-428, TSK-429 | TC-018, TC-136, TC-137 | IN PROGRESS — startup and routine error UI hide raw unexpected storage/plugin details; permissions/logging/network inspection pending |
-| NFR-003 | SCR-006 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426 | TC-012–015, TC-117, TC-120, TC-122, TC-134 | IN PROGRESS — backup byte limits and preference-write rollback source added; execution/platform verification pending |
+| NFR-002 | SCR-006, SCR-004 | TSK-304, TSK-428, TSK-429, TSK-444 | TC-018, TC-136, TC-137, TC-152 | IN PROGRESS — startup and routine error UI hide raw unexpected storage/plugin details; permissions/logging/network inspection pending |
+| NFR-003 | SCR-006, SCR-004 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426, TSK-444 | TC-012–015, TC-117, TC-120, TC-122, TC-134, TC-152 | IN PROGRESS — backup byte limits and preference-write rollback source added; execution/platform verification pending |
 | NFR-004 | SCR-004, SCR-006 | TSK-203, TSK-425, TSK-427 | TC-006, TC-017, TC-133, TC-135 | IN PROGRESS — platform-specific local-storage/search copy added; end-to-end wording review pending |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
 | NFR-006 | All screens | TSK-103, TSK-304, TSK-443 | UI/accessibility checklist, TC-151 | IN PROGRESS — in-app text-size preference now layers over platform scaling; execution and platform checks pending |
@@ -1055,3 +1055,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Source:** Settings now exposes System default, Large and Extra large. The preference is saved locally and applies an additional multiplier on top of the platform's TextScaler, so it never replaces or lowers the device/browser setting.
 - **Regression:** TC-151 covers the Settings interaction, applied scale, preference persistence and rollback after a late storage failure.
 - **Status:** Source and regression cases are committed but unrun; narrow viewport, Android and web behavior remain pending manual validation.
+
+
+### TSK-444 — Consistent favorite-update failure feedback in Item Details
+
+- **Requirement:** FR-004 / FR-018 and NFR-002–003 (reliable item actions, safe operation feedback and recoverable local persistence).
+- **Implementation:** the Item Details favorite action now uses the shared operation-error helper, matching the Library tile. Unexpected storage failures show local-storage/retry guidance instead of unrelated URL/file repair advice.
+- **Regression:** TC-152 injects a late favorite-write failure and confirms the actionable message, privacy-safe error text and non-favorite rollback state.
+- **Verification:** source and regression are committed but unrun; browser/device persistence behavior remains pending.
