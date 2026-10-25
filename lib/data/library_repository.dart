@@ -65,7 +65,22 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function()? setDarkModeAfterWriteForTesting;
 
+  /// Fault-injection seam for a text-size preference write that fails late.
+  @visibleForTesting
+  static Future<void> Function()? setTextScaleMultiplierAfterWriteForTesting;
+
   bool get darkMode => _preferencesBox.get('darkMode') == true;
+
+  /// Extra app text scaling layered on top of platform accessibility scaling.
+  /// Invalid legacy preference values fall back to the system default.
+  double get textScaleMultiplier {
+    const supported = <double>{1.0, 1.15, 1.3};
+    final value = _preferencesBox.get('textScaleMultiplier');
+    if (value is num && supported.contains(value.toDouble())) {
+      return value.toDouble();
+    }
+    return 1.0;
+  }
 
   /// Whether the one-time local-storage safety reminder has been dismissed.
   bool get hasSeenStorageReminder =>
@@ -548,6 +563,36 @@ class LibraryRepository {
         }
       } catch (_) {
         // Preserve the original storage failure.
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> setTextScaleMultiplier(double value) async {
+    const supported = <double>{1.0, 1.15, 1.3};
+    if (!supported.contains(value)) {
+      throw const FormatException(
+        'Choose System default, Large or Extra large text.',
+      );
+    }
+
+    const key = 'textScaleMultiplier';
+    final hadValue = _preferencesBox.containsKey(key);
+    final previousValue = _preferencesBox.get(key);
+    try {
+      await _preferencesBox.put(key, value);
+      final afterWrite = setTextScaleMultiplierAfterWriteForTesting;
+      if (afterWrite != null) await afterWrite();
+    } catch (_) {
+      // The storage future can report a failure after committing its write.
+      try {
+        if (hadValue) {
+          await _preferencesBox.put(key, previousValue);
+        } else {
+          await _preferencesBox.delete(key);
+        }
+      } catch (_) {
+        // Preserve the original error.
       }
       rethrow;
     }
