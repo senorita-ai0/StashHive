@@ -1,8 +1,8 @@
-# StashTrail
+# StashHive
 
 **Save everything. Find it anytime.**
 
-StashTrail is a personal digital library for saving links, notes, screenshots, images, PDFs and documents and finding them later from one local library.
+StashHive is a personal digital library for saving links, notes, screenshots, images, PDFs and documents and finding them later from one local library.
 
 > **Current status: Phase 2/3 source work is in progress; verification is intentionally deferred.** Before Phase 2, dependency resolution, formatting, analysis, unit tests and the web release build passed in GitHub Actions. The Android debug build later failed because the generated Android runner could not resolve the FilePickerPlugin class referenced by GeneratedPluginRegistrant.java. The file_picker dependency was moved to 12.3.0 as a candidate fix for the known 11.x/AGP 9 issue; it is not verified until the manual build. CI is manual-only, and no post-Phase 2/3 build or test has been run.
 
@@ -17,7 +17,7 @@ StashTrail is a personal digital library for saving links, notes, screenshots, i
 
 ## Product identity and compatibility
 
-The current user-facing brand is **StashTrail**. For backward compatibility, retain the existing Dart package name (`stashhive`), Hive store keys (`stashhive_*_v1`) and version-1 JSON backup marker (`StashHive`) until a deliberate migration exists. StashTrail continues to import existing StashHive backup files.
+The current user-facing brand is **StashHive**. The Dart package name (`stashhive`), Hive store keys (`stashhive_*_v1`) and version-1 JSON backup marker (`StashHive`) are retained. Import compatibility for older StashTrail backups is preserved.
 
 ## Proposed platforms
 
@@ -86,7 +86,7 @@ flutter pub get
 flutter run -d android
 ```
 
-The configurator is idempotent, sets the generated Android launcher label to StashTrail, and registers the supported link/text/image/document share types. Incoming items open Quick Save for review; StashTrail does not silently save external content. It currently prepares one item per share action. To run verification, open **Actions → Manual Flutter validation → Run workflow**. Pushes to `main` do not start CI.
+The configurator is idempotent, sets the generated Android launcher label to StashHive, and registers the supported link/text/image/document share types. Incoming items open Quick Save for review; StashHive does not silently save external content. It currently prepares one item per share action. To run verification, open **Actions → Manual Flutter validation → Run workflow**. Pushes to `main` do not start CI.
 
 ## License
 
