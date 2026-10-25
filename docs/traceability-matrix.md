@@ -1063,3 +1063,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** the Item Details favorite action now uses the shared operation-error helper, matching the Library tile. Unexpected storage failures show local-storage/retry guidance instead of unrelated URL/file repair advice.
 - **Regression:** TC-152 injects a late favorite-write failure and confirms the actionable message, privacy-safe error text and non-favorite rollback state.
 - **Verification:** source and regression are committed but unrun; browser/device persistence behavior remains pending.
+
+### TSK-445 — Extra-large text preference persistence and reset
+
+- **Requirement:** NFR-006 / SCR-007 (accessible text sizing with an explicit return to system defaults).
+- **Implementation:** Existing Settings text-size preference; this increment extends regression coverage for selecting Extra large, recreating app state from the same repository, and resetting to System default.
+- **Test:** TC-153 in `test/accessibility_widgets_test.dart` and `docs/test-plan.md`.
+- **Verification:** Regression source committed but unrun; manual web/Android text-scaling review remains pending.
