@@ -918,3 +918,8 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - **Source:** Favorite toggling now reuses the privacy-safe operation error helper. Unexpected storage failures tell the user to check local storage and retry, rather than suggesting unrelated URL/file repairs.
 - **Regression:** TC-150 injects a late item-write failure, checks that raw diagnostic text is not rendered, and verifies best-effort rollback retains the non-favorite state.
 - **Status:** Source/test committed but unrun; real browser/Android persistence behavior remains unverified.
+
+
+### Phase 3 — Settings text-size control (TSK-443, 2026-10-25)
+
+Settings now includes a local **App text size** preference with System default, Large and Extra large choices. The selected multiplier is persisted in the existing preferences box and composed with the platform-provided text scaler, preserving Android/browser accessibility scaling while allowing users to enlarge app text further. Repository regressions cover persistence and rollback after a late write failure; a widget regression covers changing the size and checking the applied scaler. Tests and builds remain unrun, and the design still needs narrow-width, Android and browser review.
