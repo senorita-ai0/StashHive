@@ -361,3 +361,9 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - [x] The Item Details favorite button now uses the same safe operation-error helper and storage-specific recovery message as the Library tile.
 - [x] Added widget regression **TC-152** and traceability task **TSK-444**. It injects a late favorite-write failure, checks that diagnostic details and unrelated URL/file repair advice are absent, and verifies best-effort rollback leaves the item un-favorited.
 - [ ] Run TC-152 and verify favorite persistence under real browser/device storage failures at the manual checkpoint. No tests, formatter, analyzer or builds were run for this increment.
+
+## Phase 3 — text-size preference recovery coverage (2026-10-25)
+
+- Added TC-153 regression source for selecting **Extra large**, recreating app state using the same repository to check preference initialization, and returning to **System default**.
+- Updated the test plan and traceability matrix.
+- This is source-only progress. The test, analyzer, formatter, web build and Android build have not been run; CI remains manual-only.
