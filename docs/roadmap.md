@@ -1,4 +1,4 @@
-# StashTrail — Roadmap and Implementation Plan
+# StashHive — Roadmap and Implementation Plan
 
 **Status:** Implementation in progress — Phase 3 platform assurance; Phase 2 sharing/build validation remains pending. Blueprint approved on 2026-10-21; validation workflow is intentionally manual-only.
 
@@ -58,7 +58,7 @@
 
 ## Suggested development order (updated 2026-10-21)
 
-1. **Phase 1 — Core local library:** source is implemented. Historical CI passed analyzer, tests and web build; the Android APK failed because the generated runner could not resolve FilePickerPlugin. StashTrail now pins file_picker 12.3.0 as an unverified mitigation.
+1. **Phase 1 — Core local library:** source is implemented. Historical CI passed analyzer, tests and web build; the Android APK failed because the generated runner could not resolve FilePickerPlugin. StashHive now pins file_picker 12.3.0 as an unverified mitigation.
 2. **Phase 2 — Capture and recovery:** validate Android URL/text/image/document share intake; add repository persistence, attachment, restore and manifest tests.
 3. **Phase 3 — Platform assurance:** compare screens against the SVGs; validate browser persistence and real-device file/share flows; improve accessibility, backup recovery and performance.
 4. **Later phases:** consider OCR only after an offline feasibility study, then run the full manual validation workflow at the owner's release checkpoint.
@@ -307,7 +307,7 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — shared saved-item validation across save/export/restore (2026-10-22)
 
-- **TSK-342:** Added a single saved-item validator used by repository saves and backup encoding/decoding. URL length, title/content/tags, collection metadata, attachment metadata and item-kind/attachment consistency are checked before data is committed or exported, so StashTrail no longer intentionally emits backups its own decoder would reject for these field rules.
+- **TSK-342:** Added a single saved-item validator used by repository saves and backup encoding/decoding. URL length, title/content/tags, collection metadata, attachment metadata and item-kind/attachment consistency are checked before data is committed or exported, so StashHive no longer intentionally emits backups its own decoder would reject for these field rules.
 - Quick Save now gives a clear 4,096-character URL limit message, and the saved URL limit is defined once in the model and reused by incoming-share handling and backup validation.
 - Added regressions for overlong saved URLs and attachment metadata that would fail restore. Tests are committed but unrun; validate the full save/export/restore path at the manual checkpoint.
 
@@ -790,7 +790,7 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 
 ### Phase 2 — reject duplicate IDs during backup export (2026-10-22)
 
-- **TSK-415:** The backup encoder now checks item-ID uniqueness before writing JSON, matching the decoder's rule. A direct encoder caller can no longer create a backup with duplicate IDs that StashTrail will later reject during restore.
+- **TSK-415:** The backup encoder now checks item-ID uniqueness before writing JSON, matching the decoder's rule. A direct encoder caller can no longer create a backup with duplicate IDs that StashHive will later reject during restore.
 - Added a codec regression using two different records with the same ID. Test source is committed but unrun.
 
 
@@ -818,9 +818,9 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 - Library and Search now share the same comparator, and a model regression covers ties for Recently saved, Oldest first and Title A–Z. Test source is committed but unrun.
 
 
-### Phase 3 — StashTrail product-brand alignment (2026-10-22)
+### Phase 3 — StashHive product-brand alignment (2026-10-22)
 
-- **TSK-420:** Aligned visible Flutter labels, generated Android launcher labels, web install metadata, README and current product/design documentation with StashTrail.
+- **TSK-420:** Aligned visible Flutter labels, generated Android launcher labels, web install metadata, README and current product/design documentation with StashHive.
 - Internal package/Hive box identifiers and the version-1 `StashHive` backup marker remain unchanged so existing local data and version-1 exports stay compatible.
 - Added **TC-125** for the Library wordmark and **TC-126** for a version-1 backup marker round trip. Test source is committed but unrun; CI/build remains manual-only.
 
@@ -836,7 +836,7 @@ TSK-319 changes the decorative search field on the Library page into a clearly n
 ### TSK-422 — First-launch local-storage safety reminder — 2026-10-22
 
 - **Requirement:** FR-015 (browser-local storage honesty and data-loss awareness).
-- **Source:** A first-launch Library reminder now distinguishes browser-profile storage from Android app/device storage. It explains that clearing local data may erase the library and that StashTrail does not sync; users can dismiss it or open Backup & privacy directly.
+- **Source:** A first-launch Library reminder now distinguishes browser-profile storage from Android app/device storage. It explains that clearing local data may erase the library and that StashHive does not sync; users can dismiss it or open Backup & privacy directly.
 - **Persistence:** Dismissal is saved in the existing `stashhive_preferences_v1` box so it is scoped to the current app/browser store and does not require a backend.
 - **Tests:** TC-130 plus repository/widget regression source added. Status is **IN PROGRESS** until source checks are run and the first-launch/restart paths are manually reviewed on web and Android. No test/build/CI was run for this change.
 
@@ -931,3 +931,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** The Item Details favorite button now uses the shared safe-error helper, matching the Library tile. Unexpected failures recommend checking local storage and retrying, instead of suggesting unrelated URL/file repair.
 - **Regression:** TC-152 injects a late storage failure, confirms diagnostic details remain hidden, and checks the favorite state remains false.
 - **Status:** Source/test committed but unrun; real browser/Android storage recovery remains unverified.
+
+
+### Product rename follow-up — 2026-10-25
+
+- Updated the product name in the roadmap and requirements to StashHive. Older StashTrail backups remain a supported import format.
+- The Android manifest configurator and its regression tests now enforce the StashHive launcher label; the web page title and install manifest use StashHive as well.
+- Automated tests/builds remain deferred until the manual validation checkpoint.
