@@ -1091,6 +1091,62 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets(
+    'Item Details favorite update failure shows safe storage guidance',
+    (tester) async {
+      const item = SavedItem(
+        id: 'details-favorite-write-failure',
+        kind: ItemKind.link,
+        title: 'Details favorite test',
+        content: 'Useful note',
+        url: 'https://example.com/details-favorite',
+        tags: <String>[],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 10,
+        updatedAtMs: 11,
+      );
+      await repository.save(item);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: app.ItemDetailsPage(
+            repository: repository,
+            itemId: item.id,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      LibraryRepository.saveAfterItemCommitForTesting = () async {
+        throw StateError('simulated details favorite storage diagnostic');
+      };
+      try {
+        await tester.tap(find.text('Favorite'));
+        await tester.pumpAndSettle();
+      } finally {
+        LibraryRepository.saveAfterItemCommitForTesting = null;
+      }
+
+      expect(
+        find.text(
+          'Could not update this item. Check local storage and try again.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Open Edit to review its saved details'),
+        findsNothing,
+      );
+      expect(
+        find.textContaining('simulated details favorite storage diagnostic'),
+        findsNothing,
+      );
+      expect(repository.findById(item.id)?.isFavorite, isFalse);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('Item Details labels native attachment storage accurately', (tester) async {
     const item = SavedItem(
       id: 'attachment-storage-label',
