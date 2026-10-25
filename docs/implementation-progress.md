@@ -374,3 +374,4 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - Updated the app's user-facing labels and startup messages to StashHive while retaining explicit compatibility wording for importing legacy StashTrail backups.
 - Updated widget test expectations and README product identity to match the renamed repository/application.
 - Source and test changes are committed, but tests and builds have not been executed; validation remains at the manual checkpoint.
+- Extended rename consistency to the generated Android launcher label (and its configurator regression tests), browser page title, installable web-app manifest, requirements, and roadmap. The configurator's Python tests have not been run; Android/web builds remain deferred.
