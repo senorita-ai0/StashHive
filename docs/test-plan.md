@@ -1,4 +1,4 @@
-# StashTrail — Test Plan
+# StashHive — Test Plan
 
 **Status:** Implementation and test sources exist. Phase 2 tests have not yet run; the GitHub Actions workflow is manual-only by owner request.
 
@@ -951,11 +951,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - The model comparator regression is committed but unrun; widget parity and narrow/enlarged-text sort controls remain pending manual checks.
 
 
-### TC-125 — Current StashTrail brand is visible in the Library
+### TC-125 — Current StashHive brand is visible in the Library
 
-- Open the Library and confirm the visible header says `StashTrail`.
+- Open the Library and confirm the visible header says `StashHive`.
 - Confirm the widget builds without layout exceptions; review the web-installed name and Android launcher label after the manual runner/build checkpoint.
-- The Android configurator's Python regression also asserts the generated manifest application label is StashTrail and remains idempotent. Test source is committed but unrun.
+- The Android configurator's Python regression also asserts the generated manifest application label is StashHive and remains idempotent. Test source is committed but unrun.
 
 
 ### TC-126 — Version-1 backup identifier remains backward compatible
@@ -989,7 +989,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 ### TC-130 — First-launch local-storage safety reminder
 
-- Start with a fresh preferences box and launch StashTrail. Confirm the Library shows a dismissible reminder that the library is local-only, with wording specific to the browser profile on web or app/device storage on Android.
+- Start with a fresh preferences box and launch StashHive. Confirm the Library shows a dismissible reminder that the library is local-only, with wording specific to the browser profile on web or app/device storage on Android.
 - Confirm the message states that clearing local data can erase the library and that it does not sync automatically. Activate **Backup options** and verify Backup & privacy opens directly; return and test **Got it**.
 - Confirm dismissal is persisted in the same local preferences store and the reminder does not reappear after closing and reopening the boxes. With a fresh browser profile/device store, confirm the reminder appears again.
 - Repository and widget regression source is committed but unrun; web/Android first-launch behavior remains pending the manual validation checkpoint.
@@ -1011,7 +1011,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 ### TC-133 — Attachment storage wording matches the platform
 
-- Open Item Details for an image or document on Android and confirm the attachment section describes storage inside StashTrail on the device.
+- Open Item Details for an image or document on Android and confirm the attachment section describes storage inside StashHive on the device.
 - Open the same screen in the web app and confirm the label says the file is stored in this browser profile, not on the device or in the cloud.
 - Check this copy together with Backup & privacy's local-storage warning. Widget source currently asserts the native label; both platform branches still require manual review because tests/builds have not been run.
 
