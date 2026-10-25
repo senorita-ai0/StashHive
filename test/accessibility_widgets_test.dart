@@ -35,13 +35,13 @@ void main() {
 
   testWidgets('Startup failure UI hides raw local storage diagnostics', (tester) async {
     await tester.pumpWidget(const app.StartupFailureApp());
-    expect(find.text('StashTrail could not open its local library'), findsOneWidget);
+    expect(find.text('StashHive could not open its local library'), findsOneWidget);
     expect(find.textContaining('Technical details are hidden'), findsOneWidget);
     expect(find.byType(SelectableText), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Library header displays the StashTrail brand', (tester) async {
+  testWidgets('Library header displays the StashHive brand', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: app.LibraryPage(
@@ -53,7 +53,7 @@ void main() {
       ),
     );
 
-    expect(find.text('StashTrail'), findsOneWidget);
+    expect(find.text('StashHive'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -1217,7 +1217,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Stored inside StashTrail on this device'), findsOneWidget);
+    expect(find.text('Stored inside StashHive on this device'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
