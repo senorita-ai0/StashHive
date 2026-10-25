@@ -28,7 +28,7 @@
 | NFR-003 | SCR-006 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426 | TC-012–015, TC-117, TC-120, TC-122, TC-134 | IN PROGRESS — backup byte limits and preference-write rollback source added; execution/platform verification pending |
 | NFR-004 | SCR-004, SCR-006 | TSK-203, TSK-425, TSK-427 | TC-006, TC-017, TC-133, TC-135 | IN PROGRESS — platform-specific local-storage/search copy added; end-to-end wording review pending |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
-| NFR-006 | All screens | TSK-103, TSK-304 | UI/accessibility checklist | IN PROGRESS — text scaling, semantics and contrast source/tests added; execution and platform checks pending |
+| NFR-006 | All screens | TSK-103, TSK-304, TSK-443 | UI/accessibility checklist, TC-151 | IN PROGRESS — in-app text-size preference now layers over platform scaling; execution and platform checks pending |
 | NFR-007 | Search/list | TSK-003, TSK-305, TSK-412 | TC-116 / Performance baseline | IN PROGRESS — non-gating harness added; measurements pending |
 | NFR-008 | Attachments / OCR | TSK-005, TSK-305 | Package-size benchmark | NOT STARTED |
 | NFR-009 | Architecture | TSK-002, TSK-101 | Static checks/build | NOT STARTED |
@@ -1047,3 +1047,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-004 and FR-018, NFR-002–003 (understandable actions and privacy-conscious failure feedback).
 - Regression: TC-150 in `test/accessibility_widgets_test.dart` injects a late write failure and asserts the favorite state is rolled back and raw exception detail is hidden.
 - Verification: source/test committed but unrun; real platform persistence/rollback still needs validation.
+
+
+### TSK-443 — User-adjustable text size that respects platform accessibility settings
+
+- **Requirement:** NFR-006 / SCR-007 (accessible text sizing and Settings completeness).
+- **Source:** Settings now exposes System default, Large and Extra large. The preference is saved locally and applies an additional multiplier on top of the platform's TextScaler, so it never replaces or lowers the device/browser setting.
+- **Regression:** TC-151 covers the Settings interaction, applied scale, preference persistence and rollback after a late storage failure.
+- **Status:** Source and regression cases are committed but unrun; narrow viewport, Android and web behavior remain pending manual validation.
