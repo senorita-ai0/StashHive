@@ -93,6 +93,8 @@ void main() {
           repository: repository,
           darkMode: false,
           onDarkModeChanged: (_) {},
+          textScaleMultiplier: repository.textScaleMultiplier,
+          onTextScaleChanged: (_) {},
         ),
       ),
     );
@@ -116,6 +118,8 @@ void main() {
           repository: repository,
           darkMode: false,
           onDarkModeChanged: (_) {},
+          textScaleMultiplier: repository.textScaleMultiplier,
+          onTextScaleChanged: (_) {},
         ),
       ),
     );
@@ -152,6 +156,35 @@ void main() {
 
     expect(repository.darkMode, isFalse);
     expect(tester.widget<Switch>(switchFinder).value, isFalse);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Text size preference increases app text and preserves platform scaling', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+    await tester.pumpWidget(
+      app.StashHiveApp(repository: repository, initialDarkMode: false),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Settings').last);
+    await tester.pumpAndSettle();
+
+    final before = MediaQuery.of(tester.element(find.text('Text size')))
+        .textScaler
+        .scale(10);
+    final control = find.byType(DropdownButtonFormField<double>);
+    expect(control, findsOneWidget);
+    await tester.tap(control);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Large').last);
+    await tester.pumpAndSettle();
+
+    expect(repository.textScaleMultiplier, 1.15);
+    final after = MediaQuery.of(tester.element(find.text('Text size')))
+        .textScaler
+        .scale(10);
+    expect(after, closeTo(before * 1.15, 0.1));
     expect(tester.takeException(), isNull);
   });
 
@@ -1093,6 +1126,8 @@ void main() {
             repository: repository,
             darkMode: false,
             onDarkModeChanged: (_) {},
+            textScaleMultiplier: repository.textScaleMultiplier,
+            onTextScaleChanged: (_) {},
           ),
         ),
       ),
