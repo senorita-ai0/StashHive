@@ -1040,3 +1040,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - Requirements: FR-004–005 and NFR-006 (understandable no-result state and accessible recovery).
 - Regression: TC-149 in `test/accessibility_widgets_test.dart`; covers both an unmatched filter alone and a combined query-plus-filter reset.
 - Verification: source/test committed but unrun; narrow-width, large-text, keyboard and screen-reader review remains pending.
+
+### TSK-442 — Actionable favorite-update storage errors
+
+- Implementation: `SavedItemTile` in `lib/main.dart`; unexpected failures from `LibraryRepository.toggleFavorite` now use the shared safe-error helper, with storage-specific fallback guidance. App-defined validation messages remain available.
+- Requirements: FR-004 and FR-018, NFR-002–003 (understandable actions and privacy-conscious failure feedback).
+- Regression: TC-150 in `test/accessibility_widgets_test.dart` injects a late write failure and asserts the favorite state is rolled back and raw exception detail is hidden.
+- Verification: source/test committed but unrun; real platform persistence/rollback still needs validation.
