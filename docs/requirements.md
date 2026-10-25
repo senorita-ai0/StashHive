@@ -1,18 +1,18 @@
-# StashTrail — Requirements and Acceptance Criteria
+# StashHive — Requirements and Acceptance Criteria
 
 **Status:** Draft for approval. These requirements are proposed, not approved for implementation.  
 **Priorities:** Must = essential to the proposed MVP; Should = high value if the proof of concept supports it; Could = later; Won't = explicitly excluded from MVP.
 
 ## Product identity and compatibility
 
-The visible product name is StashTrail. Package, local-storage and version-1 backup identifiers may retain the former StashHive name for compatibility; these internal identifiers are not user-facing branding and must not be changed without a migration plan.
+The visible product name is StashHive. Keep the existing `stashhive` package/storage identifiers and version-1 backup marker stable. Older StashTrail backups must remain importable.
 
 ## Actors and terminology
 
 - **User:** one person managing their own library. No admin or social roles are required.
 - **Saved item:** a record of something the user wants to find later.
 - **Bookmark/link:** a URL plus locally saved metadata; not the same as an offline webpage.
-- **Attachment:** a copy of an image/document stored by StashTrail or a user-selected file reference. Availability differs by platform and import choice.
+- **Attachment:** a copy of an image/document stored by StashHive or a user-selected file reference. Availability differs by platform and import choice.
 - **Extracted text:** text extracted on-device from an image/PDF when a validated processor is available. It is optional metadata, not a replacement for the original file.
 - **Collection:** a user-created grouping of items. **Tag:** a searchable label. An item may have multiple tags and optionally a collection.
 
@@ -28,7 +28,7 @@ The visible product name is StashTrail. Package, local-storage and version-1 bac
 | FR-006 | Add links manually and open them externally. | Must | Valid links are saved without requiring page scraping; tapping opens the correct destination when a handler is available, otherwise displays a recoverable error. | URL validation/opening; TC-006 |
 | FR-007 | Save text snippets and personal notes without a URL or attachment. | Must | A user can save, edit, search, and delete a note offline. | Note UI/storage; TC-007 |
 | FR-008 | Import user-selected images and documents using platform-appropriate selection/share mechanisms. | Must for manual picker; Should for Android share intake until spike passes | Import copies data when appropriate or clearly records a reference; cancelling picker does not create a ghost item; unsupported/oversized files show an explanation. | Storage/import proof of concept; TC-008 |
-| FR-009 | Receive shared URLs/text/images/files from Android apps. | Should pending technical validation | When a supported item is shared to StashTrail, the app shows a confirmation/edit step and saves once; unsupported MIME types fail safely. | Android intent/share spike; TC-009 |
+| FR-009 | Receive shared URLs/text/images/files from Android apps. | Should pending technical validation | When a supported item is shared to StashHive, the app shows a confirmation/edit step and saves once; unsupported MIME types fail safely. | Android intent/share spike; TC-009 |
 | FR-010 | Add and remove tags, create/rename/delete collections, and assign an item to a collection. | Must | Renaming/deleting a collection follows the documented rule; deleting a collection does not silently delete its items. | Data relationships; TC-010 |
 | FR-011 | Show a detail view with source URL, note, file/type information, tags, saved time, and available actions. | Must | Bookmark vs copied file vs cached preview/offline snapshot is explicitly distinguished. | Detail design; TC-011 |
 | FR-012 | Export the library and its copied attachments into a portable, versioned backup chosen by the user. | Must before release | Export completes with a summary; the archive has a manifest and schema version; failure/cancellation does not damage the live library. | Backup format; TC-012 |
