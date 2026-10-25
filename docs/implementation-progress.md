@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-25
 
-No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-151 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-151 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for these increments. GitHub Actions remains `workflow_dispatch`-only. All recent regression cases through TC-152 are source-authored, not passed; TC-116 benchmark measurements are pending; TC-123 through TC-152 are authored but unrun. Phase 2 device/restore verification and Phase 3 visual, large-text, keyboard and assistive-technology checks remain open; do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and the remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -354,3 +354,10 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - [x] Applied the choice as an additional multiplier over the platform-provided text scaler, retaining device/browser accessibility scaling.
 - [x] Added repository regression source for preference persistence and late-write rollback, plus widget regression **TC-151** for the Settings interaction and effective scale; traced as **TSK-443**.
 - [ ] Run TC-151 and inspect Settings/Library at narrow widths, with enlarged device text, keyboard navigation and screen readers on web and Android. Tests, formatter, analyzer and builds remain unrun.
+
+
+## Phase 3 — consistent Item Details favorite error feedback (2026-10-25)
+
+- [x] The Item Details favorite button now uses the same safe operation-error helper and storage-specific recovery message as the Library tile.
+- [x] Added widget regression **TC-152** and traceability task **TSK-444**. It injects a late favorite-write failure, checks that diagnostic details and unrelated URL/file repair advice are absent, and verifies best-effort rollback leaves the item un-favorited.
+- [ ] Run TC-152 and verify favorite persistence under real browser/device storage failures at the manual checkpoint. No tests, formatter, analyzer or builds were run for this increment.
