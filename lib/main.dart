@@ -2376,9 +2376,13 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     try {
       await widget.repository.toggleFavorite(item.id);
       if (mounted) setState(_reload);
-    } catch (_) {
+    } catch (error) {
       _message(
-        'Could not update this item. Open Edit to review its saved details and repair any invalid URL or missing file.',
+        'Could not update this item. ' +
+            _messageForOperationError(
+              error,
+              fallback: 'Check local storage and try again.',
+            ),
       );
     }
   }
