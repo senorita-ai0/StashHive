@@ -196,7 +196,7 @@ class BackupCodec {
   }
 
   /// Validates item fields shared by repository saves and backup export/import.
-  /// Keeping these constraints aligned prevents StashTrail from exporting a
+  /// Keeping these constraints aligned prevents StashHive from exporting a
   /// backup that its own decoder would later reject.
   static void validateSavedItem(SavedItem item) {
     _validateSavedItemMap(item.toMap());
