@@ -92,6 +92,46 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets(
+    'keeps the local library usable when native share-stream setup fails',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      app.incomingShareStreamForTesting = () {
+        throw StateError('private native share channel detail');
+      };
+      addTearDown(() {
+        debugDefaultTargetPlatformOverride = null;
+        app.incomingShareStreamForTesting = null;
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: app.HomeShell(
+            repository: repository,
+            darkMode: false,
+            onDarkModeChanged: (_) {},
+            textScaleMultiplier: 1,
+            onTextScaleChanged: (_) {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(
+          'Sharing is unavailable right now. You can still add items manually.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('private native share channel detail'),
+        findsNothing,
+      );
+      expect(find.text('Search your library'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('Library header displays the StashHive brand', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
