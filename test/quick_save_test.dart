@@ -429,7 +429,7 @@ void main() {
 
       expect(find.text('Selecting file…'), findsOneWidget);
       expect(
-        find.text('Checking file size and reading content…'),
+        find.text('Please wait while the file is selected and checked'),
         findsOneWidget,
       );
       expect(
