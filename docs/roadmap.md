@@ -1109,7 +1109,7 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-486 — Bound and test the aggregate share feedback message — 2026-10-28
 
 - **Requirements:** FR-009 and NFR-006.
-- **Source:** A pure share-service formatter composes unsupported, invalid/unreadable and omitted counts, de-duplicates hints, caps details at three entries, and returns `null` when nothing needs reporting. HomeShell calls it only after the waiting share queue drains.
+- **Source:** A pure share-service formatter composes unsupported, invalid/unreadable and omitted counts, de-duplicates hints, caps details at three entries, and returns `null` when nothing needs reporting. HomeShell calls it only after the waiting share queue drains and gives the combined summary an eight-second display duration.
 - **Regression:** TC-196 covers combined summary text and hint limits; TC-197 confirms empty summaries are suppressed. TC-195 remains the end-to-end manual UX check for timing/accessibility.
 - **Status:** Source and regression documentation committed but unrun. Verify end-to-end summary timing and assistive-technology behavior at the manual checkpoint; CI remains manual-only.
 
