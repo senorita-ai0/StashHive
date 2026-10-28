@@ -1298,3 +1298,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the restore with an injected interruption. Confirm restore rollback removes the staged item and attachment, and the queued backup contains only the original library item and collection with no orphan attachment payload.
 - **Status:** Repository regression source is committed but unrun. Verify backup/restore concurrency and interruption recovery on web and Android at the manual checkpoint.
 
+### TC-183 — Wait for save rollback before creating a backup
+
+- Save an image with known bytes, then begin a replacement save and pause it after the new attachment and item record have been written.
+- Request a backup while the replacement is pending; confirm the export waits rather than using the temporary replacement values.
+- Release the save with a simulated late failure. Confirm rollback restores the old metadata and attachment bytes, then confirm the queued backup contains those restored values.
+- **Status:** Repository regression source is committed but unrun. Verify concurrent backup/failed-save behavior against browser and Android storage at the manual checkpoint.
+
