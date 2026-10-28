@@ -934,6 +934,56 @@ void main() {
       },
     );
 
+    test('rejects oversized saved-item kinds before model parsing', () {
+      final oversizedKind = List<String>.filled(100000, 'x').join();
+      final rawItem = <String, Object?>{
+        ...sampleLink().toMap(),
+        'kind': oversizedKind,
+      };
+      final source = jsonEncode(<String, Object?>{
+        'app': 'StashHive',
+        'formatVersion': BackupCodec.formatVersion,
+        'exportedAt': '2026-10-28T00:00:00Z',
+        'collections': ['Learning'],
+        'items': [rawItem],
+        'attachments': <String, Object?>{},
+      });
+
+      expect(
+        () => BackupCodec.decode(source),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item contains fields beyond supported storage limits.',
+          ),
+        ),
+      );
+
+      final shortUnknown = <String, Object?>{
+        ...sampleLink().toMap(),
+        'kind': 'unknown-kind',
+      };
+      final shortUnknownSource = jsonEncode(<String, Object?>{
+        'app': 'StashHive',
+        'formatVersion': BackupCodec.formatVersion,
+        'exportedAt': '2026-10-28T00:00:00Z',
+        'collections': ['Learning'],
+        'items': [shortUnknown],
+        'attachments': <String, Object?>{},
+      });
+      expect(
+        () => BackupCodec.decode(shortUnknownSource),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item has an invalid type.',
+          ),
+        ),
+      );
+    });
+
     test('rejects unsafe or invalid URL schemes', () {
       final item = sampleLink().copyWith(url: 'javascript:alert(1)');
       final payload = <String, Object?>{
