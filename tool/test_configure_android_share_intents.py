@@ -82,15 +82,37 @@ class ConfigureAndroidShareIntentsTests(unittest.TestCase):
             "StashHive",
         )
 
-    def test_fails_clearly_when_main_activity_is_missing(self):
-        self.path.write_text(
+    def test_fails_clearly_when_main_activity_is_missing_without_rewriting_file(self):
+        invalid_manifest = (
             '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
             '<application><activity android:name=".OtherActivity" /></application>'
-            '</manifest>',
-            encoding="utf-8",
+            '</manifest>'
         )
+        self.path.write_text(invalid_manifest, encoding="utf-8")
+
         with self.assertRaisesRegex(ValueError, "MainActivity"):
             configure_manifest(self.path)
+
+        self.assertEqual(self.path.read_text(encoding="utf-8"), invalid_manifest)
+
+    def test_fails_clearly_when_application_is_missing(self):
+        self.path.write_text("<manifest />", encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "<application>"):
+            configure_manifest(self.path)
+
+    def test_fails_clearly_when_manifest_is_missing(self):
+        missing_path = self.path.parent / "missing" / "AndroidManifest.xml"
+        with self.assertRaisesRegex(FileNotFoundError, "Android manifest not found"):
+            configure_manifest(missing_path)
+
+    def test_reports_malformed_xml_without_overwriting_it(self):
+        malformed_manifest = "<manifest><application>"
+        self.path.write_text(malformed_manifest, encoding="utf-8")
+
+        with self.assertRaises(ET.ParseError):
+            configure_manifest(self.path)
+
+        self.assertEqual(self.path.read_text(encoding="utf-8"), malformed_manifest)
 
 
 if __name__ == "__main__":
