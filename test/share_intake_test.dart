@@ -373,6 +373,21 @@ void main() {
       );
     });
 
+    test('caps waiting share batches while the current batch is reviewed', () {
+      expect(
+        hasCapacityForIncomingShareBatch(maxPendingIncomingShareBatches - 1),
+        isTrue,
+      );
+      expect(
+        hasCapacityForIncomingShareBatch(maxPendingIncomingShareBatches),
+        isFalse,
+      );
+      expect(
+        hasCapacityForIncomingShareBatch(maxPendingIncomingShareBatches + 1),
+        isFalse,
+      );
+    });
+
     test('bounds large share batches while preserving their original order', () {
       final media = List<SharedMediaFile>.generate(
         maxIncomingShareBatchItems + 3,
