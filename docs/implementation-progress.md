@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-188 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-189 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -606,4 +606,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added a 12,000-character cap for the comma-separated tags field with inline validation and a defensive pre-split check; the limits of 100 tags and 100 characters per tag remain in place.
 - [x] Added widget regression **TC-188**, traced as **TSK-478**, for oversized tag input and the existing URL-length validation path.
 - [ ] Run TC-188 and review large-paste behavior and ordinary URL/tag editing on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — bound Search query work for larger libraries (2026-10-28)
+
+- [x] Saved-item matching now exposes a normalized-query method, so Search normalizes and lowercases the query once instead of doing so for every item.
+- [x] Search rejects queries over 4,096 characters before normalization or library scanning and displays a clear inline limit message.
+- [x] Added model regression for normalized-query matching and widget regression **TC-189** for oversized input; traced as **TSK-479**.
+- [ ] Run TC-189 and capture the existing 100/1,000/10,000-item performance baseline. Verify Unicode matching, large-paste behavior and screen-reader feedback on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
