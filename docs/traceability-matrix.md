@@ -1272,3 +1272,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-186 injects a file-size lookup failure followed by a successful image selection and verifies the exact stored bytes.
 - **Verification:** Widget regression source is committed but unrun. Confirm platform file-provider exceptions and retry behavior on Android and supported browsers/desktop at the manual checkpoint.
 
+### TSK-477 — Recover from attachment byte-stream read failures
+
+- **Requirements:** FR-008 and NFR-003/NFR-006; a provider can fail during byte reading even after the picker and size lookup succeed, and the user must retain a recoverable form state.
+- **Implementation:** Quick Save's existing bounded stream reader is wrapped by the same safe picker error path as size lookup. The failure clears busy state without exposing provider details and permits a fresh selection.
+- **Regression:** TC-187 provides a PlatformFile whose length succeeds but whose byte stream throws, then retries with a valid image and verifies exact stored bytes.
+- **Verification:** Widget regression source is committed but unrun. Confirm partial-stream/provider failure behavior on Android and supported browser/desktop platforms at the manual validation checkpoint.
+
