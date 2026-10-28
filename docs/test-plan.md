@@ -1728,8 +1728,8 @@ The previous Android debug build failed when the generated plugin registrant cou
 ### TC-242 — Reject invalid share de-duplication limits
 
 - Construct ShareEventDeduplicator with a zero and a negative time window; confirm each construction throws ArgumentError.
-- Construct ShareEventDeduplicator with zero and negative cache capacities; confirm each construction throws ArgumentError rather than failing later during cache eviction.
-- Preserve control coverage for ordinary positive values and bounded-cache eviction.
+- Construct ShareEventDeduplicator with zero and negative cache capacities and a capacity above the hard maximum; confirm each construction throws ArgumentError rather than failing later during cache eviction or allowing an effectively unbounded cache.
+- Confirm the maximum supported capacity is accepted and preserve control coverage for ordinary positive values and bounded-cache eviction.
 - **Status:** Regression source is committed but unrun. Execute with the complete share-intake suite at the manual validation checkpoint; CI remains manual-only.
 
 ### TC-243 — Preserve Android manifest when atomic replacement fails
