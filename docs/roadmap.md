@@ -1246,3 +1246,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-217 provides an over-limit list whose indexed access throws and confirms the encoder returns the fixed collection-count error based on the list length alone.
 - **Status:** Source and regression documentation committed; TC-217 is authored but unrun. Confirm parity between direct encode/decode limits, older backup compatibility and restore behavior at the manual checkpoint.
 
+### TSK-506 — Bound saved-item type values before parsing — 2026-10-28
+
+- **Requirements:** FR-013, NFR-002 and NFR-003.
+- **Source:** Backup raw-item validation now checks all item string lengths and confirms the kind is a known saved-item type before model parsing. Local raw-record validation bounds the kind field as well. Model-level wire parsing uses a fixed error message for invalid types instead of echoing untrusted values.
+- **Regression:** TC-218 covers oversized and unknown types through direct model parsing, backup decode and local repository recovery while valid neighboring items remain accessible.
+- **Status:** Source and regression documentation committed; TC-218 is authored but unrun. Validate malformed backup feedback and legacy local-store recovery at the manual checkpoint; CI remains manual-only.
+
