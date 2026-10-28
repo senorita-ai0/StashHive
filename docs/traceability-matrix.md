@@ -1391,3 +1391,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-205 mounts a library image, triggers an unrelated parent rebuild, and confirms the same item revision performs one attachment read rather than queuing another.
 - **Verification:** Widget regression source is committed but unrun. Check thumbnail refresh after edits/replacements and capture the repository performance baseline at the manual checkpoint.
 
+### TSK-494 — Coalesce overlapping reads without crossing repository writes
+
+- **Requirements:** FR-008/FR-011 and NFR-003/NFR-007; repeated consumers should not issue duplicate reads for the same attachment, while every read requested after a queued mutation must observe the post-mutation state.
+- **Implementation:** `LibraryRepository` tracks an in-flight attachment-read future by key and queue sequence. Same-key requests share it only if no later repository operation has been queued; a read requested after an intervening save/delete/restore gets its own queue position and cannot observe stale bytes.
+- **Regression:** TC-206 pauses a read, coalesces a second request, queues an attachment replacement, then verifies a later read returns replacement bytes while both earlier callers receive the original snapshot.
+- **Verification:** Regression source is committed but unrun. Validate shared-key image previews and replacement refresh on web/Android at the manual validation checkpoint.
+
