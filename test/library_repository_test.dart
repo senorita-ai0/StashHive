@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -680,6 +681,39 @@ void main() {
     expect(
       Hive.box<dynamic>('stashhive_preferences_v1').containsKey('collections'),
       isFalse,
+    );
+  });
+
+  test('serializes concurrent collection creation without losing updates', () async {
+    final firstWriteEntered = Completer<void>();
+    final releaseFirstWrite = Completer<void>();
+    var hookCalls = 0;
+
+    LibraryRepository.addCollectionAfterWriteForTesting = () async {
+      hookCalls++;
+      if (hookCalls == 1) {
+        firstWriteEntered.complete();
+        await releaseFirstWrite.future;
+      }
+    };
+    final first = repository.addCollection('First');
+    await firstWriteEntered.future;
+    final second = repository.addCollection('Second');
+    await Future<void>.delayed(Duration.zero);
+    final secondOvertookFirst = hookCalls > 1;
+
+    releaseFirstWrite.complete();
+    try {
+      await Future.wait([first, second]);
+    } finally {
+      LibraryRepository.addCollectionAfterWriteForTesting = null;
+    }
+
+    expect(secondOvertookFirst, isFalse);
+    expect(repository.collections.value, containsAll(['First', 'Second']));
+    expect(
+      Hive.box<dynamic>('stashhive_preferences_v1').get('collections'),
+      containsAll(['First', 'Second']),
     );
   });
 
