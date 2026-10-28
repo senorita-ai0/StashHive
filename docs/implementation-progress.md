@@ -964,3 +964,9 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - Added a regression test for a late save failure after the item record write. It asserts that both `findById()` and the published item list continue to expose the prior committed item after rollback.
 - The test is committed to `main`; it has not been run. CI, formatter, analyzer and platform builds remain untouched by request.
 
+
+## Phase 3 — Android share manifest failure-path coverage (2026-10-29)
+
+- [x] Expanded the Python regression suite for the Android share-intent configurator: missing manifest path, missing `<application>`, malformed XML, and missing `MainActivity` without rewriting the input manifest.
+- [x] Existing coverage continues to verify all configured MIME/action pairs, mixed-MIME multi-share support, app label/launch mode, and idempotent re-runs.
+- [ ] Run `python3 -m unittest tool.test_configure_android_share_intents` at the manual validation checkpoint. No tests or builds were run for this increment; CI remains manual-only.
