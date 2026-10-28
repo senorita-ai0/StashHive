@@ -1378,3 +1378,8 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** The `createdAt` and `updatedAt` getters now validate their millisecond values against the shared supported date range before constructing a local `DateTime`, and report a stable error for invalid direct model instances.
 - **Regression:** TC-237 covers invalid created/updated timestamps accessed through the public getters and a valid-value control.
 - **Status:** Source and regression committed; tests remain unrun. Validate with TC-235/TC-236, repository timestamp checks and backup encode/decode at the manual checkpoint. CI remains manual-only.
+
+### Phase 3 — timestamp boundary regression (2026-10-29)
+
+- Added **TC-238** to verify both inclusive timestamp limits survive direct SavedItem.toMap() / SavedItem.fromMap() round-trips, complementing the existing rejection checks for values one millisecond outside the supported range.
+- Added **TSK-525** to track this boundary regression. Source is committed; no formatter, analyzer, tests or builds were run. Validation remains deferred to the owner’s manual checkpoint.
