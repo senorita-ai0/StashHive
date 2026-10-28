@@ -1224,3 +1224,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** The public restore method now validates and copies the decoded backup's item/tag lists, collections, attachment metadata/map and byte buffers before enqueueing the restore. The queued operation no longer reads caller-owned mutable structures after waiting for prior repository work.
 - **Regression:** TC-214 queues a restore behind a paused save, changes the original backup lists/map/bytes, and asserts the import still matches the data captured at submission.
 - **Status:** Source and regression plan committed but unrun. Review peak memory, rollback and target-platform persistence at the manual validation checkpoint; CI remains manual-only.
+
+### TSK-503 — Reject oversized tag lists before serialization — 2026-10-28
+
+- **Requirements:** FR-002, FR-013 and NFR-003.
+- **Source:** Shared item validation now bounds tag-list count and each tag length before `SavedItem.toMap()` copies the list. The public save boundary also performs the cheap tag-size preflight before full validation.
+- **Regression:** TC-215 passes a guard list whose declared count is above the maximum and expects the fixed validation error without any element traversal.
+- **Status:** Source and regression plan committed but unrun. Verify direct save, backup encode and restore validation at the manual checkpoint; CI remains manual-only.
