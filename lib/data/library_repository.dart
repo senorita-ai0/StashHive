@@ -135,35 +135,40 @@ class LibraryRepository {
   /// Stores backup-preparation time in the local app/browser profile.
   /// This metadata is not included in the portable backup itself.
   Future<void> recordBackupPreparedAt(int timestampMs) =>
-      _serializeMutation(() async {
-        final latestPlausible =
-            DateTime.now().millisecondsSinceEpoch +
-            const Duration(minutes: 5).inMilliseconds;
-        if (timestampMs <= 0 || timestampMs > latestPlausible) {
-          throw const FormatException('The backup timestamp is invalid.');
-        }
+      _serializeMutation(() => _writeBackupPreparedAt(timestampMs));
 
-        const key = 'lastBackupPreparedAtMs';
-        final hadPreviousValue = _preferencesBox.containsKey(key);
-        final previousValue = _preferencesBox.get(key);
-        try {
-          await _preferencesBox.put(key, timestampMs);
-        } catch (_) {
-          // A preference write may commit then report a late error. Restore
-          // the prior informational value where possible, without masking the
-          // original failure or interrupting an already prepared backup.
-          try {
-            if (hadPreviousValue) {
-              await _preferencesBox.put(key, previousValue);
-            } else {
-              await _preferencesBox.delete(key);
-            }
-          } catch (_) {
-            // Preserve the original error; this timestamp never blocks export.
-          }
-          rethrow;
+  /// Performs the timestamp preference write without taking the mutation
+  /// queue itself. Backup creation calls this while it already owns the queue,
+  /// keeping the recorded time atomic with its metadata/attachment snapshot.
+  Future<void> _writeBackupPreparedAt(int timestampMs) async {
+    final latestPlausible =
+        DateTime.now().millisecondsSinceEpoch +
+        const Duration(minutes: 5).inMilliseconds;
+    if (timestampMs <= 0 || timestampMs > latestPlausible) {
+      throw const FormatException('The backup timestamp is invalid.');
+    }
+
+    const key = 'lastBackupPreparedAtMs';
+    final hadPreviousValue = _preferencesBox.containsKey(key);
+    final previousValue = _preferencesBox.get(key);
+    try {
+      await _preferencesBox.put(key, timestampMs);
+    } catch (_) {
+      // A preference write may commit then report a late error. Restore the
+      // prior informational value where possible without masking the original
+      // failure or losing a prepared backup.
+      try {
+        if (hadPreviousValue) {
+          await _preferencesBox.put(key, previousValue);
+        } else {
+          await _preferencesBox.delete(key);
         }
-      });
+      } catch (_) {
+        // Best-effort rollback; retain the original timestamp write failure.
+      }
+      rethrow;
+    }
+  }
 
   /// Persists the reminder acknowledgement in this local app/browser profile.
   Future<void> markStorageReminderSeen() =>
@@ -959,7 +964,7 @@ class LibraryRepository {
     }
 
     final snapshot = _buildBackupSnapshot(copyAttachmentBytes: true);
-    return BackupCodec.encode(
+    final source = BackupCodec.encode(
       items: snapshot.items,
       attachmentBytes: snapshot.attachmentBytes,
       collections: List<String>.from(collections.value),
@@ -967,6 +972,17 @@ class LibraryRepository {
       omittedCollectionEntryCount: skippedCollectionCount.value,
       omittedUnexportableRecordCount: snapshot.omitted,
     );
+
+    // Keep preparation time within this serialized operation. Otherwise a
+    // queued save could complete between snapshot generation and timestamp
+    // storage, making the status appear newer than the backup contents.
+    try {
+      await _writeBackupPreparedAt(DateTime.now().millisecondsSinceEpoch);
+    } catch (_) {
+      // A backup has already been generated. This optional status must never
+      // prevent the caller from receiving it.
+    }
+    return source;
   }
 
   Future<int> restoreBackup(String source) async {
