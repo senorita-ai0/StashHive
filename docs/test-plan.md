@@ -1277,3 +1277,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the explanatory text says this is the time the backup file was generated, not proof that the share-sheet destination saved it.
 - **Status:** Widget regression source is committed but unrun. Verify status updates after the share sheet returns, including when it is canceled, on web and Android at the manual checkpoint.
 
+### TC-180 — Keep backup export successful when optional status storage fails
+
+- Store a prior valid last-backup-prepared timestamp, then inject a failure after the next timestamp write has committed.
+- Create a backup and confirm valid backup JSON is still returned and decodes successfully.
+- Confirm best-effort rollback restores the previous timestamp in both the repository getter and raw preferences.
+- **Status:** Repository regression source is committed but unrun. Verify quota/storage failure behavior during backup generation on browser and Android at the manual checkpoint.
+
