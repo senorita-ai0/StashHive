@@ -147,6 +147,77 @@ void main() {
     );
   });
 
+  test('serializes dark-mode writes after a late failure', () async {
+    final firstWriteEntered = Completer<void>();
+    final releaseFirstFailure = Completer<void>();
+    var hookCalls = 0;
+
+    LibraryRepository.setDarkModeAfterWriteForTesting = () async {
+      hookCalls++;
+      if (hookCalls == 1) {
+        firstWriteEntered.complete();
+        await releaseFirstFailure.future;
+        throw StateError('simulated late dark-mode failure');
+      }
+    };
+
+    final first = repository.setDarkMode(true);
+    await firstWriteEntered.future;
+    final second = repository.setDarkMode(false);
+    await Future<void>.delayed(Duration.zero);
+    final secondOvertookFirst = hookCalls > 1;
+    final firstFailure = expectLater(first, throwsA(isA<StateError>()));
+
+    releaseFirstFailure.complete();
+    try {
+      await firstFailure;
+      await second;
+    } finally {
+      LibraryRepository.setDarkModeAfterWriteForTesting = null;
+    }
+
+    final preferences = Hive.box<dynamic>('stashhive_preferences_v1');
+    expect(secondOvertookFirst, isFalse);
+    expect(repository.darkMode, isFalse);
+    expect(preferences.containsKey('darkMode'), isTrue);
+    expect(preferences.get('darkMode'), isFalse);
+  });
+
+  test('serializes text-size writes after a late failure', () async {
+    final firstWriteEntered = Completer<void>();
+    final releaseFirstFailure = Completer<void>();
+    var hookCalls = 0;
+
+    LibraryRepository.setTextScaleMultiplierAfterWriteForTesting = () async {
+      hookCalls++;
+      if (hookCalls == 1) {
+        firstWriteEntered.complete();
+        await releaseFirstFailure.future;
+        throw StateError('simulated late text-size failure');
+      }
+    };
+
+    final first = repository.setTextScaleMultiplier(1.3);
+    await firstWriteEntered.future;
+    final second = repository.setTextScaleMultiplier(1.15);
+    await Future<void>.delayed(Duration.zero);
+    final secondOvertookFirst = hookCalls > 1;
+    final firstFailure = expectLater(first, throwsA(isA<StateError>()));
+
+    releaseFirstFailure.complete();
+    try {
+      await firstFailure;
+      await second;
+    } finally {
+      LibraryRepository.setTextScaleMultiplierAfterWriteForTesting = null;
+    }
+
+    final preferences = Hive.box<dynamic>('stashhive_preferences_v1');
+    expect(secondOvertookFirst, isFalse);
+    expect(repository.textScaleMultiplier, 1.15);
+    expect(preferences.get('textScaleMultiplier'), 1.15);
+  });
+
   test('storage reminder acknowledgement persists across box reopen', () async {
     expect(repository.hasSeenStorageReminder, isFalse);
     await repository.markStorageReminderSeen();
