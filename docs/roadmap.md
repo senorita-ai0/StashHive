@@ -984,6 +984,6 @@ Settings now includes a local **App text size** preference with System default, 
 
 - **Requirements:** NFR-003/NFR-006.
 - **Source:** Dark-mode and text-size callbacks now use request revisions so a late failure from an earlier preference update cannot roll the UI over a newer choice already queued in the repository.
-- **Regression:** TC-175 covers rapid dark-mode actions behind a delayed failure; TC-176 covers text-size changes while an earlier write fails.
+- **Regression:** TC-175 covers rapid dark-mode actions behind a delayed failure; TC-176 covers text-size changes while an earlier write fails; TC-177 checks that the visible dropdown returns to the persisted option after a failed choice.
 - **Status:** Source and widget regression coverage committed but unrun. Verify real browser/Android storage behavior at the manual checkpoint.
 
