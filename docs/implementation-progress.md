@@ -813,7 +813,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 ## Phase 3 — preflight raw metadata lengths before normalization (2026-10-28)
 
 - [x] Backup JSON decode, direct decoded-backup validation and backup collection normalization now reject overlong collection names before calling trim.
-- [x] Strict raw item validation now rejects oversized tags before trim; direct attachment metadata validates key/name/MIME lengths before trimming.
+- [x] Strict raw item validation now rejects oversized tags before trim; JSON attachment entries and direct attachment metadata validate key/name/MIME lengths before trimming.
 - [x] Local collection recovery and add/rename operations now reject overlong collection names before normalization, while continuing to count/skip malformed legacy preference entries.
 - [x] Added regressions **TC-220** covering oversized tag/collection/attachment metadata paths and local preference recovery; added traceability task **TSK-508**.
 - [ ] Run TC-220 with malformed backup, legacy preferences and restore-preflight coverage at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
