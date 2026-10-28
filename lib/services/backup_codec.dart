@@ -705,7 +705,8 @@ class BackupCodec {
         (collection?.length ?? 0) > 80 ||
         (attachmentKey?.length ?? 0) > 128 ||
         (attachmentName?.length ?? 0) > 255 ||
-        (attachmentMimeType?.length ?? 0) > 128) {
+        (attachmentMimeType?.length ?? 0) > 128 ||
+        (value['kind'] as String).length > 16) {
       throw const FormatException(
         'A saved item contains fields beyond supported storage limits.',
       );
@@ -748,6 +749,40 @@ class BackupCodec {
         'A saved item contains invalid optional field types.',
       );
     }
+
+    // Bound raw strings before SavedItem.fromMap trims/canonicalizes them.
+    // In particular, never let an attacker-controlled type value become an
+    // unbounded exception message or make the parser normalize huge metadata.
+    final id = value['id'] as String;
+    final kind = value['kind'] as String;
+    final title = value['title'] as String;
+    final content = value['content'] as String;
+    final url = value['url'] as String?;
+    final collection = value['collection'] as String?;
+    final attachmentKey = value['attachmentKey'] as String?;
+    final attachmentName = value['attachmentName'] as String?;
+    final mimeType = value['attachmentMimeType'] as String?;
+    if (id.isEmpty ||
+        id.length > 128 ||
+        kind.length > 16 ||
+        title.length > 500 ||
+        content.length > 1000000 ||
+        (url?.length ?? 0) > maxSavedItemUrlCharacters ||
+        (collection?.length ?? 0) > 80 ||
+        (attachmentKey?.length ?? 0) > 128 ||
+        (attachmentName?.length ?? 0) > 255 ||
+        (mimeType?.length ?? 0) > 128) {
+      throw const FormatException(
+        'A saved item contains fields beyond supported storage limits.',
+      );
+    }
+    if (!ItemKind.values.any((candidate) => candidate.name == kind)) {
+      throw const FormatException('A saved item has an invalid type.');
+    }
+    if (title.trim().isEmpty) {
+      throw const FormatException('A saved item has an invalid title.');
+    }
+
     final tags = value['tags'] as List;
     if (tags.length > 100 || tags.any((tag) => tag is! String)) {
       throw const FormatException('A saved item contains an invalid tag list.');
@@ -762,26 +797,17 @@ class BackupCodec {
         'Tags must be non-empty, trimmed and 100 characters or shorter.',
       );
     }
-    final collection = value['collection'];
-    if (collection is String &&
-        (collection.trim().isEmpty ||
-            collection.trim() != collection ||
-            collection.length > 80)) {
+    if (collection != null &&
+        (collection.trim().isEmpty || collection.trim() != collection)) {
       throw const FormatException('A saved item has an invalid collection name.');
     }
-    final attachmentKey = value['attachmentKey'];
-    if (attachmentKey is String &&
-        (attachmentKey.trim().isEmpty || attachmentKey.length > 128)) {
+    if (attachmentKey != null && attachmentKey.trim().isEmpty) {
       throw const FormatException('A saved item has an invalid attachment key.');
     }
-    final attachmentName = value['attachmentName'];
-    if (attachmentName is String &&
-        (attachmentName.isEmpty || attachmentName.length > 255)) {
+    if (attachmentName != null && attachmentName.isEmpty) {
       throw const FormatException('A saved item has an invalid attachment name.');
     }
-    final mimeType = value['attachmentMimeType'];
-    if (mimeType is String &&
-        (mimeType.trim().isEmpty || mimeType.length > 128)) {
+    if (mimeType != null && mimeType.trim().isEmpty) {
       throw const FormatException('A saved item has an invalid attachment MIME type.');
     }
   }
