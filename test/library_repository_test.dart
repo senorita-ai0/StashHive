@@ -1711,7 +1711,7 @@ void main() {
     expect(decoded.collections, ['Existing']);
     expect(decoded.attachments, isEmpty);
     expect(repository.findById('restore-backup-race-existing')?.title,
-        'Existing item');
+        'Flutter documentation');
     expect(repository.items.value.map((item) => item.id),
         ['restore-backup-race-existing']);
     expect(repository.findById(incomingImage.id), isNull);
