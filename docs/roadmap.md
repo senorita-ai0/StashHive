@@ -1267,3 +1267,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-220 covers oversized tag/collection values, direct decoded-backup validation, export encoding and legacy collection preference recovery.
 - **Status:** Source and regression documentation committed but unrun. Validate malformed-import and local recovery behavior at the manual checkpoint; CI remains manual-only.
 
+### TSK-509 — Preflight direct model fields before normalization — 2026-10-28
+
+- **Requirements:** FR-002/FR-013 and NFR-003.
+- **Source:** `SavedItem.fromMap` now rejects overlong raw fields and oversized tag lists/tag values before trimming or copying data. Valid-size legacy values continue through the existing normalization rules.
+- **Regression:** TC-221 verifies direct parsing rejects oversized title/tag fields with fixed messages.
+- **Status:** Source and regression documentation committed but unrun. Check model round-trip, legacy tag normalization and malformed backup recovery at the manual validation checkpoint.
+
