@@ -667,6 +667,14 @@ void main() {
         await tester.pump();
 
         expect(find.text('Restoring…'), findsOneWidget);
+        expect(find.text('Restore in progress…'), findsOneWidget);
+        final exportAction = find.ancestor(
+          of: find.text('Restore in progress…'),
+          matching: find.byType(FilledButton),
+        );
+        expect(exportAction, findsOneWidget);
+        expect(tester.widget<FilledButton>(exportAction).onPressed, isNull);
+
         final backButton = tester.widget<IconButton>(
           find.descendant(
             of: find.byType(AppBar),
@@ -787,6 +795,56 @@ void main() {
       } finally {
         LibraryRepository.restoreBeforeCollectionsCommitForTesting = null;
       }
+    },
+  );
+
+  testWidgets(
+    'disables restore while backup preparation is in progress',
+    (tester) async {
+      final preparationEntered = Completer<void>();
+      final releasePreparation = Completer<void>();
+      LibraryRepository.backupPreparedAtAfterWriteForTesting = () async {
+        preparationEntered.complete();
+        await releasePreparation.future;
+      };
+      addTearDown(() {
+        LibraryRepository.backupPreparedAtAfterWriteForTesting = null;
+        if (!releasePreparation.isCompleted) {
+          releasePreparation.complete();
+        }
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: app.BackupPrivacyPage(repository: repository),
+        ),
+      );
+      await tester.ensureVisible(find.text('Create backup'));
+      await tester.tap(find.text('Create backup'));
+      await tester.pump();
+      await preparationEntered.future;
+      await tester.pump();
+
+      expect(find.text('Preparing…'), findsOneWidget);
+      expect(find.text('Backup in progress…'), findsOneWidget);
+      final restoreAction = find.ancestor(
+        of: find.text('Backup in progress…'),
+        matching: find.byType(FilledButton),
+      );
+      expect(restoreAction, findsOneWidget);
+      expect(tester.widget<FilledButton>(restoreAction).onPressed, isNull);
+
+      // A second entry point must not start while the export owns the screen.
+      await tester.tap(find.text('Backup in progress…'));
+      await tester.pump();
+      expect(find.text('Choosing backup…'), findsNothing);
+
+      LibraryRepository.backupPreparedAtAfterWriteForTesting = null;
+      releasePreparation.complete();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Preparing…'), findsNothing);
+      expect(tester.takeException(), isNull);
     },
   );
 
