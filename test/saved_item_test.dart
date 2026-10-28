@@ -169,6 +169,32 @@ void main() {
       expect(item.matchesQuery('flutter'), isTrue);
     });
 
+    test('rejects oversized searchable fields before lowercasing them', () {
+      final oversizedTitle = List<String>.filled(100000, ' ').join();
+      final oversizedContent =
+          List<String>.filled(1000001, ' ').join();
+
+      expect(
+        makeItem(title: oversizedTitle).matchesQuery('flutter'),
+        isFalse,
+      );
+      expect(
+        makeItem(content: oversizedContent).matchesNormalizedQuery(''),
+        isFalse,
+      );
+      expect(
+        makeItem(tags: [oversizedTitle]).matchesQuery('reading'),
+        isFalse,
+      );
+      expect(
+        makeItem(
+          tags: List<String>.generate(101, (index) => 'tag$index'),
+        ).matchesNormalizedQuery('tag1'),
+        isFalse,
+      );
+      expect(makeItem().matchesQuery('flutter'), isTrue);
+    });
+
     test('trims padded legacy metadata without changing note content', () {
       final raw = makeItem(attachmentKey: 'sample-key').toMap();
       raw['title'] = '  A saved title  ';
