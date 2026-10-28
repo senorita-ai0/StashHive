@@ -1570,9 +1570,16 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 ### TC-220 — Check raw metadata lengths before normalization
 
-- Decode a backup containing a 100,000-character whitespace-only tag and one containing an oversized whitespace-only collection name. Confirm both are rejected with their documented fixed validation errors.
+- Decode a backup containing a 100,000-character whitespace-only tag, an oversized whitespace-only collection name, and an oversized attachment filename. Confirm each is rejected with its documented fixed validation error before normalization.
 - Validate a directly constructed decoded backup with an oversized collection name and an attachment whose name is oversized; confirm preflight rejects it before normalization/copying.
 - Call backup encoding with an oversized declared collection name and confirm the declared-name cap is applied before normalization.
 - Reopen a local repository whose collection preferences include an oversized whitespace-only name. Confirm the malformed entry is skipped/counts toward recovery feedback while valid collection names remain available.
 - **Status:** Regression source is committed but unrun. Verify malformed backup/local-preference recovery and storage behavior at the manual validation checkpoint.
+
+### TC-221 — Preflight direct model fields before normalization
+
+- Call `SavedItem.fromMap` directly with an overlong raw title and an overlong tag, without routing through the repository or backup validators.
+- Confirm the factory rejects each value with fixed size-limit errors before trimming strings or iterating/copying oversized tag content.
+- Confirm an ordinary valid map still round-trips and the existing legacy tag-normalization behavior for in-limit values remains supported.
+- **Status:** Model regression source is committed but unrun. Validate direct model callers alongside malformed backup and raw-record recovery cases at the manual checkpoint.
 
