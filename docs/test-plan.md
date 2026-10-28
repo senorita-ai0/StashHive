@@ -1534,3 +1534,8 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the blocking save and confirm restore uses the validated values captured at the time of the restore call, including the original tags, collection assignment and exact attachment bytes.
 - **Status:** Repository regression source is committed but unrun. Verify restore input isolation and peak memory with large backups during the manual validation checkpoint.
 
+### TC-215 — Reject oversized tags before copying the tag list
+
+- Build a valid saved item using a test tag-list implementation whose declared size exceeds the 100-tag limit and whose element access throws if the list is traversed.
+- Call the shared saved-item validator and confirm it rejects the size with the expected `FormatException` before iterating/copying the caller-owned tag list.
+- **Status:** Codec regression source is committed but unrun. Verify oversized tag and content boundaries through repository save, backup encode and decoded-backup validation at the manual checkpoint.
