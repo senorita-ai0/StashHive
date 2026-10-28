@@ -132,7 +132,12 @@ Future<void> openNewKind(WidgetTester tester, ItemKind kind) async {
 }
 
 final class _DelayedPlatformFile extends PlatformFile {
-  _DelayedPlatformFile(String name) : super(name: name, size: 1);
+  _DelayedPlatformFile(this._name);
+
+  final String _name;
+
+  @override
+  String get name => _name;
 
   var lengthCalls = 0;
 
