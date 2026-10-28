@@ -1125,3 +1125,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Inject a failure immediately after the updated collection preferences are written during rename.
 - Confirm the rename reports the original error, both item assignments are restored, the collection list returns to its prior value, and raw persisted records/preferences agree with the visible state.
 - **Status:** Repository regression source is committed but unrun. Real storage interruption and rollback-write failures remain part of the manual validation checkpoint.
+
+### TC-159 — Concurrent library mutations do not lose updates
+
+- Start adding one collection and pause the first operation immediately after its preference write.
+- Request a second collection before releasing the first operation.
+- Confirm the second mutation waits instead of deriving its write from stale in-memory state, then confirm both names exist in the visible list and the stored preference value.
+- The same repository mutation queue covers item save/delete, collection add/rename/delete, and backup restore, preventing these structural writes from interleaving.
+- **Status:** Regression source is committed but unrun. Real browser/Android persistence and rollback-write failure behavior remain pending the manual validation checkpoint.
