@@ -94,6 +94,11 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function()? addCollectionAfterWriteForTesting;
 
+  /// Fault-injection seam to pause restore after its owned input snapshot
+  /// has been validated but before any persistent writes begin.
+  @visibleForTesting
+  static Future<void> Function()? restoreAfterSnapshotForTesting;
+
   /// Fault-injection seam for a theme preference write that fails after commit.
   @visibleForTesting
   static Future<void> Function()? setDarkModeAfterWriteForTesting;
@@ -1002,15 +1007,46 @@ class LibraryRepository {
       _serializeMutation(() => _restoreDecodedBackup(decoded));
 
   Future<int> _restoreDecodedBackup(DecodedBackup decoded) async {
+    // Validate before copying so an invalid public object cannot force a
+    // second oversized attachment buffer allocation, then take an owned
+    // snapshot before the first asynchronous boundary. DecodedBackup exposes
+    // lists, maps, item tag lists and Uint8Lists that callers can otherwise
+    // mutate while this restore is waiting on storage.
     BackupCodec.validateDecodedBackup(decoded);
+    final backup = DecodedBackup(
+      items: List<SavedItem>.unmodifiable(
+        decoded.items.map(
+          (item) => item.copyWith(
+            tags: List<String>.unmodifiable(item.tags),
+          ),
+        ),
+      ),
+      attachments: Map<String, BackupAttachment>.unmodifiable({
+        for (final entry in decoded.attachments.entries)
+          entry.key: BackupAttachment(
+            name: entry.value.name,
+            mimeType: entry.value.mimeType,
+            bytes: Uint8List.fromList(entry.value.bytes),
+          ),
+      }),
+      collections: List<String>.unmodifiable(decoded.collections),
+      exportedAt: decoded.exportedAt,
+      omittedUnreadableRecordCount: decoded.omittedUnreadableRecordCount,
+      omittedCollectionEntryCount: decoded.omittedCollectionEntryCount,
+      omittedUnexportableRecordCount: decoded.omittedUnexportableRecordCount,
+    );
+    BackupCodec.validateDecodedBackup(backup);
+    final afterSnapshot = restoreAfterSnapshotForTesting;
+    if (afterSnapshot != null) await afterSnapshot();
+
     BackupCodec.validateItemCount(
       currentCount: items.value.length,
-      incomingCount: decoded.items.length,
+      incomingCount: backup.items.length,
     );
     final mergedCollections = List<String>.from(collections.value);
     final importedCollectionNames = <String>[
-      ...decoded.collections,
-      ...decoded.items
+      ...backup.collections,
+      ...backup.items
           .map((item) => item.collection)
           .whereType<String>(),
     ];
@@ -1049,7 +1085,7 @@ class LibraryRepository {
     final seenImportedIds = <String>{};
     final mappedAttachmentKeys = <String, String>{};
     final stagedAttachmentKeys = <String>{};
-    for (final item in decoded.items) {
+    for (final item in backup.items) {
       var newId = item.id;
       if (reserved.contains(newId) || !seenImportedIds.add(newId)) {
         newId = createUniqueId();
@@ -1059,7 +1095,7 @@ class LibraryRepository {
         seenImportedIds.add(newId);
       }
       final oldKey = item.attachmentKey;
-      final attachment = oldKey == null ? null : decoded.attachments[oldKey];
+      final attachment = oldKey == null ? null : backup.attachments[oldKey];
       String? mappedKey;
       List<int>? bytesToWrite;
       if (oldKey != null && attachment != null) {
