@@ -1,4 +1,4 @@
-# StashTrail — Premium Screen Reference
+# StashHive — Premium Screen Reference
 
 **Status:** Seven static high-fidelity UI mockups; proposed visual source of truth for implementation. These are not screenshots from a running app.
 
@@ -19,7 +19,7 @@
 
 Purpose: make search immediately available and show recently saved items in one typed library.
 
-Visible hierarchy: StashTrail header; global search; All / Links / Images / Notes / Files filters; recently saved cards with type, title, source/storage state and saved time; add action; primary navigation.
+Visible hierarchy: StashHive header; global search; All / Links / Images / Notes / Files filters; recently saved cards with type, title, source/storage state and saved time; add action; primary navigation.
 
 Interactions: search opens Search Results; result opens Item Details; add opens Quick Save; filters update the list; “See all” opens the full library.
 
