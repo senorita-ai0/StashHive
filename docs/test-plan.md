@@ -1681,3 +1681,9 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm a normal in-range map still parses and preserves both timestamps.
 - **Status:** Model regression source is committed but unrun. Validate along with malformed local records, backup decoding and the shared timestamp constants at the manual checkpoint.
 
+### TC-236 — Reject out-of-range timestamps in direct model serialization
+
+- Construct a `SavedItem` directly with a `createdAtMs` beyond the supported maximum and another with an `updatedAtMs` below the supported minimum.
+- Call `toMap()` on each object without repository or backup validation and confirm a fixed timestamp-range `FormatException` is thrown before returning a serialized map.
+- Confirm a normal in-range item still serializes its timestamp values unchanged.
+- **Status:** Model regression source is committed but unrun. Validate alongside TC-233 and TC-235, backup encoding and repository-save timestamp checks at the manual checkpoint.
