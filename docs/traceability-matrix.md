@@ -11,7 +11,7 @@
 | FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427 | TC-005, TC-118, TC-135 | IN PROGRESS — Unicode search source and search-scope explanation aligned; execution/platform review pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
-| FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417 | TC-008, TC-122 | IN PROGRESS — repository-owned byte snapshot source/test added; platform validation pending |
+| FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476 | TC-008, TC-122, TC-186 | IN PROGRESS — repository-owned byte snapshots and picker size-error recovery source added; platform validation pending |
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; handles effective text, disposal and unusual file URIs; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423, TSK-474 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
@@ -1264,4 +1264,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** Text intake validates and consumes a non-empty message directly. It does not require or normalize the unused path before constructing a note; oversized provider fields bypass fingerprint serialization and continue to the normal intake path.
 - **Regression:** TC-185 supplies a valid note message with an over-limit unused path and checks that the message becomes the note draft.
 - **Verification:** Regression source is committed but unrun. Confirm the exact behavior against real Android share-provider variants at the manual checkpoint.
+
+### TSK-476 — Recover from attachment size metadata failures
+
+- **Requirements:** FR-008 and NFR-003/NFR-006; selecting a file must fail safely if provider metadata cannot be read, and the user must be able to retry without losing the draft.
+- **Implementation:** Quick Save already guards size lookup and bounded reading with a recoverable error path; the new regression explicitly covers an exception from `PlatformFile.length()`, checks raw provider details are hidden and confirms a second selection can be saved.
+- **Regression:** TC-186 injects a file-size lookup failure followed by a successful image selection and verifies the exact stored bytes.
+- **Verification:** Widget regression source is committed but unrun. Confirm platform file-provider exceptions and retry behavior on Android and supported browsers/desktop at the manual checkpoint.
 
