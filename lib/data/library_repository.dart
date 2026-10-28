@@ -102,6 +102,10 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function()? setTextScaleMultiplierAfterWriteForTesting;
 
+  /// Fault-injection seam for backup status storage failing after its write.
+  @visibleForTesting
+  static Future<void> Function()? backupPreparedAtAfterWriteForTesting;
+
   bool get darkMode => _preferencesBox.get('darkMode') == true;
 
   /// Extra app text scaling layered on top of platform accessibility scaling.
@@ -153,6 +157,8 @@ class LibraryRepository {
     final previousValue = _preferencesBox.get(key);
     try {
       await _preferencesBox.put(key, timestampMs);
+      final afterWrite = backupPreparedAtAfterWriteForTesting;
+      if (afterWrite != null) await afterWrite();
     } catch (_) {
       // A preference write may commit then report a late error. Restore the
       // prior informational value where possible without masking the original
