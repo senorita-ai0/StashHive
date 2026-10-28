@@ -990,7 +990,7 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-469 — Track the last generated backup honestly — 2026-10-28
 
 - **Requirements:** FR-012–015 / NFR-004.
-- **Source:** Stores a local timestamp after backup JSON generation succeeds and shows the localized date/time in Backup & privacy. UI copy explicitly distinguishes generation from confirmed destination delivery; a timestamp preference failure does not block sharing.
+- **Source:** Stores a local timestamp after backup JSON generation succeeds but before the serialized snapshot operation is released, preventing a queued mutation from running between snapshot and timestamp. The Backup & privacy screen shows the localized date/time and explicitly distinguishes generation from confirmed destination delivery; a timestamp preference failure does not block sharing.
 - **Regression:** TC-178 verifies persistence/validation, and TC-179 checks the UI's empty state, formatted time and honest caveat.
 - **Status:** Source and regressions committed but unrun; native/browser share-sheet update behavior remains pending manual validation.
 
