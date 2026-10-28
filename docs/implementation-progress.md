@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173–TC-176 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173–TC-177 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -534,6 +534,6 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 ## Phase 3 — preserve the newest preference choice after stale failures (2026-10-28)
 
 - [x] Added request revisions for dark-mode and text-size preference callbacks; only the latest request is allowed to roll the visible setting back after a persistence error.
-- [x] Added widget regressions **TC-175** (rapid dark-mode choices) and **TC-176** (text-size choice while an older write fails), traced as **TSK-468**.
+- [x] Added widget regressions **TC-175** (rapid dark-mode choices), **TC-176** (text-size choice while an older write fails), and **TC-177** (visible dropdown rollback after failed persistence), traced as **TSK-468**. The text-size form field is keyed to the effective multiplier so its internal selection resets with the parent state.
 - [ ] Run TC-175/TC-176 and verify theme/text-scale state under slow or failing persistence on web and Android. No tests, formatter, analyzer or builds were run; CI remains manual-only.
 
