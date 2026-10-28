@@ -988,3 +988,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added a maximum of 256 entries for custom ShareEventDeduplicator cache configurations; runtime validation now rejects zero/negative capacities and values above the cap, while accepting the cap itself.
 - [x] Expanded TC-242 boundary coverage and reflected the hard ceiling in the test plan and roadmap.
 - [ ] Run the share-intake regressions and full manual validation checkpoint. Tests, formatting, analysis and platform builds remain unrun; CI is manual-only.
+
+## Phase 2/3 source-development handoff — 2026-10-29
+
+- [x] Source and regression-test additions are committed on `main`; the repository is ready to move from source development to manual validation.
+- [ ] Do not treat the code as validated yet: recent tests, formatting, static analysis, Python tool tests, web build and Android APK build have not been run.
+- [ ] At the manual checkpoint, run the repository's `workflow_dispatch` workflow; triage any failures, then verify Android share-in on-device, browser persistence, backup/restore recovery, accessibility behavior and visual alignment with the seven screen references.
+- [ ] Keep OCR/PDF extraction deferred pending its separate feasibility study. Release readiness remains blocked on the above evidence.
