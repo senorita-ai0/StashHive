@@ -1,3 +1,5 @@
+import '../models/saved_item.dart';
+
 /// Parsing helpers for links that may be opened outside StashHive.
 ///
 /// Never pass a URL from persisted or imported data directly to a platform
@@ -5,7 +7,8 @@
 /// Parses a URL field or shared text token, permitting a bare domain by
 /// assuming HTTPS but never rewriting an explicit non-web scheme.
 Uri? parseUserWebUrl(String? value) {
-  final text = value?.trim() ?? '';
+  if (value == null || value.length > maxSavedItemUrlCharacters) return null;
+  final text = value.trim();
   if (text.isEmpty || text.contains(RegExp(r'\s'))) return null;
 
   final lower = text.toLowerCase();
@@ -32,7 +35,8 @@ Uri? parseUserWebUrl(String? value) {
 }
 
 Uri? parseHttpUrl(String? value) {
-  final text = value?.trim() ?? '';
+  if (value == null || value.length > maxSavedItemUrlCharacters) return null;
+  final text = value.trim();
   if (text.isEmpty || text.contains(RegExp(r'\s'))) return null;
   final uri = Uri.tryParse(text);
   if (uri == null || uri.host.isEmpty || uri.userInfo.isNotEmpty) {
