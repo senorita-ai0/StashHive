@@ -2,7 +2,7 @@
 
 ## Current state
 
-**Implementation approved; Phase 2 is in progress (2026-10-21).** Continue using small, testable vertical slices on `main`. Never claim a build/test passed without its actual result. Public deployment, publishing, spending and paid services require separate approval.
+**Implementation approved; Phase 2/3 source work is in progress (2026-10-28).** Continue using small, testable vertical slices on `main`. Phase 2 Android/build validation remains pending; do not start Phase 4 release-readiness work until the owner-approved manual validation checkpoint supplies test/build/platform evidence. Never claim a build/test passed without its actual result. Public deployment, publishing, spending and paid services require separate approval.
 
 ## Read first
 
