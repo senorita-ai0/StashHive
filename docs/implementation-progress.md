@@ -456,7 +456,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 
 - [x] Quick Save now records the selected type/revision before opening the file picker, and discards results if the draft type changed before the picker, size read or byte read completes.
 - [x] Prevented duplicate simultaneous attachment-picker requests and retained the existing attachment size bound.
-- [x] Added widget regression **TC-164** and traceability task **TSK-457**.
+- [x] Added widget regressions **TC-164** and **TC-165** with a delayed `PlatformFile` test double compatible with the pinned `file_picker: ^12.3.0` API; traceability tasks **TSK-457** and **TSK-458** document both stale-result cases.
 - [ ] Run TC-164 and verify image/document selection on real Android plus supported web/desktop flows at the manual checkpoint. No tests, formatter, analyzer or builds were run; CI remains manual-only.
 
 
