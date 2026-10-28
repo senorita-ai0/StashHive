@@ -1155,3 +1155,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-204 holds an attachment replacement before metadata commit, then checks that the page and dialog present loading instead of falsely reporting a missing attachment.
 - **Status:** Source and regression documentation committed but unrun. Review slow-storage transitions and screen-reader announcements on web/Android at the manual checkpoint; CI remains manual-only.
 
+### TSK-493 — Reuse image thumbnail attachment reads across rebuilds — 2026-10-28
+
+- **Requirements:** FR-008, FR-011 and NFR-003/NFR-007.
+- **Source:** The image thumbnail owns a stable attachment-read Future and refreshes it only when repository/item identity or revision changes. Ordinary parent rebuilds do not enqueue another serialized read for the same item revision.
+- **Regression:** TC-205 counts read starts while rebuilding the Library without changing the saved image, then confirms only one read was scheduled.
+- **Status:** Source and regression documentation committed but unrun. Verify replacement refresh and capture performance baselines at the manual checkpoint; CI remains manual-only.
+
