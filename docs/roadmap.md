@@ -1098,3 +1098,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** Oversized share batches retain the omitted count in the waiting queue. The app accumulates omitted counts and shows a combined truncation warning only after all already-queued sequential draft reviews finish, when the Library/home screen is visible again.
 - **Manual regression:** TC-194 checks first-100 sequential review, unsupported-item handling, and the final omitted-count warning.
 - **Status:** Source and documentation committed; manual Android UX confirmation remains pending. CI stays manual-only.
+
+### TSK-485 — Aggregate share review feedback after the queue drains — 2026-10-28
+
+- **Requirements:** FR-009 and NFR-006.
+- **Source:** Counts for unsupported, invalid/unreadable and over-limit entries accumulate while queued batches are reviewed. One combined message—with up to three safe validation hints—is shown when the waiting queue drains, so later Quick Save routes cannot cover earlier feedback.
+- **Manual regression:** TC-195 combines multiple queued batches, unsupported entries, one invalid entry and an over-limit batch; verify the final summary on the Library screen.
+- **Status:** Source and documentation committed; manual share-batch UX verification remains pending. CI remains manual-only.
