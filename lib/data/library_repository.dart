@@ -337,12 +337,12 @@ class LibraryRepository {
 
     if (value is List) {
       for (final rawName in value) {
-        if (rawName is! String) {
+        if (rawName is! String || rawName.length > 80) {
           skipped++;
           continue;
         }
         final name = rawName.trim();
-        if (name.isEmpty || name.length > 80) {
+        if (name.isEmpty) {
           skipped++;
           continue;
         }
@@ -366,8 +366,12 @@ class LibraryRepository {
     for (final item in items.value) {
       final rawName = item.collection;
       if (rawName == null) continue;
+      if (rawName.length > 80) {
+        skipped++;
+        continue;
+      }
       final name = rawName.trim();
-      if (name.isEmpty || name.length > 80) {
+      if (name.isEmpty) {
         skipped++;
         continue;
       }
@@ -831,8 +835,11 @@ class LibraryRepository {
       _serializeOperation(() => _addCollection(name));
 
   Future<void> _addCollection(String name) async {
+    if (name.length > 80) {
+      throw const FormatException('Collection names must be between 1 and 80 characters.');
+    }
     final cleaned = name.trim();
-    if (cleaned.isEmpty || cleaned.length > 80) {
+    if (cleaned.isEmpty) {
       throw const FormatException('Collection names must be between 1 and 80 characters.');
     }
     final current = List<String>.from(collections.value);
@@ -873,8 +880,11 @@ class LibraryRepository {
       _serializeOperation(() => _renameCollection(oldName, newName));
 
   Future<void> _renameCollection(String oldName, String newName) async {
+    if (newName.length > 80) {
+      throw const FormatException('Collection names must be between 1 and 80 characters.');
+    }
     final cleaned = newName.trim();
-    if (cleaned.isEmpty || cleaned.length > 80) {
+    if (cleaned.isEmpty) {
       throw const FormatException('Collection names must be between 1 and 80 characters.');
     }
     if (collections.value.any((item) =>
