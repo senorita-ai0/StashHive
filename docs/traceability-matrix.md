@@ -1141,3 +1141,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `LibraryRepository.setTextScaleMultiplier` now serializes its preference read/write/rollback sequence with other repository mutations.
 - **Regression:** TC-163 queues a second supported multiplier during a late failure and verifies the getter and stored preference retain the newer value.
 - **Verification:** Regression source is committed but unrun; browser/Android persistence and accessibility review remain pending.
+
+
+### TSK-457 — Discard stale attachment-picker results after a draft type change
+
+- **Requirement:** FR-008–009 and NFR-003; attachment metadata and bytes must match the item type the user ultimately saves, and changing an unsaved draft must not let a pending asynchronous action restore stale data.
+- **Implementation:** Quick Save captures the requested item kind and a revision number when opening the picker. A real type change increments the revision, and the picker request is checked after each asynchronous boundary before it may read or update the draft. Duplicate picker requests are ignored while one request is pending.
+- **Regression:** TC-164 in `test/quick_save_test.dart` delays the image picker result, changes the draft to Document, then confirms the outdated result is discarded before file I/O and cannot be saved as a document.
+- **Verification:** Widget regression source is committed but unrun; browser/Android picker interaction remains pending.
