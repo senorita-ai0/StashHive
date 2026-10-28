@@ -387,3 +387,11 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - [x] Updated collection-cap errors during save, collection creation, and backup restore to use the current StashHive brand rather than the retired product name.
 - [x] Existing repository regression cases already cover the collection-limit message shape; the expected limit wording remains unchanged.
 - [ ] No tests, formatting, analysis, or platform builds were run. Manual-only CI remains unchanged.
+
+
+## Phase 3 — attachment-safe backup restore rollback (2026-10-28)
+
+- [x] Restore rollback now attempts all staged-item deletions before cleaning up attachment payloads; a payload is removed only if no raw stored item still references it.
+- [x] Shared imported attachment keys are cleaned once, and visible item/collection notifiers are refreshed after best-effort rollback so they reflect persisted state if storage refuses a deletion.
+- [x] Added repository regression **TC-154** and traceability task **TSK-446** for a staged-item deletion failure after a restore interruption.
+- [ ] Run TC-154 and the related restore/attachment regression set at the agreed manual validation checkpoint. No tests, formatter, analyzer, web build, or Android build were run for this change; CI remains manual-only.
