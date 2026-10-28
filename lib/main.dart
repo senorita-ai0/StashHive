@@ -98,6 +98,13 @@ Future<PlatformFile?> Function()? backupFilePickerForTesting;
 @visibleForTesting
 Stream<List<SharedMediaFile>> Function()? incomingShareStreamForTesting;
 
+/// Test hooks for launch-time native share retrieval/acknowledgement.
+@visibleForTesting
+Future<List<SharedMediaFile>> Function()? incomingInitialShareReaderForTesting;
+
+@visibleForTesting
+Future<void> Function()? resetIncomingInitialShareForTesting;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -451,7 +458,6 @@ class _HomeShellState extends State<HomeShell> {
           );
         },
       );
-      unawaited(_readInitialShare());
     } catch (_) {
       // A plugin/channel can fail before it returns a stream. Keep the local
       // library usable and give the user a manual capture path.
@@ -459,14 +465,25 @@ class _HomeShellState extends State<HomeShell> {
         'Sharing is unavailable right now. You can still add items manually.',
       );
     }
+
+    // Launch-time intents are retrieved separately from the broadcast stream.
+    // Still attempt that path if stream startup fails so a cold-start share is
+    // not discarded solely because the live stream could not be initialized.
+    unawaited(_readInitialShare());
   }
 
   Future<void> _readInitialShare() async {
     try {
       await consumeInitialSharedMedia(
-        readInitialMedia: ReceiveSharingIntent.instance.getInitialMedia,
+        readInitialMedia: incomingInitialShareReaderForTesting ??
+            ReceiveSharingIntent.instance.getInitialMedia,
         resetInitialMedia: () async {
-          await ReceiveSharingIntent.instance.reset();
+          final reset = resetIncomingInitialShareForTesting;
+          if (reset != null) {
+            await reset();
+          } else {
+            await ReceiveSharingIntent.instance.reset();
+          }
         },
         enqueue: _enqueueShareBatch,
       );
