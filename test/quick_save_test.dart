@@ -361,6 +361,7 @@ void main() {
         );
         expect(repository.items.value, isEmpty);
       } finally {
+        LibraryRepository.saveAfterItemCommitForTesting = null;
         if (!releaseFailure.isCompleted) releaseFailure.complete();
       }
 
