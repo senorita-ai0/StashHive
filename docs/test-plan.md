@@ -1333,3 +1333,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Select a valid image on the next attempt, save it, and confirm the stored attachment bytes exactly match the successful selection.
 - **Status:** Widget regression source is committed but unrun. Verify provider stream failures, partial reads and retry behavior on Android and supported browser/desktop pickers at the manual validation checkpoint.
 
+### TC-188 — Reject oversized Quick Save inputs before parsing
+
+- Paste a URL longer than 4,096 characters and confirm validation reports the configured limit before attempting URL normalization.
+- Paste a tags field longer than 12,000 characters and confirm the form shows a clear inline input-limit error without creating an item or splitting the oversized string into a tag list.
+- Confirm normal URLs and valid tag sets continue to save as expected.
+- **Status:** Widget/source regression is committed but unrun. Review paste behavior, validation wording and responsiveness on web and Android at the manual checkpoint.
+
