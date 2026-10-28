@@ -1326,3 +1326,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Select a valid image on the next attempt, save it, and confirm the persisted attachment bytes match the chosen file.
 - **Status:** Widget regression source is committed but unrun. Verify browser/desktop/Android provider failure behavior at the manual validation checkpoint.
 
+### TC-187 — Recover when an attachment byte stream fails
+
+- Open an Image draft and return a file whose size lookup succeeds but whose byte stream emits an unexpected provider error.
+- Confirm Quick Save reports safe retry guidance, hides raw provider details, clears its busy indicator and creates no item.
+- Select a valid image on the next attempt, save it, and confirm the stored attachment bytes exactly match the successful selection.
+- **Status:** Widget regression source is committed but unrun. Verify provider stream failures, partial reads and retry behavior on Android and supported browser/desktop pickers at the manual validation checkpoint.
+
