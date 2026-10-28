@@ -63,6 +63,39 @@ void main() {
       }
     });
 
+    test('preflights oversized raw fields before trimming or copying them', () {
+      final oversizedWhitespace = List<String>.filled(100000, ' ').join();
+      final oversizedTitle = <String, Object?>{
+        ...makeItem().toMap(),
+        'title': oversizedWhitespace,
+      };
+      expect(
+        () => SavedItem.fromMap(oversizedTitle),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item contains fields beyond supported storage limits.',
+          ),
+        ),
+      );
+
+      final oversizedTag = <String, Object?>{
+        ...makeItem().toMap(),
+        'tags': <String>[oversizedWhitespace],
+      };
+      expect(
+        () => SavedItem.fromMap(oversizedTag),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item contains an invalid or oversized tag list.',
+          ),
+        ),
+      );
+    });
+
     test('searches titles, URLs, notes, tags and collections case-insensitively', () {
       final item = makeItem(content: 'Research local storage');
       expect(item.matchesQuery('FLUTTER'), isTrue);
