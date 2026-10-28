@@ -636,6 +636,18 @@ void main() {
         () => ShareEventDeduplicator(maxEntries: -1),
         throwsArgumentError,
       );
+      expect(
+        () => ShareEventDeduplicator(
+          maxEntries: maxShareEventDeduplicatorEntries + 1,
+        ),
+        throwsArgumentError,
+      );
+      expect(
+        () => ShareEventDeduplicator(
+          maxEntries: maxShareEventDeduplicatorEntries,
+        ),
+        returnsNormally,
+      );
     });
 
     test('suppresses immediate initial/stream duplicates but accepts later repeats', () {
