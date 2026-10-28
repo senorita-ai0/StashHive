@@ -3546,6 +3546,20 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  String _lastBackupPreparedLabel(BuildContext context) {
+    final timestamp = widget.repository.lastBackupPreparedAtMs;
+    if (timestamp == null) return 'Not prepared yet';
+
+    final local = DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal();
+    final localizations = MaterialLocalizations.of(context);
+    final formattedDate = localizations.formatMediumDate(local);
+    final formattedTime = localizations.formatTimeOfDay(
+      TimeOfDay.fromDateTime(local),
+      alwaysUse24HourFormat: MediaQuery.of(context).alwaysUse24HourFormat,
+    );
+    return '$formattedDate · $formattedTime';
+  }
+
   Future<void> _export() async {
     if (_exporting) return;
     setState(() => _exporting = true);
@@ -3611,7 +3625,17 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
       }
 
       final json = await widget.repository.createBackup();
-      final name = 'stashtrail-backup-' + DateTime.now().toUtc().toIso8601String().substring(0, 10) + '.json';
+      // Track successful file generation, not destination completion: the
+      // platform share sheet may be canceled or may not save to a file.
+      try {
+        await widget.repository.recordBackupPreparedAt(
+          DateTime.now().millisecondsSinceEpoch,
+        );
+      } catch (_) {
+        // Backup generation succeeded; failure to update this informational
+        // timestamp must not block the user from receiving the file.
+      }
+      final name = 'stashhive-backup-' + DateTime.now().toUtc().toIso8601String().substring(0, 10) + '.json';
       final bytes = utf8.encode(json);
       final result = await SharePlus.instance.share(
         ShareParams(
@@ -3854,6 +3878,48 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 const SizedBox(height: 5),
                 Text('Export your metadata and copied attachments into a portable file.',
                     style: TextStyle(color: mutedTextColor(context))),
+                const SizedBox(height: 12),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: Theme.of(context).dividerColor),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.history_rounded, color: mutedTextColor(context)),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Last backup prepared',
+                              style: TextStyle(fontWeight: FontWeight.w700),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              _lastBackupPreparedLabel(context),
+                              style: TextStyle(color: mutedTextColor(context)),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              'This records when a backup file was generated, not whether the destination saved it.',
+                              style: TextStyle(
+                                color: mutedTextColor(context),
+                                fontSize: 11,
+                                height: 1.35,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 12),
                 ValueListenableBuilder<List<SavedItem>>(
                   valueListenable: widget.repository.items,
