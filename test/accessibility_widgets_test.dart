@@ -407,8 +407,9 @@ void main() {
       expect(find.text('Last backup prepared'), findsOneWidget);
       expect(find.text('Not prepared yet'), findsOneWidget);
 
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      await repository.recordBackupPreparedAt(timestamp);
+      await repository.createBackup();
+      final timestamp = repository.lastBackupPreparedAtMs;
+      expect(timestamp, isNotNull);
       await tester.pumpWidget(backupPage());
 
       expect(find.text('Last backup prepared'), findsOneWidget);
@@ -419,7 +420,8 @@ void main() {
         ),
         findsOneWidget,
       );
-      final localDate = DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal();
+      final localDate =
+          DateTime.fromMillisecondsSinceEpoch(timestamp!).toLocal();
       final expectedDate = MaterialLocalizations.of(
         tester.element(find.text('Last backup prepared')),
       ).formatMediumDate(localDate);
