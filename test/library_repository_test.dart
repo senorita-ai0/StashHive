@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart' show ValueListenable;
+import 'package:flutter/foundation.dart' show ValueListenable, ValueNotifier;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:stashhive/data/library_repository.dart';
@@ -85,6 +85,16 @@ void main() {
       final ValueListenable<List<SavedItem>> visibleItems = repository.items;
       final ValueListenable<List<String>> visibleCollections =
           repository.collections;
+      expect(
+        visibleItems,
+        isNot(isA<ValueNotifier<List<SavedItem>>>()),
+        reason: 'The public wrapper must not expose the private mutable notifier.',
+      );
+      expect(
+        visibleCollections,
+        isNot(isA<ValueNotifier<List<String>>>()),
+        reason: 'The public wrapper must not expose the private mutable notifier.',
+      );
       var itemNotifications = 0;
       var collectionNotifications = 0;
       void onItemsChanged() => itemNotifications++;
