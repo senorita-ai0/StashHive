@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-165 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-166 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -465,3 +465,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added a second Quick Save regression for Image → Document → Image while the original picker remains unresolved. It checks the revision token invalidates the stale result even when the current kind matches the request's original kind.
 - [x] Added **TC-165** and traceability task **TSK-458**.
 - [ ] Run TC-164/TC-165 and verify delayed picker behavior on real Android and supported browser/desktop platforms during the manual checkpoint. No tests, formatter, analyzer or builds were run; CI remains manual-only.
+
+
+## Phase 3 — lock Quick Save during pending saves (2026-10-28)
+
+- [x] Quick Save now disables draft editing, type changes, collection selection, attachment selection and in-form navigation while repository save is in progress.
+- [x] Save now also guards against reentry and reports the busy activity as either saving or selecting a file.
+- [x] Added widget regression **TC-166** and traceability task **TSK-459** for a delayed repository save.
+- [ ] Run TC-166 and review busy-state keyboard/screen-reader behavior at the manual validation checkpoint. No tests, formatter, analyzer or builds were run; CI remains manual-only.
