@@ -1195,3 +1195,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the operation with a simulated late storage failure and confirm the repository rolls back the item, Quick Save unlocks, and the entered URL/note remain in the controllers.
 - Retry the save without changing the draft; confirm exactly one item is saved with the original URL and note and no framework exception escapes.
 - **Status:** Widget regression source is committed but unrun. Verify late storage errors, retry behavior and accessible error feedback during the manual validation checkpoint.
+
+### TC-168 — Recover after an attachment-picker error
+
+- Open an Image draft and pause the first file-picker request while the attachment area is showing its progress state.
+- Release the picker request with an unexpected provider error and confirm Quick Save reports safe retry guidance, does not expose the raw exception details, clears the busy state and does not create an item.
+- Retry file selection with a valid image. Confirm the selected filename is shown and saving the draft persists the exact file bytes.
+- **Status:** Widget regression source is committed but unrun. Verify picker cancellation, provider failures, byte-reading failures and retry behavior on Android and supported browser/desktop platforms at the manual checkpoint.
+
