@@ -1008,3 +1008,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-181 pauses deletion after removing the record/attachment, requests a backup, then injects a late failure and verifies that the export includes the restored metadata and exact attachment bytes.
 - **Status:** Regression source is committed but unrun; browser/Android storage concurrency remains part of the manual validation checkpoint.
 
+### TSK-472 — Keep backup exports out of interrupted restore states — 2026-10-28
+
+- **Requirements:** FR-012–013 and NFR-003.
+- **Source:** Backup generation and restore share the serialized repository mutation queue. An export requested during restore waits for either a successful commit or rollback of staged items/attachments and prior collection preferences.
+- **Regression:** TC-182 pauses restore after incoming media is staged, queues a backup, injects an interruption, and verifies that only the original library state is exported.
+- **Status:** Regression source is committed but unrun; browser/Android backup and restore concurrency remains pending the manual validation checkpoint.
+
