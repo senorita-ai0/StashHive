@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-224 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-226 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -843,3 +843,17 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Incoming file-share intake now catches failures converting file URIs with non-local authorities or invalid path escaping and emits fixed recovery guidance instead of exposing provider/platform exception details.
 - [x] Added regression source **TC-224** and traceability task **TSK-512**. TC-174 continues to cover the separate duplicate-fingerprinting path for unusual file URIs.
 - [ ] Run TC-224 and verify local/non-local provider URI behavior plus multi-item batch continuation on a physical Android device at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — bound share-review summary hints (2026-10-28)
+
+- [x] `buildShareReviewSummary` inspects no more than 16 hints, skips any hint over 160 characters before trimming, and displays at most three distinct safe validation hints.
+- [x] Added **TC-225** and traceability task **TSK-513**.
+- [ ] Run TC-225 and verify the feedback summary with malformed/unsupported share batches on Android at the manual checkpoint. No tests or builds were run; CI remains manual-only.
+
+## Phase 3 — keep Backup & privacy operations mutually exclusive (2026-10-28)
+
+- [x] Export and restore handlers now refuse to overlap. The opposite action is disabled and shows the currently active operation.
+- [x] Added **TC-226** for a paused backup-preparation operation and extended the active-restore widget case to assert export is disabled.
+- [x] Added **TSK-514** to the test plan, roadmap and traceability matrix.
+- [ ] Run TC-226 and verify real picker/share-sheet handoff on Android and browser at the manual checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
