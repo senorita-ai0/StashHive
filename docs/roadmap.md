@@ -1148,3 +1148,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-202 checks a pending successful replacement; TC-203 checks a failed replacement that must roll back the original bytes before a waiting reader continues.
 - **Status:** Source and regression documentation committed but unrun. Validate slow-storage preview/share flows and failure rollback on web/Android at the manual checkpoint; CI remains manual-only.
 
+### TSK-492 — Distinguish pending attachment reads from missing-file states — 2026-10-28
+
+- **Requirements:** FR-011 and NFR-006.
+- **Source:** Item Details and the image-view dialog now show an accessible loading state while attachment reads wait behind a repository write. Missing-file feedback is shown only after a completed empty read; read errors use preview-unavailable feedback.
+- **Regression:** TC-204 holds an attachment replacement before metadata commit, then checks that the page and dialog present loading instead of falsely reporting a missing attachment.
+- **Status:** Source and regression documentation committed but unrun. Review slow-storage transitions and screen-reader announcements on web/Android at the manual checkpoint; CI remains manual-only.
+
