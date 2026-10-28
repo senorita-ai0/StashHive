@@ -12,7 +12,7 @@
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417 | TC-008, TC-122 | IN PROGRESS — repository-owned byte snapshot source/test added; platform validation pending |
-| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462 | TC-009, TC-169, TC-170 | IN PROGRESS — source has bounded share batches, bounded fingerprint work and effective-text fallback; Android build/device test pending |
+| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465 | TC-009, TC-169, TC-170, TC-172 | IN PROGRESS — source has bounded share batches, bounded fingerprint work, effective-text fallback and a disposal guard; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423 | TC-010, TC-131 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463 | TC-012, TC-117, TC-119, TC-120, TC-171 | IN PROGRESS — bounded-size source and mutation-consistent snapshot queue added; execution and platform export pending |
@@ -1194,4 +1194,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `LibraryRepository.createBackup()` now takes a position in the same asynchronous queue as item save/delete, collection mutations, and restore. Export waits for an in-flight write and snapshots metadata and attachments after it has either completed or rolled back.
 - **Regression:** TC-171 pauses an attachment replacement after the item write, requests a backup, then verifies the export does not finish early and decodes with matching edited metadata and replacement bytes.
 - **Verification:** Regression source is committed but unrun. Real web/Android storage consistency and concurrent backup scenarios remain pending the manual validation checkpoint.
+
+### TSK-465 — Guard share enqueue against host disposal
+
+- **Requirements:** FR-009 / NFR-003; asynchronous share intake must not enqueue work into a disposed navigation host or leave awaited batch completions unresolved.
+- **Implementation:** `_enqueueShareBatch` now exits when `HomeShell` is no longer mounted, covering the race where an event is already in flight as stream cancellation begins.
+- **Manual regression:** TC-172 exercises share-stream delivery racing with app-shell disposal, including an already-active batch's completion.
+- **Verification:** Source guard is committed; Android plugin cancellation, lifecycle and restart behavior remain pending physical-device validation.
 
