@@ -1586,6 +1586,6 @@ The previous Android debug build failed when the generated plugin registrant cou
 ### TC-222 — Bound direct URL and search helper input
 
 - Call both URL parsing helpers directly with oversized whitespace input and confirm they return no URL before trimming or normalization.
-- Call `SavedItem.matchesQuery` with a query longer than the supported search limit and confirm it returns false before trimming/lowercasing, while ordinary case-insensitive searches still work.
+- Call both `SavedItem.matchesQuery` and `SavedItem.matchesNormalizedQuery` with a query longer than the supported search limit and confirm they return false before trimming/lowercasing or scanning saved fields, while ordinary case-insensitive searches still work.
 - **Status:** Regression source is committed but unrun. Verify the direct helper behavior alongside form-level URL validation, metadata search and large-input handling at the manual validation checkpoint.
 
