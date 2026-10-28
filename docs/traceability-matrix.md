@@ -12,7 +12,7 @@
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476, TSK-477 | TC-008, TC-122, TC-186, TC-187 | IN PROGRESS — bounded attachment reads and retry recovery are source-covered; platform validation pending |
-| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; handles effective text, disposal and unusual file URIs; Android build/device test pending |
+| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475, TSK-481 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185, TC-191 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; handles effective text, disposal and unusual file URIs; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423, TSK-474 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471, TSK-472, TSK-473, TSK-474 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181, TC-182, TC-183, TC-184 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status and rollback-safe export concurrency added; execution and platform export pending |
@@ -1299,3 +1299,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** The backup restore picker can be injected for regression coverage; the production path keeps its existing safe error handling and resets the choosing-backup state in `finally` after a length lookup failure.
 - **Regression:** TC-190 injects a `PlatformFile.length()` failure, verifies generic guidance and no data changes, then provides a valid backup and confirms that merge succeeds.
 - **Verification:** Widget regression source is committed but unrun. Verify actual provider metadata errors and retry behavior on web and Android during the manual validation checkpoint.
+
+### TSK-481 — Ignore oversized whitespace in unused share message fields
+
+- **Requirements:** FR-009 and NFR-003; providers may populate both path and message, but only one may be the effective draft content. An oversized unused field must not reject valid user content or require an unnecessary large trim/copy.
+- **Implementation:** Text-share intake checks whether the message contains non-whitespace before applying the message length rejection. An oversized whitespace-only message is treated as empty and intake falls back to the bounded path field.
+- **Regression:** TC-191 supplies a short valid path and an oversized whitespace-only message and expects an editable note draft from the path.
+- **Verification:** Regression source is committed but unrun. Confirm whitespace/provider-field behavior on physical Android devices at the manual validation checkpoint.
+
