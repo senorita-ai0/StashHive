@@ -1338,7 +1338,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-486 — Bound and test the aggregate share feedback message
 
 - **Requirements:** FR-009 and NFR-006; review feedback should accurately communicate omitted/error counts without flooding the UI or exposing raw provider diagnostics.
-- **Implementation:** A pure share-service summary builder formats unsupported, invalid/unreadable and omitted counts, de-duplicates hints and caps details at three distinct app-defined messages. It returns no message if there is nothing to report; HomeShell invokes it only after the waiting queue drains.
+- **Implementation:** A pure share-service summary builder formats unsupported, invalid/unreadable and omitted counts, de-duplicates hints and caps details at three distinct app-defined messages. It returns no message if there is nothing to report; HomeShell invokes it only after the waiting queue drains and keeps the combined summary visible for eight seconds.
 - **Regression:** TC-196 checks combined counts and hint limits; TC-197 ensures a successful share batch does not get an empty-state warning. TC-195 remains the manual end-to-end timing/accessibility case.
 - **Verification:** Service test source is committed but unrun. Verify end-to-end summary timing and screen-reader behavior on Android at the manual validation checkpoint.
 
