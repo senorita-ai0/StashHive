@@ -68,7 +68,7 @@ String? buildShareReviewSummary({
   }
   final details = safeHints.isEmpty
       ? ''
-      : ' Details: ${safeHints.join(' ')}';
+      : ' Details: ${safeHints.join('; ')}';
   return 'Share review complete. ${parts.join('; ')}.$details '
       'You can add skipped items manually.';
 }
