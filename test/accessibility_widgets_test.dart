@@ -583,6 +583,108 @@ void main() {
   );
 
   testWidgets(
+    'blocks back navigation while a restore is committing',
+    (tester) async {
+      const item = SavedItem(
+        id: 'restore-navigation-guard-source',
+        kind: ItemKind.link,
+        title: 'Restore navigation guard source',
+        content: 'Existing library data',
+        url: 'https://example.com/restore-navigation-guard',
+        tags: <String>['Backup'],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 300,
+        updatedAtMs: 301,
+      );
+      await repository.save(item);
+      final backupBytes = Uint8List.fromList(
+        utf8.encode(await repository.createBackup()),
+      );
+      app.backupFilePickerForTesting = () async => PlatformFile(
+            name: 'restore-navigation-guard.json',
+            size: backupBytes.length,
+            bytes: backupBytes,
+          );
+      addTearDown(() {
+        app.backupFilePickerForTesting = null;
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push<void>(
+                      MaterialPageRoute<void>(
+                        builder: (_) =>
+                            app.BackupPrivacyPage(repository: repository),
+                      ),
+                    );
+                  },
+                  child: const Text('Open backup screen'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Open backup screen'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Choose backup file'));
+      await tester.tap(find.text('Choose backup file'));
+      await tester.pumpAndSettle();
+      expect(find.text('Merge this backup?'), findsOneWidget);
+
+      final restoreEntered = Completer<void>();
+      final releaseRestore = Completer<void>();
+      LibraryRepository.restoreBeforeCollectionsCommitForTesting = () async {
+        restoreEntered.complete();
+        await releaseRestore.future;
+      };
+
+      try {
+        await tester.tap(find.text('Merge backup'));
+        await tester.pump();
+        await restoreEntered.future;
+        await tester.pump();
+
+        expect(find.text('Restoring…'), findsOneWidget);
+        final backButton = tester.widget<IconButton>(
+          find.descendant(
+            of: find.byType(AppBar),
+            matching: find.byType(IconButton),
+          ).first,
+        );
+        expect(backButton.onPressed, isNull);
+
+        await tester.binding.handlePopRoute();
+        await tester.pump();
+
+        expect(find.text('Backup & privacy'), findsOneWidget);
+        expect(
+          find.text('Restoring…'),
+          findsOneWidget,
+          reason: 'System back must not dismiss an active restore commit.',
+        );
+        expect(repository.items.value, hasLength(1));
+      } finally {
+        if (!releaseRestore.isCompleted) releaseRestore.complete();
+        LibraryRepository.restoreBeforeCollectionsCommitForTesting = null;
+      }
+
+      await tester.pumpAndSettle();
+      expect(find.text('Backup & privacy'), findsOneWidget);
+      expect(find.text('Restored 1 item.'), findsOneWidget);
+      expect(repository.items.value, hasLength(2));
+      expect(repository.findById(item.id), isNotNull);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'Backup & privacy shows backup preparation time without claiming destination save',
     (tester) async {
       final backupPage = () => MaterialApp(
