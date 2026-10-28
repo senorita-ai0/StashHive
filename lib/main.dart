@@ -443,6 +443,12 @@ class _HomeShellState extends State<HomeShell> {
         !_shareDeduplicator.shouldAccept(boundedBatch.media)) {
       return;
     }
+    if (!hasCapacityForIncomingShareBatch(_pendingShareBatches.length)) {
+      _showShareMessage(
+        'Too many share batches are waiting. Finish the current shares before sending more.',
+      );
+      return;
+    }
     if (boundedBatch.skippedCount > 0) {
       _showShareMessage(
         'This share contains too many items. The first '
