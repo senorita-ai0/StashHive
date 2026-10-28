@@ -1312,3 +1312,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the rename successfully. Confirm the backup contains the renamed collection and the saved item's matching assignment, not the old collection state.
 - **Status:** Repository regression source is committed but unrun. Verify backup consistency with concurrent collection changes on browser and Android at the manual checkpoint.
 
+### TC-185 — Use effective text when an unused provider path is oversized
+
+- Provide a text share with a valid short message but a provider path longer than the normal shared-text limit.
+- Confirm fingerprinting skips its expensive canonicalization for the oversized provider fields, while normal intake uses the effective message and produces an editable note draft.
+- Confirm the unused path is neither required nor copied into the saved note.
+- **Status:** Regression source is committed but unrun. Verify provider-field conventions and memory behavior on real Android share sources at the manual validation checkpoint.
+
