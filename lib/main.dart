@@ -488,8 +488,9 @@ class _HomeShellState extends State<HomeShell> {
         try {
           await _presentSharedItem(batch.media);
         } catch (_) {
-          _showShareMessage(
-            'That item could not be prepared. Try adding it manually.',
+          _pendingInvalidShareItemCount++;
+          _recordShareErrorHint(
+            'A share batch could not be completed. You can add its items manually.',
           );
         } finally {
           // Accumulate omitted entries and announce them only after every
