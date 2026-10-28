@@ -113,6 +113,7 @@ void main() {
           List<String>.filled(maxSearchQueryCharacters + 1, ' ').join();
 
       expect(item.matchesQuery(oversizedQuery), isFalse);
+      expect(item.matchesNormalizedQuery(oversizedQuery), isFalse);
       expect(item.matchesQuery('flutter'), isTrue);
     });
 
