@@ -1284,3 +1284,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm best-effort rollback restores the previous timestamp in both the repository getter and raw preferences.
 - **Status:** Repository regression source is committed but unrun. Verify quota/storage failure behavior during backup generation on browser and Android at the manual checkpoint.
 
+### TC-181 — Wait for delete rollback before creating a backup
+
+- Save an image with known bytes, then pause deletion after its record and attachment have been removed.
+- Request a backup while deletion is pending; confirm backup generation does not complete before deletion resolves.
+- Release the delete with a simulated late failure. Confirm the repository restores the item and its attachment, then confirm the queued backup contains the original item metadata and exact original bytes rather than recording the temporary missing-file state.
+- **Status:** Repository regression source is committed but unrun. Verify concurrent delete/backup consistency and rollback against browser and Android storage at the manual checkpoint.
+
