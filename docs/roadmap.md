@@ -953,3 +953,9 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-171 pauses an attachment edit after its item write, requests a backup, and checks the decoded export contains the matching new item metadata and new attachment bytes.
 - **Status:** Source and regression documentation committed; tests remain unrun. Validate concurrent export/edit/delete/restore behavior on browser and Android storage at the manual checkpoint. CI remains manual-only by owner request.
 
+### TSK-464 — Dependency inventory and project-document consistency — 2026-10-28
+
+- **Requirements:** NFR-010 and project documentation maintainability.
+- **Source/docs:** Added the direct dependency/license register, linked it from the README, updated the NFR-010 traceability row, corrected stale StashTrail branding in current project documents, and aligned requirements approval status with the approved blueprint.
+- **Status:** Initial direct dependency inventory is committed. The transitive dependency graph, exact resolved versions and license/security audit are still open because no `pubspec.lock` is committed. Do not claim a completed license review until the lockfile and platform build checkpoint are available.
+
