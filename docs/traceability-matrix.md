@@ -1127,3 +1127,17 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `LibraryRepository.toggleFavorite` now enters the repository mutation queue before reading the item and calls the internal save path within that same queued operation.
 - **Regression:** TC-161 calls `toggleFavorite` twice without awaiting either call and checks the final notifier and raw stored favorite value match the starting state.
 - **Verification:** Regression source is committed but unrun; interaction behavior and persistence require validation at the manual checkpoint.
+
+### TSK-455 — Serialize dark-mode preference rollback
+
+- **Requirement:** NFR-003; a late preference-write failure must not roll back a newer user's choice for the same key.
+- **Implementation:** `LibraryRepository.setDarkMode` now serializes its read/write/rollback sequence through the repository mutation queue.
+- **Regression:** TC-162 queues the opposite choice while the first operation is paused after writing, injects a late failure, and verifies the newer value remains persisted.
+- **Verification:** Regression source is committed but unrun; persistence and storage-interruption behavior remain pending.
+
+### TSK-456 — Serialize text-size preference rollback
+
+- **Requirement:** NFR-003 and NFR-006; text-size changes must persist predictably, remain accessible, and not be overwritten by rollback from an earlier failed choice.
+- **Implementation:** `LibraryRepository.setTextScaleMultiplier` now serializes its preference read/write/rollback sequence with other repository mutations.
+- **Regression:** TC-163 queues a second supported multiplier during a late failure and verifies the getter and stored preference retain the newer value.
+- **Verification:** Regression source is committed but unrun; browser/Android persistence and accessibility review remain pending.
