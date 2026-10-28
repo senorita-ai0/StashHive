@@ -309,7 +309,7 @@ class SavedItem {
       title: title ?? this.title,
       content: content ?? this.content,
       url: clearUrl ? null : (url ?? this.url),
-      tags: tags ?? this.tags,
+      tags: List<String>.unmodifiable(tags ?? this.tags),
       collection: clearCollection ? null : (collection ?? this.collection),
       isFavorite: isFavorite ?? this.isFavorite,
       createdAtMs: createdAtMs,
