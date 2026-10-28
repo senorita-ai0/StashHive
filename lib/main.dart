@@ -1907,209 +1907,209 @@ class _QuickSavePageState extends State<QuickSavePage> {
         appBar: AppBar(
           leading: IconButton(
             tooltip: 'Back',
-          onPressed: _saving ? null : () => Navigator.of(context).maybePop(),
-          icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: _saving ? null : () => Navigator.of(context).maybePop(),
+            icon: const Icon(Icons.arrow_back_rounded),
+          ),
+          title: Text(isEditing ? 'Edit item' : 'Quick save'),
+          actions: [
+            if (isEditing)
+              IconButton(
+                tooltip: 'Cancel',
+                onPressed: _saving ? null : () => Navigator.of(context).pop(false),
+                icon: const Icon(Icons.close_rounded),
+              ),
+          ],
         ),
-        title: Text(isEditing ? 'Edit item' : 'Quick save'),
-        actions: [
-          if (isEditing)
-            IconButton(
-              tooltip: 'Cancel',
-              onPressed: _saving ? null : () => Navigator.of(context).pop(false),
-              icon: const Icon(Icons.close_rounded),
-            ),
-        ],
-      ),
-      body: SafeArea(
-        top: false,
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 700),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
-                children: [
-                  Text(isEditing ? 'Refine your saved item' : 'Save something useful',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.5,
-                          )),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Keep the things you want to find again.',
-                    style: TextStyle(color: mutedTextColor(context)),
-                  ),
-                  if ((widget.initialShare?.shareTotal ?? 1) > 1) ...[
-                    const SizedBox(height: 14),
-                    Container(
-                      padding: const EdgeInsets.all(13),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFF2DF),
-                        borderRadius: BorderRadius.circular(13),
+        body: SafeArea(
+          top: false,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 700),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+                  children: [
+                    Text(isEditing ? 'Refine your saved item' : 'Save something useful',
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.5,
+                            )),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Keep the things you want to find again.',
+                      style: TextStyle(color: mutedTextColor(context)),
+                    ),
+                    if ((widget.initialShare?.shareTotal ?? 1) > 1) ...[
+                      const SizedBox(height: 14),
+                      Container(
+                        padding: const EdgeInsets.all(13),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF2DF),
+                          borderRadius: BorderRadius.circular(13),
+                        ),
+                        child: Text(
+                          'Item ${widget.initialShare!.sharePosition} of ${widget.initialShare!.shareTotal}. Save or cancel this draft to continue to the next shared item.',
+                          style: const TextStyle(fontSize: 12, height: 1.4),
+                        ),
                       ),
-                      child: Text(
-                        'Item ${widget.initialShare!.sharePosition} of ${widget.initialShare!.shareTotal}. Save or cancel this draft to continue to the next shared item.',
-                        style: const TextStyle(fontSize: 12, height: 1.4),
+                    ],
+                    const SizedBox(height: 20),
+                    if (!isEditing) _buildKindPicker(),
+                    if (!isEditing) const SizedBox(height: 20),
+                    if (_kind == ItemKind.link) ...[
+                      TextFormField(
+                        controller: _urlController,
+                        enabled: !_saving,
+                        keyboardType: TextInputType.url,
+                        textInputAction: TextInputAction.next,
+                        autocorrect: false,
+                        decoration: const InputDecoration(
+                          labelText: 'Website URL',
+                          hintText: 'https://example.com',
+                          prefixIcon: Icon(Icons.link_rounded),
+                        ),
+                        validator: (value) {
+                          if ((value ?? '').trim().isEmpty) {
+                            return 'Enter a website URL.';
+                          }
+                          final uri = parseUserWebUrl(value);
+                          if (uri == null) {
+                            return 'Enter a valid http or https URL.';
+                          }
+                          if (uri.toString().length > maxSavedItemUrlCharacters) {
+                            return 'Website URLs must be 4,096 characters or shorter.';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 14),
+                    ],
+                    TextFormField(
+                      controller: _titleController,
+                      enabled: !_saving,
+                      textInputAction: TextInputAction.next,
+                      maxLength: 500,
+                      validator: _validateTitle,
+                      decoration: InputDecoration(
+                        labelText: 'Title' + (_kind == ItemKind.link ? ' (optional)' : ''),
+                        hintText: _kind == ItemKind.note
+                            ? 'A short title for your note'
+                            : 'Give it a helpful name',
+                        counterText: '',
                       ),
                     ),
-                  ],
-                  const SizedBox(height: 20),
-                  if (!isEditing) _buildKindPicker(),
-                  if (!isEditing) const SizedBox(height: 20),
-                  if (_kind == ItemKind.link) ...[
+                    const SizedBox(height: 14),
                     TextFormField(
-                      controller: _urlController,
+                      controller: _contentController,
                       enabled: !_saving,
-                      keyboardType: TextInputType.url,
-                      textInputAction: TextInputAction.next,
-                      autocorrect: false,
-                      decoration: const InputDecoration(
-                        labelText: 'Website URL',
-                        hintText: 'https://example.com',
-                        prefixIcon: Icon(Icons.link_rounded),
+                      minLines: _kind == ItemKind.note ? 5 : 2,
+                      maxLines: _kind == ItemKind.note ? 8 : 4,
+                      maxLength: 1000000,
+                      decoration: InputDecoration(
+                        labelText: _kind == ItemKind.note ? 'Your note' : 'Notes (optional)',
+                        hintText: _kind == ItemKind.note
+                            ? 'Write a thought, quote or reminder…'
+                            : 'What do you want to remember about it?',
+                        alignLabelWithHint: true,
+                        counterText: '',
                       ),
                       validator: (value) {
-                        if ((value ?? '').trim().isEmpty) {
-                          return 'Enter a website URL.';
-                        }
-                        final uri = parseUserWebUrl(value);
-                        if (uri == null) {
-                          return 'Enter a valid http or https URL.';
-                        }
-                        if (uri.toString().length > maxSavedItemUrlCharacters) {
-                          return 'Website URLs must be 4,096 characters or shorter.';
+                        if (_kind == ItemKind.note && (value ?? '').trim().isEmpty) {
+                          return 'Write something in your note.';
                         }
                         return null;
                       },
                     ),
-                    const SizedBox(height: 14),
-                  ],
-                  TextFormField(
-                    controller: _titleController,
-                    enabled: !_saving,
-                    textInputAction: TextInputAction.next,
-                    maxLength: 500,
-                    validator: _validateTitle,
-                    decoration: InputDecoration(
-                      labelText: 'Title' + (_kind == ItemKind.link ? ' (optional)' : ''),
-                      hintText: _kind == ItemKind.note
-                          ? 'A short title for your note'
-                          : 'Give it a helpful name',
-                      counterText: '',
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  TextFormField(
-                    controller: _contentController,
-                    enabled: !_saving,
-                    minLines: _kind == ItemKind.note ? 5 : 2,
-                    maxLines: _kind == ItemKind.note ? 8 : 4,
-                    maxLength: 1000000,
-                    decoration: InputDecoration(
-                      labelText: _kind == ItemKind.note ? 'Your note' : 'Notes (optional)',
-                      hintText: _kind == ItemKind.note
-                          ? 'Write a thought, quote or reminder…'
-                          : 'What do you want to remember about it?',
-                      alignLabelWithHint: true,
-                      counterText: '',
-                    ),
-                    validator: (value) {
-                      if (_kind == ItemKind.note && (value ?? '').trim().isEmpty) {
-                        return 'Write something in your note.';
-                      }
-                      return null;
-                    },
-                  ),
-                  if (fileKind) ...[
-                    const SizedBox(height: 14),
-                    _buildAttachmentPicker(),
-                  ],
-                  const SizedBox(height: 14),
-                  TextFormField(
-                    controller: _tagsController,
-                    enabled: !_saving,
-                    decoration: const InputDecoration(
-                      labelText: 'Tags (optional)',
-                      hintText: 'Design, Reading, Work',
-                      prefixIcon: Icon(Icons.sell_outlined),
-                      helperText: 'Separate tags with commas.',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  DropdownButtonFormField<String?>(
-                    initialValue: _collection,
-                    isExpanded: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Collection (optional)',
-                      prefixIcon: Icon(Icons.folder_outlined),
-                    ),
-                    hint: const Text('Choose a collection'),
-                    items: [
-                      const DropdownMenuItem<String?>(
-                        value: null,
-                        child: Text('No collection'),
-                      ),
-                      for (final name in widget.repository.collections.value)
-                        DropdownMenuItem<String?>(value: name, child: Text(name)),
+                    if (fileKind) ...[
+                      const SizedBox(height: 14),
+                      _buildAttachmentPicker(),
                     ],
-                    onChanged: _saving
-                        ? null
-                        : (value) => setState(() => _collection = value),
-                  ),
-                  if (_kind == ItemKind.link) ...[
+                    const SizedBox(height: 14),
+                    TextFormField(
+                      controller: _tagsController,
+                      enabled: !_saving,
+                      decoration: const InputDecoration(
+                        labelText: 'Tags (optional)',
+                        hintText: 'Design, Reading, Work',
+                        prefixIcon: Icon(Icons.sell_outlined),
+                        helperText: 'Separate tags with commas.',
+                      ),
+                    ),
                     const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFF2DF),
-                        borderRadius: BorderRadius.circular(14),
+                    DropdownButtonFormField<String?>(
+                      initialValue: _collection,
+                      isExpanded: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Collection (optional)',
+                        prefixIcon: Icon(Icons.folder_outlined),
                       ),
-                      child: const Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(Icons.bookmark_outline_rounded, color: Color(0xFFB87A22)),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              'Saved as a bookmark. The website itself is not downloaded for offline use.',
-                              style: TextStyle(fontSize: 12, height: 1.4),
+                      hint: const Text('Choose a collection'),
+                      items: [
+                        const DropdownMenuItem<String?>(
+                          value: null,
+                          child: Text('No collection'),
+                        ),
+                        for (final name in widget.repository.collections.value)
+                          DropdownMenuItem<String?>(value: name, child: Text(name)),
+                      ],
+                      onChanged: _saving
+                          ? null
+                          : (value) => setState(() => _collection = value),
+                    ),
+                    if (_kind == ItemKind.link) ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF2DF),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: const Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.bookmark_outline_rounded, color: Color(0xFFB87A22)),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'Saved as a bookmark. The website itself is not downloaded for offline use.',
+                                style: TextStyle(fontSize: 12, height: 1.4),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+                    ],
+                    const SizedBox(height: 24),
+                    FilledButton.icon(
+                      onPressed: (_saving || _pickingAttachment) ? null : _save,
+                      icon: (_saving || _pickingAttachment)
+                          ? const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            )
+                          : const Icon(Icons.check_rounded),
+                      label: Text(
+                        _saving
+                            ? 'Saving…'
+                            : _pickingAttachment
+                                ? 'Selecting file…'
+                                : isEditing
+                                    ? 'Save changes'
+                                    : 'Save to StashHive',
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: _saving ? null : () => Navigator.of(context).maybePop(false),
+                      child: const Text('Cancel'),
                     ),
                   ],
-                  const SizedBox(height: 24),
-                  FilledButton.icon(
-                    onPressed: (_saving || _pickingAttachment) ? null : _save,
-                    icon: (_saving || _pickingAttachment)
-                        ? const SizedBox(
-                            height: 18,
-                            width: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                          )
-                        : const Icon(Icons.check_rounded),
-                    label: Text(
-                      _saving
-                          ? 'Saving…'
-                          : _pickingAttachment
-                              ? 'Selecting file…'
-                              : isEditing
-                                  ? 'Save changes'
-                                  : 'Save to StashHive',
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextButton(
-                    onPressed: _saving ? null : () => Navigator.of(context).maybePop(false),
-                    child: const Text('Cancel'),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
         ),
       ),
     );
