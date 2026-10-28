@@ -1603,3 +1603,9 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm ordinary local file paths and local `file://` URIs still reach extension/MIME and bounded-byte validation.
 - **Status:** Share-intake regression source is committed but unrun. Verify provider URI shapes and recovery summaries using real Android share sources at the manual validation checkpoint.
 
+### TC-225 — Bound share-review summary hint processing
+
+- Supply a summary hint longer than `maxShareReviewHintCharacters` followed by an ordinary app-owned hint. Confirm the oversized hint is skipped before trimming and the safe hint remains available in the concise summary.
+- Supply an iterable with many empty hints and confirm the helper inspects no more than `maxShareReviewHintCandidates` entries before returning a summary without details.
+- Confirm count summaries and the first three distinct, in-limit validation hints remain unchanged.
+- **Status:** Regression source is committed but unrun. Verify share feedback remains concise after malformed/unsupported batches on Android at the manual validation checkpoint.
