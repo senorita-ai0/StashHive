@@ -1337,3 +1337,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-231 injects a stream setup exception, verifies launch-time intent retrieval is still attempted, and checks safe guidance, hidden plugin diagnostics, continued Library navigation and no framework exception.
 - **Status:** Source and regression documentation are committed but unrun. Validate plugin lifecycle and normal event delivery on a physical Android device at the manual validation checkpoint; CI remains manual-only.
 
+### TSK-519 — Keep Quick Save navigation consistent while a picker is pending — 2026-10-28
+
+- **Requirements:** FR-008 and NFR-003/NFR-006.
+- **Source:** The Quick Save route guard and visible Back/Cancel controls now remain disabled while either persistence or file selection is pending. Changing the item kind remains enabled during selection so stale picker responses can be invalidated; after picker completion/cancellation, normal navigation is restored.
+- **Regression:** TC-232 pauses an image picker and checks in-form navigation and system back remain blocked until the picker returns canceled.
+- **Status:** Source and widget regression committed; test not run. Confirm Android/browser picker cancellation and navigation manually at the validation checkpoint. CI stays manual-only.
+
