@@ -3369,7 +3369,7 @@ class SettingsPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<double>(
-                        value: textScaleMultiplier,
+                        initialValue: textScaleMultiplier,
                         decoration: const InputDecoration(
                           labelText: 'App text size',
                         ),
