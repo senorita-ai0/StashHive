@@ -382,6 +382,7 @@ class _HomeShellState extends State<HomeShell> {
       ShareEventDeduplicator();
   bool _processingShareBatches = false;
   Completer<void>? _activeShareBatchDone;
+  int _pendingOmittedShareItemCount = 0;
   bool _showStorageReminder = false;
 
   @override
@@ -488,21 +489,25 @@ class _HomeShellState extends State<HomeShell> {
             'That item could not be prepared. Try adding it manually.',
           );
         } finally {
-          // Show the truncation warning after the last item route has closed,
-          // so the user can see it on the home screen instead of losing it
-          // while reviewing a potentially long batch.
-          if (mounted && batch.skippedCount > 0) {
-            _showShareMessage(
-              'This share contained ${batch.skippedCount} additional item(s) '
-              'beyond the ${batch.media.length}-item review limit. Share the '
-              'remaining items in smaller batches.',
-            );
-          }
+          // Accumulate omitted entries and announce them only after every
+          // already-queued batch has finished, so a subsequent Quick Save
+          // route cannot cover the warning from a prior batch.
+          _pendingOmittedShareItemCount += batch.skippedCount;
           if (!batch.done.isCompleted) batch.done.complete();
           if (identical(_activeShareBatchDone, batch.done)) {
             _activeShareBatchDone = null;
           }
         }
+      }
+      if (mounted &&
+          _pendingShareBatches.isEmpty &&
+          _pendingOmittedShareItemCount > 0) {
+        final omittedCount = _pendingOmittedShareItemCount;
+        _pendingOmittedShareItemCount = 0;
+        _showShareMessage(
+          'Incoming share batches omitted $omittedCount additional item(s) '
+          'beyond the review limit. Share the remaining items in smaller batches.',
+        );
       }
     } finally {
       _processingShareBatches = false;
