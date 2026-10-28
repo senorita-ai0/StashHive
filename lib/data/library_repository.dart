@@ -894,7 +894,12 @@ class LibraryRepository {
     );
   }
 
-  Future<String> createBackup() async {
+  /// Takes the export snapshot behind pending writes so item metadata,
+  /// attachment bytes and collection preferences come from one serialized
+  /// repository state instead of interleaving with a save/delete/restore.
+  Future<String> createBackup() => _serializeMutation(_createBackup);
+
+  Future<String> _createBackup() async {
     final unrepresentedAssignments = unrepresentedCollectionAssignmentCount;
     if (unrepresentedAssignments > 0) {
       final itemLabel = unrepresentedAssignments == 1
