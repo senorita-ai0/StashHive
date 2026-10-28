@@ -70,6 +70,7 @@ class _PreferenceTextScaler extends TextScaler {
 const Color kCanvas = Color(0xFFF8F9FD);
 const Color kBorder = Color(0xFFE7E9F2);
 const int kMaxAttachmentBytes = BackupCodec.maxAttachmentBytes;
+const int maxQuickSaveTagsInputCharacters = 12000;
 
 /// Test hook for resolving delayed file-picker requests without invoking a
 /// platform picker. Production leaves this unset.
@@ -1831,7 +1832,15 @@ class _QuickSavePageState extends State<QuickSavePage> {
       var title = _titleController.text.trim();
       final content = _contentController.text.trim();
       if (_kind == ItemKind.link) {
-        final entered = _urlController.text.trim();
+        final rawEntered = _urlController.text;
+        // Check the raw length before trim/URL parsing so a large pasted value
+        // does not trigger unnecessary normalization work.
+        if (rawEntered.length > maxSavedItemUrlCharacters) {
+          _showMessage('Website URLs must be 4,096 characters or shorter.');
+          setState(() => _saving = false);
+          return;
+        }
+        final entered = rawEntered.trim();
         final uri = parseUserWebUrl(entered);
         if (uri == null) {
           _showMessage('Enter a valid http or https website URL.');
@@ -1858,6 +1867,15 @@ class _QuickSavePageState extends State<QuickSavePage> {
       }
       if (title.length > 500) {
         _showMessage('Use a shorter title (up to 500 characters).');
+        setState(() => _saving = false);
+        return;
+      }
+      // Bound the comma-separated field before split() can allocate a
+      // list for an arbitrarily large pasted string.
+      if (_tagsController.text.length > maxQuickSaveTagsInputCharacters) {
+        _showMessage(
+          'Tag input must be $maxQuickSaveTagsInputCharacters characters or shorter.',
+        );
         setState(() => _saving = false);
         return;
       }
@@ -2009,10 +2027,14 @@ class _QuickSavePageState extends State<QuickSavePage> {
                           prefixIcon: Icon(Icons.link_rounded),
                         ),
                         validator: (value) {
-                          if ((value ?? '').trim().isEmpty) {
+                          final rawValue = value ?? '';
+                          if (rawValue.length > maxSavedItemUrlCharacters) {
+                            return 'Website URLs must be 4,096 characters or shorter.';
+                          }
+                          if (rawValue.trim().isEmpty) {
                             return 'Enter a website URL.';
                           }
-                          final uri = parseUserWebUrl(value);
+                          final uri = parseUserWebUrl(rawValue);
                           if (uri == null) {
                             return 'Enter a valid http or https URL.';
                           }
@@ -2074,6 +2096,13 @@ class _QuickSavePageState extends State<QuickSavePage> {
                         prefixIcon: Icon(Icons.sell_outlined),
                         helperText: 'Separate tags with commas.',
                       ),
+                      validator: (value) {
+                        if ((value?.length ?? 0) >
+                            maxQuickSaveTagsInputCharacters) {
+                          return 'Tag input must be $maxQuickSaveTagsInputCharacters characters or shorter.';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String?>(
