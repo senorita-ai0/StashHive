@@ -1235,6 +1235,6 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-504 — Bound the attachment-entry count in backups — 2026-10-28
 
 - **Requirements:** FR-013 and NFR-003.
-- **Source:** Backup JSON decode and in-memory `DecodedBackup` validation now reject more than 10,000 attachment entries before walking attachment keys. The portable format already rejects unreferenced payloads, and each saved item can reference at most one attachment.
-- **Regression:** TC-216 tests both an oversized attachment map passed directly to the validator and a JSON backup with more than 10,000 attachment entries.
+- **Source:** Backup JSON decode and in-memory `DecodedBackup` validation now reject attachment maps with more entries than saved items before walking attachment keys. The portable format already rejects unreferenced payloads, and each saved item can reference at most one attachment.
+- **Regression:** TC-216 tests both a direct in-memory attachment map and a JSON backup whose attachment-entry count exceeds its item count.
 - **Status:** Source and regression plan committed but unrun. Validate malformed backup limits and restore error handling at the manual checkpoint; CI remains manual-only.
