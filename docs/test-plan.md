@@ -1161,3 +1161,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Allow the first operation to fail and roll back.
 - Confirm the second request waited and the final notifier getter and stored preference both show the second multiplier.
 - **Status:** Regression source is committed but unrun. Confirm persistence with web and Android storage during the manual checkpoint.
+
+### TC-164 — Discard attachment selections that belong to an outdated draft type
+
+- Start a file-picker request from an Image draft and leave its result pending.
+- Change the draft to Document, then complete the earlier request with a delayed image result.
+- Confirm the stale result is discarded before file I/O, the Document draft still has no selected attachment, and it cannot be saved until a document is selected.
+- Repeat by switching away from the requested type and back before completing the picker, ensuring the request revision—not just the current type—invalidates old results.
+- **Status:** Widget regression source is committed but unrun. Verify native picker behavior on Android and file selection in web/desktop browsers at the manual checkpoint.
