@@ -199,6 +199,13 @@ class BackupCodec {
   /// Keeping these constraints aligned prevents StashHive from exporting a
   /// backup that its own decoder would later reject.
   static void validateSavedItem(SavedItem item) {
+    // Check collection dimensions before toMap() copies tags into a fresh list.
+    // This guard also protects direct callers that construct SavedItem with a
+    // caller-owned oversized list rather than using the validated UI form.
+    if (item.tags.length > 100 ||
+        item.tags.any((tag) => tag.length > 100)) {
+      throw const FormatException('A saved item exceeds supported limits.');
+    }
     _validateSavedItemMap(item.toMap());
 
     if (item.id.isEmpty || item.id.length > 128) {
@@ -219,9 +226,7 @@ class BackupCodec {
       );
     }
     if (item.content.length > 1000000 ||
-        (item.url?.length ?? 0) > maxSavedItemUrlCharacters ||
-        item.tags.length > 100 ||
-        item.tags.any((tag) => tag.length > 100)) {
+        (item.url?.length ?? 0) > maxSavedItemUrlCharacters) {
       throw const FormatException('A saved item exceeds supported limits.');
     }
     if (item.tags.any((tag) => tag.isEmpty || tag.trim() != tag)) {
