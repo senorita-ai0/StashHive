@@ -209,6 +209,26 @@ void main() {
       );
     });
 
+    test('accepts inclusive timestamp bounds during model round-trip', () {
+      final earliest = makeItem(
+        createdAtMs: minSavedItemTimestampMs,
+        updatedAtMs: minSavedItemTimestampMs,
+      );
+      final latest = makeItem(
+        createdAtMs: maxSavedItemTimestampMs,
+        updatedAtMs: maxSavedItemTimestampMs,
+      );
+
+      expect(
+        SavedItem.fromMap(earliest.toMap()).createdAtMs,
+        minSavedItemTimestampMs,
+      );
+      expect(
+        SavedItem.fromMap(latest.toMap()).updatedAtMs,
+        maxSavedItemTimestampMs,
+      );
+    });
+
     test('rejects out-of-range timestamps in direct model serialization', () {
       final invalidCreatedAt = makeItem(
         createdAtMs: maxSavedItemTimestampMs + 1,
