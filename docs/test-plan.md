@@ -1305,3 +1305,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the save with a simulated late failure. Confirm rollback restores the old metadata and attachment bytes, then confirm the queued backup contains those restored values.
 - **Status:** Repository regression source is committed but unrun. Verify concurrent backup/failed-save behavior against browser and Android storage at the manual checkpoint.
 
+### TC-184 — Wait for collection changes before creating a backup
+
+- Create a collection and assign a saved item to it, then begin renaming the collection.
+- Pause rename after its persisted item assignments and collection preference write but before the repository refreshes its visible state. Request a backup and confirm export waits.
+- Release the rename successfully. Confirm the backup contains the renamed collection and the saved item's matching assignment, not the old collection state.
+- **Status:** Repository regression source is committed but unrun. Verify backup consistency with concurrent collection changes on browser and Android at the manual checkpoint.
+
