@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-160 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-161 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -435,3 +435,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] The test asserts the second request waits for rollback, then leaves only its own collection in the visible list and persisted preference value.
 - [x] Added traceability task **TSK-453**.
 - [ ] Run TC-159/TC-160 and related mutation rollback cases at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+
+## Phase 3 — serialize favorite toggles against stale reads (2026-10-28)
+
+- [x] Moved the favorite read-and-update sequence inside the repository mutation queue. Concurrent toggles now read the latest stored item after earlier queued actions complete.
+- [x] Added repository regression **TC-161** for two overlapping toggles and assertions against the visible notifier and raw persisted record.
+- [x] Added traceability task **TSK-454**.
+- [ ] Run TC-161 and the related favorite-update persistence/error tests at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
