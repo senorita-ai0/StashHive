@@ -1340,3 +1340,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm normal URLs and valid tag sets continue to save as expected.
 - **Status:** Widget/source regression is committed but unrun. Review paste behavior, validation wording and responsiveness on web and Android at the manual checkpoint.
 
+### TC-189 — Bound search-query work on large input
+
+- Provide an initial search query longer than 4,096 characters with at least one saved item present.
+- Confirm the Search page reports the query-length limit, returns no results without scanning saved items, and remains free of layout/framework exceptions.
+- Confirm ordinary search still normalizes the query once and matches case-insensitively across title, URL, note, tags and collection names.
+- **Status:** Widget and model regression sources are committed but unrun. Review paste behavior, Unicode matching, responsiveness and accessibility on web and Android at the manual checkpoint.
+
