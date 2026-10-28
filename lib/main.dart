@@ -4204,7 +4204,7 @@ class _BackupCard extends StatelessWidget {
   final String subtitle;
   final String buttonText;
   final bool loading;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
