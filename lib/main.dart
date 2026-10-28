@@ -2241,6 +2241,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
     return Semantics(
       button: true,
       enabled: !_saving && !_pickingAttachment,
+      liveRegion: _pickingAttachment,
       label: pickerLabel,
       hint: _saving
           ? 'Wait for the item to finish saving'
