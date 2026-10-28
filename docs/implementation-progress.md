@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-212 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-213 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -761,4 +761,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Backup decoding now verifies that `formatVersion` is an integer before displaying the version in an error. Arbitrary strings, lists or maps receive a short fixed validation message rather than being echoed into an exception.
 - [x] Added codec regression **TC-212** with a 100,000-character non-integer version field and documented task **TSK-500** in traceability.
 - [ ] Run TC-212 alongside malformed-backup and oversized-import cases at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — capture save inputs before asynchronous queueing (2026-10-28)
+
+- [x] `LibraryRepository.save()` now preflights attachment size/byte validity and tag bounds before making defensive copies, then snapshots mutable tags and attachment bytes before entering the shared mutation queue.
+- [x] The queued save now consumes those owned values, so callers cannot change the pending operation by mutating their original lists while it waits behind another repository operation.
+- [x] Added regression **TC-213** for a queued image save whose original tag list and byte buffer are mutated after submission; added traceability task **TSK-501**.
+- [ ] Run TC-213 with the metadata/attachment snapshot and rollback regressions at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
