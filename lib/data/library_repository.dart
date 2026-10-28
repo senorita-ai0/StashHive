@@ -25,12 +25,12 @@ class LibraryRepository {
   final Box<dynamic> _attachmentsBox;
   final Box<dynamic> _preferencesBox;
 
-  // Serialize state-changing operations so two fast UI actions cannot both
-  // derive writes from the same stale notifier snapshot and overwrite each
-  // other's library/collection changes.
+  // Serialize repository operations that need a stable view of persisted
+  // state. Mutations, backup snapshots and attachment reads share this queue
+  // so callers cannot observe half-committed item/attachment relationships.
   Future<void> _mutationTail = Future<void>.value();
 
-  Future<T> _serializeMutation<T>(Future<T> Function() operation) {
+  Future<T> _serializeOperation<T>(Future<T> Function() operation) {
     final previous = _mutationTail;
     final release = Completer<void>();
     _mutationTail = release.future;
@@ -144,7 +144,7 @@ class LibraryRepository {
   /// Stores backup-preparation time in the local app/browser profile.
   /// This metadata is not included in the portable backup itself.
   Future<void> recordBackupPreparedAt(int timestampMs) =>
-      _serializeMutation(() => _writeBackupPreparedAt(timestampMs));
+      _serializeOperation(() => _writeBackupPreparedAt(timestampMs));
 
   /// Performs the timestamp preference write without taking the mutation
   /// queue itself. Backup creation calls this while it already owns the queue,
@@ -399,7 +399,7 @@ class LibraryRepository {
   }
 
   Future<void> save(SavedItem item, {List<int>? attachmentBytes}) =>
-      _serializeMutation(
+      _serializeOperation(
         () => _save(item, attachmentBytes: attachmentBytes),
       );
 
@@ -560,7 +560,7 @@ class LibraryRepository {
   }
 
   Future<void> delete(String id) =>
-      _serializeMutation(() => _delete(id));
+      _serializeOperation(() => _delete(id));
 
   Future<void> _delete(String id) async {
     final hadItemKey = _itemsBox.containsKey(id);
@@ -640,7 +640,7 @@ class LibraryRepository {
   }
 
   Future<void> toggleFavorite(String id) =>
-      _serializeMutation(() => _toggleFavorite(id));
+      _serializeOperation(() => _toggleFavorite(id));
 
   Future<void> _toggleFavorite(String id) async {
     // Read the current item only after this operation reaches the queue head.
@@ -653,14 +653,15 @@ class LibraryRepository {
     ));
   }
 
-  Future<Uint8List?> readAttachment(String key) async {
-    final value = _attachmentsBox.get(key);
-    if (!isValidAttachmentByteList(value)) return null;
-    return Uint8List.fromList((value as List).cast<int>());
-  }
+  Future<Uint8List?> readAttachment(String key) =>
+      _serializeOperation(() async {
+        final value = _attachmentsBox.get(key);
+        if (!isValidAttachmentByteList(value)) return null;
+        return Uint8List.fromList((value as List).cast<int>());
+      });
 
   Future<void> setDarkMode(bool value) =>
-      _serializeMutation(() => _setDarkMode(value));
+      _serializeOperation(() => _setDarkMode(value));
 
   Future<void> _setDarkMode(bool value) async {
     final hadDarkModeKey = _preferencesBox.containsKey('darkMode');
@@ -686,7 +687,7 @@ class LibraryRepository {
   }
 
   Future<void> setTextScaleMultiplier(double value) =>
-      _serializeMutation(() => _setTextScaleMultiplier(value));
+      _serializeOperation(() => _setTextScaleMultiplier(value));
 
   Future<void> _setTextScaleMultiplier(double value) async {
     const supported = <double>{1.0, 1.15, 1.3};
@@ -719,7 +720,7 @@ class LibraryRepository {
   }
 
   Future<void> addCollection(String name) =>
-      _serializeMutation(() => _addCollection(name));
+      _serializeOperation(() => _addCollection(name));
 
   Future<void> _addCollection(String name) async {
     final cleaned = name.trim();
@@ -761,7 +762,7 @@ class LibraryRepository {
   }
 
   Future<void> renameCollection(String oldName, String newName) =>
-      _serializeMutation(() => _renameCollection(oldName, newName));
+      _serializeOperation(() => _renameCollection(oldName, newName));
 
   Future<void> _renameCollection(String oldName, String newName) async {
     final cleaned = newName.trim();
@@ -796,7 +797,7 @@ class LibraryRepository {
   }
 
   Future<void> deleteCollection(String name) =>
-      _serializeMutation(() => _deleteCollection(name));
+      _serializeOperation(() => _deleteCollection(name));
 
   Future<void> _deleteCollection(String name) async {
     final exists = collections.value.any(
@@ -965,7 +966,7 @@ class LibraryRepository {
   /// Takes the export snapshot behind pending writes so item metadata,
   /// attachment bytes and collection preferences come from one serialized
   /// repository state instead of interleaving with a save/delete/restore.
-  Future<String> createBackup() => _serializeMutation(_createBackup);
+  Future<String> createBackup() => _serializeOperation(_createBackup);
 
   Future<String> _createBackup() async {
     final unrepresentedAssignments = unrepresentedCollectionAssignmentCount;
@@ -1010,7 +1011,7 @@ class LibraryRepository {
   /// decode once before confirmation and avoid parsing large JSON/base64 data
   /// a second time after the user accepts the merge.
   Future<int> restoreDecodedBackup(DecodedBackup decoded) =>
-      _serializeMutation(() => _restoreDecodedBackup(decoded));
+      _serializeOperation(() => _restoreDecodedBackup(decoded));
 
   Future<int> _restoreDecodedBackup(DecodedBackup decoded) async {
     // Validate before copying so an invalid public object cannot force a
