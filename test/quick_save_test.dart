@@ -155,6 +155,8 @@ void main() {
   });
 
   testWidgets('reselecting a shared image kind keeps its attachment', (tester) async {
+    final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
     final bytes = Uint8List.fromList([4, 8, 15, 16, 23, 42]);
     final share = IncomingShare(
       kind: ItemKind.image,
@@ -209,6 +211,8 @@ void main() {
   });
 
   testWidgets('changing item kind preserves shared note content', (tester) async {
+    final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
     await openNewLink(tester);
 
     final noteChoice = find.bySemanticsLabel('Note');
