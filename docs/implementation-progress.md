@@ -764,7 +764,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 
 ## Phase 3 — capture save inputs before asynchronous queueing (2026-10-28)
 
-- [x] `LibraryRepository.save()` now preflights attachment size/byte validity and tag bounds before making defensive copies, then snapshots mutable tags and attachment bytes before entering the shared mutation queue.
+- [x] `LibraryRepository.save()` now bounds tags before model serialization, validates saved-item fields before attachment allocation, preflights attachment size/byte validity, and snapshots mutable tags/attachment bytes before entering the shared mutation queue.
 - [x] The queued save now consumes those owned values, so callers cannot change the pending operation by mutating their original lists while it waits behind another repository operation.
 - [x] Added regression **TC-213** for a queued image save whose original tag list and byte buffer are mutated after submission; added traceability task **TSK-501**.
 - [ ] Run TC-213 with the metadata/attachment snapshot and rollback regressions at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
