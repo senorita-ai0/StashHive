@@ -1046,6 +1046,55 @@ void main() {
     );
   });
 
+  test('backup waits for collection rename before snapshotting assignments', () async {
+    await repository.addCollection('Before');
+    await repository.save(
+      buildLink(id: 'backup-collection-race', collection: 'Before'),
+    );
+
+    final renameEntered = Completer<void>();
+    final releaseRename = Completer<void>();
+    LibraryRepository.collectionAfterPreferencesWriteForTesting = () async {
+      renameEntered.complete();
+      await releaseRename.future;
+    };
+
+    final pendingRename = repository.renameCollection('Before', 'After');
+    await renameEntered.future;
+
+    var backupCompleted = false;
+    final pendingBackup = repository.createBackup().then((source) {
+      backupCompleted = true;
+      return source;
+    });
+
+    try {
+      await Future<void>.delayed(Duration.zero);
+      expect(
+        backupCompleted,
+        isFalse,
+        reason: 'Backup must wait until the collection and item updates commit.',
+      );
+    } finally {
+      if (!releaseRename.isCompleted) releaseRename.complete();
+    }
+
+    try {
+      await pendingRename;
+    } finally {
+      LibraryRepository.collectionAfterPreferencesWriteForTesting = null;
+    }
+
+    final source = await pendingBackup;
+    final decoded = BackupCodec.decode(source);
+
+    expect(decoded.collections, ['After']);
+    expect(decoded.items, hasLength(1));
+    expect(decoded.items.single.collection, 'After');
+    expect(repository.collections.value, ['After']);
+    expect(repository.items.value.single.collection, 'After');
+  });
+
   test('backup waits for a failed save to restore previous attachment state', () async {
     final originalBytes = Uint8List.fromList([1, 4, 1, 4]);
     final replacementBytes = Uint8List.fromList([2, 7, 1, 8]);
