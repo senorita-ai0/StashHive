@@ -1,4 +1,4 @@
-# StashTrail — Proposed Architecture
+# StashHive — Proposed Architecture
 
 **Status:** Draft architecture for approval; storage choice remains provisional until a proof of concept passes.  
 **Date checked for technical references:** 2026-10-21
@@ -26,7 +26,7 @@ flowchart TD
     BAK --> DB
     BAK --> FILES
     UI --> EXT[External browser / file viewer]
-    EXT -. URLs require network .-> NET[(Internet site, outside StashTrail)]
+    EXT -. URLs require network .-> NET[(Internet site, outside StashHive)]
 ```
 
 ## Logical components
@@ -163,4 +163,4 @@ Before export, the repository blocks any remaining visible item assignment that 
 
 ## Product identity and compatibility
 
-The user-facing product brand is StashTrail. Do not rename the existing `stashhive` Dart package identifier, Hive store keys (`stashhive_*_v1`) or version-1 JSON backup marker (`StashHive`) as part of a visual brand change. Existing local data and older backups must remain readable; changing these identifiers requires an explicit migration and compatibility plan.
+The user-facing product brand is StashHive. Keep the existing `stashhive` Dart package identifier, Hive store keys (`stashhive_*_v1`) and version-1 JSON backup marker (`StashHive`) stable. Older StashTrail backup files remain importable for compatibility. Any future change to package, storage or backup identifiers requires an explicit migration and compatibility plan.
