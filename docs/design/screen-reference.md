@@ -89,7 +89,7 @@ Traceability: FR-010.
 
 Purpose: explain local data ownership and offer portable export/restore without suggesting cloud synchronization.
 
-Visible hierarchy: local-storage status; create backup and last-export state; restore from selected archive; what is included; data-loss warning; no-account/no-cloud-sync privacy statement.
+Visible hierarchy: local-storage status; create backup and a last-prepared timestamp (clearly distinguished from confirmed destination delivery); restore from selected archive; what is included; data-loss warning; no-account/no-cloud-sync privacy statement.
 
 Interactions: export a versioned archive; validate restore before changing live data; conflicts are explicit; invalid backups fail safely.
 
@@ -105,7 +105,7 @@ Purpose: expose real preferences and data-management controls without invented a
 
 Visible hierarchy: appearance; system text sizing; backup/privacy; search help; Help & tips; About; local-first status cue.
 
-Interactions: appearance updates shared tokens; Backup & Privacy opens SCR-006; About reads the actual app version at runtime.
+Interactions: appearance updates shared tokens; Backup & Privacy opens SCR-006; About shows the version label declared in the app; keep this label synchronized with `pubspec.yaml` when the version changes.
 
 Required states: unavailable platform controls are hidden or explained; large text wraps; keyboard focus/semantics work on web; settings match real platform capability.
 
