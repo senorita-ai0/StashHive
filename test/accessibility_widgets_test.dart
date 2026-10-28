@@ -396,6 +396,38 @@ void main() {
     },
   );
 
+  testWidgets(
+    'Backup & privacy shows backup preparation time without claiming destination save',
+    (tester) async {
+      final backupPage = () => MaterialApp(
+            home: app.BackupPrivacyPage(repository: repository),
+          );
+
+      await tester.pumpWidget(backupPage());
+      expect(find.text('Last backup prepared'), findsOneWidget);
+      expect(find.text('Not prepared yet'), findsOneWidget);
+
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      await repository.recordBackupPreparedAt(timestamp);
+      await tester.pumpWidget(backupPage());
+
+      expect(find.text('Last backup prepared'), findsOneWidget);
+      expect(find.text('Not prepared yet'), findsNothing);
+      expect(
+        find.textContaining(
+          'This records when a backup file was generated, not whether the destination saved it.',
+        ),
+        findsOneWidget,
+      );
+      final localDate = DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal();
+      final expectedDate = MaterialLocalizations.of(
+        tester.element(find.text('Last backup prepared')),
+      ).formatMediumDate(localDate);
+      expect(find.textContaining(expectedDate), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('Library and Search avoid layout exceptions at narrow width with large text', (tester) async {
     await tester.binding.setSurfaceSize(const Size(320, 568));
     addTearDown(() => tester.binding.setSurfaceSize(null));
