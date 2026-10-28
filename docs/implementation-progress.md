@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-166 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-167 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -474,3 +474,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Save now also guards against reentry and reports the busy activity as either saving or selecting a file.
 - [x] Added widget regression **TC-166** and traceability task **TSK-459** for a delayed repository save, including a simulated system-back action.
 - [ ] Run TC-166 and review busy-state keyboard/screen-reader behavior at the manual validation checkpoint. No tests, formatter, analyzer or builds were run; CI remains manual-only.
+
+
+## Phase 3 — verify Quick Save unlocks after failed persistence (2026-10-28)
+
+- [x] Added widget regression **TC-167** for an injected late save failure while Quick Save is in its busy state.
+- [x] The regression checks rollback leaves no item, editable URL/note draft values survive, busy controls re-enable, and retry can save the original content.
+- [x] Added traceability task **TSK-460**.
+- [ ] Run TC-167 and test retry/error feedback under browser and Android storage failures at the manual validation checkpoint. No tests, formatter, analyzer or builds were run; CI remains manual-only.
