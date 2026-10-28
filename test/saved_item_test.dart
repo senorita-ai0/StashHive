@@ -318,6 +318,24 @@ void main() {
       expect(makeItem().matchesQuery('flutter'), isTrue);
     });
 
+    test('copyWith snapshots tags into an immutable list', () {
+      final incomingTags = <String>['Reading'];
+      final copied = makeItem().copyWith(tags: incomingTags);
+
+      incomingTags.add('Mutated later');
+      expect(copied.tags, ['Reading']);
+      expect(
+        () => copied.tags.add('Cannot mutate'),
+        throwsUnsupportedError,
+      );
+
+      final mutableOriginalTags = <String>['Original'];
+      final original = makeItem(tags: mutableOriginalTags);
+      final copyWithoutReplacement = original.copyWith();
+      mutableOriginalTags.add('Changed externally');
+      expect(copyWithoutReplacement.tags, ['Original']);
+    });
+
     test('trims padded legacy metadata without changing note content', () {
       final raw = makeItem(attachmentKey: 'sample-key').toMap();
       raw['title'] = '  A saved title  ';
