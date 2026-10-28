@@ -1365,3 +1365,9 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-235 covers invalid created/updated timestamps and a valid parse.
 - **Status:** Source and regression committed; test not run. Validate direct parsing and recovery paths at the manual validation checkpoint. CI remains manual-only.
 
+### TSK-523 — Validate timestamps in direct SavedItem serialization — 2026-10-28
+
+- **Requirements:** FR-002 and NFR-003.
+- **Source:** SavedItem.toMap now rejects created/updated millisecond timestamps outside the supported DateTime range before returning a serialized map. Direct serialization and parsing use the same timestamp bounds and safe error.
+- **Regression:** TC-236 covers invalid created/updated timestamps and an ordinary in-range serialization.
+- **Status:** Source and regression are committed; tests remain unrun. Verify serialization, parsing, backup encode/decode and repository-save validation at the manual checkpoint. CI remains manual-only.
