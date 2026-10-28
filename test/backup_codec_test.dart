@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -5,6 +6,22 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/services/backup_codec.dart';
+
+final class _OversizedGuardedTagList extends ListBase<String> {
+  @override
+  int get length => 101;
+
+  @override
+  set length(int value) => throw UnsupportedError('This list has a fixed size.');
+
+  @override
+  String operator [](int index) =>
+      throw StateError('Oversized tags were copied before validation.');
+
+  @override
+  void operator []=(int index, String value) =>
+      throw UnsupportedError('This list is immutable.');
+}
 
 SavedItem sampleLink() => SavedItem(
       id: 'link-1',
@@ -37,6 +54,24 @@ void main() {
       expect(BackupCodec.utf8ByteLength('😀'), 4);
       expect('😀'.length, 2);
     });
+
+    test(
+      'rejects oversized tag lists before copying caller-owned tags',
+      () {
+        final item = sampleLink().copyWith(tags: _OversizedGuardedTagList());
+
+        expect(
+          () => BackupCodec.validateSavedItem(item),
+          throwsA(
+            isA<FormatException>().having(
+              (error) => error.message,
+              'message',
+              'A saved item exceeds supported limits.',
+            ),
+          ),
+        );
+      },
+    );
 
     test('calculates a safe preflight for base64 decoded-byte budgets', () {
       expect(BackupCodec.maxBase64CharactersForDecodedBytes(0), 0);
