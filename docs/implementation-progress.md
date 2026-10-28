@@ -932,3 +932,9 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added model regression TC-237 for out-of-range created/updated date getters, using the fixed timestamp-range error and retaining valid in-range controls.
 - [x] Added traceability task TSK-524 and connected it to FR-002.
 - [ ] Run TC-237 with TC-235/TC-236, repository save validation and backup encode/decode at the manual checkpoint. No tests, formatting, analysis, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — inclusive timestamp-boundary regression (2026-10-29)
+
+- [x] Added **TC-238** to round-trip SavedItem instances using the exact minimum and maximum supported millisecond timestamps, ensuring the bounds are inclusive rather than accidentally rejecting valid endpoints.
+- [x] Added **TSK-525** to the roadmap.
+- [ ] Run TC-238 with TC-235–TC-237 and repository/backup timestamp tests at the manual validation checkpoint. Per owner direction, no CI, formatter, analyzer, test suite or platform build was started for this source-only increment.
