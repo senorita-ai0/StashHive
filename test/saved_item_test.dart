@@ -9,6 +9,8 @@ SavedItem makeItem({
   List<String> tags = const ['Flutter', 'Reading'],
   String? collection = 'Learning',
   String? attachmentKey,
+  int createdAtMs = 1000,
+  int updatedAtMs = 2000,
 }) {
   return SavedItem(
     id: 'item-1',
@@ -19,8 +21,8 @@ SavedItem makeItem({
     tags: tags,
     collection: collection,
     isFavorite: false,
-    createdAtMs: 1000,
-    updatedAtMs: 2000,
+    createdAtMs: createdAtMs,
+    updatedAtMs: updatedAtMs,
     attachmentKey: attachmentKey,
     attachmentName: attachmentKey == null ? null : 'sample.png',
     attachmentMimeType: attachmentKey == null ? null : 'image/png',
@@ -167,6 +169,37 @@ void main() {
       expect(item.matchesQuery(oversizedQuery), isFalse);
       expect(item.matchesNormalizedQuery(oversizedQuery), isFalse);
       expect(item.matchesQuery('flutter'), isTrue);
+    });
+
+    test('rejects out-of-range timestamps in direct model serialization', () {
+      final invalidCreatedAt = makeItem(
+        createdAtMs: maxSavedItemTimestampMs + 1,
+      );
+      expect(
+        () => invalidCreatedAt.toMap(),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item contains a timestamp outside the supported date range.',
+          ),
+        ),
+      );
+
+      final invalidUpdatedAt = makeItem(
+        updatedAtMs: minSavedItemTimestampMs - 1,
+      );
+      expect(
+        () => invalidUpdatedAt.toMap(),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item contains a timestamp outside the supported date range.',
+          ),
+        ),
+      );
+      expect(makeItem().toMap()['updatedAtMs'], 2000);
     });
 
     test('rejects out-of-range timestamps in direct model parsing', () {
