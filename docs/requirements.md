@@ -1,6 +1,6 @@
 # StashHive — Requirements and Acceptance Criteria
 
-**Status:** Draft for approval. These requirements are proposed, not approved for implementation.  
+**Status:** Approved for source implementation on 21 October 2026; platform feasibility and acceptance verification remain pending.  
 **Priorities:** Must = essential to the proposed MVP; Should = high value if the proof of concept supports it; Could = later; Won't = explicitly excluded from MVP.
 
 ## Product identity and compatibility
