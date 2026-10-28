@@ -1097,3 +1097,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Inject an interruption after restore has staged the imported record, and separately inject a failure while rollback tries to delete that staged item.
 - Confirm the restore reports the original interruption, keeps the surviving item and its attachment bytes consistent, and restores the collection preferences to their pre-restore value.
 - **Status:** Regression source is committed but unrun. The case checks best-effort recovery when storage refuses a rollback deletion; it does not claim that a real browser/device storage interruption has been validated.
+
+### TC-155 — Acknowledge launch-time share before Quick Save review
+
+- Launch StashHive from an Android share intent while the app is closed. Confirm the intent is retrieved and reset before the Quick Save draft waits for user review.
+- Keep the draft open, then stop/restart the app before confirming the save. Confirm the same already-consumed launch intent is not automatically replayed on next launch.
+- Inject a reset/acknowledgement failure in the service regression and confirm the already-read media is still queued rather than silently discarded.
+- **Status:** Service regression source is committed but unrun. The app-stop/restart behavior and real Android intent delivery require manual device verification.
