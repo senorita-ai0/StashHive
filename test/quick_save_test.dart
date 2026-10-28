@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
@@ -99,6 +101,53 @@ Future<void> openNewLink(
   await tester.pumpAndSettle();
 }
 
+Future<void> openNewKind(WidgetTester tester, ItemKind kind) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Builder(
+        builder: (context) => Scaffold(
+          body: Center(
+            child: TextButton(
+              key: const ValueKey('open-new-kind'),
+              onPressed: () {
+                Navigator.of(context).push<void>(
+                  MaterialPageRoute<void>(
+                    builder: (_) => app.QuickSavePage(
+                      repository: repository,
+                      initialKind: kind,
+                    ),
+                  ),
+                );
+              },
+              child: Text('Open ${kind.label} draft'),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.tap(find.byKey(const ValueKey('open-new-kind')));
+  await tester.pumpAndSettle();
+}
+
+final class _DelayedPlatformFile extends PlatformFile {
+  _DelayedPlatformFile(this.name);
+
+  @override
+  final String name;
+
+  var lengthCalls = 0;
+
+  @override
+  Future<int> length() async {
+    lengthCalls++;
+    return 1;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 void main() {
   setUp(() async {
     testDirectory =
@@ -112,6 +161,52 @@ void main() {
     await Hive.close();
     await testDirectory.delete(recursive: true);
   });
+
+  testWidgets(
+    'discards a delayed file selection after the draft type changes',
+    (tester) async {
+      final semantics = tester.ensureSemantics();
+      addTearDown(semantics.dispose);
+      final pickerStarted = Completer<ItemKind>();
+      final pendingPicker = Completer<PlatformFile?>();
+      final delayedFile = _DelayedPlatformFile('stale-image.png');
+      app.quickSaveAttachmentPickerForTesting = (kind) {
+        pickerStarted.complete(kind);
+        return pendingPicker.future;
+      };
+      addTearDown(() {
+        app.quickSaveAttachmentPickerForTesting = null;
+      });
+
+      await openNewKind(tester, ItemKind.image);
+      await tester.tap(find.text('Choose an image'));
+      await tester.pump();
+
+      expect(await pickerStarted.future, ItemKind.image);
+
+      tester.getSemantics(find.bySemanticsLabel('Document'))
+          .performAction(SemanticsAction.tap);
+      await tester.pumpAndSettle();
+
+      pendingPicker.complete(delayedFile);
+      await tester.pumpAndSettle();
+
+      expect(
+        delayedFile.lengthCalls,
+        0,
+        reason: 'A stale picker result must be discarded before file IO.',
+      );
+      expect(find.text('Choose a document'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Save to StashHive'));
+      await tester.tap(find.text('Save to StashHive'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Choose a file before saving.'), findsOneWidget);
+      expect(repository.items.value, isEmpty);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('item-kind options wrap for enlarged text', (tester) async {
     await openNewLink(tester, textScale: 2);
