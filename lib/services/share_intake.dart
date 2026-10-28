@@ -136,6 +136,11 @@ class ShareEventDeduplicator {
   bool _canFingerprint(List<SharedMediaFile> media) {
     if (media.length > maxIncomingShareBatchItems) return false;
 
+    // First pass is length-only: do not trim/normalize a large message just
+    // to decide whether the aggregate batch is safe to fingerprint. Count all
+    // raw text path/message fields conservatively; unused provider metadata
+    // may make a legitimate event bypass de-duplication, but it will still
+    // reach the normal input validation path without unbounded copies.
     var totalCharacters = 0;
     for (final item in media) {
       final pathLength = item.path.length;
@@ -145,20 +150,11 @@ class ShareEventDeduplicator {
 
       switch (item.type) {
         case SharedMediaType.text:
-          // Text intake selects one effective field. Bound its length before
-          // trim/URL parsing so oversized text reaches the normal validator.
-          if (messageLength > maxIncomingTextCharacters) return false;
-          final usesMessage =
-              item.message != null && item.message!.trim().isNotEmpty;
-          if (usesMessage) {
-            charactersForItem = messageLength;
-          } else {
-            if (pathLength > maxIncomingTextCharacters) return false;
-            // Even an unused whitespace-only message was trimmed while
-            // deciding whether the path is the fallback, so count that work
-            // against the aggregate fingerprint budget as well.
-            charactersForItem = pathLength + messageLength;
+          if (messageLength > maxIncomingTextCharacters ||
+              pathLength > maxIncomingTextCharacters) {
+            return false;
           }
+          charactersForItem = messageLength + pathLength;
           break;
         case SharedMediaType.url:
           if (pathLength > maxIncomingUrlCharacters ||
@@ -170,9 +166,8 @@ class ShareEventDeduplicator {
         case SharedMediaType.image:
         case SharedMediaType.file:
         case SharedMediaType.video:
-          // Provider paths/MIME values are metadata, not note content. Avoid
-          // parsing pathological provider fields just to compute a hash.
-          if (pathLength > maxIncomingUrlCharacters || mimeLength > 128) {
+          if (pathLength > maxIncomingProviderPathCharacters ||
+              mimeLength > 128) {
             return false;
           }
           charactersForItem = pathLength + mimeLength;
