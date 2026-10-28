@@ -505,3 +505,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added traceability task **TSK-463** and updated the test plan.
 - [ ] Run TC-171 and exercise backup during concurrent saves/deletes/restores on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
+## Documentation consistency and dependency inventory (2026-10-28)
+
+- [x] Corrected stale StashTrail branding in the current architecture, security/privacy, risk, performance, AI workflow, blueprint and assumptions documents while preserving explicit legacy-backup compatibility wording.
+- [x] Aligned the requirements document's approval status with the approved blueprint and the still-pending platform verification state.
+- [x] Added `docs/dependency-register.md` with the direct `pubspec.yaml` constraints, current Pub.dev license metadata, purpose and compatibility notes; linked it from the README and traceability matrix (**TSK-464**).
+- [ ] Complete the transitive license/security review after resolving and committing a dependency lockfile at the manual validation checkpoint. No package upgrades, tests, formatting, analysis or builds were run.
+
