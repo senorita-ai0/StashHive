@@ -1473,3 +1473,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the first read and confirm both earlier callers receive the original bytes while the later caller receives the replacement bytes; confirm only two storage reads were started.
 - **Status:** Repository regression source is committed but unrun. Verify shared-key thumbnails and Item Details preview behavior with slow web/Android storage at the manual validation checkpoint.
 
+### TC-207 — Retry an attachment read after a transient failure
+
+- Save an image with known attachment bytes and inject one unexpected failure before the first repository read.
+- Confirm the first read reports the injected failure to its caller and the repository's pending-read registry is released.
+- Request the same attachment again and confirm the fresh read returns the stored bytes and the read hook is called twice total.
+- **Status:** Repository regression source is committed but unrun. Verify storage read errors do not leave previews or queued readers stuck on web/Android at the manual validation checkpoint.
+
