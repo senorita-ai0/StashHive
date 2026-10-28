@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 import xml.etree.ElementTree as ET
+from unittest.mock import patch
 from pathlib import Path
 
 from tool.configure_android_share_intents import (
@@ -113,6 +114,23 @@ class ConfigureAndroidShareIntentsTests(unittest.TestCase):
             configure_manifest(self.path)
 
         self.assertEqual(self.path.read_text(encoding="utf-8"), malformed_manifest)
+
+    def test_failed_atomic_replace_preserves_manifest_and_cleans_temp_file(self):
+        original_manifest = self.path.read_text(encoding="utf-8")
+
+        with patch(
+            "tool.configure_android_share_intents.os.replace",
+            side_effect=OSError("simulated replacement failure"),
+        ):
+            with self.assertRaisesRegex(OSError, "simulated replacement failure"):
+                configure_manifest(self.path)
+
+        self.assertEqual(self.path.read_text(encoding="utf-8"), original_manifest)
+        self.assertEqual(
+            list(self.path.parent.glob(".AndroidManifest.xml.*.tmp")),
+            [],
+            "A failed replacement must not leave a temporary manifest behind.",
+        )
 
 
 if __name__ == "__main__":
