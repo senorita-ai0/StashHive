@@ -863,3 +863,9 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Extended **TSK-514** coverage and added TC-227 to FR-012/FR-013 traceability.
 - [ ] Run TC-226/TC-227 and verify Android/web picker and share-sheet state transitions at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
+## Phase 3 — shorten backup export string lifetime (2026-10-28)
+
+- [x] Backup & privacy now clears the local reference to the generated JSON string immediately after UTF-8 encoding, before awaiting the platform share sheet. The byte payload remains intact for sharing.
+- [x] Added manual regression/check **TC-228** and traceability task **TSK-515** for backup UTF-8 integrity and peak-memory review during a long share-sheet wait.
+- [ ] Inspect a representative large backup's peak memory and verify the exported payload on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
