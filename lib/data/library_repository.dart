@@ -1152,11 +1152,8 @@ class LibraryRepository {
       BackupCodec.validateDecodedBackup(decoded);
       final backup = DecodedBackup(
         items: List<SavedItem>.unmodifiable(
-          decoded.items.map(
-            (item) => item.copyWith(
-              tags: List<String>.unmodifiable(item.tags),
-            ),
-          ),
+          // SavedItem owns the immutable tag snapshot; avoid copying twice.
+          decoded.items.map((item) => item.copyWith()),
         ),
         attachments: Map<String, BackupAttachment>.unmodifiable({
           for (final entry in decoded.attachments.entries)
