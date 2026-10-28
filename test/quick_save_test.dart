@@ -297,6 +297,69 @@ void main() {
     },
   );
 
+  testWidgets(
+    'prevents Quick Save navigation while the attachment picker is pending',
+    (tester) async {
+      final pickerStarted = Completer<void>();
+      final pendingPicker = Completer<PlatformFile?>();
+      app.quickSaveAttachmentPickerForTesting = (_) {
+        pickerStarted.complete();
+        return pendingPicker.future;
+      };
+      addTearDown(() {
+        app.quickSaveAttachmentPickerForTesting = null;
+        if (!pendingPicker.isCompleted) pendingPicker.complete(null);
+      });
+
+      await openNewKind(tester, ItemKind.image);
+      await tester.ensureVisible(find.text('Choose an image'));
+      await tester.tap(find.text('Choose an image'));
+      await tester.pump();
+      await pickerStarted.future;
+      await tester.pump();
+
+      expect(find.text('Selecting file…'), findsOneWidget);
+      final backButton = tester.widget<IconButton>(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byType(IconButton),
+        ).first,
+      );
+      expect(backButton.onPressed, isNull);
+      expect(
+        tester.widget<TextButton>(find.widgetWithText(TextButton, 'Cancel'))
+            .onPressed,
+        isNull,
+      );
+
+      await tester.binding.handlePopRoute();
+      await tester.pump();
+      expect(
+        find.text('Selecting file…'),
+        findsOneWidget,
+        reason: 'System back must not discard a draft while its picker request is pending.',
+      );
+      expect(repository.items.value, isEmpty);
+
+      pendingPicker.complete(null);
+      await tester.pumpAndSettle();
+      expect(find.text('Choose an image'), findsOneWidget);
+
+      final backButtonAfterCancel = tester.widget<IconButton>(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byType(IconButton),
+        ).first,
+      );
+      expect(backButtonAfterCancel.onPressed, isNotNull);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('Open Image draft'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('locks Quick Save controls while an item is being saved', (tester) async {
     final semantics = tester.ensureSemantics();
     addTearDown(semantics.dispose);
