@@ -32,7 +32,7 @@
 | NFR-007 | Search/list | TSK-003, TSK-305, TSK-412 | TC-116 / Performance baseline | IN PROGRESS — non-gating harness added; measurements pending |
 | NFR-008 | Attachments / OCR | TSK-005, TSK-305 | Package-size benchmark | NOT STARTED |
 | NFR-009 | Architecture | TSK-002, TSK-101 | Static checks/build | NOT STARTED |
-| NFR-010 | Dependency register | TSK-003, TSK-403 | License review | NOT STARTED |
+| NFR-010 | Dependency register | TSK-003, TSK-403, TSK-464 | License/dependency review | IN PROGRESS — direct constraints and package license metadata recorded; transitive audit and lockfile resolution remain pending |
 
 ## Screen IDs
 
