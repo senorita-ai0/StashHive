@@ -5,7 +5,7 @@
 | Requirement | Design / screen | Planned task | Test | Implementation status |
 |---|---|---|---|---|
 | FR-001 | SCR-001, SCR-004 | TSK-102, TSK-105, TSK-520 | TC-001, TC-233 | IN PROGRESS — supported saved-item types are implemented; direct model serialization dimensions are bounded, build/test pending |
-| FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104, TSK-473, TSK-478, TSK-490, TSK-496, TSK-499, TSK-501, TSK-503, TSK-522, TSK-523 | TC-002, TC-183, TC-188, TC-201, TC-208, TC-211, TC-213, TC-215, TC-235, TC-236 | IN PROGRESS — URL/tag input bounds, pre-queue input snapshots, published item lookup, read-only state access and consistent timestamp parsing/serialization bounds are source-covered; build/test pending |
+| FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104, TSK-473, TSK-478, TSK-490, TSK-496, TSK-499, TSK-501, TSK-503, TSK-522, TSK-523, TSK-524 | TC-002, TC-183, TC-188, TC-201, TC-208, TC-211, TC-213, TC-215, TC-235, TC-236, TC-237 | IN PROGRESS — URL/tag input bounds, pre-queue input snapshots, published item lookup, read-only state access and consistent timestamp parsing/serialization/access bounds are source-covered; build/test pending |
 | FR-003 | SCR-004 | TSK-102, TSK-105, TSK-424, TSK-497 | TC-003, TC-132, TC-209 | IN PROGRESS — delete failure feedback and stable published lookup during delete rollback are source-covered; rollback/platform validation pending |
 | FR-004 | SCR-001, SCR-003, SCR-004 | TSK-103, TSK-201, TSK-416, TSK-444 | TC-004, TC-121, TC-152 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
 | FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427, TSK-479, TSK-510, TSK-521 | TC-005, TC-118, TC-135, TC-189, TC-222, TC-234 | IN PROGRESS — search normalizes once and bounds both oversized query input and stored searchable field dimensions; Unicode metadata search remains source-covered, execution/platform review pending |
@@ -1600,3 +1600,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `SavedItem.toMap()` now rejects created/updated millisecond timestamps outside the shared supported DateTime range before returning a serialized map. It uses the same fixed error message as direct model parsing.
 - **Regression:** TC-236 directly serializes invalid created/updated timestamps and confirms in-range values remain serializable.
 - **Verification:** Model regression source is committed but unrun. Validate direct serialization, parsing, backup encode/decode and repository save together at the manual checkpoint.
+
+### TSK-524 — Guard direct SavedItem date getters
+
+- **Requirements:** FR-002 and NFR-003; invalid dates should fail consistently at public model boundaries rather than surfacing implementation-specific date-construction errors.
+- **Implementation:** `SavedItem.createdAt` and `updatedAt` now route through a shared timestamp-range guard before constructing a local `DateTime`, using the same fixed `FormatException` as model parsing and serialization.
+- **Regression:** TC-237 accesses the date getters on directly constructed models whose created/updated timestamps exceed the supported bounds, and retains an in-range control.
+- **Verification:** Regression source is committed but unrun. Validate the model and repository timestamp paths together at the manual checkpoint.
