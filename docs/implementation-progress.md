@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173–TC-174 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173–TC-176 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -530,4 +530,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Duplicate-share MIME inference now treats `file://` URI-to-path conversion as best-effort and uses the bounded raw provider path if conversion throws on the current platform.
 - [x] Added source regression **TC-174** for a file URI with a non-local authority and traced it to **TSK-467**.
 - [ ] Run TC-174 and verify provider-specific URI handling against real Android file-source apps. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — preserve the newest preference choice after stale failures (2026-10-28)
+
+- [x] Added request revisions for dark-mode and text-size preference callbacks; only the latest request is allowed to roll the visible setting back after a persistence error.
+- [x] Added widget regressions **TC-175** (rapid dark-mode choices) and **TC-176** (text-size choice while an older write fails), traced as **TSK-468**.
+- [ ] Run TC-175/TC-176 and verify theme/text-scale state under slow or failing persistence on web and Android. No tests, formatter, analyzer or builds were run; CI remains manual-only.
 
