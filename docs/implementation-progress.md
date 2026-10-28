@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-221 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-222 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -823,4 +823,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] `SavedItem.fromMap` now bounds raw string fields and tag count/lengths before trimming or copying values. This makes the public model factory follow the same limits used by backup decode and local-record recovery, without removing in-limit legacy tag normalization.
 - [x] Added regression source **TC-221** for oversized raw titles and tags passed directly to model parsing; added traceability task **TSK-509**.
 - [ ] Run TC-221 with model round-trip, legacy tag normalization and malformed backup/recovery cases at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — bound direct URL and search helper input (2026-10-28)
+
+- [x] `parseUserWebUrl` and `parseHttpUrl` reject URL strings over the 4,096-character portable limit before trimming or parsing.
+- [x] `SavedItem.matchesQuery` rejects search queries over its existing 4,096-character limit before trimming or lowercasing; normal case-insensitive search remains unchanged.
+- [x] Added regression source **TC-222** and traceability task **TSK-510** for direct helper calls outside the form UI.
+- [ ] Run TC-222 with URL validation and search regressions at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
