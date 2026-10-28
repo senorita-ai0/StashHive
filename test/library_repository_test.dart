@@ -991,6 +991,46 @@ void main() {
     );
   });
 
+  test('rolls back collection rename after preferences write then error', () async {
+    await repository.addCollection('Learning');
+    final first = buildLink(id: 'late-rename-1', collection: 'Learning');
+    final second = buildLink(id: 'late-rename-2', collection: 'Learning');
+    await repository.save(first);
+    await repository.save(second);
+
+    LibraryRepository.collectionAfterPreferencesWriteForTesting = () async {
+      throw StateError('simulated post-commit preference failure');
+    };
+    try {
+      await expectLater(
+        repository.renameCollection('Learning', 'Reading'),
+        throwsA(
+          isA<StateError>().having(
+            (error) => error.message,
+            'message',
+            'simulated post-commit preference failure',
+          ),
+        ),
+      );
+    } finally {
+      LibraryRepository.collectionAfterPreferencesWriteForTesting = null;
+    }
+
+    expect(repository.collections.value, ['Learning']);
+    expect(repository.items.value, hasLength(2));
+    expect(
+      repository.items.value.map((item) => item.collection),
+      everyElement('Learning'),
+    );
+    final storedItems = Hive.box<dynamic>('stashhive_items_v1');
+    expect(storedItems.get(first.id)['collection'], 'Learning');
+    expect(storedItems.get(second.id)['collection'], 'Learning');
+    expect(
+      Hive.box<dynamic>('stashhive_preferences_v1').get('collections'),
+      ['Learning'],
+    );
+  });
+
   test('deleting an unreadable legacy item reclaims its unreferenced attachment', () async {
     const itemId = 'unreadable-image-record';
     const attachmentKey = 'unreadable-orphan-payload';
