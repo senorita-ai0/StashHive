@@ -9,7 +9,7 @@ Changes worth noting are recorded here. StashHive is in source development and p
 - Serialized backup export with repository mutations and added source regression coverage for keeping exported item metadata and attachment bytes consistent during an attachment replacement.
 - Guarded incoming share processing against HomeShell disposal and released active/queued batch completion futures during teardown; capped waiting share batches and kept file-URI fingerprinting resilient to conversion errors.
 - Added Quick Save attachment-picker progress/accessibility and retry regressions, bounded share intake and its waiting queue, guarded unusual file-URI fingerprinting, serialized backup exports with mutations and added a local last-backup-prepared status that does not claim destination delivery and is updated inside the serialized export operation, without letting status-write failure block a valid backup, protected the newest preference choice from stale failures and reset the visible text-size dropdown after a rollback, aligned design references with the StashHive name, and documented direct dependencies/licenses plus remaining transitive audit work.
-- Regression source through TC-226 is committed but unrun; TC-172 remains a manual Android lifecycle scenario. No formatter, analyzer, tests, web build or Android build were run for this update. GitHub Actions remains manual-only.
+- Regression source through TC-227 is committed but unrun; TC-172 remains a manual Android lifecycle scenario. No formatter, analyzer, tests, web build or Android build were run for this update. GitHub Actions remains manual-only.
 
 ## Initial blueprint package — 2026-10-21
 
