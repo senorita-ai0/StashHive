@@ -1104,3 +1104,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Keep the draft open, then stop/restart the app before confirming the save. Confirm the same already-consumed launch intent is not automatically replayed on next launch.
 - Inject a reset/acknowledgement failure in the service regression and confirm the already-read media is still queued rather than silently discarded.
 - **Status:** Service regression source is committed but unrun. The app-stop/restart behavior and real Android intent delivery require manual device verification.
+
+### TC-156 — Quick Save preserves note text across item-type changes
+
+- Open Quick Save and select **Note**. Enter text in the note field, switch to **Link**, then switch back to **Note**.
+- Confirm the previously entered text remains in the shared content field and no item was saved as a side effect of changing type.
+- Repeat from a file or image draft where optional notes are entered; changing type may clear the type-specific attachment selection, but should not silently erase shared content.
+- **Status:** Widget regression source is committed but unrun. Verify the interaction with keyboard, screen reader, and enlarged text during the manual checkpoint.
