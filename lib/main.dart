@@ -434,7 +434,9 @@ class _HomeShellState extends State<HomeShell> {
   }
 
   Future<void> _enqueueShareBatch(List<SharedMediaFile> media) async {
-    if (media.isEmpty) return;
+    // Stream cancellation is asynchronous; an event already in flight may
+    // arrive after dispose. Do not enqueue a future that no queue can drain.
+    if (!mounted || media.isEmpty) return;
     final boundedBatch = boundIncomingShareBatch(media);
     if (boundedBatch.media.isEmpty ||
         !_shareDeduplicator.shouldAccept(boundedBatch.media)) {
