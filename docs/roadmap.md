@@ -1141,3 +1141,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-201 pauses save before the record write, mutates the caller's list and checks both the visible item and raw stored record retain the original tags.
 - **Status:** Source and regression committed but unrun. Verify together with attachment-byte snapshot and rollback cases at the manual checkpoint.
 
+### TSK-491 — Prevent attachment reads from observing an in-flight replacement — 2026-10-28
+
+- **Requirements:** FR-008 and NFR-003.
+- **Source:** Attachment reads share the repository operation queue with writes and backup snapshots. They wait until attachment replacement/deletion/restore operations either commit or finish rollback, preventing the UI from observing an inconsistent item/payload pair.
+- **Regression:** TC-202 checks a pending successful replacement; TC-203 checks a failed replacement that must roll back the original bytes before a waiting reader continues.
+- **Status:** Source and regression documentation committed but unrun. Validate slow-storage preview/share flows and failure rollback on web/Android at the manual checkpoint; CI remains manual-only.
+
