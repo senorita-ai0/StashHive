@@ -1133,3 +1133,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the second mutation waits instead of deriving its write from stale in-memory state, then confirm both names exist in the visible list and the stored preference value.
 - The same repository mutation queue covers item save/delete, collection add/rename/delete, and backup restore, preventing these structural writes from interleaving.
 - **Status:** Regression source is committed but unrun. Real browser/Android persistence and rollback-write failure behavior remain pending the manual validation checkpoint.
+
+### TC-160 — Mutation queue is released after a failed collection creation
+
+- Pause the first collection creation immediately after its preference write, then queue a second collection creation.
+- Let the first operation throw after the write so it exercises its rollback path.
+- Confirm the second request did not start before the first failure was handled, then confirm it completes successfully and only the second collection remains in visible state and persisted preferences.
+- **Status:** Regression source is committed but unrun. Confirm failure recovery against browser/Android persistence during the manual validation checkpoint.
