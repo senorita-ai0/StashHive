@@ -1716,3 +1716,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - While the save is paused, confirm findById() and the public items listenable both expose the prior title, not a staged record.
 - Release the write and confirm both lookup surfaces update to the new title together.
 - **Status:** Regression source is committed but unrun. Execute at the manual validation checkpoint; no CI or build was triggered.
+
+
+### TC-241 — Snapshot tags at SavedItem construction
+
+- Construct a SavedItem using a caller-owned mutable tag list, mutate that list after construction, and confirm the item retains only the original tags.
+- Confirm direct mutation through the item's tags list throws UnsupportedError.
+- **Status:** Regression source is committed but unrun. Run with TC-239 and the model/repository/backup regression suites at the manual checkpoint; CI remains manual-only.
