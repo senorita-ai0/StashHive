@@ -571,10 +571,15 @@ class LibraryRepository {
     return false;
   }
 
-  Future<void> toggleFavorite(String id) async {
+  Future<void> toggleFavorite(String id) =>
+      _serializeMutation(() => _toggleFavorite(id));
+
+  Future<void> _toggleFavorite(String id) async {
+    // Read the current item only after this operation reaches the queue head.
+    // Otherwise two rapid toggles can both calculate from the same old value.
     final item = findById(id);
     if (item == null) return;
-    await save(item.copyWith(
+    await _save(item.copyWith(
       isFavorite: !item.isFavorite,
       updatedAtMs: DateTime.now().toUtc().millisecondsSinceEpoch,
     ));
