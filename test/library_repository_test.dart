@@ -1840,6 +1840,61 @@ void main() {
     },
   );
 
+  test(
+    'findById keeps the published item visible while delete rollback is pending',
+    () async {
+      final originalBytes = Uint8List.fromList([8, 6, 7, 5]);
+      final image = buildImage(id: 'published-lookup-delete-rollback');
+      await repository.save(image, attachmentBytes: originalBytes);
+
+      final deleteEntered = Completer<void>();
+      final releaseDeleteFailure = Completer<void>();
+      LibraryRepository.deleteAfterAttachmentDeleteForTesting = () async {
+        deleteEntered.complete();
+        await releaseDeleteFailure.future;
+        throw StateError('simulated delayed delete failure');
+      };
+      final pendingDelete = repository.delete(image.id);
+
+      try {
+        await deleteEntered.future;
+        expect(
+          Hive.box<dynamic>('stashhive_items_v1').containsKey(image.id),
+          isFalse,
+          reason: 'The raw record is staged as deleted before rollback is released.',
+        );
+        expect(
+          repository.items.value.single.id,
+          image.id,
+          reason: 'The public list remains on the last published snapshot.',
+        );
+        expect(
+          repository.findById(image.id)?.id,
+          image.id,
+          reason: 'Synchronous lookup must not expose a staged deletion.',
+        );
+      } finally {
+        if (!releaseDeleteFailure.isCompleted) {
+          releaseDeleteFailure.complete();
+        }
+        try {
+          await expectLater(
+            pendingDelete,
+            throwsA(isA<StateError>()),
+          );
+        } finally {
+          LibraryRepository.deleteAfterAttachmentDeleteForTesting = null;
+        }
+      }
+
+      expect(repository.findById(image.id)?.title, image.title);
+      expect(
+        await repository.readAttachment(image.attachmentKey!),
+        orderedEquals(originalBytes),
+      );
+    },
+  );
+
   test('rolls back a partially written collection rename', () async {
     await repository.addCollection('Learning');
     await repository.save(buildLink(id: 'learning-1', collection: 'Learning'));
