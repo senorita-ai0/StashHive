@@ -3814,9 +3814,13 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
       // Repository export records the preparation time while it still owns
       // the serialized snapshot operation, preventing the timestamp from
       // being newer than a queued mutation that was absent from this backup.
-      final json = await widget.repository.createBackup();
+      var json = await widget.repository.createBackup();
       final name = 'stashhive-backup-' + DateTime.now().toUtc().toIso8601String().substring(0, 10) + '.json';
+      // UTF-8 bytes are the payload handed to the share sheet. Drop the
+      // potentially large JSON string reference before awaiting a platform UI
+      // that may remain open while the user chooses a destination.
       final bytes = utf8.encode(json);
+      json = '';
       final result = await SharePlus.instance.share(
         ShareParams(
           title: 'StashHive backup',
