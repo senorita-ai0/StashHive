@@ -58,6 +58,7 @@ class BackupCodec {
   static const int maxAttachmentBytes = 15 * 1024 * 1024;
   static const int maxTotalAttachmentBytes = 100 * 1024 * 1024;
   static const int maxBackupBytes = 145 * 1024 * 1024;
+  static const int maxExportedAtCharacters = 64;
   // Retained as the character guard for decoding in-memory JSON; the UTF-8
   // byte limit is the portable file-size boundary enforced on every path.
   static const int maxJsonCharacters = maxBackupBytes;
@@ -117,6 +118,9 @@ class BackupCodec {
   /// so callers must not be able to bypass JSON decoder limits by constructing
   /// an instance directly or modifying one after decode.
   static void validateDecodedBackup(DecodedBackup backup) {
+    if (backup.exportedAt.length > maxExportedAtCharacters) {
+      throw const FormatException('The backup export timestamp is too long.');
+    }
     if (backup.items.length > maxItems) {
       throw const FormatException('The backup contains too many items.');
     }
@@ -643,7 +647,13 @@ class BackupCodec {
       items: List<SavedItem>.unmodifiable(safeRestoredItems),
       attachments: Map<String, BackupAttachment>.unmodifiable(attachments),
       collections: safeRestoredCollections,
-      exportedAt: decoded['exportedAt'] is String ? decoded['exportedAt'] as String : '',
+      // Export time is informational only. Keep compatibility with backups
+      // whose field is missing or malformed, but never retain an arbitrarily
+      // large provider-controlled string in the decoded object.
+      exportedAt: decoded['exportedAt'] is String &&
+              (decoded['exportedAt'] as String).length <= maxExportedAtCharacters
+          ? decoded['exportedAt'] as String
+          : '',
       omittedUnreadableRecordCount:
           omittedRecordValue is int ? omittedRecordValue : 0,
       omittedCollectionEntryCount:
