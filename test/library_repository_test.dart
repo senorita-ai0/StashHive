@@ -990,7 +990,7 @@ void main() {
     expect(decoded.items, hasLength(1));
     expect(decoded.items.single.title, 'Updated attachment metadata');
     expect(
-      decoded.attachments[original.attachmentKey]!.bytes,
+      decoded.attachments[original.attachmentKey!]!.bytes,
       orderedEquals(replacementBytes),
       reason: 'Backup metadata and bytes must reflect the same committed edit.',
     );
