@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -131,10 +132,7 @@ Future<void> openNewKind(WidgetTester tester, ItemKind kind) async {
 }
 
 final class _DelayedPlatformFile extends PlatformFile {
-  _DelayedPlatformFile(this.name);
-
-  @override
-  final String name;
+  _DelayedPlatformFile(String name) : super(name: name, size: 1);
 
   var lengthCalls = 0;
 
@@ -143,9 +141,6 @@ final class _DelayedPlatformFile extends PlatformFile {
     lengthCalls++;
     return 1;
   }
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 void main() {
