@@ -1064,3 +1064,9 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-189 checks oversized initial query handling; a SavedItem unit case covers normalized-query matching.
 - **Status:** Source/tests authored and committed, unrun. Capture performance measurements at 100, 1,000 and 10,000 items and review Unicode/search accessibility on browser and Android at the manual validation checkpoint.
 
+### TSK-480 — Recover from backup picker metadata errors — 2026-10-28
+
+- **Requirements:** FR-013 and NFR-003/NFR-006.
+- **Source:** Backup restore's file-size lookup is covered with a failure injection seam; the UI should recover to an idle, retryable state without displaying raw provider paths/details, and a later valid backup should remain importable.
+- **Regression:** TC-190 fails the first length lookup, checks no records changed and private details are hidden, then retries with a valid backup and verifies the merge.
+- **Status:** Source/test committed but unrun. Verify native/browser file-picker error behavior at the manual validation checkpoint. CI remains manual-only.
