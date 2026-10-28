@@ -23,6 +23,22 @@ final class _OversizedGuardedTagList extends ListBase<String> {
       throw UnsupportedError('This list is immutable.');
 }
 
+final class _OversizedGuardedCollectionList extends ListBase<String> {
+  @override
+  int get length => BackupCodec.maxCollections + 1;
+
+  @override
+  set length(int value) => throw UnsupportedError('This list has a fixed size.');
+
+  @override
+  String operator [](int index) =>
+      throw StateError('Oversized collections were read before validation.');
+
+  @override
+  void operator []=(int index, String value) =>
+      throw UnsupportedError('This list is immutable.');
+}
+
 SavedItem sampleLink() => SavedItem(
       id: 'link-1',
       kind: ItemKind.link,
@@ -87,6 +103,26 @@ void main() {
             ),
           ),
           tagLimitError(),
+        );
+      },
+    );
+
+    test(
+      'rejects oversized collection lists before traversing caller data',
+      () {
+        expect(
+          () => BackupCodec.encode(
+            items: [sampleLink()],
+            attachmentBytes: const <String, Uint8List>{},
+            collections: _OversizedGuardedCollectionList(),
+          ),
+          throwsA(
+            isA<FormatException>().having(
+              (error) => error.message,
+              'message',
+              'The backup contains too many collections.',
+            ),
+          ),
         );
       },
     );
