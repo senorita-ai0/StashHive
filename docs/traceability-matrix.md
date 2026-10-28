@@ -13,9 +13,9 @@
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417 | TC-008, TC-122 | IN PROGRESS — repository-owned byte snapshot source/test added; platform validation pending |
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; handles effective text, disposal and unusual file URIs; Android build/device test pending |
-| FR-010 | SCR-005 | TSK-203, TSK-423 | TC-010, TC-131 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending |
+| FR-010 | SCR-005 | TSK-203, TSK-423, TSK-475 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
-| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471, TSK-472, TSK-473 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181, TC-182, TC-183 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status and rollback-safe export concurrency added; execution and platform export pending |
+| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471, TSK-472, TSK-473, TSK-475 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181, TC-182, TC-183, TC-184 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status and rollback-safe export concurrency added; execution and platform export pending |
 | FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415, TSK-472 | TC-013, TC-117, TC-119, TC-120, TC-182 | IN PROGRESS — codec/source added; restore tests pending; backup waits for restore rollback |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | IN PROGRESS — local-first flows are implemented in source; offline/restart tests pending |
 | FR-015 | SCR-006, SCR-001, SCR-004 | TSK-003, TSK-303, TSK-422, TSK-425 | TC-015, TC-130, TC-133 | IN PROGRESS — storage reminders and platform-specific attachment copy added; browser restart/platform review pending |
@@ -1250,4 +1250,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `LibraryRepository.createBackup()` shares the mutation queue with save and rollback. A queued export waits for the save to either commit or restore the prior metadata and attachment payload.
 - **Regression:** TC-183 pauses an attachment replacement after item write, requests a backup, then injects a late save failure and verifies the export contains the original title and exact original bytes.
 - **Verification:** Repository regression source is committed but unrun. Verify concurrent backup/failed-save behavior on web and Android at the manual checkpoint.
+
+### TSK-475 — Keep backup snapshots aligned with collection renames
+
+- **Requirements:** FR-010, FR-012 and NFR-003; the exported collection list and each saved item's collection assignment must reflect the same committed repository state.
+- **Implementation:** Backup generation runs behind the shared mutation queue. A backup requested during collection rename waits until item records, collection preferences, and visible notifiers agree.
+- **Regression:** TC-184 pauses rename after underlying writes but before notifier refresh, queues backup creation, and verifies the result contains the new collection and matching saved-item assignment.
+- **Verification:** Regression source is committed but unrun. Verify backup/export behavior during collection updates on browser and Android at the manual checkpoint.
 
