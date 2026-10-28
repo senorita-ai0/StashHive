@@ -1418,3 +1418,19 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm a completed share action tells the user to verify the destination rather than promising the file was saved; a dismissed sheet advises retrying when the file was not saved; an unavailable result states that the destination outcome is unknown and recommends checking Downloads/selected destination.
 - Confirm uncertain outcomes never display the older generic message that implies a destination should still be chosen after the share sheet has already closed.
 - **Status:** Message-mapping regression source is committed but unrun. Platform-specific share-sheet behavior and delivery remain unverified until the manual validation checkpoint.
+
+### TC-200 — Restore an owned snapshot of mutable decoded input
+
+- Construct a valid decoded backup using caller-owned mutable item/collection lists, a mutable item tag list, a mutable attachment map, and a mutable attachment byte buffer.
+- Pause restore after it has validated and copied those inputs but before its first persistent write.
+- Mutate/clear the original caller-owned structures and replace the original attachment bytes while restore is paused.
+- Release restore and confirm it imports the original validated item metadata, tags, collection assignment and exact attachment bytes; mutations made to the source objects must not alter the in-flight restore.
+- **Status:** Repository regression source is committed but unrun. Verify restore snapshot memory behavior and web/Android persistence at the manual validation checkpoint.
+
+### TC-201 — Snapshot caller-owned item tags before save writes
+
+- Create a saved item with a mutable caller-owned tags list and pause repository save immediately before the item record write.
+- Mutate and extend the original tag list while save is waiting.
+- Release save and confirm the repository notifier and raw stored item record both contain the tag values validated at save start, not the later caller mutations.
+- **Status:** Repository regression source is committed but unrun. Verify metadata persistence and failure rollback at the manual validation checkpoint.
+
