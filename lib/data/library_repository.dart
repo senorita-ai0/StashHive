@@ -29,8 +29,22 @@ class LibraryRepository {
   // state. Mutations, backup snapshots and attachment reads share this queue
   // so callers cannot observe half-committed item/attachment relationships.
   Future<void> _mutationTail = Future<void>.value();
+  int _operationSequence = 0;
+  final Map<String, ({int sequence, Future<Uint8List?> future})>
+      _pendingAttachmentReads = {};
 
   Future<T> _serializeOperation<T>(Future<T> Function() operation) {
+    final sequence = ++_operationSequence;
+    return _serializeOperationAtSequence(operation, sequence);
+  }
+
+  Future<T> _serializeOperationAtSequence<T>(
+    Future<T> Function() operation,
+    int sequence,
+  ) {
+    // The sequence is allocated when a caller queues its operation, not when
+    // it starts running. Attachment-read coalescing uses it to avoid joining a
+    // read that would cross a save/delete/restore queued in the meantime.
     final previous = _mutationTail;
     final release = Completer<void>();
     _mutationTail = release.future;
@@ -658,14 +672,34 @@ class LibraryRepository {
     ));
   }
 
-  Future<Uint8List?> readAttachment(String key) =>
-      _serializeOperation(() async {
+  Future<Uint8List?> readAttachment(String key) {
+    final existing = _pendingAttachmentReads[key];
+    // Reuse an in-flight read only when no other repository operation has been
+    // queued since it. If a write is queued between reads, the later request
+    // must run after that write and observe the newly committed bytes.
+    if (existing != null && existing.sequence == _operationSequence) {
+      return existing.future;
+    }
+
+    final sequence = ++_operationSequence;
+    late final Future<Uint8List?> future;
+    future = _serializeOperationAtSequence(() async {
+      try {
         final beforeRead = readAttachmentBeforeReadForTesting;
         if (beforeRead != null) await beforeRead(key);
         final value = _attachmentsBox.get(key);
         if (!isValidAttachmentByteList(value)) return null;
         return Uint8List.fromList((value as List).cast<int>());
-      });
+      } finally {
+        final active = _pendingAttachmentReads[key];
+        if (active != null && identical(active.future, future)) {
+          _pendingAttachmentReads.remove(key);
+        }
+      }
+    }, sequence);
+    _pendingAttachmentReads[key] = (sequence: sequence, future: future);
+    return future;
+  }
 
   Future<void> setDarkMode(bool value) =>
       _serializeOperation(() => _setDarkMode(value));
