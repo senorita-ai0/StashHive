@@ -328,6 +328,72 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets(
+    'unlocks Quick Save and preserves the draft after a delayed save failure',
+    (tester) async {
+      await openNewLink(tester);
+      const url = 'https://example.com/retry-safe-draft';
+      const note = 'Keep this content available for retry.';
+      await tester.enterText(find.byType(TextFormField).at(0), url);
+      await tester.enterText(find.byType(TextFormField).at(2), note);
+
+      final writeEntered = Completer<void>();
+      final releaseFailure = Completer<void>();
+      LibraryRepository.saveAfterItemCommitForTesting = () async {
+        writeEntered.complete();
+        await releaseFailure.future;
+        LibraryRepository.saveAfterItemCommitForTesting = null;
+        throw StateError('simulated delayed save failure');
+      };
+
+      try {
+        await tester.ensureVisible(find.text('Save to StashHive'));
+        await tester.tap(find.text('Save to StashHive'));
+        await tester.pump();
+        await writeEntered.future;
+        await tester.pump();
+
+        expect(find.text('Saving…'), findsOneWidget);
+        expect(
+          tester.widgetList<TextFormField>(find.byType(TextFormField))
+              .every((field) => field.enabled == false),
+          isTrue,
+        );
+        expect(repository.items.value, isEmpty);
+      } finally {
+        if (!releaseFailure.isCompleted) releaseFailure.complete();
+      }
+
+      await tester.pumpAndSettle();
+      expect(repository.items.value, isEmpty);
+      expect(
+        tester.widgetList<TextFormField>(find.byType(TextFormField))
+            .every((field) => field.enabled == true),
+        isTrue,
+      );
+      expect(
+        tester.widget<TextFormField>(find.byType(TextFormField).at(0))
+            .controller!.text,
+        url,
+      );
+      expect(
+        tester.widget<TextFormField>(find.byType(TextFormField).at(2))
+            .controller!.text,
+        note,
+      );
+      expect(find.text('Save to StashHive'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Save to StashHive'));
+      await tester.tap(find.text('Save to StashHive'));
+      await tester.pumpAndSettle();
+
+      expect(repository.items.value, hasLength(1));
+      expect(repository.items.value.single.url, url);
+      expect(repository.items.value.single.content, note);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('item-kind options wrap for enlarged text', (tester) async {
     await openNewLink(tester, textScale: 2);
     final linkChoice = find.bySemanticsLabel('Link');
