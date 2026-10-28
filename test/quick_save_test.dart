@@ -150,6 +150,23 @@ final class _DelayedPlatformFile extends PlatformFile {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+final class _FailingLengthPlatformFile extends PlatformFile {
+  _FailingLengthPlatformFile(this._name);
+
+  final String _name;
+
+  @override
+  String get name => _name;
+
+  @override
+  Future<int> length() async {
+    throw StateError('private attachment provider path should not be shown');
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 void main() {
   setUp(() async {
     testDirectory =
@@ -468,6 +485,64 @@ void main() {
       final saved = repository.items.value.single;
       expect(saved.kind, ItemKind.image);
       expect(saved.attachmentName, 'retry.png');
+      expect(
+        await repository.readAttachment(saved.attachmentKey!),
+        orderedEquals(attachmentBytes),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'recovers when attachment size lookup fails and allows another selection',
+    (tester) async {
+      var pickerAttempts = 0;
+      final attachmentBytes = Uint8List.fromList([4, 5, 6]);
+      app.quickSaveAttachmentPickerForTesting = (kind) async {
+        pickerAttempts++;
+        if (pickerAttempts == 1) {
+          return _FailingLengthPlatformFile('unreadable.png');
+        }
+        return PlatformFile(
+          name: 'retry-after-size-error.png',
+          size: attachmentBytes.length,
+          bytes: attachmentBytes,
+        );
+      };
+      addTearDown(() {
+        app.quickSaveAttachmentPickerForTesting = null;
+      });
+
+      await openNewKind(tester, ItemKind.image);
+      await tester.ensureVisible(find.text('Choose an image'));
+      await tester.tap(find.text('Choose an image'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('The file could not be selected. Try choosing it again.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('private attachment provider path should not be shown'),
+        findsNothing,
+      );
+      expect(find.text('Selecting file…'), findsNothing);
+      expect(find.text('Choose an image'), findsOneWidget);
+      expect(repository.items.value, isEmpty);
+
+      await tester.ensureVisible(find.text('Choose an image'));
+      await tester.tap(find.text('Choose an image'));
+      await tester.pumpAndSettle();
+
+      expect(pickerAttempts, 2);
+      expect(find.text('retry-after-size-error.png'), findsOneWidget);
+      await tester.ensureVisible(find.text('Save to StashHive'));
+      await tester.tap(find.text('Save to StashHive'));
+      await tester.pumpAndSettle();
+
+      expect(repository.items.value, hasLength(1));
+      final saved = repository.items.value.single;
+      expect(saved.attachmentName, 'retry-after-size-error.png');
       expect(
         await repository.readAttachment(saved.attachmentKey!),
         orderedEquals(attachmentBytes),
