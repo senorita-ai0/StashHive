@@ -470,6 +470,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 ## Phase 3 — lock Quick Save during pending saves (2026-10-28)
 
 - [x] Quick Save now disables draft editing, type changes, collection selection, attachment selection and in-form navigation while repository save is in progress.
+- [x] Added a PopScope guard against system-back navigation while a save is pending; successful persistence re-enables the route pop before closing the screen.
 - [x] Save now also guards against reentry and reports the busy activity as either saving or selecting a file.
-- [x] Added widget regression **TC-166** and traceability task **TSK-459** for a delayed repository save.
+- [x] Added widget regression **TC-166** and traceability task **TSK-459** for a delayed repository save, including a simulated system-back action.
 - [ ] Run TC-166 and review busy-state keyboard/screen-reader behavior at the manual validation checkpoint. No tests, formatter, analyzer or builds were run; CI remains manual-only.
