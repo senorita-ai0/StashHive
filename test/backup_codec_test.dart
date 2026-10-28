@@ -60,15 +60,33 @@ void main() {
       () {
         final item = sampleLink().copyWith(tags: _OversizedGuardedTagList());
 
+        Matcher tagLimitError() => throwsA(
+              isA<FormatException>().having(
+                (error) => error.message,
+                'message',
+                'A saved item exceeds supported limits.',
+              ),
+            );
+
+        expect(() => BackupCodec.validateSavedItem(item), tagLimitError());
         expect(
-          () => BackupCodec.validateSavedItem(item),
-          throwsA(
-            isA<FormatException>().having(
-              (error) => error.message,
-              'message',
-              'A saved item exceeds supported limits.',
+          () => BackupCodec.encode(
+            items: [item],
+            attachmentBytes: const <String, Uint8List>{},
+            collections: const <String>[],
+          ),
+          tagLimitError(),
+        );
+        expect(
+          () => BackupCodec.validateDecodedBackup(
+            DecodedBackup(
+              items: [item],
+              attachments: const <String, BackupAttachment>{},
+              collections: const <String>[],
+              exportedAt: '2026-10-28T00:00:00Z',
             ),
           ),
+          tagLimitError(),
         );
       },
     );
