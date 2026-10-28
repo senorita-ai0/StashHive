@@ -1465,3 +1465,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the existing thumbnail reuses its pending/completed read future rather than adding another serialized read for the same item revision.
 - **Status:** Widget regression source is committed but unrun. Review thumbnail refresh behavior after item edits and attachment replacement on web/Android at the manual checkpoint.
 
+### TC-206 — Coalesce same-key reads without crossing queued writes
+
+- Save an image with known original bytes and pause the first repository attachment read before storage access.
+- Request a second read for the same key while the first read is pending; confirm both calls share one read operation.
+- Queue a replacement write, then request another read of the same key. Confirm this later read is not attached to the old future and waits until the replacement commits.
+- Release the first read and confirm both earlier callers receive the original bytes while the later caller receives the replacement bytes; confirm only two storage reads were started.
+- **Status:** Repository regression source is committed but unrun. Verify shared-key thumbnails and Item Details preview behavior with slow web/Android storage at the manual validation checkpoint.
+
