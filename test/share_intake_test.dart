@@ -357,6 +357,57 @@ void main() {
       );
     });
 
+    test('bounds large share batches while preserving their original order', () {
+      final media = List<SharedMediaFile>.generate(
+        maxIncomingShareBatchItems + 3,
+        (index) => SharedMediaFile(
+          path: 'https://example.com/item-$index',
+          type: SharedMediaType.url,
+          mimeType: 'text/uri-list',
+        ),
+      );
+
+      final bounded = boundIncomingShareBatch(media);
+
+      expect(bounded.media, hasLength(maxIncomingShareBatchItems));
+      expect(bounded.skippedCount, 3);
+      expect(bounded.media.first.path, 'https://example.com/item-0');
+      expect(
+        bounded.media.last.path,
+        'https://example.com/item-${maxIncomingShareBatchItems - 1}',
+      );
+      expect(media, hasLength(maxIncomingShareBatchItems + 3));
+    });
+
+    test('does not fingerprint oversized text before normal validation', () async {
+      final deduplicator = ShareEventDeduplicator();
+      final oversizedText =
+          List<String>.filled(maxIncomingTextCharacters + 1, 'x').join();
+      final shared = <SharedMediaFile>[
+        SharedMediaFile(
+          path: 'provider-placeholder',
+          message: oversizedText,
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      ];
+      final start = DateTime.utc(2026, 10, 28, 12);
+
+      expect(deduplicator.shouldAccept(shared, now: start), isTrue);
+      expect(
+        deduplicator.shouldAccept(
+          shared,
+          now: start.add(const Duration(milliseconds: 100)),
+        ),
+        isTrue,
+        reason: 'Oversized drafts bypass hashing so intake can reject them safely.',
+      );
+      await expectLater(
+        ShareIntake.fromSharedMedia(shared.single),
+        throwsFormatException,
+      );
+    });
+
     test('suppresses immediate initial/stream duplicates but accepts later repeats', () {
       final deduplicator = ShareEventDeduplicator(
         window: const Duration(seconds: 3),
