@@ -96,6 +96,49 @@ void main() {
       );
     });
 
+    test('preflights direct model serialization before copying fields and tags', () {
+      final oversizedWhitespace = List<String>.filled(100000, ' ').join();
+      final oversizedTitle = makeItem(title: oversizedWhitespace);
+      expect(
+        () => oversizedTitle.toMap(),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item contains fields beyond supported storage limits.',
+          ),
+        ),
+      );
+
+      final oversizedTag = makeItem(tags: [oversizedWhitespace]);
+      expect(
+        () => oversizedTag.toMap(),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item contains an invalid or oversized tag list.',
+          ),
+        ),
+      );
+
+      final excessiveTags = makeItem(
+        tags: List<String>.generate(101, (index) => 'tag$index'),
+      );
+      expect(
+        () => excessiveTags.toMap(),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item contains an invalid or oversized tag list.',
+          ),
+        ),
+      );
+
+      expect(makeItem().toMap()['title'], 'Flutter docs');
+    });
+
     test('searches titles, URLs, notes, tags and collections case-insensitively', () {
       final item = makeItem(content: 'Research local storage');
       expect(item.matchesQuery('FLUTTER'), isTrue);
