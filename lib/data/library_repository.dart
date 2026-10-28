@@ -503,9 +503,8 @@ class LibraryRepository {
         }
       }
 
-      final itemSnapshot = item.copyWith(
-        tags: List<String>.unmodifiable(item.tags),
-      );
+      // SavedItem's constructor owns the immutable tag snapshot.
+      final itemSnapshot = item.copyWith();
       final attachmentSnapshot = attachmentBytes == null
           ? null
           : Uint8List.fromList(attachmentBytes);
