@@ -3748,7 +3748,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
   }
 
   Future<void> _export() async {
-    if (_exporting) return;
+    if (_exporting || _choosingBackup || _restoring) return;
     setState(() => _exporting = true);
     try {
       final unrepresentedAssignments =
@@ -3847,7 +3847,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
   }
 
   Future<void> _restore() async {
-    if (_choosingBackup || _restoring) return;
+    if (_exporting || _choosingBackup || _restoring) return;
     setState(() => _choosingBackup = true);
     try {
       final testPicker = backupFilePickerForTesting;
@@ -4112,9 +4112,17 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                       icon: Icons.file_download_outlined,
                       title: 'Create a backup',
                       subtitle: items.length.toString() + (items.length == 1 ? ' saved item' : ' saved items'),
-                      buttonText: _exporting ? 'Preparing…' : 'Create backup',
+                      buttonText: _exporting
+                          ? 'Preparing…'
+                          : _restoring
+                              ? 'Restore in progress…'
+                              : _choosingBackup
+                                  ? 'Choose backup first…'
+                                  : 'Create backup',
                       loading: _exporting,
-                      onPressed: _export,
+                      onPressed: (_choosingBackup || _restoring)
+                          ? null
+                          : _export,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -4131,9 +4139,11 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                         ? 'Restoring…'
                         : _choosingBackup
                             ? 'Choosing backup…'
-                            : 'Choose backup file',
+                            : _exporting
+                                ? 'Backup in progress…'
+                                : 'Choose backup file',
                     loading: _choosingBackup || _restoring,
-                    onPressed: _restore,
+                    onPressed: _exporting ? null : _restore,
                   ),
                   const SizedBox(height: 18),
                   Container(
