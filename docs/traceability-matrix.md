@@ -28,7 +28,7 @@
 | NFR-003 | SCR-006, SCR-004 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426, TSK-444 | TC-012–015, TC-117, TC-120, TC-122, TC-134, TC-152 | IN PROGRESS — backup byte limits and preference-write rollback source added; execution/platform verification pending |
 | NFR-004 | SCR-004, SCR-006 | TSK-203, TSK-425, TSK-427 | TC-006, TC-017, TC-133, TC-135 | IN PROGRESS — platform-specific local-storage/search copy added; end-to-end wording review pending |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
-| NFR-006 | All screens | TSK-103, TSK-304, TSK-443 | UI/accessibility checklist, TC-151 | IN PROGRESS — in-app text-size preference now layers over platform scaling; execution and platform checks pending |
+| NFR-006 | All screens | TSK-103, TSK-304, TSK-443, TSK-468 | UI/accessibility checklist, TC-151, TC-175, TC-176 | IN PROGRESS — in-app text-size preference layers over platform scaling and stale rollback callbacks cannot overwrite a newer choice; execution and platform checks pending |
 | NFR-007 | Search/list | TSK-003, TSK-305, TSK-412 | TC-116 / Performance baseline | IN PROGRESS — non-gating harness added; measurements pending |
 | NFR-008 | Attachments / OCR | TSK-005, TSK-305 | Package-size benchmark | NOT STARTED |
 | NFR-009 | Architecture | TSK-002, TSK-101 | Static checks/build | NOT STARTED |
@@ -1215,4 +1215,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** MIME inference now treats URI-to-local-path conversion as best-effort during duplicate fingerprinting and falls back to the bounded raw path if the current platform cannot convert a provider's file URI.
 - **Regression:** TC-174 supplies a file URI with a non-local authority and asserts the event can be fingerprinted without throwing.
 - **Verification:** Regression source is committed but unrun. Confirm real file provider URI forms and fallback behavior on Android during the manual validation checkpoint.
+
+### TSK-468 — Prevent stale preference errors from reverting newer UI choices
+
+- **Requirements:** NFR-003/NFR-006; optimistic preference controls must remain consistent with the latest queued user choice even when an older local-storage write fails late.
+- **Implementation:** `_StashHiveAppState` now increments a request revision for dark mode and text size. A failure handler restores the persisted value only if its request is still the most recent request for that control.
+- **Regression:** TC-175 queues two newer theme choices behind a paused failing write; TC-176 chooses Extra large while an earlier text-size write is pending and failing. Both verify the newest value stays selected and persisted.
+- **Verification:** Widget regression source is committed but unrun. Storage latency and accessible state changes need manual browser/Android review.
 
