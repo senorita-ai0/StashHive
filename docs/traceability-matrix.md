@@ -16,7 +16,7 @@
 | FR-010 | SCR-005 | TSK-203, TSK-423, TSK-474 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471, TSK-472, TSK-473, TSK-474 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181, TC-182, TC-183, TC-184 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status and rollback-safe export concurrency added; execution and platform export pending |
-| FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415, TSK-472, TSK-480, TSK-482, TSK-483 | TC-013, TC-117, TC-119, TC-120, TC-182, TC-190, TC-192, TC-193 | IN PROGRESS — codec/source, restore rollback, picker size/read recovery and active-restore navigation guard are source-covered; validation pending |
+| FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415, TSK-472, TSK-480, TSK-482, TSK-483, TSK-487 | TC-013, TC-117, TC-119, TC-120, TC-182, TC-190, TC-192, TC-193, TC-198 | IN PROGRESS — codec/source, restore rollback, picker size/read recovery and restore navigation guard recovery are source-covered; validation pending |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | IN PROGRESS — local-first flows are implemented in source; offline/restart tests pending |
 | FR-015 | SCR-006, SCR-001, SCR-004 | TSK-003, TSK-303, TSK-422, TSK-425 | TC-015, TC-130, TC-133 | IN PROGRESS — storage reminders and platform-specific attachment copy added; browser restart/platform review pending |
 | FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205 | TC-016 | BLOCKED pending POC |
@@ -1341,3 +1341,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** A pure share-service summary builder formats unsupported, invalid/unreadable and omitted counts, de-duplicates hints and caps details at three distinct app-defined messages. It returns no message if there is nothing to report; HomeShell invokes it only after the waiting queue drains.
 - **Regression:** TC-196 checks combined counts and hint limits; TC-197 ensures a successful share batch does not get an empty-state warning. TC-195 remains the manual end-to-end timing/accessibility case.
 - **Verification:** Service test source is committed but unrun. Verify end-to-end summary timing and screen-reader behavior on Android at the manual validation checkpoint.
+
+### TSK-487 — Release restore navigation guard after commit failure
+
+- **Requirements:** FR-013 and NFR-003/NFR-006; route protection during a restore must prevent dismissal while writes are in progress without trapping the user after rollback/error.
+- **Implementation:** `PopScope<bool>` guards only while `_restoring` is true; the existing `finally` path clears `_restoring` after success or failure. The new regression explicitly checks that error recovery restores navigation.
+- **Regression:** TC-198 interrupts restore before collection commit, confirms the library remains intact and diagnostic details stay hidden, then invokes system back and verifies the page can close.
+- **Verification:** Widget regression source is committed but unrun. Check rollback and navigation state on web/Android at the manual validation checkpoint.
