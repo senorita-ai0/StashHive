@@ -1546,3 +1546,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Decode a JSON backup candidate with more attachment keys than item records; confirm decode stops at the count invariant before iterating attachment keys/base64 metadata.
 - **Status:** Codec regression source is committed but unrun. Verify malformed backup limits and restore preflight at the manual validation checkpoint.
 
+### TC-217 — Reject oversized collection lists before traversing input
+
+- Call BackupCodec.encode with a collection list whose declared length exceeds BackupCodec.maxCollections and whose indexed element access throws.
+- Confirm the encoder returns the fixed too-many-collections FormatException without reading any collection entries or constructing a combined declared/assigned collection list.
+- Confirm an in-limit collection list still encodes and is normalized against item assignments as before.
+- **Status:** Codec regression source is committed but unrun. Check direct encoder limits and legacy collection normalization at the manual validation checkpoint.
+
