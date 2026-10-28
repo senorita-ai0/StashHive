@@ -1288,3 +1288,9 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-223 tests a 10,001-entry duplicate list, skip count, a preserved item-assigned collection and raw preference retention.
 - **Status:** Source and regression documentation committed but unrun. Validate recovery messages and browser/Android storage behavior at the manual checkpoint.
 
+### TSK-512 — Sanitize invalid provider file-URI errors — 2026-10-28
+
+- **Requirements:** FR-009 and NFR-002/NFR-003.
+- **Source:** File-share intake catches URI-to-local-path conversion errors and returns fixed user-facing guidance instead of allowing raw provider URI/platform exception details into the share-review feedback.
+- **Regression:** TC-224 covers an incoming file URI with a non-local authority; TC-174 separately protects duplicate-event fingerprinting for unusual file URIs.
+- **Status:** Source and regression documentation committed but unrun. Validate local/non-local URI handling and batch continuation against real Android providers at the manual checkpoint; CI remains manual-only.
