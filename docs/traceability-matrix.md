@@ -1226,7 +1226,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-469 — Track the last generated backup without implying successful delivery
 
 - **Requirements:** FR-012–015 and NFR-004; backup status must help the user understand recency without making a false claim that a file was permanently saved somewhere.
-- **Implementation:** The repository stores `lastBackupPreparedAtMs` in local preferences only after backup JSON generation succeeds. The Backup & privacy screen displays the local date/time and explicitly says it records file generation, not whether a destination saved the file. Failure to store this optional timestamp does not block sharing the prepared JSON.
+- **Implementation:** The repository stores `lastBackupPreparedAtMs` in local preferences after backup JSON generation succeeds, before releasing the same serialized mutation operation that produced the snapshot. This prevents a queued edit from running between snapshot generation and timestamp storage. The Backup & privacy screen displays the local date/time and explicitly says it records file generation, not whether a destination saved the file. Failure to store this optional timestamp does not block sharing the prepared JSON.
 - **Regression:** TC-178 covers timestamp validation and repository reopen; TC-179 covers the empty state, formatted timestamp and truthful wording.
 - **Verification:** Source regression coverage is committed but unrun. Confirm status updates after native/web share-sheet return or cancellation at the manual validation checkpoint.
 
