@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -298,7 +297,13 @@ void main() {
             .hasAction(SemanticsAction.tap),
         isFalse,
       );
-      expect(tester.widget<IconButton>(find.byTooltip('Back')).onPressed, isNull);
+      final backButton = tester.widget<IconButton>(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byType(IconButton),
+        ).first,
+      );
+      expect(backButton.onPressed, isNull);
     } finally {
       if (!releaseSaveHook.isCompleted) releaseSaveHook.complete();
       LibraryRepository.saveAfterItemCommitForTesting = null;
