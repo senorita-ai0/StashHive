@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-223 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-224 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -838,3 +838,8 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added regression source **TC-223** and traceability task **TSK-511** for a large duplicate list, skip-count accuracy, saved-item assignment preservation and raw preference retention.
 - [ ] Run TC-223 and inspect the recovery warning on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
+## Phase 3 — sanitize malformed provider file-URI errors (2026-10-28)
+
+- [x] Incoming file-share intake now catches failures converting file URIs with non-local authorities or invalid path escaping and emits fixed recovery guidance instead of exposing provider/platform exception details.
+- [x] Added regression source **TC-224** and traceability task **TSK-512**. TC-174 continues to cover the separate duplicate-fingerprinting path for unusual file URIs.
+- [ ] Run TC-224 and verify local/non-local provider URI behavior plus multi-item batch continuation on a physical Android device at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
