@@ -1078,6 +1078,23 @@ void main() {
         ),
       );
 
+      final directCollectionBackup = DecodedBackup(
+        items: [sampleLink()],
+        attachments: const <String, BackupAttachment>{},
+        collections: <String>[oversizedWhitespace],
+        exportedAt: '2026-10-28T00:00:00Z',
+      );
+      expect(
+        () => BackupCodec.validateDecodedBackup(directCollectionBackup),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A collection name must be between 1 and 80 characters.',
+          ),
+        ),
+      );
+
       final image = SavedItem(
         id: 'attachment-metadata-boundary',
         kind: ItemKind.image,
