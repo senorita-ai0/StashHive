@@ -144,7 +144,41 @@ class SavedItem {
       };
 
   factory SavedItem.fromMap(Map<dynamic, dynamic> raw) {
+    final idValue = raw['id'];
+    final kindValue = raw['kind'];
+    final titleValue = raw['title'];
+    final contentValue = raw['content'];
+    final urlValue = raw['url'];
+    final collectionValue = raw['collection'];
+    final attachmentKeyValue = raw['attachmentKey'];
+    final attachmentNameValue = raw['attachmentName'];
+    final attachmentMimeTypeValue = raw['attachmentMimeType'];
+
+    // This factory is public and may be called without the repository/backup
+    // validators. Reject overlong strings before normalization or copying.
+    if ((idValue is String && idValue.length > 128) ||
+        (kindValue is String && kindValue.length > 16) ||
+        (titleValue is String && titleValue.length > 500) ||
+        (contentValue is String && contentValue.length > 1000000) ||
+        (urlValue is String && urlValue.length > maxSavedItemUrlCharacters) ||
+        (collectionValue is String && collectionValue.length > 80) ||
+        (attachmentKeyValue is String && attachmentKeyValue.length > 128) ||
+        (attachmentNameValue is String && attachmentNameValue.length > 255) ||
+        (attachmentMimeTypeValue is String && attachmentMimeTypeValue.length > 128)) {
+      throw const FormatException(
+        'A saved item contains fields beyond supported storage limits.',
+      );
+    }
+
     final tagsValue = raw['tags'];
+    if (tagsValue is List) {
+      if (tagsValue.length > 100 ||
+          tagsValue.any((tag) => tag is String && tag.length > 100)) {
+        throw const FormatException(
+          'A saved item contains an invalid or oversized tag list.',
+        );
+      }
+    }
     final seenTags = <String>{};
     final tags = <String>[];
     if (tagsValue is List) {
