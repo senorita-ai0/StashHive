@@ -1480,3 +1480,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Request the same attachment again and confirm the fresh read returns the stored bytes and the read hook is called twice total.
 - **Status:** Repository regression source is committed but unrun. Verify storage read errors do not leave previews or queued readers stuck on web/Android at the manual validation checkpoint.
 
+### TC-208 — Keep synchronous item lookup aligned with the published snapshot
+
+- Save an image with known bytes, then begin replacing the image metadata and bytes.
+- Pause the repository after the raw saved-item record has been written but before the save operation finishes and refreshes the visible notifier.
+- Confirm the raw storage record contains the staged title while both the public items notifier and `findById` still return the previously published item.
+- Release the save and confirm `findById` returns the updated item and the attachment read returns the replacement bytes.
+- **Status:** Repository regression source is committed but unrun. Verify lookups during delayed save, delete and restore operations on web and Android at the manual validation checkpoint.
+
