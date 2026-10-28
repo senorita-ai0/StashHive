@@ -1118,3 +1118,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Tap the already-selected **Image** or **Document** type option, then save the draft.
 - Confirm the attachment remains present, the correct item kind is saved, and the stored bytes match the originally shared payload.
 - **Status:** Widget regression source is committed but unrun. Validate with real Android image/document shares at the manual checkpoint.
+
+### TC-158 — Collection rename rolls back after preferences write commits
+
+- Create a collection and assign at least two saved items to it.
+- Inject a failure immediately after the updated collection preferences are written during rename.
+- Confirm the rename reports the original error, both item assignments are restored, the collection list returns to its prior value, and raw persisted records/preferences agree with the visible state.
+- **Status:** Repository regression source is committed but unrun. Real storage interruption and rollback-write failures remain part of the manual validation checkpoint.
