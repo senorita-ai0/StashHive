@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-227 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-228 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
