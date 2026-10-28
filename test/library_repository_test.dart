@@ -1782,6 +1782,64 @@ void main() {
     );
   });
 
+  test(
+    'findById stays on the published snapshot during an in-flight save',
+    () async {
+      final originalBytes = Uint8List.fromList([1, 3, 5, 7]);
+      final replacementBytes = Uint8List.fromList([2, 4, 6, 8]);
+      final original = buildImage(id: 'published-lookup-snapshot');
+      await repository.save(original, attachmentBytes: originalBytes);
+
+      final writeEntered = Completer<void>();
+      final releaseWrite = Completer<void>();
+      LibraryRepository.saveAfterItemCommitForTesting = () async {
+        writeEntered.complete();
+        await releaseWrite.future;
+      };
+      final updated = original.copyWith(
+        title: 'Replacement is still pending',
+        updatedAtMs: 3000,
+      );
+      final pendingSave = repository.save(
+        updated,
+        attachmentBytes: replacementBytes,
+      );
+
+      try {
+        await writeEntered.future;
+        final raw = Hive.box<dynamic>('stashhive_items_v1')
+            .get(original.id) as Map;
+        expect(raw['title'], 'Replacement is still pending');
+        expect(
+          repository.items.value.single.title,
+          original.title,
+          reason: 'The visible notifier is not published until save completes.',
+        );
+        expect(
+          repository.findById(original.id)?.title,
+          original.title,
+          reason: 'Synchronous lookups must not expose the raw staged record.',
+        );
+      } finally {
+        if (!releaseWrite.isCompleted) releaseWrite.complete();
+        try {
+          await pendingSave;
+        } finally {
+          LibraryRepository.saveAfterItemCommitForTesting = null;
+        }
+      }
+
+      expect(
+        repository.findById(original.id)?.title,
+        'Replacement is still pending',
+      );
+      expect(
+        await repository.readAttachment(original.attachmentKey!),
+        orderedEquals(replacementBytes),
+      );
+    },
+  );
+
   test('rolls back a partially written collection rename', () async {
     await repository.addCollection('Learning');
     await repository.save(buildLink(id: 'learning-1', collection: 'Learning'));
