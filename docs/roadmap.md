@@ -1330,3 +1330,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-230 injects a one-time read failure, checks that safe feedback hides raw storage diagnostics, then retries and confirms the preview's attachment read succeeds.
 - **Status:** Source and regression documentation committed but unrun. Verify retry behavior, screen-reader feedback and image decoding on web/Android at the manual validation checkpoint. CI remains manual-only.
 
+### TSK-518 — Recover when native share-stream setup fails — 2026-10-28
+
+- **Requirements:** FR-009 and NFR-002/NFR-003.
+- **Source:** Android share-intake startup now catches synchronous failures while obtaining/subscribing to the event stream and tells the user that manual capture remains available. Initial-share reading begins only after the stream subscription is established.
+- **Regression:** TC-231 injects a stream setup exception and checks safe guidance, hidden plugin diagnostics, continued Library navigation and no framework exception.
+- **Status:** Source and regression documentation are committed but unrun. Validate plugin lifecycle and normal event delivery on a physical Android device at the manual validation checkpoint; CI remains manual-only.
+
