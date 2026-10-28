@@ -958,3 +958,9 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Updated SavedItem.copyWith() to snapshot tags into an unmodifiable list, preventing caller-owned list mutations from changing the copied model after creation.
 - [x] Added TC-239 for replacement-list mutation, source-list mutation and direct mutation rejection; linked TSK-526 in the roadmap and FR-001/FR-002 traceability.
 - [ ] Run TC-238/TC-239 with model, repository snapshot, backup encode/decode and restore regression suites. Formatting, analyzer, unit tests, Python tests, web build and Android build remain unrun for these latest commits; CI remains manual-only.
+
+## Phase 3 — indexed lookup rollback regression — 2026-10-29
+
+- Added a regression test for a late save failure after the item record write. It asserts that both `findById()` and the published item list continue to expose the prior committed item after rollback.
+- The test is committed to `main`; it has not been run. CI, formatter, analyzer and platform builds remain untouched by request.
+
