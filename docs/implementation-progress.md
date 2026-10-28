@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-187 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-188 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -599,4 +599,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] The regression checks that raw provider details stay hidden, the busy state clears, no item is created by the failed read, and a second valid selection can be saved with exact bytes.
 - [x] Added traceability task **TSK-477** and updated the test plan.
 - [ ] Run TC-187 and verify partial-stream/provider failure recovery on Android and supported browser/desktop platforms at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — bound pasted URL and tag input before parsing (2026-10-28)
+
+- [x] Quick Save now checks raw URL length before trim/URL normalization, then retains the existing post-normalization length guard.
+- [x] Added a 12,000-character cap for the comma-separated tags field with inline validation and a defensive pre-split check; the limits of 100 tags and 100 characters per tag remain in place.
+- [x] Added widget regression **TC-188**, traced as **TSK-478**, for oversized tag input and the existing URL-length validation path.
+- [ ] Run TC-188 and review large-paste behavior and ordinary URL/tag editing on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
