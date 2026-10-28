@@ -1358,3 +1358,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-234 covers oversized title/content/tags and confirms normal valid searches still work.
 - **Status:** Source and regression committed; test not run. Validate alongside direct model parsing/serialization and the performance baseline at the manual validation checkpoint. CI remains manual-only.
 
+### TSK-522 — Validate timestamps in direct SavedItem parsing — 2026-10-28
+
+- **Requirements:** FR-002 and NFR-003.
+- **Source:** The model and backup codec share the same supported millisecond range; the public SavedItem.fromMap() factory rejects integer timestamps outside that range before returning a model.
+- **Regression:** TC-235 covers invalid created/updated timestamps and a valid parse.
+- **Status:** Source and regression committed; test not run. Validate direct parsing and recovery paths at the manual validation checkpoint. CI remains manual-only.
+
