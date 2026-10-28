@@ -593,3 +593,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added traceability task **TSK-476** and updated the test plan.
 - [ ] Run TC-186 and verify size metadata/read failures on actual Android and supported browser/desktop pickers at the manual checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
+## Phase 3 — recover from attachment byte-stream failures (2026-10-28)
+
+- [x] Added Quick Save widget regression **TC-187** for a provider that reports file length successfully but throws while emitting the file's byte stream.
+- [x] The regression checks that raw provider details stay hidden, the busy state clears, no item is created by the failed read, and a second valid selection can be saved with exact bytes.
+- [x] Added traceability task **TSK-477** and updated the test plan.
+- [ ] Run TC-187 and verify partial-stream/provider failure recovery on Android and supported browser/desktop platforms at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
