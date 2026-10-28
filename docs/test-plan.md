@@ -1183,6 +1183,6 @@ The previous Android debug build failed when the generated plugin registrant cou
 ### TC-166 — Lock Quick Save controls while an item save is pending
 
 - Pause the repository after the saved-item record has been written but before the save call completes.
-- Confirm the text fields, type choices, collection selector, attachment picker and navigation controls do not permit edits or cancellation while the snapshot is being persisted.
+- Confirm the text fields, type choices, collection selector, attachment picker and navigation controls, including a simulated system-back action, do not permit edits or cancellation while the snapshot is being persisted.
 - Release the save and confirm the saved link, URL and note content match the values visible when saving began.
 - **Status:** Widget regression source is committed but unrun. Verify slow-storage behavior and screen-reader state during the manual validation checkpoint.
