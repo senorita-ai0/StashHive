@@ -103,11 +103,18 @@ class SavedItem {
 
   bool get hasAttachment => attachmentKey != null && attachmentKey!.isNotEmpty;
 
-  DateTime get createdAt =>
-      DateTime.fromMillisecondsSinceEpoch(createdAtMs, isUtc: true).toLocal();
+  DateTime get createdAt => _localDateTimeForTimestamp(createdAtMs);
 
-  DateTime get updatedAt =>
-      DateTime.fromMillisecondsSinceEpoch(updatedAtMs, isUtc: true).toLocal();
+  DateTime get updatedAt => _localDateTimeForTimestamp(updatedAtMs);
+
+  DateTime _localDateTimeForTimestamp(int value) {
+    if (value < minSavedItemTimestampMs || value > maxSavedItemTimestampMs) {
+      throw const FormatException(
+        'A saved item contains a timestamp outside the supported date range.',
+      );
+    }
+    return DateTime.fromMillisecondsSinceEpoch(value, isUtc: true).toLocal();
+  }
 
   bool matchesQuery(String query) {
     if (query.length > maxSearchQueryCharacters) return false;
