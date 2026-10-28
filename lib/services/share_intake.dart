@@ -15,6 +15,29 @@ const int maxIncomingAttachmentBytes = BackupCodec.maxAttachmentBytes;
 const int maxIncomingUrlCharacters = maxSavedItemUrlCharacters;
 const int maxIncomingTextCharacters = 1000000;
 
+/// Reads and acknowledges a launch-time share before waiting for interactive
+/// review. Quick Save can remain open while the user reviews a batch; delaying
+/// [resetInitialMedia] until then can leave the consumed OS intent pending if
+/// the app is stopped in the middle of that review.
+Future<void> consumeInitialSharedMedia({
+  required Future<List<SharedMediaFile>> Function() readInitialMedia,
+  required Future<void> Function() resetInitialMedia,
+  required Future<void> Function(List<SharedMediaFile>) enqueue,
+}) async {
+  final media = await readInitialMedia();
+
+  // A failed acknowledgement must not discard a share we have already read.
+  // The item is still queued; a later app launch could replay it if the plugin
+  // could not clear the stored intent.
+  try {
+    await resetInitialMedia();
+  } catch (_) {
+    // Best-effort acknowledgement; continue with the media already received.
+  }
+
+  if (media.isNotEmpty) await enqueue(media);
+}
+
 /// A user-selected or OS-shared item ready to prefill StashHive's save form.
 class IncomingShare {
   const IncomingShare({
