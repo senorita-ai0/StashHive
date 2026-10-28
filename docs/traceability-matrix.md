@@ -1559,3 +1559,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-230 injects a one-time attachment-read failure, checks safe feedback and hidden diagnostics, retries, and confirms the new read succeeds without a framework exception.
 - **Verification:** Widget regression source is committed but unrun. Verify real read-error recovery and assistive-technology feedback on web/Android during the manual validation checkpoint.
 
+### TSK-518 — Recover when native share-stream setup fails
+
+- **Requirements:** FR-009 and NFR-002/NFR-003; platform share integration must fail safely without preventing ordinary manual capture or exposing plugin/channel diagnostics.
+- **Implementation:** The native share-intake startup handler now catches synchronous exceptions while requesting or subscribing to the native share stream, shows manual-capture guidance, and does not start initial-intent processing until the stream is successfully subscribed.
+- **Regression:** TC-231 injects a stream setup exception in an Android-targeted widget test, checks recovery copy and hidden raw diagnostics, and confirms Library navigation is still available.
+- **Verification:** Widget regression source is committed but unrun. Verify real plugin/channel failure behavior and normal share delivery on Android at the manual validation checkpoint.
+
