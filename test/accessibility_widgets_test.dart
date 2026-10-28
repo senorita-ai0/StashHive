@@ -2443,4 +2443,61 @@ void main() {
     expect(find.bySemanticsLabel('1 result'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'Item Details reports attachment read failure without leaking storage details',
+    (tester) async {
+      final bytes = Uint8List.fromList([1, 2, 3, 4]);
+      const item = SavedItem(
+        id: 'details-attachment-read-failure',
+        kind: ItemKind.document,
+        title: 'Read failure document',
+        content: '',
+        tags: <String>[],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 10,
+        updatedAtMs: 11,
+        attachmentKey: 'details-attachment-read-failure',
+        attachmentName: 'report.pdf',
+        attachmentMimeType: 'application/pdf',
+      );
+      await repository.save(item, attachmentBytes: bytes);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: app.ItemDetailsPage(
+            repository: repository,
+            itemId: item.id,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      LibraryRepository.readAttachmentBeforeReadForTesting = (_) async {
+        throw StateError('secret local storage path');
+      };
+      try {
+        await tester.tap(find.text('Open / share file'));
+        await tester.pumpAndSettle();
+      } finally {
+        LibraryRepository.readAttachmentBeforeReadForTesting = null;
+      }
+
+      expect(
+        find.text(
+          'Could not read the saved file. Check local storage and try again.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining('secret local storage path'), findsNothing);
+      expect(repository.findById(item.id), isNotNull);
+      expect(
+        await repository.readAttachment(item.attachmentKey!),
+        orderedEquals(bytes),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
 }
