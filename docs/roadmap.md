@@ -1162,3 +1162,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-205 counts read starts while rebuilding the Library without changing the saved image, then confirms only one read was scheduled.
 - **Status:** Source and regression documentation committed but unrun. Verify replacement refresh and capture performance baselines at the manual checkpoint; CI remains manual-only.
 
+### TSK-494 — Coalesce overlapping attachment reads without crossing writes — 2026-10-28
+
+- **Requirements:** FR-008/FR-011 and NFR-003/NFR-007.
+- **Source:** Concurrent requests for the same attachment can reuse one pending read future. Queue sequence tracking prevents a read requested after a later repository operation has been enqueued from joining an older future and seeing stale bytes.
+- **Regression:** TC-206 verifies shared concurrent reads return original bytes while a read queued after an attachment replacement returns the committed replacement bytes.
+- **Status:** Source and regression committed but unrun. Review same-key thumbnail/detail read behavior and capture performance baseline during the manual validation checkpoint.
+
