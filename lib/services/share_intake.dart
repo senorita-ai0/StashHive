@@ -32,6 +32,8 @@ bool hasCapacityForIncomingShareBatch(int pendingBatchCount) =>
 const int _maxShareFingerprintCharacters =
     maxIncomingTextCharacters + maxIncomingShareBatchItems * maxIncomingUrlCharacters;
 
+final RegExp _nonWhitespacePattern = RegExp(r'\S');
+
 /// Reads and acknowledges a launch-time share before waiting for interactive
 /// review. Quick Save can remain open while the user reviews a batch; delaying
 /// [resetInitialMedia] until then can leave the consumed OS intent pending if
@@ -352,17 +354,22 @@ class ShareIntake {
 
     if (media.type == SharedMediaType.text) {
       final rawMessage = media.message ?? '';
-      if (rawMessage.length > maxIncomingTextCharacters) {
+      final messageHasContent = _nonWhitespacePattern.hasMatch(rawMessage);
+      if (rawMessage.length > maxIncomingTextCharacters &&
+          messageHasContent) {
         throw const FormatException(
           'Shared text is over the 1,000,000-character limit.',
         );
       }
-      final message = rawMessage.trim();
-      if (message.isNotEmpty) {
+      if (rawMessage.length <= maxIncomingTextCharacters &&
+          messageHasContent) {
         // Some providers place the effective text in message and leave path
         // empty or populate it with unused metadata. Do not require/copy path.
-        return _fromText(message);
+        return _fromText(rawMessage.trim());
       }
+      // An oversized message made only of whitespace is not the effective
+      // content. Ignore it and fall back to the provider path without trimming
+      // or allocating a same-sized copy of the unused field.
 
       final rawText = media.path;
       if (rawText.length > maxIncomingTextCharacters) {
