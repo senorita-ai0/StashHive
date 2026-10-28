@@ -976,3 +976,9 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Replaced assert-only constructor constraints with runtime validation for `ShareEventDeduplicator.window` and `maxEntries`; invalid values now fail predictably in release builds instead of allowing zero-capacity eviction to fail later.
 - [x] Added regressions for zero and negative durations and cache capacities.
 - [ ] Run the share-intake suite, Python tool tests, formatting, analysis and platform builds at the manual validation checkpoint. None were run for this increment; CI remains manual-only.
+
+## Phase 3 — atomic Android share manifest updates (2026-10-29)
+
+- [x] The Android share configurator now serializes to a temporary file beside the manifest, flushes it, preserves the previous file mode, and atomically replaces the destination only after serialization succeeds.
+- [x] Added a failure-path regression that simulates replacement failure and verifies the valid manifest remains unchanged and no temporary file is left behind.
+- [ ] Run the Python configurator suite and full manual validation before enabling testing builds. No tests, formatting, analysis or platform builds were run for this increment; CI remains manual-only.
