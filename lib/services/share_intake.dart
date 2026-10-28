@@ -152,12 +152,14 @@ class ShareEventDeduplicator {
           final effectiveLength = usesMessage ? messageLength : pathLength;
           if (effectiveLength > maxIncomingTextCharacters) return false;
           charactersForItem = effectiveLength;
+          break;
         case SharedMediaType.url:
           if (pathLength > maxIncomingUrlCharacters ||
               messageLength > maxIncomingTextCharacters) {
             return false;
           }
           charactersForItem = pathLength + messageLength;
+          break;
         case SharedMediaType.image:
         case SharedMediaType.file:
         case SharedMediaType.video:
@@ -167,6 +169,7 @@ class ShareEventDeduplicator {
             return false;
           }
           charactersForItem = pathLength + mimeLength;
+          break;
       }
 
       totalCharacters += charactersForItem;
