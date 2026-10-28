@@ -12,7 +12,7 @@
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417 | TC-008, TC-122 | IN PROGRESS — repository-owned byte snapshot source/test added; platform validation pending |
-| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; handles effective text, disposal and unusual file URIs; Android build/device test pending |
+| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; handles effective text, disposal and unusual file URIs; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423, TSK-474 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471, TSK-472, TSK-473, TSK-474 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181, TC-182, TC-183, TC-184 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status and rollback-safe export concurrency added; execution and platform export pending |
@@ -1257,4 +1257,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** Backup generation runs behind the shared mutation queue. A backup requested during collection rename waits until item records, collection preferences, and visible notifiers agree.
 - **Regression:** TC-184 pauses rename after underlying writes but before notifier refresh, queues backup creation, and verifies the result contains the new collection and matching saved-item assignment.
 - **Verification:** Regression source is committed but unrun. Verify backup/export behavior during collection updates on browser and Android at the manual checkpoint.
+
+### TSK-475 — Preserve effective text when an unused provider path is oversized
+
+- **Requirements:** FR-009 and NFR-003; provider fields that do not contribute to the effective draft must not cause unnecessary rejection, while fingerprint work stays bounded.
+- **Implementation:** Text intake validates and consumes a non-empty message directly. It does not require or normalize the unused path before constructing a note; oversized provider fields bypass fingerprint serialization and continue to the normal intake path.
+- **Regression:** TC-185 supplies a valid note message with an over-limit unused path and checks that the message becomes the note draft.
+- **Verification:** Regression source is committed but unrun. Confirm the exact behavior against real Android share-provider variants at the manual checkpoint.
 
