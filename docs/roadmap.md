@@ -1281,3 +1281,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-222 covers oversized direct URL helper input and oversized model search queries.
 - **Status:** Source and regression documentation committed but unrun. Verify direct helper behavior, form validation and Search UI messaging at the manual checkpoint.
 
+### TSK-511 — Bound legacy collection preference recovery scans — 2026-10-28
+
+- **Requirements:** FR-010, FR-015 and NFR-003.
+- **Source:** Collection preference recovery scans at most 10,000 raw entries per initialization. If the 500 collection cap is filled earlier, the remainder is counted as skipped without traversal. Uninspected entries are reported through the existing recovery counter; saved-item collection assignments are merged afterward and the raw preference is not rewritten.
+- **Regression:** TC-223 tests a 10,001-entry duplicate list, skip count, a preserved item-assigned collection and raw preference retention.
+- **Status:** Source and regression documentation committed but unrun. Validate recovery messages and browser/Android storage behavior at the manual checkpoint.
+
