@@ -1388,3 +1388,10 @@ Settings now includes a local **App text size** preference with System default, 
 
 - `SavedItem.copyWith()` now creates an unmodifiable snapshot of its tag list, including when no replacement list is supplied. This closes a shallow-copy path where later caller mutation could silently change a supposedly immutable model.
 - Added **TC-239** and **TSK-526**. Regression source is committed; execution remains pending because CI/builds are intentionally manual-only.
+
+### TSK-526 — Preserve immutable tag snapshots when copying SavedItem — 2026-10-29
+
+- **Requirements:** FR-001 and FR-002.
+- **Source:** `SavedItem.copyWith()` now wraps the chosen tag list in `List<String>.unmodifiable`, preventing caller-owned mutable lists from changing the copied model after construction.
+- **Regression:** TC-239 verifies mutation of a replacement list, mutation of the original item’s list, and rejection of direct mutation through the copied model.
+- **Status:** Source and test are committed. Test execution and formatting/analyzer checks remain pending at the manual checkpoint; CI remains manual-only.
