@@ -15,7 +15,7 @@
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; handles effective text, disposal and unusual file URIs; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423 | TC-010, TC-131 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
-| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463 | TC-012, TC-117, TC-119, TC-120, TC-171 | IN PROGRESS — bounded-size source and mutation-consistent snapshot queue added; execution and platform export pending |
+| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful last-prepared status added; execution and platform export pending |
 | FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415 | TC-013, TC-117, TC-119, TC-120 | IN PROGRESS — codec/source added; restore tests pending |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | IN PROGRESS — local-first flows are implemented in source; offline/restart tests pending |
 | FR-015 | SCR-006, SCR-001, SCR-004 | TSK-003, TSK-303, TSK-422, TSK-425 | TC-015, TC-130, TC-133 | IN PROGRESS — storage reminders and platform-specific attachment copy added; browser restart/platform review pending |
@@ -1222,4 +1222,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `_StashHiveAppState` now increments a request revision for dark mode and text size. A failure handler restores the persisted value only if its request is still the most recent request for that control.
 - **Regression:** TC-175 queues two newer theme choices behind a paused failing write; TC-176 chooses Extra large while an earlier text-size write is pending and failing; TC-177 verifies the visible dropdown returns to the persisted option after a failed selection. Both verify the newest value stays selected and persisted.
 - **Verification:** Widget regression source is committed but unrun. Storage latency and accessible state changes need manual browser/Android review.
+
+### TSK-469 — Track the last generated backup without implying successful delivery
+
+- **Requirements:** FR-012–015 and NFR-004; backup status must help the user understand recency without making a false claim that a file was permanently saved somewhere.
+- **Implementation:** The repository stores `lastBackupPreparedAtMs` in local preferences only after backup JSON generation succeeds. The Backup & privacy screen displays the local date/time and explicitly says it records file generation, not whether a destination saved the file. Failure to store this optional timestamp does not block sharing the prepared JSON.
+- **Regression:** TC-178 covers timestamp validation and repository reopen; TC-179 covers the empty state, formatted timestamp and truthful wording.
+- **Verification:** Source regression coverage is committed but unrun. Confirm status updates after native/web share-sheet return or cancellation at the manual validation checkpoint.
 
