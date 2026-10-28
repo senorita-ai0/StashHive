@@ -447,6 +447,43 @@ void main() {
       expect(message, isNot(contains('This fourth detail should be excluded.')));
     });
 
+    test('skips oversized summary hints before trimming them', () {
+      final oversizedWhitespace = List<String>.filled(
+        maxShareReviewHintCharacters + 1000,
+        ' ',
+      ).join();
+      final message = buildShareReviewSummary(
+        unsupportedItemCount: 0,
+        invalidItemCount: 1,
+        omittedItemCount: 0,
+        validationHints: [oversizedWhitespace, 'A supported hint'],
+      );
+
+      expect(message, contains('1 item could not be prepared'));
+      expect(message, contains('Details: A supported hint.'));
+      expect(message, isNot(contains(oversizedWhitespace)));
+    });
+
+    test('inspects only a bounded number of summary hint candidates', () {
+      var yielded = 0;
+      Iterable<String> noisyHints() sync* {
+        for (var index = 0; index < 1000; index++) {
+          yielded++;
+          yield '   ';
+        }
+      }
+
+      final message = buildShareReviewSummary(
+        unsupportedItemCount: 0,
+        invalidItemCount: 1,
+        omittedItemCount: 0,
+        validationHints: noisyHints(),
+      );
+
+      expect(yielded, maxShareReviewHintCandidates);
+      expect(message, isNot(contains('Details:')));
+    });
+
     test('does not show a share summary when there is nothing to report', () {
       expect(
         buildShareReviewSummary(
