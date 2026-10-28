@@ -1165,3 +1165,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** Quick Save disables editable fields, the item-kind selector, collection selector, attachment picker, route buttons, and system back while saving. `PopScope` permits the app's own successful-save pop after the save has completed. Save is guarded against reentry, and the primary action reports when file selection or persistence is in progress.
 - **Regression:** TC-166 in `test/quick_save_test.dart` pauses repository save after the item record write, checks fields/type navigation and system-back handling are blocked while saving, and confirms the persisted draft matches the submitted values.
 - **Verification:** Widget regression source is committed but unrun; slow storage and screen-reader behavior require manual validation.
+
+
+### TSK-460 — Preserve Quick Save draft and re-enable retry after failed persistence
+
+- **Requirement:** FR-003 and NFR-003/NFR-006; a failed local save must not silently discard user input, trap the form in a busy state, or prevent a retry.
+- **Implementation:** Quick Save keeps the form values when repository save fails, releases its saving state, restores interactive controls and reports safe recovery guidance. The save-pending route guard returns to its normal state when the failure handler unlocks the form.
+- **Regression:** TC-167 in `test/quick_save_test.dart` pauses a write, injects a late failure, checks the item rolls back and URL/note remain editable, then retries and confirms the draft saves.
+- **Verification:** Widget regression source is committed but unrun; real browser/Android storage failure and retry behavior remain pending.
