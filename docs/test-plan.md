@@ -1561,3 +1561,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Place a raw local record with an oversized kind beside a valid item; reopen the repository and confirm the malformed row is counted/skipped without hiding the valid item.
 - **Status:** Regression source is committed but unrun. Verify malformed import and legacy-record recovery at the manual validation checkpoint.
 
+### TC-219 — Bound optional backup export timestamp metadata
+
+- Decode a valid version-1 backup whose optional `exportedAt` field is much longer than a normal timestamp. Confirm the optional metadata is normalized to an empty value while valid saved items remain available.
+- Pass a directly constructed `DecodedBackup` with an overlong `exportedAt` string through restore preflight and confirm a fixed validation error is returned before any repository write.
+- Confirm normal ISO timestamp values and older backups without this field remain compatible.
+- **Status:** Regression source is committed but unrun. Verify malformed timestamp handling alongside the malformed-backup and restore-preflight matrix at the manual validation checkpoint.
+
