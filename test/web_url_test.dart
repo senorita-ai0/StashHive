@@ -2,13 +2,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:stashhive/services/web_url.dart';
 
 void main() {
-  group('parseUserWebUrl', () {  test('rejects oversized URL input before normalization', () {
+  test('rejects oversized URL input before normalization', () {
     final oversized = List<String>.filled(100000, ' ').join();
     expect(parseUserWebUrl(oversized), isNull);
     expect(parseHttpUrl(oversized), isNull);
   });
 
-
+  group('parseUserWebUrl', () {
     test('accepts explicit web schemes and bare domains', () {
       expect(parseUserWebUrl('HTTPS://EXAMPLE.COM/Guide')?.toString(),
           'https://EXAMPLE.COM/Guide');
