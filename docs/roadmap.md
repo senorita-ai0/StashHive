@@ -1309,3 +1309,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-226 pauses backup preparation and checks Restore cannot start with a live status; TC-227 pauses file selection and checks Create backup cannot start until picker cancellation; both tests assert accessible status announcements.
 - **Status:** Source and widget regression source committed, unrun. Verify real Android/web file picker and share-sheet transitions at the manual checkpoint.
 
+### TSK-515 — Release the backup JSON string before share-sheet await — 2026-10-28
+
+- **Requirements:** FR-012 and NFR-003/NFR-007.
+- **Source:** After UTF-8 encoding, Backup & privacy clears its local reference to the large JSON source string before awaiting the user-controlled platform share sheet. The share payload remains the encoded byte list.
+- **Manual regression:** TC-228 checks that the generated backup remains valid UTF-8 JSON with matching metadata/attachments and calls for peak-memory inspection while the share sheet remains open.
+- **Status:** Source and documentation committed; no tests, formatting, analysis, builds, or memory profiles were run. Verify large backup export on web and Android at the manual checkpoint. CI stays manual-only.
+
