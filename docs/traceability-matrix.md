@@ -1506,7 +1506,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-510 — Bound direct URL and search helper input
 
 - **Requirements:** FR-005/FR-006 and NFR-003; helpers callable outside the visible form should enforce the same size limits before trimming or lowercasing raw input.
-- **Implementation:** `parseUserWebUrl` and `parseHttpUrl` now reject URL strings longer than the portable 4,096-character limit before trimming. `SavedItem.matchesQuery` rejects over-limit search queries before trimming/lowercasing; the existing UI still supplies its explanatory validation state.
+- **Implementation:** `parseUserWebUrl` and `parseHttpUrl` now reject URL strings longer than the portable 4,096-character limit before trimming. `SavedItem.matchesQuery` and `SavedItem.matchesNormalizedQuery` reject over-limit queries before normalization or scanning saved fields; the existing UI still supplies its explanatory validation state.
 - **Regression:** TC-222 covers oversized direct URL helper calls and model search queries, and confirms ordinary URL/search behavior is unchanged.
 - **Verification:** Regression source is committed but unrun. Validate direct helper, form and Search UI behavior at the manual checkpoint.
 
