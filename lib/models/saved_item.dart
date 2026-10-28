@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const int maxSavedItemUrlCharacters = 4096;
+const int maxSearchQueryCharacters = 4096;
 
 enum ItemKind {
   link,
@@ -100,9 +101,14 @@ class SavedItem {
   DateTime get updatedAt =>
       DateTime.fromMillisecondsSinceEpoch(updatedAtMs, isUtc: true).toLocal();
 
-  bool matchesQuery(String query) {
-    final normalized = query.trim().toLowerCase();
-    if (normalized.isEmpty) return true;
+  bool matchesQuery(String query) =>
+      matchesNormalizedQuery(query.trim().toLowerCase());
+
+  /// Matches an already trimmed, lower-case query. Search views can normalize
+  /// once and reuse the result across many items instead of allocating the
+  /// same lower-case query again for every saved record.
+  bool matchesNormalizedQuery(String normalizedQuery) {
+    if (normalizedQuery.isEmpty) return true;
     final searchable = <String>[
       title,
       content,
@@ -110,7 +116,9 @@ class SavedItem {
       if (collection != null) collection!,
       ...tags,
     ];
-    return searchable.any((value) => value.toLowerCase().contains(normalized));
+    return searchable.any(
+      (value) => value.toLowerCase().contains(normalizedQuery),
+    );
   }
 
   Map<String, dynamic> toMap() => <String, dynamic>{
