@@ -2062,10 +2062,11 @@ class _QuickSavePageState extends State<QuickSavePage> {
   void _selectKind(ItemKind kind) {
     setState(() {
       _kind = kind;
+      // Changing type clears only the type-specific attachment selection.
+      // Keep shared notes/content just as we preserve title, tags and URL.
       _selectedBytes = null;
       _selectedName = null;
       _selectedMimeType = null;
-      _contentController.clear();
     });
   }
 
