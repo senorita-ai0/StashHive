@@ -1200,6 +1200,6 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-499 — Expose repository state through read-only listenables — 2026-10-28
 
 - **Requirements:** FR-002/FR-010 and NFR-003.
-- **Source:** Repository item, collection and recovery-counter notifiers are now private. Public `ValueListenable` getters preserve widget subscriptions and reads without exposing a direct setter that can replace snapshots without persistence.
+- **Source:** Repository item, collection and recovery-counter notifiers are private. Public read-only `ValueListenable` wrappers preserve widget subscriptions and reads without exposing mutable notifier instances or direct setters that can replace snapshots without persistence.
 - **Regression:** TC-211 checks state notification after repository operations and confirms published item/collection lists remain unmodifiable through the public interface.
 - **Status:** Source and regression plan committed but unrun. Review widget reactivity, formatting, static analysis and platform behavior at the agreed manual validation checkpoint; CI remains manual-only.
