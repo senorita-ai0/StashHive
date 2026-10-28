@@ -65,6 +65,30 @@ void main() {
 
       expect(queued, isTrue);
     });
+    test('rejects oversized provider paths before opening shared files', () async {
+      final result = ShareIntake.fromSharedMedia(
+        SharedMediaFile(
+          path: List<String>.filled(
+            maxIncomingProviderPathCharacters + 1,
+            'x',
+          ).join(),
+          type: SharedMediaType.image,
+          mimeType: 'image/png',
+        ),
+      );
+
+      await expectLater(
+        result,
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'The shared file path is too long to read safely.',
+          ),
+        ),
+      );
+    });
+
     test('accepts the URL length supported by backup format', () async {
       const prefix = 'https://example.com/';
       final url = prefix +
