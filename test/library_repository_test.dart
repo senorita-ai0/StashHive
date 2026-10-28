@@ -2068,6 +2068,95 @@ void main() {
     },
   );
 
+  test(
+    'snapshots decoded restore inputs before waiting in the mutation queue',
+    () async {
+      final blockerWriteEntered = Completer<void>();
+      final releaseBlocker = Completer<void>();
+      var afterWriteCalls = 0;
+      LibraryRepository.saveAfterItemCommitForTesting = () async {
+        afterWriteCalls++;
+        if (afterWriteCalls == 1) {
+          blockerWriteEntered.complete();
+          await releaseBlocker.future;
+        }
+      };
+
+      final blockerSave = repository.save(
+        buildLink(id: 'restore-input-queue-blocker', collection: null),
+      );
+      final callerTags = <String>['Original restore tag'];
+      final sourceItems = <SavedItem>[
+        SavedItem(
+          id: 'queued-restore-snapshot-image',
+          kind: ItemKind.image,
+          title: 'Queued restore image',
+          content: '',
+          tags: callerTags,
+          collection: 'Imported original',
+          isFavorite: false,
+          createdAtMs: 1000,
+          updatedAtMs: 2000,
+          attachmentKey: 'queued-restore-snapshot-image',
+          attachmentName: 'queued.png',
+          attachmentMimeType: 'image/png',
+        ),
+      ];
+      final sourceCollections = <String>['Imported original'];
+      final sourceBytes = Uint8List.fromList([2, 7, 1, 8, 2]);
+      final expectedBytes = Uint8List.fromList(sourceBytes);
+      final sourceAttachments = <String, BackupAttachment>{
+        'queued-restore-snapshot-image': BackupAttachment(
+          name: 'queued.png',
+          mimeType: 'image/png',
+          bytes: sourceBytes,
+        ),
+      };
+      final decoded = DecodedBackup(
+        items: sourceItems,
+        attachments: sourceAttachments,
+        collections: sourceCollections,
+        exportedAt: '2026-10-28T00:00:00Z',
+      );
+
+      Future<int>? pendingRestore;
+      try {
+        await blockerWriteEntered.future;
+        pendingRestore = repository.restoreDecodedBackup(decoded);
+
+        // The restore is waiting behind the blocker. Its submitted snapshot
+        // must not change when the caller mutates every source collection.
+        callerTags
+          ..[0] = 'Mutated tag'
+          ..add('Late tag');
+        sourceItems.clear();
+        sourceCollections[0] = 'Mutated collection';
+        sourceAttachments.clear();
+        sourceBytes[0] = 99;
+        sourceBytes[4] = 0;
+      } finally {
+        if (!releaseBlocker.isCompleted) releaseBlocker.complete();
+        try {
+          await blockerSave;
+          if (pendingRestore != null) await pendingRestore;
+        } finally {
+          LibraryRepository.saveAfterItemCommitForTesting = null;
+        }
+      }
+
+      expect(pendingRestore, isNotNull);
+      final restored = repository.findById('queued-restore-snapshot-image');
+      expect(restored, isNotNull);
+      expect(restored!.tags, ['Original restore tag']);
+      expect(restored.collection, 'Imported original');
+      expect(repository.collections.value, contains('Imported original'));
+      expect(
+        await repository.readAttachment('queued-restore-snapshot-image'),
+        orderedEquals(expectedBytes),
+      );
+    },
+  );
+
   test('rolls back a partially written collection rename', () async {
     await repository.addCollection('Learning');
     await repository.save(buildLink(id: 'learning-1', collection: 'Learning'));
