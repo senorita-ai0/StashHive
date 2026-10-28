@@ -1403,3 +1403,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Request a share-review summary with zero unsupported, invalid and omitted entries, even when an unused validation hint is supplied.
 - Confirm no summary is produced, so ordinary successful shares do not receive unnecessary error feedback.
 - **Status:** Service regression source is committed but unrun. End-to-end share queue behavior remains pending the manual validation checkpoint.
+
+### TC-198 — Release the restore navigation guard after a failed restore
+
+- Open Backup & privacy through a pushed route, choose a valid backup and confirm the merge.
+- Inject an interruption before the collection commit so the repository rolls back the staged import.
+- Confirm the UI shows safe failure guidance, the existing library remains intact, raw injected diagnostics are hidden, and the restoring state clears.
+- Trigger system back after the failure and confirm the route can now close; the guard must not trap the user after an error.
+- **Status:** Widget regression source is committed but unrun. Verify rollback, SnackBar feedback and back navigation on web/Android at the manual validation checkpoint.
