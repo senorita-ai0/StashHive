@@ -1589,3 +1589,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Call both `SavedItem.matchesQuery` and `SavedItem.matchesNormalizedQuery` with a query longer than the supported search limit and confirm they return false before trimming/lowercasing or scanning saved fields, while ordinary case-insensitive searches still work.
 - **Status:** Regression source is committed but unrun. Verify the direct helper behavior alongside form-level URL validation, metadata search and large-input handling at the manual validation checkpoint.
 
+### TC-223 — Bound recovery scans of legacy collection preferences
+
+- Store more than 10,000 local collection preference entries containing repeated names, then reopen the repository.
+- Confirm recovery inspects no more than the configured scan budget, counts duplicate/uninspected entries in the skipped-entry counter, and still restores a valid collection assignment from a saved item.
+- Confirm the raw preference list is not rewritten during recovery; the app reports what it skipped rather than silently erasing legacy data.
+- **Status:** Repository regression source is committed but unrun. Verify the bounded scan and recovery feedback against browser/Android local storage at the manual validation checkpoint.
+
