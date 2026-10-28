@@ -1070,3 +1070,11 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** Backup restore's file-size lookup is covered with a failure injection seam; the UI should recover to an idle, retryable state without displaying raw provider paths/details, and a later valid backup should remain importable.
 - **Regression:** TC-190 fails the first length lookup, checks no records changed and private details are hidden, then retries with a valid backup and verifies the merge.
 - **Status:** Source/test committed but unrun. Verify native/browser file-picker error behavior at the manual validation checkpoint. CI remains manual-only.
+
+### TSK-481 — Ignore oversized whitespace in unused share message fields — 2026-10-28
+
+- **Requirements:** FR-009 and NFR-003.
+- **Source:** Incoming text-share intake detects whether the provider's message contains non-whitespace content before applying the 1,000,000-character limit. When an oversized message is all whitespace, intake treats it as unused metadata and falls back to the path without trimming/copying the oversized field. Non-whitespace oversized content still fails validation.
+- **Regression:** TC-191 uses a short valid path with an oversized whitespace-only message and expects an editable note draft.
+- **Status:** Source and regression documentation committed; regression remains unrun. Verify real Android provider fields at the manual checkpoint; CI remains manual-only.
+
