@@ -795,3 +795,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added codec regression **TC-217** using an over-limit list whose item accessor throws, plus traceability task **TSK-505** in the matrix and roadmap.
 - [ ] Run TC-217 with direct encoder/decoder validation, legacy backup compatibility and restore tests at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
+## Phase 3 — bound saved-item type values before model parsing (2026-10-28)
+
+- [x] Strict backup validation now checks item identifier/type/title/content/URL/collection/attachment metadata sizes before constructing a model or trimming/canonicalizing those fields.
+- [x] Unknown saved-item type strings now produce fixed, bounded error messages; the ItemKind.fromWire path no longer interpolates untrusted values into exceptions.
+- [x] Local-record validation also bounds the raw kind field before attempting model parsing, allowing malformed rows to be skipped without affecting neighboring valid items.
+- [x] Added regression source **TC-218** across model parsing, backup decoding and local-record recovery; added traceability task **TSK-506**.
+- [ ] Run TC-218 with malformed-backup and legacy-record recovery cases at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
