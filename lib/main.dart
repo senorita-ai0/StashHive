@@ -537,7 +537,7 @@ class _HomeShellState extends State<HomeShell> {
     _pendingInvalidShareItemCount = 0;
     _pendingOmittedShareItemCount = 0;
     _pendingShareErrorHints.clear();
-    _showShareMessage(message);
+    _showShareMessage(message, duration: const Duration(seconds: 8));
   }
 
   Future<void> _presentSharedItem(List<SharedMediaFile> media) async {
@@ -580,10 +580,16 @@ class _HomeShellState extends State<HomeShell> {
     if (mounted) setState(() => _selectedTab = 0);
   }
 
-  void _showShareMessage(String message) {
+  void _showShareMessage(
+    String message, {
+    Duration duration = const Duration(seconds: 4),
+  }) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
+      SnackBar(
+        content: Text(message),
+        duration: duration,
+      ),
     );
   }
 
