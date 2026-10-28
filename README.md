@@ -44,6 +44,7 @@ OCR/PDF text extraction, in-app PDF rendering, cloud sync, accounts, public shar
 - [Assumptions](docs/assumptions.md)
 - [Roadmap](docs/roadmap.md)
 - [Test plan](docs/test-plan.md)
+- [Dependency and license register](docs/dependency-register.md)
 - [Traceability matrix](docs/traceability-matrix.md)
 - [Risk register](docs/risk-register.md)
 - [Security and privacy](docs/security-privacy.md)
