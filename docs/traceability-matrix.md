@@ -1070,3 +1070,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** Existing Settings text-size preference; this increment extends regression coverage for selecting Extra large, recreating app state from the same repository, and resetting to System default.
 - **Test:** TC-153 in `test/accessibility_widgets_test.dart` and `docs/test-plan.md`.
 - **Verification:** Regression source committed but unrun; manual web/Android text-scaling review remains pending.
+
+
+### TSK-446 — Attachment-safe cleanup after failed backup restore
+
+- **Requirement:** FR-016 and NFR-003; backup restore rollback must not knowingly remove attachment bytes while a surviving saved-item record still references them.
+- **Implementation:** `LibraryRepository.restoreDecodedBackup` now attempts all staged item deletions before reclaiming distinct attachment keys, skips payloads still referenced by raw records, and refreshes visible notifiers after best-effort rollback.
+- **Regression:** TC-154 in `test/library_repository_test.dart` injects both a restore interruption and a staged-item rollback deletion failure, then checks that the remaining record still has its original bytes and collection preferences are restored.
+- **Verification:** Source regression authored but unrun. Real storage interruption, browser persistence, and Android persistence still require the manual validation checkpoint.
