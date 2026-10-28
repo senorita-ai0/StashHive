@@ -685,6 +685,97 @@ void main() {
   );
 
   testWidgets(
+    'releases the restore navigation guard after a failed restore',
+    (tester) async {
+      const item = SavedItem(
+        id: 'restore-navigation-failure-source',
+        kind: ItemKind.link,
+        title: 'Existing item to preserve',
+        content: 'Existing library data',
+        url: 'https://example.com/restore-navigation-failure',
+        tags: <String>['Backup'],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 400,
+        updatedAtMs: 401,
+      );
+      await repository.save(item);
+      final backupBytes = Uint8List.fromList(
+        utf8.encode(await repository.createBackup()),
+      );
+      app.backupFilePickerForTesting = () async => PlatformFile(
+            name: 'restore-failure-guard.json',
+            size: backupBytes.length,
+            bytes: backupBytes,
+          );
+      addTearDown(() {
+        app.backupFilePickerForTesting = null;
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push<void>(
+                      MaterialPageRoute<void>(
+                        builder: (_) =>
+                            app.BackupPrivacyPage(repository: repository),
+                      ),
+                    );
+                  },
+                  child: const Text('Open backup screen'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Open backup screen'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Choose backup file'));
+      await tester.tap(find.text('Choose backup file'));
+      await tester.pumpAndSettle();
+      expect(find.text('Merge this backup?'), findsOneWidget);
+
+      LibraryRepository.restoreBeforeCollectionsCommitForTesting = () async {
+        throw StateError('private restore commit detail should not be shown');
+      };
+
+      try {
+        await tester.tap(find.text('Merge backup'));
+        await tester.pumpAndSettle();
+
+        expect(
+          find.text(
+            'Could not restore this backup. Check the selected file and try again.',
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.textContaining('private restore commit detail should not be shown'),
+          findsNothing,
+        );
+        expect(find.text('Restoring…'), findsNothing);
+        expect(repository.items.value, hasLength(1));
+        expect(repository.findById(item.id), isNotNull);
+        expect(tester.takeException(), isNull);
+
+        await tester.binding.handlePopRoute();
+        await tester.pumpAndSettle();
+
+        expect(find.text('Open backup screen'), findsOneWidget);
+        expect(find.text('Backup & privacy'), findsNothing);
+        expect(tester.takeException(), isNull);
+      } finally {
+        LibraryRepository.restoreBeforeCollectionsCommitForTesting = null;
+      }
+    },
+  );
+
+  testWidgets(
     'Backup & privacy shows backup preparation time without claiming destination save',
     (tester) async {
       final backupPage = () => MaterialApp(
