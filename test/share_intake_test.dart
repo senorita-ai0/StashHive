@@ -414,6 +414,51 @@ void main() {
       );
     });
 
+    test('builds one summary for unsupported, invalid and omitted share items', () {
+      final message = buildShareReviewSummary(
+        unsupportedItemCount: 1,
+        invalidItemCount: 2,
+        omittedItemCount: 101,
+        validationHints: const [
+          ' Invalid URL ',
+          'Invalid URL',
+          '',
+          'File could not be read.',
+          'Shared text is too long.',
+          'This fourth detail should be excluded.',
+        ],
+      );
+
+      expect(message, isNotNull);
+      expect(message, contains('1 unsupported item was skipped'));
+      expect(message, contains('2 items could not be prepared'));
+      expect(
+        message,
+        contains(
+          '101 additional items were omitted because each share batch is limited to 100 items',
+        ),
+      );
+      expect(
+        message,
+        contains(
+          'Details: Invalid URL File could not be read. Shared text is too long.',
+        ),
+      );
+      expect(message, isNot(contains('This fourth detail should be excluded.')));
+    });
+
+    test('does not show a share summary when there is nothing to report', () {
+      expect(
+        buildShareReviewSummary(
+          unsupportedItemCount: 0,
+          invalidItemCount: 0,
+          omittedItemCount: 0,
+          validationHints: const ['Unused hint'],
+        ),
+        isNull,
+      );
+    });
+
     test('caps waiting share batches while the current batch is reviewed', () {
       expect(
         hasCapacityForIncomingShareBatch(maxPendingIncomingShareBatches - 1),
