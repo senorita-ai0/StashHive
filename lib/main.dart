@@ -474,7 +474,8 @@ class _HomeShellState extends State<HomeShell> {
     // to queue pressure can be retried after the user finishes pending shares.
     if (!hasCapacityForIncomingShareBatch(_pendingShareBatches.length)) {
       _showShareMessage(
-        'Too many share batches are waiting. Finish the current shares before sending more.',
+        'This share was not queued because too many batches are waiting. '
+        'Finish the current shares, then share this item again.',
       );
       return;
     }
