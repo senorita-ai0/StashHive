@@ -1112,3 +1112,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** A pure share-service formatter composes unsupported, invalid/unreadable and omitted counts, de-duplicates hints, caps details at three entries, and returns `null` when nothing needs reporting. HomeShell calls it only after the waiting share queue drains.
 - **Regression:** TC-196 covers combined summary text and hint limits; TC-197 confirms empty summaries are suppressed. TC-195 remains the end-to-end manual UX check for timing/accessibility.
 - **Status:** Source and regression documentation committed but unrun. Verify end-to-end summary timing and assistive-technology behavior at the manual checkpoint; CI remains manual-only.
+
+### TSK-487 — Release restore navigation guard after commit failure — 2026-10-28
+
+- **Requirements:** FR-013 and NFR-003/NFR-006.
+- **Source:** The route guard remains active only during `_restoring`; this regression documents and checks that `finally` releases the guard after a staged restore fails and repository rollback completes.
+- **Regression:** TC-198 injects a restore interruption, verifies existing library data is retained and private details are hidden, then triggers system back to confirm the user can leave the failed restore screen.
+- **Status:** Regression source and docs committed but unrun. Verify web/Android rollback and navigation at the manual checkpoint; CI remains manual-only.
