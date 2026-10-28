@@ -1057,3 +1057,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-188 verifies oversized tag input is rejected without creating an item; the URL-length regression covers the 4,096-character bound.
 - **Status:** Source and regression are committed but unrun. Confirm large paste behavior and ordinary field editing on web/Android during the manual validation checkpoint.
 
+### TSK-479 — Normalize search once and bound oversized queries — 2026-10-28
+
+- **Requirements:** FR-005 and NFR-007.
+- **Source:** Search normalizes the query once and reuses that lower-case string for each item match. Queries above 4,096 characters are rejected before trimming/normalization or scanning the saved list, with visible limit feedback.
+- **Regression:** TC-189 checks oversized initial query handling; a SavedItem unit case covers normalized-query matching.
+- **Status:** Source/tests authored and committed, unrun. Capture performance measurements at 100, 1,000 and 10,000 items and review Unicode/search accessibility on browser and Android at the manual validation checkpoint.
+
