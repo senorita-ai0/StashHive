@@ -3822,9 +3822,15 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope<bool>(
+      canPop: !_restoring,
+      child: Scaffold(
       appBar: AppBar(
-        leading: const BackButton(),
+        leading: IconButton(
+          tooltip: 'Back',
+          onPressed: _restoring ? null : () => Navigator.of(context).maybePop(),
+          icon: const Icon(Icons.arrow_back_rounded),
+        ),
         title: const Text('Backup & privacy'),
       ),
       body: SafeArea(
@@ -4036,6 +4042,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
             ),
           ),
         ),
+      ),
       ),
     );
   }
