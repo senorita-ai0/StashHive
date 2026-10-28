@@ -1022,3 +1022,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-183 pauses an attachment replacement after the item write, requests a backup and injects a late failure; the backup must contain the prior title and exact prior bytes.
 - **Status:** Regression source is committed but unrun; browser/Android failure-path validation remains pending.
 
+### TSK-475 — Keep backup snapshots aligned with collection renames — 2026-10-28
+
+- **Requirements:** FR-010, FR-012 and NFR-003.
+- **Source:** Backup generation is serialized with collection/item mutations and waits for the underlying writes and notifier refreshes to complete before capturing the collection list and item assignments.
+- **Regression:** TC-184 pauses a collection rename after persisted writes, queues a backup and verifies that the resulting export contains only the committed new collection assignment.
+- **Status:** Regression source is committed but unrun; browser/Android backup consistency remains pending the manual validation checkpoint.
+
