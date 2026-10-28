@@ -11,7 +11,7 @@
 | FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427, TSK-479 | TC-005, TC-118, TC-135, TC-189 | IN PROGRESS — search normalizes once, bounds oversized queries and retains Unicode metadata search; execution/platform review pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
-| FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476, TSK-477 | TC-008, TC-122, TC-186, TC-187 | IN PROGRESS — bounded attachment reads and retry recovery are source-covered; platform validation pending |
+| FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476, TSK-477, TSK-491 | TC-008, TC-122, TC-186, TC-187, TC-202, TC-203 | IN PROGRESS — bounded attachment reads, retry recovery and mutation-consistent byte reads are source-covered; platform validation pending |
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475, TSK-481, TSK-484, TSK-485, TSK-486 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185, TC-191, TC-194, TC-195, TC-196, TC-197 | IN PROGRESS — source bounds batch/fingerprint/queue work and aggregates/count-limits share review feedback; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423, TSK-474 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
@@ -25,7 +25,7 @@
 | FR-019 | SCR-001, SCR-002 | Later if approved | TC-019 | NOT STARTED / Could |
 | NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | IN PROGRESS — no backend/account integration in core source; offline and network inspection pending |
 | NFR-002 | SCR-006, SCR-004 | TSK-304, TSK-428, TSK-429, TSK-444 | TC-018, TC-136, TC-137, TC-152 | IN PROGRESS — startup and routine error UI hide raw unexpected storage/plugin details; permissions/logging/network inspection pending |
-| NFR-003 | SCR-006, SCR-004 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426, TSK-444, TSK-482, TSK-483, TSK-487, TSK-488, TSK-489, TSK-490 | TC-012–015, TC-117, TC-120, TC-122, TC-134, TC-152, TC-192, TC-193, TC-198, TC-199, TC-200, TC-201 | IN PROGRESS — bounded backup reads, consistent mutable-input snapshots, truthful share outcome messages and restore failure/navigation recovery are source-covered; execution/platform verification pending |
+| NFR-003 | SCR-006, SCR-004 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426, TSK-444, TSK-482, TSK-483, TSK-487, TSK-488, TSK-489, TSK-490, TSK-491 | TC-012–015, TC-117, TC-120, TC-122, TC-134, TC-152, TC-192, TC-193, TC-198, TC-199, TC-200, TC-201, TC-202, TC-203 | IN PROGRESS — bounded backup reads, consistent mutable-input snapshots, truthful share outcome messages, restore recovery and attachment read isolation are source-covered; execution/platform verification pending |
 | NFR-004 | SCR-004, SCR-006 | TSK-203, TSK-425, TSK-427 | TC-006, TC-017, TC-133, TC-135 | IN PROGRESS — platform-specific local-storage/search copy added; end-to-end wording review pending |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
 | NFR-006 | All screens | TSK-103, TSK-304, TSK-443, TSK-468, TSK-484, TSK-485, TSK-486, TSK-487 | UI/accessibility checklist, TC-151, TC-175, TC-176, TC-177, TC-194–TC-198 | IN PROGRESS — in-app text-size preference layers over platform scaling; share review feedback is combined and accessible after queue completion; restore navigation protection releases after failure; execution and platform checks pending |
@@ -1369,4 +1369,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** LibraryRepository.save() now clones and freezes the item tags list before validation or asynchronous storage operations. Caller mutations to the source list cannot change item metadata while a save is paused or in progress.
 - **Regression:** TC-201 mutates a caller-owned tag list while save is paused immediately before its record write, then checks the repository notifier and raw stored map both retain the original tags.
 - **Verification:** Regression source is committed but unrun. Verify save metadata snapshot behavior alongside attachment snapshot and rollback cases at the manual checkpoint.
+
+### TSK-491 — Prevent attachment reads from observing an in-flight replacement
+
+- **Requirements:** FR-008 and NFR-003; item metadata and its attachment payload must be observed as a consistent saved state during concurrent edits.
+- **Implementation:** The repository operation queue now serializes attachment reads with saves, deletes, restores and backup snapshot creation. A preview/share read cannot observe replacement bytes before their item commit or while rollback is restoring old bytes.
+- **Regression:** TC-202 pauses a replacement after payload write and proves the read waits for commit. TC-203 injects a replacement failure and proves the read waits for rollback and returns the original bytes.
+- **Verification:** Repository regression source is committed but unrun. Validate slow-storage preview/share behavior and failure recovery on web and Android during the manual checkpoint.
 
