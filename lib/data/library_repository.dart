@@ -538,7 +538,7 @@ class LibraryRepository {
         'Only image/document items may reference an attachment, and both require one.',
       );
     }
-    if (key != null && (key.trim().isEmpty || key.length > 128)) {
+    if (key != null && (key.length > 128 || key.trim().isEmpty)) {
       throw const FormatException('The attachment reference is invalid.');
     }
     if (attachmentBytes != null && !requiresAttachment) {
