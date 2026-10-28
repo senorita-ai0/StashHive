@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173–TC-179 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173–TC-180 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -543,4 +543,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Backup & privacy now displays “Last backup prepared” with a localized date/time and explicitly states this does not confirm the share-sheet destination saved the file. Timestamp-write failure does not block an already prepared backup from being shared.
 - [x] Added repository regression **TC-178** and widget regression **TC-179**, traced as **TSK-469**.
 - [ ] Run TC-178/TC-179 and verify status updates after browser/native share-sheet completion or cancellation. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — preserve backup export when status preference storage fails (2026-10-28)
+
+- [x] Moved backup-prepared timestamp storage inside the same serialized repository operation that encodes the backup, preventing a queued edit from running between the snapshot and status write.
+- [x] Added a fault-injection seam for a timestamp write that commits and then reports an error; backup generation treats this informational write as best-effort and rolls back to the previous value where possible.
+- [x] Added repository regression **TC-180**, verifying export still returns valid JSON and prior timestamp data is restored after the injected late failure.
+- [ ] Run TC-180 and validate behavior under actual browser quota/device storage failures. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
