@@ -171,6 +171,38 @@ void main() {
       expect(item.matchesQuery('flutter'), isTrue);
     });
 
+    test('rejects out-of-range timestamps when reading date getters', () {
+      final invalidCreatedAt = makeItem(
+        createdAtMs: maxSavedItemTimestampMs + 1,
+      );
+      expect(
+        () => invalidCreatedAt.createdAt,
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item contains a timestamp outside the supported date range.',
+          ),
+        ),
+      );
+
+      final invalidUpdatedAt = makeItem(
+        updatedAtMs: minSavedItemTimestampMs - 1,
+      );
+      expect(
+        () => invalidUpdatedAt.updatedAt,
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item contains a timestamp outside the supported date range.',
+          ),
+        ),
+      );
+      expect(makeItem().createdAtMs, 1000);
+      expect(makeItem().updatedAtMs, 2000);
+    });
+
     test('rejects out-of-range timestamps in direct model serialization', () {
       final invalidCreatedAt = makeItem(
         createdAtMs: maxSavedItemTimestampMs + 1,
