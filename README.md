@@ -86,7 +86,7 @@ flutter pub get
 flutter run -d android
 ```
 
-The configurator is idempotent, sets the generated Android launcher label to StashHive, and registers the supported link/text/image/document share types. Incoming items open Quick Save for review; StashHive does not silently save external content. It currently prepares one item per share action. To run verification, open **Actions → Manual Flutter validation → Run workflow**. Pushes to `main` do not start CI.
+The configurator is idempotent, sets the generated Android launcher label to StashHive, and registers the supported link/text/image/document share types. Incoming batches are reviewed sequentially in Quick Save, one draft at a time; each supported item must be explicitly saved or canceled, and unsupported items are skipped with feedback. StashHive does not silently save external content. To run verification, open **Actions → Manual Flutter validation → Run workflow**. Pushes to `main` do not start CI.
 
 ## License
 
