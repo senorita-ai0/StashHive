@@ -412,11 +412,13 @@ class _HomeShellState extends State<HomeShell> {
 
   Future<void> _readInitialShare() async {
     try {
-      final media = await ReceiveSharingIntent.instance.getInitialMedia();
-      if (media.isNotEmpty) {
-        await _enqueueShareBatch(media);
-      }
-      await ReceiveSharingIntent.instance.reset();
+      await consumeInitialSharedMedia(
+        readInitialMedia: ReceiveSharingIntent.instance.getInitialMedia,
+        resetInitialMedia: () async {
+          await ReceiveSharingIntent.instance.reset();
+        },
+        enqueue: _enqueueShareBatch,
+      );
     } catch (_) {
       if (mounted) {
         _showShareMessage(
