@@ -1708,3 +1708,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Call copyWith() without replacement tags on a directly constructed item with a mutable tag list, mutate the original list, and confirm the copied item remains unchanged.
 - Confirm attempts to mutate the copied item tag list throw UnsupportedError.
 - **Status:** Regression source is committed but unrun. Run with model round-trip, repository save snapshot and backup validation tests at the manual checkpoint.
+
+
+### TC-240 — Keep synchronous lookups on the last committed item revision
+
+- Save an existing item, then pause a replacement save after it enters the write phase but before the item record commits.
+- While the save is paused, confirm findById() and the public items listenable both expose the prior title, not a staged record.
+- Release the write and confirm both lookup surfaces update to the new title together.
+- **Status:** Regression source is committed but unrun. Execute at the manual validation checkpoint; no CI or build was triggered.
