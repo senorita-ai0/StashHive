@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-234 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-235 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -911,4 +911,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Corrected a malformed test declaration discovered in source review; the pre-normalized-query and oversized-query cases are now separate test blocks.
 - [x] Added traceability task TSK-521.
 - [ ] Run TC-234 with TC-221/TC-222/TC-233 and capture the pending search performance baseline at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — validate timestamps in direct SavedItem parsing (2026-10-28)
+
+- [x] Moved the supported millisecond date bounds to the SavedItem model and reused the same constants in BackupCodec to prevent the parsing/backup limits from drifting.
+- [x] SavedItem.fromMap() now rejects integer created/updated timestamps outside the supported DateTime range before constructing the model.
+- [x] Added model regression TC-235 for out-of-range created/updated timestamps and an ordinary in-range map; added traceability task TSK-522.
+- [ ] Run TC-235 with direct model parsing, raw-record recovery, backup decode and save-path regressions at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
