@@ -167,6 +167,27 @@ final class _FailingLengthPlatformFile extends PlatformFile {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+final class _FailingByteStreamPlatformFile extends PlatformFile {
+  _FailingByteStreamPlatformFile(this._name, this._size);
+
+  final String _name;
+  final int _size;
+
+  @override
+  String get name => _name;
+
+  @override
+  Future<int> length() async => _size;
+
+  @override
+  Stream<Uint8List> readAsByteStream() => Stream<Uint8List>.error(
+        StateError('private byte stream location should not be shown'),
+      );
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 void main() {
   setUp(() async {
     testDirectory =
@@ -543,6 +564,69 @@ void main() {
       expect(repository.items.value, hasLength(1));
       final saved = repository.items.value.single;
       expect(saved.attachmentName, 'retry-after-size-error.png');
+      expect(
+        await repository.readAttachment(saved.attachmentKey!),
+        orderedEquals(attachmentBytes),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'recovers when attachment byte reading fails and allows another selection',
+    (tester) async {
+      var pickerAttempts = 0;
+      final attachmentBytes = Uint8List.fromList([9, 8, 7, 6]);
+      app.quickSaveAttachmentPickerForTesting = (kind) async {
+        pickerAttempts++;
+        if (pickerAttempts == 1) {
+          return _FailingByteStreamPlatformFile(
+            'unreadable-stream.png',
+            attachmentBytes.length,
+          );
+        }
+        return PlatformFile(
+          name: 'retry-after-read-error.png',
+          size: attachmentBytes.length,
+          bytes: attachmentBytes,
+        );
+      };
+      addTearDown(() {
+        app.quickSaveAttachmentPickerForTesting = null;
+      });
+
+      await openNewKind(tester, ItemKind.image);
+      await tester.ensureVisible(find.text('Choose an image'));
+      await tester.tap(find.text('Choose an image'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('The file could not be selected. Try choosing it again.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('private byte stream location should not be shown'),
+        findsNothing,
+      );
+      expect(find.text('Selecting file…'), findsNothing);
+      expect(find.text('Choose an image'), findsOneWidget);
+      expect(repository.items.value, isEmpty);
+      expect(tester.takeException(), isNull);
+
+      await tester.ensureVisible(find.text('Choose an image'));
+      await tester.tap(find.text('Choose an image'));
+      await tester.pumpAndSettle();
+
+      expect(pickerAttempts, 2);
+      expect(find.text('retry-after-read-error.png'), findsOneWidget);
+      await tester.ensureVisible(find.text('Save to StashHive'));
+      await tester.tap(find.text('Save to StashHive'));
+      await tester.pumpAndSettle();
+
+      expect(repository.items.value, hasLength(1));
+      final saved = repository.items.value.single;
+      expect(saved.kind, ItemKind.image);
+      expect(saved.attachmentName, 'retry-after-read-error.png');
       expect(
         await repository.readAttachment(saved.attachmentKey!),
         orderedEquals(attachmentBytes),
