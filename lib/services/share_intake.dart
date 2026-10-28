@@ -27,6 +27,52 @@ const int maxPendingIncomingShareBatches = 8;
 bool hasCapacityForIncomingShareBatch(int pendingBatchCount) =>
     pendingBatchCount < maxPendingIncomingShareBatches;
 
+/// Builds one bounded, user-facing summary after queued share review finishes.
+/// Hints are app-defined validation guidance, not raw plugin exceptions.
+String? buildShareReviewSummary({
+  required int unsupportedItemCount,
+  required int invalidItemCount,
+  required int omittedItemCount,
+  Iterable<String> validationHints = const <String>[],
+}) {
+  final parts = <String>[];
+  if (unsupportedItemCount > 0) {
+    parts.add(
+      unsupportedItemCount == 1
+          ? '1 unsupported item was skipped'
+          : '$unsupportedItemCount unsupported items were skipped',
+    );
+  }
+  if (invalidItemCount > 0) {
+    parts.add(
+      invalidItemCount == 1
+          ? '1 item could not be prepared'
+          : '$invalidItemCount items could not be prepared',
+    );
+  }
+  if (omittedItemCount > 0) {
+    parts.add(
+      omittedItemCount == 1
+          ? '1 additional item was omitted because each share batch is limited to 100 items'
+          : '$omittedItemCount additional items were omitted because each share batch is limited to 100 items',
+    );
+  }
+  if (parts.isEmpty) return null;
+
+  final safeHints = <String>[];
+  for (final rawHint in validationHints) {
+    final hint = rawHint.trim();
+    if (hint.isEmpty || safeHints.contains(hint)) continue;
+    safeHints.add(hint);
+    if (safeHints.length == 3) break;
+  }
+  final details = safeHints.isEmpty
+      ? ''
+      : ' Details: ${safeHints.join(' ')}';
+  return 'Share review complete. ${parts.join('; ')}.$details '
+      'You can add skipped items manually.';
+}
+
 /// Bound the input copied into a single de-duplication fingerprint. Oversized
 /// payloads go to normal validation without creating a large JSON/UTF-8 copy.
 const int _maxShareFingerprintCharacters =
