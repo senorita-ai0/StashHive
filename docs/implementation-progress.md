@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193 and TC-196–TC-199 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-201 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -676,3 +676,18 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] The messages do not claim the destination definitely saved the backup; success asks the user to verify arrival, dismissed advises retrying when needed, and unavailable tells the user to check Downloads/selected destination.
 - [x] Added regression source **TC-199**, traceability task **TSK-488**, and test-plan coverage.
 - [ ] Run TC-199 and check real share-sheet results and file arrival on web/Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — own mutable decoded backup inputs during restore (2026-10-28)
+
+- [x] Repository restore now validates the incoming decoded backup and then snapshots its item tag lists, collection names, attachment map/metadata and attachment bytes before the first asynchronous boundary. All restore staging uses the owned snapshot instead of caller-owned collections.
+- [x] Added fault-injection seam **restoreAfterSnapshotForTesting** and regression **TC-200**, which mutates/clears the caller's lists/map and source byte buffer during the pause, then verifies the imported item metadata, collection and attachment bytes match the validated snapshot.
+- [x] Added traceability task **TSK-489** and updated the test plan/roadmap.
+- [ ] Run TC-200 and review restore peak memory with 100 MB of attachments plus real web/Android storage at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — own mutable saved-item tags during save (2026-10-28)
+
+- [x] Repository save now clones and freezes the incoming item's tag list before validating or awaiting storage, so caller mutations cannot change the persisted metadata after a save is underway.
+- [x] Added regression **TC-201**: pauses immediately before the item record write, mutates the caller's original tags, then verifies the notifier and raw stored record retain the original values.
+- [x] Added traceability task **TSK-490** and updated the test plan/roadmap.
+- [ ] Run TC-201 with the existing attachment-byte snapshot tests and save rollback suite at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
