@@ -1416,8 +1416,8 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-529 — Validate share de-duplication limits in release builds — 2026-10-29
 
 - **Requirements:** FR-008 and NFR-003.
-- **Source:** ShareEventDeduplicator now validates its public time-window and cache-capacity parameters at runtime instead of relying on assertions that are omitted in release builds. This prevents invalid zero/negative configuration from reaching de-duplication logic and triggering a later cache-eviction failure.
-- **Regression:** TC-242 covers zero and negative time windows and capacities.
+- **Source:** ShareEventDeduplicator now validates its public time-window and cache-capacity parameters at runtime instead of relying on assertions that are omitted in release builds. Cache capacity is also capped at 256 entries, so custom callers cannot disable the intended memory bound by selecting an excessive value.
+- **Regression:** TC-242 covers zero and negative time windows and capacities, rejects values above the hard maximum and accepts the maximum supported capacity.
 - **Status:** Source and regression are committed to main; tests, formatting and analysis remain pending at the manual validation checkpoint. CI remains manual-only.
 
 ### TSK-530 — Atomically update Android share manifest — 2026-10-29
