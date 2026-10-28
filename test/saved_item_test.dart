@@ -169,6 +169,38 @@ void main() {
       expect(item.matchesQuery('flutter'), isTrue);
     });
 
+    test('rejects out-of-range timestamps in direct model parsing', () {
+      final invalidCreatedAt = makeItem().toMap();
+      invalidCreatedAt['createdAtMs'] = maxSavedItemTimestampMs + 1;
+      expect(
+        () => SavedItem.fromMap(invalidCreatedAt),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item contains a timestamp outside the supported date range.',
+          ),
+        ),
+      );
+
+      final invalidUpdatedAt = makeItem().toMap();
+      invalidUpdatedAt['updatedAtMs'] = minSavedItemTimestampMs - 1;
+      expect(
+        () => SavedItem.fromMap(invalidUpdatedAt),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A saved item contains a timestamp outside the supported date range.',
+          ),
+        ),
+      );
+      expect(
+        SavedItem.fromMap(makeItem().toMap()).createdAtMs,
+        makeItem().createdAtMs,
+      );
+    });
+
     test('rejects oversized searchable fields before lowercasing them', () {
       final oversizedTitle = List<String>.filled(100000, ' ').join();
       final oversizedContent =
