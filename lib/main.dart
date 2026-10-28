@@ -77,6 +77,11 @@ const int maxQuickSaveTagsInputCharacters = 12000;
 @visibleForTesting
 Future<PlatformFile?> Function(ItemKind kind)? quickSaveAttachmentPickerForTesting;
 
+/// Test hook for simulating backup file selection failures without a platform
+/// picker channel. Production leaves this unset.
+@visibleForTesting
+Future<PlatformFile?> Function()? backupFilePickerForTesting;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -3714,10 +3719,13 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
     if (_choosingBackup || _restoring) return;
     setState(() => _choosingBackup = true);
     try {
-      final file = await FilePicker.pickFile(
-        type: FileType.custom,
-        allowedExtensions: const ['json'],
-      );
+      final testPicker = backupFilePickerForTesting;
+      final file = testPicker != null
+          ? await testPicker()
+          : await FilePicker.pickFile(
+              type: FileType.custom,
+              allowedExtensions: const ['json'],
+            );
       if (!mounted || file == null) return;
 
       // Check the selected file's size before allocating the entire backup
