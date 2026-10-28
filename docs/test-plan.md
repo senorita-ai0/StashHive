@@ -1434,3 +1434,19 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release save and confirm the repository notifier and raw stored item record both contain the tag values validated at save start, not the later caller mutations.
 - **Status:** Repository regression source is committed but unrun. Verify metadata persistence and failure rollback at the manual validation checkpoint.
 
+### TC-202 — Wait for a replacement commit before reading attachment bytes
+
+- Save an image with known bytes, then start replacing its attachment while pausing after the attachment payload write but before the item-record write.
+- Request the same attachment through the repository while the save is paused.
+- Confirm the read remains pending rather than exposing the replacement payload alongside the old item metadata.
+- Release the save and confirm the read returns the new bytes only after the matching item record commits.
+- **Status:** Repository regression source is committed but unrun. Verify attachment preview/share behavior on web and Android with slow storage at the manual validation checkpoint.
+
+### TC-203 — Wait for attachment rollback before reading bytes after a failed replacement
+
+- Save an image with known original bytes, then start replacing its payload and pause before the item-record write.
+- Queue an attachment read, then release the write hook with a simulated failure so the repository restores the original bytes.
+- Confirm the queued read remains pending during rollback and returns the original bytes after the failed save has completed.
+- Confirm the saved item metadata and the stored attachment still match the original image.
+- **Status:** Repository regression source is committed but unrun. Verify real storage-failure recovery on web and Android at the manual validation checkpoint.
+
