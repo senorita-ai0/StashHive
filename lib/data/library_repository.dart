@@ -458,8 +458,18 @@ class LibraryRepository {
     // operation eventually starts. Otherwise a caller could mutate tags/bytes
     // while this save waits behind an earlier repository operation.
     try {
+      // Guard tag dimensions before any model serialization can copy the list,
+      // then validate all item fields before allocating an attachment snapshot.
       if (item.tags.length > 100 || item.tags.any((tag) => tag.length > 100)) {
         throw const FormatException('A saved item exceeds supported limits.');
+      }
+      BackupCodec.validateSavedItem(item);
+      if (attachmentBytes != null &&
+          item.kind != ItemKind.image &&
+          item.kind != ItemKind.document) {
+        throw const FormatException(
+          'Attachments can only be saved for image or document items.',
+        );
       }
       if (attachmentBytes != null) {
         if (attachmentBytes.length > BackupCodec.maxAttachmentBytes) {
