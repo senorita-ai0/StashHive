@@ -1085,3 +1085,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `consumeInitialSharedMedia` in `lib/services/share_intake.dart` acknowledges the plugin's initial callback before awaiting batch review. If acknowledgement fails, the already-read share is still enqueued.
 - **Regression:** `test/share_intake_test.dart` verifies reset happens before an intentionally paused review queue and that reset failure does not discard the media.
 - **Verification:** Source regression authored but unrun. Restart/replay behavior and Android plugin timing require device validation.
+
+### TSK-448 — Preserve shared content when changing Quick Save type
+
+- **Requirement:** FR-003 and FR-008–009; editing the kind of a draft must not silently discard user-entered content that remains valid as notes across supported item types.
+- **Implementation:** `_QuickSavePageState._selectKind` in `lib/main.dart` clears the type-specific selected attachment, but retains the shared notes/content controller.
+- **Regression:** TC-156 in `test/quick_save_test.dart` enters note content, switches to Link and back to Note, and verifies the text remains without saving an item.
+- **Verification:** Source regression authored but unrun; keyboard/screen-reader and platform interaction review remain pending.
