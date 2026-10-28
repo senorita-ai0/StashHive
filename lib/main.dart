@@ -439,16 +439,16 @@ class _HomeShellState extends State<HomeShell> {
     // arrive after dispose. Do not enqueue a future that no queue can drain.
     if (!mounted || media.isEmpty) return;
     final boundedBatch = boundIncomingShareBatch(media);
-    if (boundedBatch.media.isEmpty ||
-        !_shareDeduplicator.shouldAccept(boundedBatch.media)) {
-      return;
-    }
+    if (boundedBatch.media.isEmpty) return;
+    // Check capacity before recording a fingerprint so an event declined due
+    // to queue pressure can be retried after the user finishes pending shares.
     if (!hasCapacityForIncomingShareBatch(_pendingShareBatches.length)) {
       _showShareMessage(
         'Too many share batches are waiting. Finish the current shares before sending more.',
       );
       return;
     }
+    if (!_shareDeduplicator.shouldAccept(boundedBatch.media)) return;
     if (boundedBatch.skippedCount > 0) {
       _showShareMessage(
         'This share contains too many items. The first '
