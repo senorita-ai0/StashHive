@@ -24,6 +24,10 @@ const int maxIncomingShareBatchItems = 100;
 /// The active batch is tracked separately from this waiting queue.
 const int maxPendingIncomingShareBatches = 8;
 
+/// Bound the amount of provider/error guidance inspected for one summary.
+const int maxShareReviewHintCandidates = 16;
+const int maxShareReviewHintCharacters = 160;
+
 bool hasCapacityForIncomingShareBatch(int pendingBatchCount) =>
     pendingBatchCount < maxPendingIncomingShareBatches;
 
@@ -60,7 +64,13 @@ String? buildShareReviewSummary({
   if (parts.isEmpty) return null;
 
   final safeHints = <String>[];
+  var inspectedHints = 0;
   for (final rawHint in validationHints) {
+    if (inspectedHints >= maxShareReviewHintCandidates) break;
+    inspectedHints++;
+    // A caller can construct this helper directly; avoid making a second,
+    // trimmed copy of arbitrary-size text just to display a short summary.
+    if (rawHint.length > maxShareReviewHintCharacters) continue;
     final hint = rawHint.trim();
     if (hint.isEmpty || safeHints.contains(hint)) continue;
     safeHints.add(hint);
