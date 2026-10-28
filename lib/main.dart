@@ -434,10 +434,22 @@ class _HomeShellState extends State<HomeShell> {
   }
 
   Future<void> _enqueueShareBatch(List<SharedMediaFile> media) async {
-    if (media.isEmpty || !_shareDeduplicator.shouldAccept(media)) return;
+    if (media.isEmpty) return;
+    final boundedBatch = boundIncomingShareBatch(media);
+    if (boundedBatch.media.isEmpty ||
+        !_shareDeduplicator.shouldAccept(boundedBatch.media)) {
+      return;
+    }
+    if (boundedBatch.skippedCount > 0) {
+      _showShareMessage(
+        'This share contains too many items. The first '
+        '${boundedBatch.media.length} will be reviewed; share the remaining '
+        'items in smaller batches.',
+      );
+    }
     final done = Completer<void>();
     _pendingShareBatches.add((
-      media: List<SharedMediaFile>.unmodifiable(media),
+      media: boundedBatch.media,
       done: done,
     ));
     unawaited(_drainShareQueue());
