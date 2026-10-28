@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-170 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -497,4 +497,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Text intake now accepts the provider's message as the effective content when the path is empty or unused. Unsupported video shares skip path parsing, and URL/provider-path/MIME limits are checked before trim/case-normalization work.
 - [x] Added regression source **TC-169** for the batch limit/order and oversized-text fingerprint bypass, plus **TC-170** for message-only text shares. Added traceability task **TSK-462**.
 - [ ] Run TC-169/TC-170 and verify real source-app MIME/path fields, batch warning/order and share cancellation on a physical Android device at the manual checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — make backup exports wait for repository mutations (2026-10-28)
+
+- [x] `LibraryRepository.createBackup()` now takes a place in the shared mutation queue, so a backup cannot read old item notifier values alongside newly written attachment bytes during an in-flight edit.
+- [x] Added repository regression **TC-171**: pause an attachment replacement after its item write, confirm backup waits, then decode the export and verify both metadata and bytes match the completed edit.
+- [x] Added traceability task **TSK-463** and updated the test plan.
+- [ ] Run TC-171 and exercise backup during concurrent saves/deletes/restores on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
