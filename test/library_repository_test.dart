@@ -1008,6 +1008,11 @@ void main() {
     final source = await pendingBackup;
     final decoded = BackupCodec.decode(source);
 
+    expect(
+      repository.lastBackupPreparedAtMs,
+      isNotNull,
+      reason: 'A generated portable backup records its preparation time.',
+    );
     expect(decoded.items, hasLength(1));
     expect(decoded.items.single.title, 'Updated attachment metadata');
     expect(
