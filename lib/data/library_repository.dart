@@ -521,7 +521,7 @@ class LibraryRepository {
   Future<void> _save(SavedItem item, {List<int>? attachmentBytes}) async {
     final saveItem = _canonicalizeCollectionAssignment(item);
     BackupCodec.validateSavedItem(saveItem);
-    final alreadyVisible = items.value.any((saved) => saved.id == saveItem.id);
+    final alreadyVisible = _visibleItemsById.containsKey(saveItem.id);
     BackupCodec.validateItemCount(
       currentCount: items.value.length,
       incomingCount: alreadyVisible ? 0 : 1,
