@@ -1165,6 +1165,35 @@ void main() {
     );
   });
 
+  test('clears a failed attachment read so the same key can be retried', () async {
+    final bytes = Uint8List.fromList([3, 1, 4, 1, 5]);
+    final image = buildImage(id: 'retry-failed-attachment-read');
+    await repository.save(image, attachmentBytes: bytes);
+
+    var readAttempts = 0;
+    LibraryRepository.readAttachmentBeforeReadForTesting = (key) async {
+      readAttempts++;
+      if (readAttempts == 1) {
+        throw StateError('simulated transient attachment read failure');
+      }
+    };
+
+    try {
+      await expectLater(
+        repository.readAttachment(image.attachmentKey!),
+        throwsA(isA<StateError>()),
+      );
+
+      expect(
+        await repository.readAttachment(image.attachmentKey!),
+        orderedEquals(bytes),
+      );
+      expect(readAttempts, 2);
+    } finally {
+      LibraryRepository.readAttachmentBeforeReadForTesting = null;
+    }
+  });
+
   test('coalesces overlapping attachment reads without crossing a queued write', () async {
     final originalBytes = Uint8List.fromList([2, 7, 1, 8]);
     final replacementBytes = Uint8List.fromList([2, 8, 1, 8]);
