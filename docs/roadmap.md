@@ -1190,3 +1190,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-209 pauses delete after raw item/attachment removal, checks the item remains visible through `findById`, then verifies the simulated failure restores the item and exact attachment bytes.
 - **Status:** Source and regression plan committed but unrun. Verify slow delete/rollback and consistency on web and Android at the manual checkpoint; CI remains manual-only.
 
+### TSK-498 — Keep staged restore records out of the published lookup — 2026-10-28
+
+- **Requirements:** FR-013 and NFR-003.
+- **Source:** Synchronous lookup now reads only from the published item index; raw records staged by restore are not visible until the commit path refreshes the repository snapshot.
+- **Regression:** TC-210 pauses restore after its raw item write and confirms the incoming item remains invisible to `findById` until collection commit completes.
+- **Status:** Source/regression plan committed but unrun. Verify successful and interrupted restore visibility on web and Android at the manual checkpoint; CI remains manual-only.
+
