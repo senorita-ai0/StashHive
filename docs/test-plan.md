@@ -1367,3 +1367,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the restore action exits its busy state, hides private provider details, and leaves the current library unchanged.
 - Retry with a valid backup; confirm the merge dialog is shown and the backup imports successfully.
 - **Status:** Widget regression source is committed but unrun. Verify partial read, stream error, size lookup and retry behavior with real browser/Android pickers at the manual checkpoint.
+
+### TC-193 — Prevent leaving Backup & privacy during an active restore commit
+
+- Open Backup & privacy through a pushed route, choose a valid backup and confirm the merge.
+- Pause repository restore after staged writes but before collection commit. Confirm the screen shows a restoring state, the app-bar Back action is disabled, and a simulated system-back action cannot dismiss the route.
+- Release the restore and confirm it completes, shows feedback, preserves existing items and adds the backed-up item without a framework exception.
+- **Status:** Widget regression source is committed but unrun. Verify Android system-back behavior and navigation during slow browser/native storage writes at the manual checkpoint.
