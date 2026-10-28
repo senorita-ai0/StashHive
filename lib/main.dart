@@ -373,8 +373,11 @@ class _HomeShellState extends State<HomeShell> {
   int _searchRevision = 0;
 
   StreamSubscription<List<SharedMediaFile>>? _shareSubscription;
-  final List<({List<SharedMediaFile> media, Completer<void> done})>
-      _pendingShareBatches = [];
+  final List<({
+    List<SharedMediaFile> media,
+    int skippedCount,
+    Completer<void> done,
+  })> _pendingShareBatches = [];
   final ShareEventDeduplicator _shareDeduplicator =
       ShareEventDeduplicator();
   bool _processingShareBatches = false;
@@ -461,16 +464,10 @@ class _HomeShellState extends State<HomeShell> {
       return;
     }
     if (!_shareDeduplicator.shouldAccept(boundedBatch.media)) return;
-    if (boundedBatch.skippedCount > 0) {
-      _showShareMessage(
-        'This share contains too many items. The first '
-        '${boundedBatch.media.length} will be reviewed; share the remaining '
-        'items in smaller batches.',
-      );
-    }
     final done = Completer<void>();
     _pendingShareBatches.add((
       media: boundedBatch.media,
+      skippedCount: boundedBatch.skippedCount,
       done: done,
     ));
     unawaited(_drainShareQueue());
@@ -491,6 +488,16 @@ class _HomeShellState extends State<HomeShell> {
             'That item could not be prepared. Try adding it manually.',
           );
         } finally {
+          // Show the truncation warning after the last item route has closed,
+          // so the user can see it on the home screen instead of losing it
+          // while reviewing a potentially long batch.
+          if (mounted && batch.skippedCount > 0) {
+            _showShareMessage(
+              'This share contained ${batch.skippedCount} additional item(s) '
+              'beyond the ${batch.media.length}-item review limit. Share the '
+              'remaining items in smaller batches.',
+            );
+          }
           if (!batch.done.isCompleted) batch.done.complete();
           if (identical(_activeShareBatchDone, batch.done)) {
             _activeShareBatchDone = null;
