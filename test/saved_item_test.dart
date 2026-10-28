@@ -150,7 +150,16 @@ void main() {
       expect(item.matchesQuery('  '), isTrue);
     });
 
-    test('matches pre-normalized queries for reuse across items', () {    test('rejects oversized search queries before normalization', () {
+    test('matches pre-normalized queries for reuse across items', () {
+      final item = makeItem(content: 'Research local storage');
+
+      expect(item.matchesNormalizedQuery('local storage'), isTrue);
+      expect(item.matchesNormalizedQuery('reading'), isTrue);
+      expect(item.matchesNormalizedQuery('missing'), isFalse);
+      expect(item.matchesNormalizedQuery(''), isTrue);
+    });
+
+    test('rejects oversized search queries before normalization', () {
       final item = makeItem();
       final oversizedQuery =
           List<String>.filled(maxSearchQueryCharacters + 1, ' ').join();
@@ -158,15 +167,6 @@ void main() {
       expect(item.matchesQuery(oversizedQuery), isFalse);
       expect(item.matchesNormalizedQuery(oversizedQuery), isFalse);
       expect(item.matchesQuery('flutter'), isTrue);
-    });
-
-
-      final item = makeItem(content: 'Research local storage');
-
-      expect(item.matchesNormalizedQuery('local storage'), isTrue);
-      expect(item.matchesNormalizedQuery('reading'), isTrue);
-      expect(item.matchesNormalizedQuery('missing'), isFalse);
-      expect(item.matchesNormalizedQuery(''), isTrue);
     });
 
     test('trims padded legacy metadata without changing note content', () {
