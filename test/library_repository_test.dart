@@ -2006,6 +2006,68 @@ void main() {
     },
   );
 
+  test(
+    'snapshots mutable save inputs before waiting in the mutation queue',
+    () async {
+      final blockerWriteEntered = Completer<void>();
+      final releaseBlocker = Completer<void>();
+      var afterWriteCalls = 0;
+      LibraryRepository.saveAfterItemCommitForTesting = () async {
+        afterWriteCalls++;
+        if (afterWriteCalls == 1) {
+          blockerWriteEntered.complete();
+          await releaseBlocker.future;
+        }
+      };
+
+      final blockerSave = repository.save(
+        buildLink(id: 'save-input-queue-blocker', collection: null),
+      );
+      Future<void>? pendingSave;
+      final callerTags = <String>['Original tag'];
+      final callerBytes = Uint8List.fromList([3, 1, 4, 1, 5]);
+      final expectedBytes = Uint8List.fromList(callerBytes);
+      final queuedImage = buildImage(id: 'queued-save-captured-inputs')
+          .copyWith(tags: callerTags);
+
+      try {
+        await blockerWriteEntered.future;
+        pendingSave = repository.save(
+          queuedImage,
+          attachmentBytes: callerBytes,
+        );
+
+        // The next repository save is waiting behind the paused blocker.
+        // These mutations must not change the values captured by save().
+        callerTags
+          ..[0] = 'Mutated after enqueue'
+          ..add('Late tag');
+        callerBytes[0] = 99;
+        callerBytes[4] = 0;
+      } finally {
+        if (!releaseBlocker.isCompleted) releaseBlocker.complete();
+        try {
+          await blockerSave;
+          if (pendingSave != null) await pendingSave;
+        } finally {
+          LibraryRepository.saveAfterItemCommitForTesting = null;
+        }
+      }
+
+      final saved = repository.findById(queuedImage.id);
+      expect(saved, isNotNull);
+      expect(saved!.tags, ['Original tag']);
+      final raw = Hive.box<dynamic>('stashhive_items_v1')
+          .get(queuedImage.id) as Map;
+      expect(raw['tags'], ['Original tag']);
+      expect(
+        await repository.readAttachment(queuedImage.attachmentKey!),
+        orderedEquals(expectedBytes),
+      );
+      expect(callerTags, ['Mutated after enqueue', 'Late tag']);
+    },
+  );
+
   test('rolls back a partially written collection rename', () async {
     await repository.addCollection('Learning');
     await repository.save(buildLink(id: 'learning-1', collection: 'Learning'));
