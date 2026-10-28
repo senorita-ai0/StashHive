@@ -1177,7 +1177,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-461 — Show attachment selection progress and recover from picker errors
 
 - **Requirement:** FR-008 and NFR-006; file selection should communicate busy state, provide safe and actionable failure feedback, and allow recovery without discarding the draft.
-- **Implementation:** Quick Save changes the attachment area's label and hint while file selection/reading is pending, and shows an inline progress indicator instead of the idle upload icon.
+- **Implementation:** Quick Save changes the attachment area's label and hint while file selection/reading is pending, shows an inline progress indicator instead of the idle upload icon, and marks the busy picker semantics as a live region so assistive technology can announce the change.
 - **Regression:** TC-168 in `test/quick_save_test.dart` pauses the picker, injects an unexpected provider error, checks that the busy UI clears and raw details remain hidden, then retries with a valid image and verifies exact persisted bytes.
 - **Verification:** Widget regression source is committed but unrun; real picker and byte-stream failure behavior remains pending on Android and supported browsers/desktop platforms.
 
