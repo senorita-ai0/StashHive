@@ -12,7 +12,7 @@
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417 | TC-008, TC-122 | IN PROGRESS — repository-owned byte snapshot source/test added; platform validation pending |
-| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466 | TC-009, TC-169, TC-170, TC-172, TC-173 | IN PROGRESS — source bounds batch size, fingerprint work and the waiting queue, handles effective text and disposal; Android build/device test pending |
+| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; handles effective text, disposal and unusual file URIs; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423 | TC-010, TC-131 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463 | TC-012, TC-117, TC-119, TC-120, TC-171 | IN PROGRESS — bounded-size source and mutation-consistent snapshot queue added; execution and platform export pending |
@@ -1205,7 +1205,14 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-466 — Bound the waiting queue for share batches
 
 - **Requirements:** FR-009 / NFR-003; incoming share events must not accumulate unbounded pending work while the user reviews existing content.
-- **Implementation:** The active share batch is tracked separately; the waiting queue admits at most `maxPendingIncomingShareBatches` (8) batches. Further unique events are declined with a clear instruction to finish current shares before sending more.
+- **Implementation:** The active share batch is tracked separately; the waiting queue admits at most `maxPendingIncomingShareBatches` (8) batches. Further unique events are declined with a clear instruction to finish current shares before sending more. Capacity is checked before recording a de-duplication fingerprint so a declined event can be retried after capacity returns.
 - **Regression:** TC-173 checks queue admission at the exact capacity boundary and documents the required queue-full/FIFO/lifecycle device checks.
 - **Verification:** The queue-limit unit regression is committed but unrun; real stream ordering and capacity-recovery UX remain pending Android validation.
+
+### TSK-467 — Keep incoming-share fingerprinting resilient to unusual file URIs
+
+- **Requirements:** FR-009 / NFR-002–003; provider metadata must not throw from a background stream callback before a safe item-level intake error can be shown.
+- **Implementation:** MIME inference now treats URI-to-local-path conversion as best-effort during duplicate fingerprinting and falls back to the bounded raw path if the current platform cannot convert a provider's file URI.
+- **Regression:** TC-174 supplies a file URI with a non-local authority and asserts the event can be fingerprinted without throwing.
+- **Verification:** Regression source is committed but unrun. Confirm real file provider URI forms and fallback behavior on Android during the manual validation checkpoint.
 
