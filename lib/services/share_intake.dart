@@ -64,10 +64,8 @@ String? buildShareReviewSummary({
   if (parts.isEmpty) return null;
 
   final safeHints = <String>[];
-  var inspectedHints = 0;
-  for (final rawHint in validationHints) {
-    if (inspectedHints >= maxShareReviewHintCandidates) break;
-    inspectedHints++;
+  for (final rawHint
+      in validationHints.take(maxShareReviewHintCandidates)) {
     // A caller can construct this helper directly; avoid making a second,
     // trimmed copy of arbitrary-size text just to display a short summary.
     if (rawHint.length > maxShareReviewHintCharacters) continue;
