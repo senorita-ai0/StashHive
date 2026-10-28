@@ -1210,3 +1210,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** Backup decoding now validates the format-version field's type before formatting an unsupported-version message. Non-integer input receives concise fixed text rather than echoing untrusted strings or structured values; unknown integer versions remain explicit.
 - **Regression:** TC-212 uses a 100,000-character string in `formatVersion` and expects the fixed invalid-version message.
 - **Status:** Source and regression plan committed but unrun. Verify large malformed backup handling and restore feedback at the manual checkpoint; CI remains manual-only.
+
+### TSK-501 — Snapshot mutable save inputs before queueing — 2026-10-28
+
+- **Requirements:** FR-002 and NFR-003.
+- **Source:** The public `save()` call now bounds attachment bytes and tag metadata, then captures owned tag/attachment snapshots before the operation joins the serialized mutation queue. Later caller mutations no longer alter a queued save.
+- **Regression:** TC-213 queues an image save behind a paused write, mutates the caller's tags and bytes, and asserts the stored item matches the values submitted to `save()`.
+- **Status:** Source and regression plan committed but unrun. Verify queue-time input snapshots, failures and rollback on web and Android at the manual validation checkpoint; CI remains manual-only.
