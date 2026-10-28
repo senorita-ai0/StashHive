@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+    show defaultTargetPlatform, kIsWeb, TargetPlatform, visibleForTesting;
 import 'package:flutter/material.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:share_plus/share_plus.dart';
@@ -70,6 +70,11 @@ class _PreferenceTextScaler extends TextScaler {
 const Color kCanvas = Color(0xFFF8F9FD);
 const Color kBorder = Color(0xFFE7E9F2);
 const int kMaxAttachmentBytes = BackupCodec.maxAttachmentBytes;
+
+/// Test hook for resolving delayed file-picker requests without invoking a
+/// platform picker. Production leaves this unset.
+@visibleForTesting
+Future<PlatformFile?> Function(ItemKind kind)? quickSaveAttachmentPickerForTesting;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -1638,6 +1643,8 @@ class _QuickSavePageState extends State<QuickSavePage> {
   String? _selectedName;
   String? _selectedMimeType;
   bool _saving = false;
+  bool _pickingAttachment = false;
+  int _attachmentSelectionRevision = 0;
 
   @override
   void initState() {
@@ -1667,17 +1674,37 @@ class _QuickSavePageState extends State<QuickSavePage> {
     super.dispose();
   }
 
+  bool _isCurrentAttachmentRequest(int revision, ItemKind requestedKind) =>
+      mounted &&
+      revision == _attachmentSelectionRevision &&
+      _kind == requestedKind;
+
   Future<void> _pickAttachment() async {
+    if (_pickingAttachment) return;
+    final requestedKind = _kind;
+    final requestRevision = _attachmentSelectionRevision;
+    setState(() => _pickingAttachment = true);
+
     try {
-      final file = await FilePicker.pickFile(
-        type: _kind == ItemKind.image ? FileType.image : FileType.custom,
-        allowedExtensions: _kind == ItemKind.image
-            ? null
-            : const ['pdf', 'txt', 'doc', 'docx', 'rtf', 'csv'],
-      );
-      if (!mounted || file == null) return;
+      final testPicker = quickSaveAttachmentPickerForTesting;
+      final file = testPicker != null
+          ? await testPicker(requestedKind)
+          : await FilePicker.pickFile(
+              type: requestedKind == ItemKind.image
+                  ? FileType.image
+                  : FileType.custom,
+              allowedExtensions: requestedKind == ItemKind.image
+                  ? null
+                  : const ['pdf', 'txt', 'doc', 'docx', 'rtf', 'csv'],
+            );
+      if (!_isCurrentAttachmentRequest(requestRevision, requestedKind) ||
+          file == null) {
+        return;
+      }
       if (file.name.trim().isEmpty) {
-        _showMessage('The selected file has no usable filename. Rename it and try again.');
+        _showMessage(
+          'The selected file has no usable filename. Rename it and try again.',
+        );
         return;
       }
       if (file.name.length > 255) {
@@ -1688,7 +1715,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
       // Inspect file length before allocating the full byte buffer. On web and
       // mobile this keeps oversized selections from consuming unbounded memory.
       final length = await file.length();
-      if (!mounted) return;
+      if (!_isCurrentAttachmentRequest(requestRevision, requestedKind)) return;
       if (length == 0) {
         _showMessage(
           'That file is empty or its size could not be determined. Choose another file.',
@@ -1705,7 +1732,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
         maxBytes: kMaxAttachmentBytes,
         limitMessage: 'Files must be 15 MB or smaller in this version.',
       );
-      if (!mounted) return;
+      if (!_isCurrentAttachmentRequest(requestRevision, requestedKind)) return;
       if (bytes.isEmpty) {
         _showMessage('Could not read that file. Try selecting it again.');
         return;
@@ -1716,12 +1743,16 @@ class _QuickSavePageState extends State<QuickSavePage> {
         _selectedMimeType = _mimeTypeFor(file.name);
       });
     } catch (error) {
-      _showMessage(
-        _messageForOperationError(
-          error,
-          fallback: 'The file could not be selected. Try choosing it again.',
-        ),
-      );
+      if (_isCurrentAttachmentRequest(requestRevision, requestedKind)) {
+        _showMessage(
+          _messageForOperationError(
+            error,
+            fallback: 'The file could not be selected. Try choosing it again.',
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _pickingAttachment = false);
     }
   }
 
@@ -2063,6 +2094,9 @@ class _QuickSavePageState extends State<QuickSavePage> {
     // Tapping the already-selected option is not a type change; in particular,
     // preserve bytes prefilled by an incoming file share.
     if (_kind == kind) return;
+    // Invalidate any picker result started for a previous draft type. This
+    // also handles switching away and back before the native dialog completes.
+    _attachmentSelectionRevision++;
     setState(() {
       _kind = kind;
       // Clear type-specific attachment selection only for an actual change.
@@ -2176,12 +2210,13 @@ class _QuickSavePageState extends State<QuickSavePage> {
         : 'Select a file, up to 15 megabytes';
     return Semantics(
       button: true,
+      enabled: !_pickingAttachment,
       label: pickerLabel,
-      hint: pickerHint,
-      onTap: _pickAttachment,
+      hint: _pickingAttachment ? 'A file selection is already in progress' : pickerHint,
+      onTap: _pickingAttachment ? null : _pickAttachment,
       child: ExcludeSemantics(
         child: InkWell(
-          onTap: _pickAttachment,
+          onTap: _pickingAttachment ? null : _pickAttachment,
           borderRadius: BorderRadius.circular(16),
           child: Container(
             padding: const EdgeInsets.all(16),
