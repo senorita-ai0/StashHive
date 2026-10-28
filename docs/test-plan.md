@@ -1347,3 +1347,9 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm ordinary search still normalizes the query once and matches case-insensitively across title, URL, note, tags and collection names.
 - **Status:** Widget and model regression sources are committed but unrun. Review paste behavior, Unicode matching, responsiveness and accessibility on web and Android at the manual checkpoint.
 
+### TC-190 — Recover from backup file size lookup failure
+
+- Open Backup & privacy and provide a file picker result whose size lookup throws an unexpected provider error.
+- Confirm the restore action returns to its idle state, the raw provider detail is hidden, no library records are changed, and the user can retry.
+- On the second attempt provide a valid backup; confirm the merge confirmation appears and the valid item is imported.
+- **Status:** Widget regression source is committed but unrun. Verify picker metadata errors, large/empty backup handling and retry behavior on web/Android at the manual validation checkpoint.
