@@ -1291,3 +1291,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the delete with a simulated late failure. Confirm the repository restores the item and its attachment, then confirm the queued backup contains the original item metadata and exact original bytes rather than recording the temporary missing-file state.
 - **Status:** Repository regression source is committed but unrun. Verify concurrent delete/backup consistency and rollback against browser and Android storage at the manual checkpoint.
 
+### TC-182 — Wait for restore rollback before creating a backup
+
+- Store an existing link and collection, then begin restoring a backup containing a new image and attachment.
+- Pause restore after its staged records/attachment have been written but before collection preferences are committed; request a backup and confirm it waits.
+- Release the restore with an injected interruption. Confirm restore rollback removes the staged item and attachment, and the queued backup contains only the original library item and collection with no orphan attachment payload.
+- **Status:** Repository regression source is committed but unrun. Verify backup/restore concurrency and interruption recovery on web and Android at the manual checkpoint.
+
