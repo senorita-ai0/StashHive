@@ -2275,9 +2275,11 @@ class _QuickSavePageState extends State<QuickSavePage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        hasCurrent
-                            ? 'Tap to choose a replacement file'
-                            : 'Select a file up to 15 MB',
+                        _pickingAttachment
+                            ? 'Checking file size and reading content…'
+                            : hasCurrent
+                                ? 'Tap to choose a replacement file'
+                                : 'Select a file up to 15 MB',
                         style: TextStyle(
                           color: mutedTextColor(context),
                           fontSize: 12,
