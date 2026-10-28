@@ -1625,3 +1625,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Cancel the picker and confirm Create backup becomes available again; no restore is started and existing library contents are unchanged.
 - **Status:** Widget regression source is committed but unrun. Verify platform picker cancellation and state recovery on Android and web at the manual checkpoint.
 
+### TC-228 — Release the backup JSON source before waiting on the share sheet
+
+- Prepare a backup containing Unicode metadata and several attachment payloads, then export it using the normal share flow.
+- Confirm the file exposed through the share sheet remains valid UTF-8 JSON and can be decoded with the same item metadata and attachment bytes as the prepared backup.
+- Review the export path's memory lifetime: once UTF-8 bytes have been produced, the UI should drop its reference to the large JSON string before awaiting the share-sheet result.
+- **Status:** Source change is committed; no memory profile or platform export was run. Check payload integrity and peak memory on web/Android during the manual validation checkpoint.
+
