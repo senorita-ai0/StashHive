@@ -1169,3 +1169,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-206 verifies shared concurrent reads return original bytes while a read queued after an attachment replacement returns the committed replacement bytes.
 - **Status:** Source and regression committed but unrun. Review same-key thumbnail/detail read behavior and capture performance baseline during the manual validation checkpoint.
 
+### TSK-495 — Release coalesced attachment reads after failure — 2026-10-28
+
+- **Requirements:** FR-008/FR-011 and NFR-003.
+- **Source:** In-flight same-key attachment read futures are removed in a guarded finally path. Failure releases the entry, and an older read cannot remove a newer request that is queued after a repository write.
+- **Regression:** TC-207 injects a transient read error and confirms the next read succeeds with the original bytes.
+- **Status:** Source and regression committed but unrun. Check read-error recovery with real browser/Android storage at the manual validation checkpoint.
+
