@@ -1450,3 +1450,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the saved item metadata and the stored attachment still match the original image.
 - **Status:** Repository regression source is committed but unrun. Verify real storage-failure recovery on web and Android at the manual validation checkpoint.
 
+### TC-204 — Distinguish a pending image read from a missing attachment
+
+- Start an attachment replacement and pause the repository after the payload write but before the item record commits.
+- Open Item Details while the repository attachment read is waiting behind the in-flight save.
+- Confirm the preview shows an accessible loading status, not missing-file guidance; open the image dialog and confirm it also shows loading rather than a false missing attachment message.
+- Release the save and confirm both readers leave the loading state without an uncaught framework exception.
+- **Status:** Widget regression source is committed but unrun. Verify loading, missing-file and preview-error states with slow web/Android storage at the manual validation checkpoint.
+
