@@ -1512,3 +1512,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the published item and collection lists reject direct mutation.
 - **Status:** Repository regression source is committed but unrun. Check widget reactivity and API compatibility during the manual validation checkpoint. No test/build result is claimed.
 
+### TC-212 — Keep malformed backup version errors bounded
+
+- Create a JSON backup candidate whose `formatVersion` field is a very long non-integer string.
+- Confirm the codec rejects the invalid version with the short, fixed message “The backup format version is invalid.”
+- Confirm the error does not echo attacker-controlled version content into an exception or UI message; unknown integer versions should still report the numeric version.
+- **Status:** Codec regression source is committed but unrun. Verify malformed backup error handling with large inputs at the manual validation checkpoint.
+
