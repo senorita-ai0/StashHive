@@ -847,6 +847,25 @@ void main() {
       );
     });
 
+    test('uses safe validation text for non-local file URI authorities', () async {
+      await expectLater(
+        ShareIntake.fromSharedMedia(
+          SharedMediaFile(
+            path: 'file://private-provider.internal/share/report.pdf',
+            type: SharedMediaType.file,
+            mimeType: 'application/pdf',
+          ),
+        ),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'The shared file path could not be read safely.',
+          ),
+        ),
+      );
+    });
+
     test('reads a supported document share into an attachment draft', () async {
       final directory =
           await Directory.systemTemp.createTemp('stashhive_share_file_test_');
