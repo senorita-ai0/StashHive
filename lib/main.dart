@@ -4042,7 +4042,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
               ),
             ),
           ),
-      ),
+        ),
       ),
     );
   }
