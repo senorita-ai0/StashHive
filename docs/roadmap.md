@@ -1333,7 +1333,7 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-518 — Recover when native share-stream setup fails — 2026-10-28
 
 - **Requirements:** FR-009 and NFR-002/NFR-003.
-- **Source:** Android share-intake startup now catches synchronous failures while obtaining/subscribing to the event stream and tells the user that manual capture remains available. Initial-share reading begins only after the stream subscription is established.
+- **Source:** Android share-intake startup catches synchronous failures while obtaining/subscribing to the live event stream and tells the user that manual capture remains available. It still attempts the independent launch-time intent read, so a cold-start share can be recovered when the live stream is unavailable.
 - **Regression:** TC-231 injects a stream setup exception and checks safe guidance, hidden plugin diagnostics, continued Library navigation and no framework exception.
 - **Status:** Source and regression documentation are committed but unrun. Validate plugin lifecycle and normal event delivery on a physical Android device at the manual validation checkpoint; CI remains manual-only.
 
