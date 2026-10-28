@@ -969,7 +969,7 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-466 — Bound the waiting queue for share batches — 2026-10-28
 
 - **Requirements:** FR-009 / NFR-003.
-- **Source:** The app now admits at most eight waiting share batches independently of the currently active batch. Additional unique events receive clear recovery guidance rather than growing the queue without limit. Capacity is checked before de-duplication cache insertion so declined events can be retried after the queue drains.
+- **Source:** The app now admits at most eight waiting share batches independently of the currently active batch. Additional unique events receive explicit feedback that the current share was not queued and must be shared again after pending batches finish, rather than growing the queue without limit. Capacity is checked before de-duplication cache insertion so declined events can be retried after the queue drains.
 - **Regression:** TC-173 checks the queue-admission boundary; manual Android verification must also exercise queue-full messaging, FIFO draining and teardown.
 - **Status:** Source and test plan committed; the unit regression has not been run and native stream behavior remains unverified.
 
