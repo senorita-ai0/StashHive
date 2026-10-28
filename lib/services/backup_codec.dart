@@ -430,10 +430,14 @@ class BackupCodec {
     if (decoded['app'] != _legacyBackupAppIdentifier) {
       throw const FormatException('This file is not a recognized StashHive backup.');
     }
-    if (decoded['formatVersion'] != formatVersion) {
-      throw FormatException(
-        'Unsupported backup version: ' + (decoded['formatVersion']?.toString() ?? 'unknown') + '.',
-      );
+    final rawVersion = decoded['formatVersion'];
+    if (rawVersion is! int) {
+      // Do not echo arbitrary backup data into an error message; this field
+      // can be a very large string, list or map in a malformed JSON file.
+      throw const FormatException('The backup format version is invalid.');
+    }
+    if (rawVersion != formatVersion) {
+      throw FormatException('Unsupported backup version: $rawVersion.');
     }
     final omittedRecordValue = decoded['omittedUnreadableRecordCount'];
     final omittedCollectionValue = decoded['omittedCollectionEntryCount'];
