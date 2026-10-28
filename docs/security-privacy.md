@@ -83,3 +83,16 @@ If the project becomes public, add a monitored security contact before release. 
 ## Phase 3 UI error handling increment — 2026-10-22
 
 Normal file selection, save, item/collection deletion and backup operation error messages preserve app-defined validation guidance but do not display raw unexpected plugin/storage exceptions. Startup failure copy now hides the raw initialization exception (which can include local paths) and provides browser- or device-specific recovery guidance. Regression source checks item/collection deletion fallbacks and startup copy. This is a source-level improvement only: platform-owned messages, logs, permissions and network behavior still require the manual privacy review; no audit or test pass is claimed.
+
+
+## Phase 3 code-level privacy review — 2026-10-29
+
+**Scope:** source inspection only; this is not a platform security audit or evidence of successful builds.
+
+- Inspected the Dart sources for direct diagnostic logging calls such as `print`, `debugPrint`, `developer.log` and common logger calls. No matches were found in the current `lib/` source files reviewed.
+- Item link opening validates persisted links with the HTTP/HTTPS-only parser immediately before calling the external launcher, so legacy unsafe schemes are rejected even if they predate current save/restore validation.
+- Shared content and attachment intake apply explicit limits to text, URLs, provider paths, MIME metadata, batch size, waiting share batches and attachment bytes before or during the corresponding allocations/read operations.
+- The Android manifest is generated during the manual workflow rather than checked into the repository. The custom configurator adds share intent filters and the app label/launch mode; it does not add permission declarations. The generated manifest and resolved plugin permission footprint still require review from an actual build.
+- No remote OCR, account system, analytics or cloud-sync service is implemented in this MVP source.
+
+**Remaining verification before this review can close:** inspect the generated merged Android manifest and resolved dependency permissions; capture browser/Android network behavior; perform real-device file/share, TalkBack and browser screen-reader checks; rerun the source/tests and manual platform builds at the owner's checkpoint. The review remains open until those checks have evidence.
