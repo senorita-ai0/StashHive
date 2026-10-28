@@ -1169,3 +1169,12 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the stale result is discarded before file I/O, the Document draft still has no selected attachment, and it cannot be saved until a document is selected.
 - Repeat by switching away from the requested type and back before completing the picker, ensuring the request revision—not just the current type—invalidates old results.
 - **Status:** Widget regression source is committed but unrun. Verify native picker behavior on Android and file selection in web/desktop browsers at the manual checkpoint.
+
+
+### TC-165 — Invalidate a picker result after switching away and back
+
+- Start a file-picker request in an Image draft and leave the result pending.
+- Change the draft to Document, then back to Image before resolving the original request.
+- Complete the old picker with an image-shaped file and confirm the request revision invalidates it even though the current type again matches the original type.
+- Confirm the stale result is discarded before file I/O and the draft cannot be saved until a fresh attachment is selected.
+- **Status:** Widget regression source is committed but unrun. Android and browser/desktop picker behavior remains pending the manual validation checkpoint.
