@@ -1113,3 +1113,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `LibraryRepository` uses a per-instance asynchronous mutation queue around item save/delete, collection add/rename/delete, and decoded backup restore. The queue releases after success or failure so one failed operation does not block later mutations.
 - **Regression:** TC-159 in `test/library_repository_test.dart` pauses the first collection creation after its write, requests a second, and checks neither operation overtakes the other and both names persist.
 - **Verification:** Source and test are committed but unrun; real browser/Android persistence remains pending.
+
+### TSK-453 — Release the mutation queue after failed operations
+
+- **Requirement:** FR-002–003, FR-010 and NFR-003; a failed local mutation must not block subsequent operations or overwrite their committed state during recovery.
+- **Implementation:** The mutation queue resolves its release signal in a `finally` path; collection creation attempts to roll back a late preference-write failure before the next queued mutation can proceed.
+- **Regression:** TC-160 in `test/library_repository_test.dart` pauses the first collection add, injects a post-write failure, and checks the next queued add succeeds with only its own collection persisted.
+- **Verification:** Regression source is committed but unrun. Browser/Android persistence and rollback-write failure behavior remain pending.
