@@ -239,6 +239,30 @@ void main() {
     expect(repository.lastBackupPreparedAtMs, timestamp);
   });
 
+  test('backup generation survives a late failure storing its optional timestamp', () async {
+    final previousTimestamp = DateTime.now().millisecondsSinceEpoch -
+        const Duration(minutes: 1).inMilliseconds;
+    await repository.recordBackupPreparedAt(previousTimestamp);
+
+    LibraryRepository.backupPreparedAtAfterWriteForTesting = () async {
+      throw StateError('simulated backup status write failure');
+    };
+    try {
+      final source = await repository.createBackup();
+      final decoded = BackupCodec.decode(source);
+
+      expect(decoded.items, isEmpty);
+      expect(repository.lastBackupPreparedAtMs, previousTimestamp);
+      expect(
+        Hive.box<dynamic>('stashhive_preferences_v1')
+            .get('lastBackupPreparedAtMs'),
+        previousTimestamp,
+      );
+    } finally {
+      LibraryRepository.backupPreparedAtAfterWriteForTesting = null;
+    }
+  });
+
   test('storage reminder acknowledgement persists across box reopen', () async {
     expect(repository.hasSeenStorageReminder, isFalse);
     await repository.markStorageReminderSeen();
