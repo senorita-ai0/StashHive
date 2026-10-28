@@ -12,7 +12,7 @@
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417 | TC-008, TC-122 | IN PROGRESS — repository-owned byte snapshot source/test added; platform validation pending |
-| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204 | TC-009 | IN PROGRESS — source added, build/device test pending |
+| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462 | TC-009, TC-169, TC-170 | IN PROGRESS — source has bounded share batches, bounded fingerprint work and effective-text fallback; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423 | TC-010, TC-131 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415 | TC-012, TC-117, TC-119, TC-120 | IN PROGRESS — bounded-size source added; execution and platform export pending |
@@ -1180,4 +1180,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** Quick Save changes the attachment area's label and hint while file selection/reading is pending, shows an inline progress indicator instead of the idle upload icon, and marks the busy picker semantics as a live region so assistive technology can announce the change.
 - **Regression:** TC-168 in `test/quick_save_test.dart` pauses the picker, injects an unexpected provider error, checks that the busy UI clears and raw details remain hidden, then retries with a valid image and verifies exact persisted bytes.
 - **Verification:** Widget regression source is committed but unrun; real picker and byte-stream failure behavior remains pending on Android and supported browsers/desktop platforms.
+
+### TSK-462 — Bound Android share intake and validate before string copies
+
+- **Requirements:** FR-008/FR-009 and NFR-002/NFR-003; external shares must be processed within predictable bounds, invalid payloads must receive normal validation feedback, and supported content must not be rejected because an unused provider field is empty.
+- **Implementation:** One incoming share batch is limited to the first 100 entries, with a user-facing warning for the remainder. Duplicate-fingerprint work now has preflight limits for batch count, effective text/URL/path/MIME lengths and total characters; over-limit input bypasses fingerprint serialization so the normal intake path can give actionable validation feedback. Text shares now consume a non-empty message even if the provider path is empty, video shares exit as unsupported before path parsing, and URL/path/MIME lengths are checked before expensive string transformations.
+- **Regression:** TC-169 covers batch truncation/order and large text bypass; TC-170 covers message-only text shares.
+- **Verification:** Regression source is committed but unrun. Validate actual provider field conventions, warnings, multi-select order and error behavior on a real Android device at the manual checkpoint.
 
