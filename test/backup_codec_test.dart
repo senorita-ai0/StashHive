@@ -1018,6 +1018,104 @@ void main() {
       );
     });
 
+    test('bounds raw tag, collection and attachment metadata before normalization', () {
+      final oversizedWhitespace = List<String>.filled(100000, ' ').join();
+
+      final malformedTagItem = <String, Object?>{
+        ...sampleLink().toMap(),
+        'tags': <String>[oversizedWhitespace],
+      };
+      final malformedTagBackup = jsonEncode(<String, Object?>{
+        'app': 'StashHive',
+        'formatVersion': BackupCodec.formatVersion,
+        'exportedAt': '2026-10-28T00:00:00Z',
+        'collections': ['Learning'],
+        'items': [malformedTagItem],
+        'attachments': <String, Object?>{},
+      });
+      expect(
+        () => BackupCodec.decode(malformedTagBackup),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'Tags must be non-empty, trimmed and 100 characters or shorter.',
+          ),
+        ),
+      );
+
+      final oversizedCollectionBackup = jsonEncode(<String, Object?>{
+        'app': 'StashHive',
+        'formatVersion': BackupCodec.formatVersion,
+        'exportedAt': '2026-10-28T00:00:00Z',
+        'collections': <String>[oversizedWhitespace],
+        'items': [sampleLink().toMap()],
+        'attachments': <String, Object?>{},
+      });
+      expect(
+        () => BackupCodec.decode(oversizedCollectionBackup),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'A collection name must be between 1 and 80 characters.',
+          ),
+        ),
+      );
+
+      expect(
+        () => BackupCodec.encode(
+          items: [sampleLink()],
+          attachmentBytes: const <String, Uint8List>{},
+          collections: <String>[oversizedWhitespace],
+        ),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'Collection names must be between 1 and 80 characters.',
+          ),
+        ),
+      );
+
+      final image = SavedItem(
+        id: 'attachment-metadata-boundary',
+        kind: ItemKind.image,
+        title: 'Image',
+        content: '',
+        tags: const [],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 1000,
+        attachmentKey: 'attachment-metadata-boundary',
+        attachmentName: 'short.png',
+        attachmentMimeType: 'image/png',
+      );
+      final directBackup = DecodedBackup(
+        items: [image],
+        attachments: {
+          image.attachmentKey!: BackupAttachment(
+            name: oversizedWhitespace,
+            mimeType: 'image/png',
+            bytes: Uint8List.fromList([1, 2, 3]),
+          ),
+        },
+        collections: const [],
+        exportedAt: '2026-10-28T00:00:00Z',
+      );
+      expect(
+        () => BackupCodec.validateDecodedBackup(directBackup),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'An attachment has invalid metadata.',
+          ),
+        ),
+      );
+    });
+
     test('rejects unsafe or invalid URL schemes', () {
       final item = sampleLink().copyWith(url: 'javascript:alert(1)');
       final payload = <String, Object?>{
