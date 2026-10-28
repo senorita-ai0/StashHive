@@ -15,8 +15,8 @@
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; handles effective text, disposal and unusual file URIs; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423 | TC-010, TC-131 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
-| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status and rollback-safe export concurrency added; execution and platform export pending |
-| FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415 | TC-013, TC-117, TC-119, TC-120 | IN PROGRESS — codec/source added; restore tests pending |
+| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471, TSK-472 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181, TC-182 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status and rollback-safe export concurrency added; execution and platform export pending |
+| FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415, TSK-472 | TC-013, TC-117, TC-119, TC-120, TC-182 | IN PROGRESS — codec/source added; restore tests pending; backup waits for restore rollback |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | IN PROGRESS — local-first flows are implemented in source; offline/restart tests pending |
 | FR-015 | SCR-006, SCR-001, SCR-004 | TSK-003, TSK-303, TSK-422, TSK-425 | TC-015, TC-130, TC-133 | IN PROGRESS — storage reminders and platform-specific attachment copy added; browser restart/platform review pending |
 | FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205 | TC-016 | BLOCKED pending POC |
@@ -1236,4 +1236,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** Backup creation shares the repository mutation queue with deletes and their rollback handlers. A queued export captures the repository after the delete either commits or restores its previous item record and attachment bytes.
 - **Regression:** TC-181 pauses deletion after record/attachment removal, requests a backup, then injects a late delete failure and verifies the resulting backup contains the restored item's metadata and exact attachment bytes.
 - **Verification:** Repository regression source is committed but unrun. Verify concurrent delete/backup behavior against browser and Android storage at the manual validation checkpoint.
+
+### TSK-472 — Keep backup exports out of interrupted restore states
+
+- **Requirements:** FR-012–013 and NFR-003; a backup must reflect a stable repository snapshot, not partially staged restore records/attachments.
+- **Implementation:** Restore and backup use the same repository mutation queue. A queued backup waits until restore commits or its failure path has removed staged records/attachments and restored the prior collection preferences.
+- **Regression:** TC-182 pauses a restore after incoming image data is staged, requests a backup, then injects an interruption and verifies that the resulting backup contains only the original item/collection and no staged attachment.
+- **Verification:** Regression source is committed but unrun. Exercise backup during interrupted restore on web and Android at the manual validation checkpoint.
 
