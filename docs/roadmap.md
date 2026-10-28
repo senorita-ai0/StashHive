@@ -1316,3 +1316,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Manual regression:** TC-228 checks that the generated backup remains valid UTF-8 JSON with matching metadata/attachments and calls for peak-memory inspection while the share sheet remains open.
 - **Status:** Source and documentation committed; no tests, formatting, analysis, builds, or memory profiles were run. Verify large backup export on web and Android at the manual checkpoint. CI stays manual-only.
 
+### TSK-516 — Handle Item Details attachment-read failures — 2026-10-28
+
+- **Requirements:** FR-011 and NFR-002/NFR-003.
+- **Source:** Item Details catches repository read failures while preparing a document for the system share sheet, displays safe local-storage/retry feedback and checks mounted state before proceeding.
+- **Regression:** TC-229 injects a storage-read error, checks the raw diagnostic is hidden, and verifies the saved attachment remains intact.
+- **Status:** Source and regression documentation committed; test remains unrun. Verify storage error recovery and ordinary attachment sharing on web and Android at the manual validation checkpoint. CI stays manual-only.
+
