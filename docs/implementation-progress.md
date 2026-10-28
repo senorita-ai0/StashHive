@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-229 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-230 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -875,4 +875,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added widget regression **TC-229** for an injected storage-read failure, hidden provider details, retained item/attachment bytes, and recoverable error feedback.
 - [x] Added traceability task **TSK-516** and documented the manual storage/platform check.
 - [ ] Run TC-229 and verify recovery with real storage-read failures on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — retry transient image-preview read failures (2026-10-28)
+
+- [x] Item Details' image preview now shows **Retry preview** when the attachment read fails, allowing the user to start a fresh repository read without leaving the page.
+- [x] The retry updates the dialog's local FutureBuilder input and the page's cached future, so reopening the dialog uses the latest attempt rather than a completed failed future.
+- [x] Added widget regression **TC-230** and traceability task **TSK-517**.
+- [ ] Run TC-230 and verify preview retry, loading announcements and image decoding on browser/Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
