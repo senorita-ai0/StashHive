@@ -2103,12 +2103,14 @@ class _QuickSavePageState extends State<QuickSavePage> {
     final isEditing = widget.existingItem != null;
     final fileKind = _kind == ItemKind.image || _kind == ItemKind.document;
     return PopScope<bool>(
-      canPop: !_saving || _allowSaveCompletionPop,
+      canPop: (!_saving && !_pickingAttachment) || _allowSaveCompletionPop,
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
             tooltip: 'Back',
-            onPressed: _saving ? null : () => Navigator.of(context).maybePop(),
+            onPressed: (_saving || _pickingAttachment)
+                ? null
+                : () => Navigator.of(context).maybePop(),
             icon: const Icon(Icons.arrow_back_rounded),
           ),
           title: Text(isEditing ? 'Edit item' : 'Quick save'),
@@ -2116,7 +2118,9 @@ class _QuickSavePageState extends State<QuickSavePage> {
             if (isEditing)
               IconButton(
                 tooltip: 'Cancel',
-                onPressed: _saving ? null : () => Navigator.of(context).pop(false),
+                onPressed: (_saving || _pickingAttachment)
+                    ? null
+                    : () => Navigator.of(context).pop(false),
                 icon: const Icon(Icons.close_rounded),
               ),
           ],
@@ -2314,7 +2318,9 @@ class _QuickSavePageState extends State<QuickSavePage> {
                     ),
                     const SizedBox(height: 8),
                     TextButton(
-                      onPressed: _saving ? null : () => Navigator.of(context).maybePop(false),
+                      onPressed: (_saving || _pickingAttachment)
+                          ? null
+                          : () => Navigator.of(context).maybePop(false),
                       child: const Text('Cancel'),
                     ),
                   ],
