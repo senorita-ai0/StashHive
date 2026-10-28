@@ -863,6 +863,78 @@ void main() {
     expect(repository.collections.value, ['Existing']);
   });
 
+  test('restore rollback preserves bytes when staged item deletion fails', () async {
+    await repository.addCollection('Existing');
+    await repository.save(buildLink(id: 'existing-before-rollback-failure'));
+
+    final importedBytes = Uint8List.fromList([3, 1, 4, 1, 5]);
+    const incomingImage = SavedItem(
+      id: 'incoming-image-rollback-failure',
+      kind: ItemKind.image,
+      title: 'Imported image retained after rollback failure',
+      content: 'Restore interruption recovery',
+      url: null,
+      tags: ['Recovery'],
+      collection: 'Imported',
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 2000,
+      attachmentKey: 'incoming-image-rollback-failure',
+      attachmentName: 'imported.png',
+      attachmentMimeType: 'image/png',
+    );
+    final backup = BackupCodec.encode(
+      items: const [incomingImage],
+      attachmentBytes: {
+        'incoming-image-rollback-failure': importedBytes,
+      },
+      collections: const ['Imported'],
+    );
+
+    LibraryRepository.restoreBeforeCollectionsCommitForTesting = () async {
+      throw StateError('simulated restore interruption');
+    };
+    LibraryRepository.restoreBeforeRollbackItemDeleteForTesting =
+        (itemId) async {
+      if (itemId == incomingImage.id) {
+        throw StateError('simulated rollback item-delete failure');
+      }
+    };
+    try {
+      await expectLater(
+        repository.restoreBackup(backup),
+        throwsA(
+          isA<StateError>().having(
+            (error) => error.message,
+            'message',
+            'simulated restore interruption',
+          ),
+        ),
+      );
+    } finally {
+      LibraryRepository.restoreBeforeCollectionsCommitForTesting = null;
+      LibraryRepository.restoreBeforeRollbackItemDeleteForTesting = null;
+    }
+
+    // The failed rollback may leave this staged record on disk, but it must
+    // never leave that record pointing at attachment bytes that were deleted.
+    expect(
+      Hive.box<dynamic>('stashhive_items_v1')
+          .containsKey(incomingImage.id),
+      isTrue,
+    );
+    expect(
+      await repository.readAttachment(incomingImage.attachmentKey!),
+      orderedEquals(importedBytes),
+    );
+    expect(repository.findById(incomingImage.id), isNotNull);
+    expect(
+      Hive.box<dynamic>('stashhive_preferences_v1').get('collections'),
+      ['Existing'],
+    );
+    expect(repository.collections.value, ['Existing']);
+  });
+
   test('restores item and attachment if save fails after item write', () async {
     final originalBytes = Uint8List.fromList([1, 3, 5, 7]);
     final replacementBytes = Uint8List.fromList([2, 4, 6, 8]);
