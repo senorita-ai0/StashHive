@@ -3825,223 +3825,223 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
     return PopScope<bool>(
       canPop: !_restoring,
       child: Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          tooltip: 'Back',
-          onPressed: _restoring ? null : () => Navigator.of(context).maybePop(),
-          icon: const Icon(Icons.arrow_back_rounded),
+        appBar: AppBar(
+          leading: IconButton(
+            tooltip: 'Back',
+            onPressed: _restoring ? null : () => Navigator.of(context).maybePop(),
+            icon: const Icon(Icons.arrow_back_rounded),
+          ),
+          title: const Text('Backup & privacy'),
         ),
-        title: const Text('Backup & privacy'),
-      ),
-      body: SafeArea(
-        top: false,
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 740),
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
-              children: [
-                Text('Your library,',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
-                Text('in your control.',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
-                const SizedBox(height: 7),
-                Text('Keep a safe copy you can restore later.', style: TextStyle(color: mutedTextColor(context))),
-                const SizedBox(height: 14),
-                ValueListenableBuilder<int>(
-                  valueListenable: widget.repository.skippedRecordCount,
-                  builder: (context, skippedRecords, _) {
-                    return ValueListenableBuilder<int>(
-                      valueListenable:
-                          widget.repository.skippedCollectionCount,
-                      builder: (context, skippedCollections, _) {
-                        if (skippedRecords == 0 && skippedCollections == 0) {
-                          return const SizedBox.shrink();
-                        }
-                        final warnings = <String>[];
-                        if (skippedRecords > 0) {
-                          warnings.add(
-                            '$skippedRecords saved record(s) could not be read.',
-                          );
-                        }
-                        if (skippedCollections > 0) {
-                          final entryLabel = skippedCollections == 1
-                              ? 'collection name or assignment was'
-                              : 'collection names or assignments were';
-                          warnings.add(
-                            '$skippedCollections $entryLabel invalid, duplicated, or beyond the 500-collection limit.',
-                          );
-                        }
-                        return Semantics(
-                          liveRegion: true,
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.errorContainer,
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            child: Text(
-                              '${warnings.join(' ')} A backup may omit unreadable records or normalize collection names. The raw data has not been intentionally deleted. Use a previous known-good backup to recover unreadable records; move any item assignment that exceeds the cap to an available collection or choose No collection before exporting.',
-                              style: TextStyle(
-                                color:
-                                    Theme.of(context).colorScheme.onErrorContainer,
-                                height: 1.35,
+        body: SafeArea(
+          top: false,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 740),
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
+                children: [
+                  Text('Your library,',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
+                  Text('in your control.',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
+                  const SizedBox(height: 7),
+                  Text('Keep a safe copy you can restore later.', style: TextStyle(color: mutedTextColor(context))),
+                  const SizedBox(height: 14),
+                  ValueListenableBuilder<int>(
+                    valueListenable: widget.repository.skippedRecordCount,
+                    builder: (context, skippedRecords, _) {
+                      return ValueListenableBuilder<int>(
+                        valueListenable:
+                            widget.repository.skippedCollectionCount,
+                        builder: (context, skippedCollections, _) {
+                          if (skippedRecords == 0 && skippedCollections == 0) {
+                            return const SizedBox.shrink();
+                          }
+                          final warnings = <String>[];
+                          if (skippedRecords > 0) {
+                            warnings.add(
+                              '$skippedRecords saved record(s) could not be read.',
+                            );
+                          }
+                          if (skippedCollections > 0) {
+                            final entryLabel = skippedCollections == 1
+                                ? 'collection name or assignment was'
+                                : 'collection names or assignments were';
+                            warnings.add(
+                              '$skippedCollections $entryLabel invalid, duplicated, or beyond the 500-collection limit.',
+                            );
+                          }
+                          return Semantics(
+                            liveRegion: true,
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.errorContainer,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Text(
+                                '${warnings.join(' ')} A backup may omit unreadable records or normalize collection names. The raw data has not been intentionally deleted. Use a previous known-good backup to recover unreadable records; move any item assignment that exceeds the cap to an available collection or choose No collection before exporting.',
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onErrorContainer,
+                                  height: 1.35,
+                                ),
                               ),
                             ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE7F7EF),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.verified_user_outlined, color: Color(0xFF2F8968), size: 28),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                kIsWeb ? 'Stored in this browser' : 'Stored on this device',
+                                style: TextStyle(fontWeight: FontWeight.w700),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                kIsWeb
+                                    ? 'Your library stays in this browser profile; it is not synced to the cloud.'
+                                    : 'StashHive does not sync your library to the cloud.',
+                                style: TextStyle(color: mutedTextColor(context), fontSize: 12),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    );
-                  },
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE7F7EF),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.verified_user_outlined, color: Color(0xFF2F8968), size: 28),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              kIsWeb ? 'Stored in this browser' : 'Stored on this device',
-                              style: TextStyle(fontWeight: FontWeight.w700),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              kIsWeb
-                                  ? 'Your library stays in this browser profile; it is not synced to the cloud.'
-                                  : 'StashHive does not sync your library to the cloud.',
-                              style: TextStyle(color: mutedTextColor(context), fontSize: 12),
-                            ),
-                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 26),
-                Text('Backup', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 5),
-                Text('Export your metadata and copied attachments into a portable file.',
-                    style: TextStyle(color: mutedTextColor(context))),
-                const SizedBox(height: 12),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Theme.of(context).dividerColor),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.history_rounded, color: mutedTextColor(context)),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Last backup prepared',
-                              style: TextStyle(fontWeight: FontWeight.w700),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              _lastBackupPreparedLabel(context),
-                              style: TextStyle(color: mutedTextColor(context)),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              'This records when a backup file was generated, not whether the destination saved it.',
-                              style: TextStyle(
-                                color: mutedTextColor(context),
-                                fontSize: 11,
-                                height: 1.35,
+                  const SizedBox(height: 26),
+                  Text('Backup', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 5),
+                  Text('Export your metadata and copied attachments into a portable file.',
+                      style: TextStyle(color: mutedTextColor(context))),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: Theme.of(context).dividerColor),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.history_rounded, color: mutedTextColor(context)),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Last backup prepared',
+                                style: TextStyle(fontWeight: FontWeight.w700),
                               ),
-                            ),
+                              const SizedBox(height: 3),
+                              Text(
+                                _lastBackupPreparedLabel(context),
+                                style: TextStyle(color: mutedTextColor(context)),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                'This records when a backup file was generated, not whether the destination saved it.',
+                                style: TextStyle(
+                                  color: mutedTextColor(context),
+                                  fontSize: 11,
+                                  height: 1.35,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ValueListenableBuilder<List<SavedItem>>(
+                    valueListenable: widget.repository.items,
+                    builder: (context, items, _) => _BackupCard(
+                      icon: Icons.file_download_outlined,
+                      title: 'Create a backup',
+                      subtitle: items.length.toString() + (items.length == 1 ? ' saved item' : ' saved items'),
+                      buttonText: _exporting ? 'Preparing…' : 'Create backup',
+                      loading: _exporting,
+                      onPressed: _export,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text('Restore', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 5),
+                  Text('Bring a previous StashTrail or StashHive backup into this library.',
+                      style: TextStyle(color: mutedTextColor(context))),
+                  const SizedBox(height: 12),
+                  _BackupCard(
+                    icon: Icons.file_upload_outlined,
+                    title: 'Restore from backup',
+                    subtitle: 'Choose a StashTrail or StashHive .json backup file. Current items are preserved.',
+                    buttonText: _restoring
+                        ? 'Restoring…'
+                        : _choosingBackup
+                            ? 'Choosing backup…'
+                            : 'Choose backup file',
+                    loading: _choosingBackup || _restoring,
+                    onPressed: _restore,
+                  ),
+                  const SizedBox(height: 18),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF2DF),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.warning_amber_rounded, color: Color(0xFFB87A22)),
+                            SizedBox(width: 8),
+                            Text('Before you continue', style: TextStyle(fontWeight: FontWeight.w700)),
                           ],
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 8),
+                        Text(
+                          kIsWeb
+                              ? "Clearing this browser's site data can erase your local library. Save backups somewhere safe. Another browser or profile has a separate library."
+                              : 'Uninstalling the app or clearing app data can erase your local library. Save backups somewhere safe. The web and Android libraries are separate.',
+                          style: TextStyle(fontSize: 12, height: 1.45),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                ValueListenableBuilder<List<SavedItem>>(
-                  valueListenable: widget.repository.items,
-                  builder: (context, items, _) => _BackupCard(
-                    icon: Icons.file_download_outlined,
-                    title: 'Create a backup',
-                    subtitle: items.length.toString() + (items.length == 1 ? ' saved item' : ' saved items'),
-                    buttonText: _exporting ? 'Preparing…' : 'Create backup',
-                    loading: _exporting,
-                    onPressed: _export,
+                  const SizedBox(height: 20),
+                  const DetailSectionLabel(label: 'BACKUP FORMAT'),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Version 1 JSON backup. Includes saved metadata, tags, collections, and copied attachments up to 15 MB each and 100 MB combined. Import validates the version, IDs, URL schemes, file sizes and attachment data, and checks SHA-256 integrity for checksummed attachments before writing.',
+                    style: TextStyle(color: mutedTextColor(context), fontSize: 12, height: 1.5),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Text('Restore', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 5),
-                Text('Bring a previous StashTrail or StashHive backup into this library.',
-                    style: TextStyle(color: mutedTextColor(context))),
-                const SizedBox(height: 12),
-                _BackupCard(
-                  icon: Icons.file_upload_outlined,
-                  title: 'Restore from backup',
-                  subtitle: 'Choose a StashTrail or StashHive .json backup file. Current items are preserved.',
-                  buttonText: _restoring
-                      ? 'Restoring…'
-                      : _choosingBackup
-                          ? 'Choosing backup…'
-                          : 'Choose backup file',
-                  loading: _choosingBackup || _restoring,
-                  onPressed: _restore,
-                ),
-                const SizedBox(height: 18),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF2DF),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.warning_amber_rounded, color: Color(0xFFB87A22)),
-                          SizedBox(width: 8),
-                          Text('Before you continue', style: TextStyle(fontWeight: FontWeight.w700)),
-                        ],
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        kIsWeb
-                            ? "Clearing this browser's site data can erase your local library. Save backups somewhere safe. Another browser or profile has a separate library."
-                            : 'Uninstalling the app or clearing app data can erase your local library. Save backups somewhere safe. The web and Android libraries are separate.',
-                        style: TextStyle(fontSize: 12, height: 1.45),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const DetailSectionLabel(label: 'BACKUP FORMAT'),
-                const SizedBox(height: 8),
-                const Text(
-                  'Version 1 JSON backup. Includes saved metadata, tags, collections, and copied attachments up to 15 MB each and 100 MB combined. Import validates the version, IDs, URL schemes, file sizes and attachment data, and checks SHA-256 integrity for checksummed attachments before writing.',
-                  style: TextStyle(color: mutedTextColor(context), fontSize: 12, height: 1.5),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
       ),
       ),
     );
