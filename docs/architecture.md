@@ -1,6 +1,6 @@
-# StashHive — Proposed Architecture
+# StashHive — Architecture and Platform Assumptions
 
-**Status:** Draft architecture for approval; storage choice remains provisional until a proof of concept passes.  
+**Status:** Working architecture for the approved MVP. Implementation uses the boundaries described below; storage selection, browser persistence, Android file/share behavior and performance assumptions remain provisional until the planned proof-of-concept and manual validation evidence is collected.  
 **Date checked for technical references:** 2026-10-21
 
 ## Recommendation in plain language
