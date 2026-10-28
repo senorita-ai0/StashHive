@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173–TC-183 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173–TC-184 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -571,4 +571,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] The regression injects a late save failure and expects the queued backup to wait for rollback, then include the original item metadata and exact original attachment bytes.
 - [x] Added traceability task **TSK-473** and updated the test plan.
 - [ ] Run TC-183 and verify backup consistency after failed saves on browser and Android storage at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — wait for collection rename before backup generation (2026-10-28)
+
+- [x] Added repository regression **TC-184** to pause collection rename after persisted item assignments and collection preferences have been written but before visible notifiers refresh.
+- [x] The regression requests a backup during that pending operation and verifies the queued export waits, then contains the renamed collection and the matching saved-item assignment.
+- [x] Added traceability task **TSK-475** and updated the test plan.
+- [ ] Run TC-184 and verify backup consistency during collection changes on browser and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
