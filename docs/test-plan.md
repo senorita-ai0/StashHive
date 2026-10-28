@@ -1353,3 +1353,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the restore action returns to its idle state, the raw provider detail is hidden, no library records are changed, and the user can retry.
 - On the second attempt provide a valid backup; confirm the merge confirmation appears and the valid item is imported.
 - **Status:** Widget regression source is committed but unrun. Verify picker metadata errors, large/empty backup handling and retry behavior on web/Android at the manual validation checkpoint.
+
+### TC-191 — Ignore oversized whitespace in an unused share message
+
+- Send a text-share event whose path contains a short valid note while the provider's message field contains more than 1,000,000 whitespace characters.
+- Confirm the message is recognized as empty without trimming/copying the oversized field, the path is used as the effective content, and an editable note draft is returned.
+- Confirm oversized messages that contain real content still receive the configured length error and ordinary message-only shares remain supported.
+- **Status:** Service regression source is committed but unrun. Verify whitespace handling and provider-field combinations with real Android share sources at the manual checkpoint.
+
