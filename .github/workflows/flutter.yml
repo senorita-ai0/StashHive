@@ -38,6 +38,12 @@ jobs:
       - name: Test Android share manifest configurator
         run: python3 -m unittest tool.test_configure_android_share_intents
 
+      - name: Check Dart import-cycle boundaries
+        run: python3 tool/check_dart_import_cycles.py
+
+      - name: Test Dart import-cycle checker
+        run: python3 -m unittest tool.test_check_dart_import_cycles
+
       - name: Resolve packages
         run: flutter pub get
 
