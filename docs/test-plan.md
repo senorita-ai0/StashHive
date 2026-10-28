@@ -1361,3 +1361,9 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm oversized messages that contain real content still receive the configured length error and ordinary message-only shares remain supported.
 - **Status:** Service regression source is committed but unrun. Verify whitespace handling and provider-field combinations with real Android share sources at the manual checkpoint.
 
+### TC-192 — Recover from a backup byte-stream failure
+
+- Open Backup & privacy and provide a backup file whose size lookup succeeds but whose byte stream throws an unexpected provider error.
+- Confirm the restore action exits its busy state, hides private provider details, and leaves the current library unchanged.
+- Retry with a valid backup; confirm the merge dialog is shown and the backup imports successfully.
+- **Status:** Widget regression source is committed but unrun. Verify partial read, stream error, size lookup and retry behavior with real browser/Android pickers at the manual checkpoint.
