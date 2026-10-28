@@ -1351,3 +1351,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-233 covers an oversized title, overlong tag, excessive tag count, and a normal valid serialization.
 - **Status:** Source and regression committed; test not run. Run TC-233 together with direct parsing and backup/repository boundary cases at the manual validation checkpoint. CI remains manual-only.
 
+### TSK-521 — Bound direct SavedItem search-field processing — 2026-10-28
+
+- **Requirements:** FR-005 and NFR-003/NFR-007.
+- **Source:** The public model search helper rejects oversized stored field dimensions and tag lists before constructing a searchable list or lowercasing stored content, consistent with repository input limits.
+- **Regression:** TC-234 covers oversized title/content/tags and confirms normal valid searches still work.
+- **Status:** Source and regression committed; test not run. Validate alongside direct model parsing/serialization and the performance baseline at the manual validation checkpoint. CI remains manual-only.
+
