@@ -1147,3 +1147,17 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the two queued operations behave as two sequential user actions, so the final favorite value matches the original value.
 - Check the repository notifier and the raw stored item record agree.
 - **Status:** Regression source is committed but unrun. Validate repeated favorite actions during the manual persistence checkpoint.
+
+### TC-162 — A late dark-mode failure cannot overwrite a newer choice
+
+- Pause the first dark-mode write after the underlying preference write, then request the opposite setting.
+- Allow the first operation to fail and roll back.
+- Confirm the second request waited, then persisted its chosen value and left the preference key present.
+- **Status:** Regression source is committed but unrun. Confirm preference persistence and recovery during the manual validation checkpoint.
+
+### TC-163 — A late text-size failure cannot overwrite a newer choice
+
+- Pause a text-size preference write after the underlying write, then request a different supported multiplier.
+- Allow the first operation to fail and roll back.
+- Confirm the second request waited and the final notifier getter and stored preference both show the second multiplier.
+- **Status:** Regression source is committed but unrun. Confirm persistence with web and Android storage during the manual checkpoint.
