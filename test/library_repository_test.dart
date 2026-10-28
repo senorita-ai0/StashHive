@@ -1895,6 +1895,70 @@ void main() {
     },
   );
 
+  test(
+    'findById does not expose staged restore records before commit',
+    () async {
+      await repository.save(
+        buildLink(id: 'restore-published-existing', collection: null),
+      );
+      final incoming = buildLink(
+        id: 'restore-published-pending',
+        collection: 'Imported',
+        url: 'https://example.com/imported',
+      );
+      final source = BackupCodec.encode(
+        items: [incoming],
+        attachmentBytes: const <String, Uint8List>{},
+        collections: const ['Imported'],
+      );
+
+      final restoreEntered = Completer<void>();
+      final releaseRestore = Completer<void>();
+      LibraryRepository.restoreBeforeCollectionsCommitForTesting = () async {
+        restoreEntered.complete();
+        await releaseRestore.future;
+      };
+      final pendingRestore = repository.restoreBackup(source);
+
+      try {
+        await restoreEntered.future;
+        expect(
+          Hive.box<dynamic>('stashhive_items_v1')
+              .containsKey(incoming.id),
+          isTrue,
+          reason: 'The restore has staged its raw item record.',
+        );
+        expect(
+          repository.findById(incoming.id),
+          isNull,
+          reason: 'A staged record must not appear before restore commit.',
+        );
+        expect(
+          repository.items.value.any((item) => item.id == incoming.id),
+          isFalse,
+        );
+        expect(
+          repository.findById('restore-published-existing')?.id,
+          'restore-published-existing',
+        );
+      } finally {
+        if (!releaseRestore.isCompleted) releaseRestore.complete();
+        try {
+          await pendingRestore;
+        } finally {
+          LibraryRepository.restoreBeforeCollectionsCommitForTesting = null;
+        }
+      }
+
+      expect(repository.findById(incoming.id)?.title, incoming.title);
+      expect(
+        repository.items.value.map((item) => item.id),
+        containsAll(['restore-published-existing', incoming.id]),
+      );
+      expect(repository.collections.value, contains('Imported'));
+    },
+  );
+
   test('rolls back a partially written collection rename', () async {
     await repository.addCollection('Learning');
     await repository.save(buildLink(id: 'learning-1', collection: 'Learning'));
