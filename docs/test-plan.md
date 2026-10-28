@@ -1257,3 +1257,9 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the earlier operation with a simulated failure and confirm the newest scale persists and remains selected rather than being reset by the stale failure handler.
 - **Status:** Widget regression source is committed but unrun. Verify rapid text-size changes under storage delay on web and Android at the manual checkpoint.
 
+### TC-177 — Restore the visible text-size selection after persistence failure
+
+- Start from System default, choose Large, then inject a late preference write failure.
+- Confirm the repository rolls back to the original multiplier and the dropdown visibly shows System default again, rather than retaining an internal stale FormField selection.
+- **Status:** Widget regression source is committed but unrun. Verify the selection and actual text scale after storage failures on web and Android at the manual checkpoint.
+
