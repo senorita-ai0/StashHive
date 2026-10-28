@@ -1405,3 +1405,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-207 injects one read failure, retries the same key, and verifies the second read returns the original stored bytes.
 - **Verification:** Regression source is committed but unrun. Verify recovery with real storage/plugin errors on web and Android at the manual validation checkpoint.
 
+### TSK-496 — Keep synchronous lookup on the last published item snapshot
+
+- **Requirements:** FR-002/FR-003 and NFR-003; callers must not observe item metadata staged during a save before the associated attachment writes and transaction outcome are finalized.
+- **Implementation:** Repository refresh publishes an O(1) visible-item index and the immutable items notifier from the same snapshot. The index is updated before notifier listeners are called. `findById` reads this published index instead of decoding the raw Hive map, so a save paused after its raw item write cannot expose an uncommitted item version to synchronous callers.
+- **Regression:** TC-208 pauses an attachment replacement after the item record write, verifies raw storage has the pending title while `items.value` and `findById` retain the old published title, then releases the save and checks the new title and bytes.
+- **Verification:** Regression source is committed but unrun. Exercise lookup consistency during delayed save/delete/restore and rollback on web and Android at the manual validation checkpoint.
+
