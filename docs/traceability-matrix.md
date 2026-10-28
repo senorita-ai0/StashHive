@@ -1429,7 +1429,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-499 — Expose repository state through read-only listenables
 
 - **Requirements:** FR-002/FR-010 and NFR-003; UI consumers need reactive repository state without getting a public setter that can replace repository snapshots without persisted writes.
-- **Implementation:** Item, collection and recovery-counter notifier instances are now private. The repository exposes `ValueListenable` getters for UI reads/notifications, and internal mutations publish through the private notifiers. The public item/collection snapshots remain unmodifiable.
+- **Implementation:** Item, collection and recovery-counter notifier instances are private. The repository exposes stable read-only `ValueListenable` wrappers that forward values/listeners without returning the mutable notifier objects; internal mutations publish through the private notifiers. The public item/collection snapshots remain unmodifiable.
 - **Regression:** TC-211 binds the public accessors as `ValueListenable`, checks notifications after repository save/collection changes, and confirms published item/collection lists reject direct edits.
 - **Verification:** Regression source is committed but unrun. Confirm widgets continue to update through the read-only listenables at the manual validation checkpoint.
 
