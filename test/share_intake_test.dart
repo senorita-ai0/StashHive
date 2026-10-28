@@ -365,6 +365,26 @@ void main() {
       expect(result.url, isNull);
     });
 
+    test('ignores an oversized whitespace-only message when path has content', () async {
+      final unusedMessage = List<String>.filled(
+        maxIncomingTextCharacters + 1,
+        ' ',
+      ).join();
+      final result = await ShareIntake.fromSharedMedia(
+        SharedMediaFile(
+          path: 'Remember this shared note',
+          message: unusedMessage,
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      );
+
+      expect(result, isNotNull);
+      expect(result!.kind, ItemKind.note);
+      expect(result.content, 'Remember this shared note');
+      expect(result.url, isNull);
+    });
+
     test('preserves ordinary Unicode share text as a note draft', () async {
       const sharedText = 'قابلِ تلاش متن — Roman Urdu: mera khayal';
       final result = await ShareIntake.fromSharedMedia(
