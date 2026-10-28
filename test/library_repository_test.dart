@@ -1165,6 +1165,59 @@ void main() {
     );
   });
 
+  test('coalesces overlapping attachment reads without crossing a queued write', () async {
+    final originalBytes = Uint8List.fromList([2, 7, 1, 8]);
+    final replacementBytes = Uint8List.fromList([2, 8, 1, 8]);
+    final image = buildImage(id: 'coalesced-attachment-read');
+    await repository.save(image, attachmentBytes: originalBytes);
+
+    final firstReadEntered = Completer<void>();
+    final releaseFirstRead = Completer<void>();
+    var readStarts = 0;
+    LibraryRepository.readAttachmentBeforeReadForTesting = (key) async {
+      readStarts++;
+      if (readStarts == 1) {
+        firstReadEntered.complete();
+        await releaseFirstRead.future;
+      }
+    };
+
+    final firstRead = repository.readAttachment(image.attachmentKey!);
+    await firstReadEntered.future;
+    try {
+      final secondRead = repository.readAttachment(image.attachmentKey!);
+      expect(
+        readStarts,
+        1,
+        reason: 'A concurrent read for the same key should share the pending future.',
+      );
+
+      final pendingSave = repository.save(
+        image.copyWith(title: 'Updated after first read'),
+        attachmentBytes: replacementBytes,
+      );
+      // This read is requested after the save is queued; it must not reuse the
+      // old read future, even though that future is still awaiting its test gate.
+      final afterWriteRead = repository.readAttachment(image.attachmentKey!);
+      expect(readStarts, 1);
+
+      releaseFirstRead.complete();
+      final firstBytes = await firstRead;
+      final secondBytes = await secondRead;
+      await pendingSave;
+      final afterWriteBytes = await afterWriteRead;
+
+      expect(firstBytes, orderedEquals(originalBytes));
+      expect(secondBytes, orderedEquals(originalBytes));
+      expect(afterWriteBytes, orderedEquals(replacementBytes));
+      expect(readStarts, 2);
+      expect(repository.findById(image.id)?.title, 'Updated after first read');
+    } finally {
+      if (!releaseFirstRead.isCompleted) releaseFirstRead.complete();
+      LibraryRepository.readAttachmentBeforeReadForTesting = null;
+    }
+  });
+
   test('creates a consistent backup after a pending attachment replacement', () async {
     final originalBytes = Uint8List.fromList([1, 3, 5, 7]);
     final replacementBytes = Uint8List.fromList([2, 4, 6, 8]);
