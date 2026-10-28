@@ -2541,68 +2541,94 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
       return;
     }
     if (item.kind == ItemKind.image && item.attachmentKey != null) {
+      // Keep a dialog-local reference so a retry rebuilds FutureBuilder even
+      // though the dialog is a separate route above this details page.
+      var previewFuture = _attachmentFuture;
+      final attachmentKey = item.attachmentKey!;
       await showDialog<void>(
         context: context,
-        builder: (context) => Dialog(
+        builder: (dialogContext) => Dialog(
           insetPadding: const EdgeInsets.all(16),
           child: Padding(
             padding: const EdgeInsets.all(12),
-            child: FutureBuilder<Uint8List?>(
-              future: _attachmentFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done) {
-                  return _previewLoading(item, height: 180);
-                }
-                if (snapshot.hasError) {
-                  return const SizedBox(
-                    height: 180,
-                    child: Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Text(
-                          'Preview unavailable. The original attachment is still saved and can be shared.',
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  );
-                }
-                if (snapshot.data == null || snapshot.data!.isEmpty) {
-                  return const SizedBox(
-                    height: 180,
-                    child: Center(child: Text('The local image is missing.')),
-                  );
-                }
-                return InteractiveViewer(
-                  child: Image.memory(
-                    snapshot.data!,
-                    semanticLabel: 'Image: ${item.title}',
-                    errorBuilder: (context, error, stackTrace) => SizedBox(
-                      height: 180,
+            child: StatefulBuilder(
+              builder: (context, setDialogState) => FutureBuilder<Uint8List?>(
+                future: previewFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
+                    return _previewLoading(item, height: 180);
+                  }
+                  if (snapshot.hasError) {
+                    return SizedBox(
+                      height: 220,
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(20),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
-                                Icons.broken_image_outlined,
-                                size: 40,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              ),
-                              const SizedBox(height: 10),
                               const Text(
                                 'Preview unavailable. The original attachment is still saved and can be shared.',
                                 textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 12),
+                              TextButton.icon(
+                                onPressed: () {
+                                  final retryFuture =
+                                      widget.repository.readAttachment(attachmentKey);
+                                  setDialogState(() {
+                                    previewFuture = retryFuture;
+                                  });
+                                  if (mounted) {
+                                    setState(() => _attachmentFuture = retryFuture);
+                                  }
+                                },
+                                icon: const Icon(Icons.refresh_rounded),
+                                label: const Text('Retry preview'),
                               ),
                             ],
                           ),
                         ),
                       ),
+                    );
+                  }
+                  if (snapshot.data == null || snapshot.data!.isEmpty) {
+                    return const SizedBox(
+                      height: 180,
+                      child: Center(child: Text('The local image is missing.')),
+                    );
+                  }
+                  return InteractiveViewer(
+                    child: Image.memory(
+                      snapshot.data!,
+                      semanticLabel: 'Image: ${item.title}',
+                      errorBuilder: (context, error, stackTrace) => SizedBox(
+                        height: 180,
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.broken_image_outlined,
+                                  size: 40,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(height: 10),
+                                const Text(
+                                  'Preview unavailable. The original attachment is still saved and can be shared.',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ),
