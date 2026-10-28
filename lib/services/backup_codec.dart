@@ -167,8 +167,13 @@ class BackupCodec {
     }
 
     for (final rawName in backup.collections) {
+      if (rawName.length > 80) {
+        throw const FormatException(
+          'A collection name must be between 1 and 80 characters.',
+        );
+      }
       final name = rawName.trim();
-      if (name.isEmpty || name != rawName || name.length > 80) {
+      if (name.isEmpty || name != rawName) {
         throw const FormatException(
           'A collection name must be between 1 and 80 characters.',
         );
@@ -182,13 +187,13 @@ class BackupCodec {
     for (final entry in backup.attachments.entries) {
       final key = entry.key;
       final attachment = entry.value;
-      if (key.trim().isEmpty || key.length > 128) {
+      if (key.length > 128 || key.trim().isEmpty) {
         throw const FormatException('An attachment key is invalid.');
       }
-      if (attachment.name.trim().isEmpty ||
-          attachment.name.length > 255 ||
-          attachment.mimeType.trim().isEmpty ||
-          attachment.mimeType.length > 128) {
+      if (attachment.name.length > 255 ||
+          attachment.mimeType.length > 128 ||
+          attachment.name.trim().isEmpty ||
+          attachment.mimeType.trim().isEmpty) {
         throw const FormatException('An attachment has invalid metadata.');
       }
       if (attachment.bytes.isEmpty) {
@@ -502,8 +507,11 @@ class BackupCodec {
       if (value is! String) {
         throw const FormatException('A collection name in the backup is invalid.');
       }
+      if (value.length > 80) {
+        throw const FormatException('A collection name must be between 1 and 80 characters.');
+      }
       final name = value.trim();
-      if (name.isEmpty || name.length > 80) {
+      if (name.isEmpty) {
         throw const FormatException('A collection name must be between 1 and 80 characters.');
       }
       declaredCollections.add(name);
@@ -800,11 +808,13 @@ class BackupCodec {
     if (tags.length > 100 || tags.any((tag) => tag is! String)) {
       throw const FormatException('A saved item contains an invalid tag list.');
     }
+    if (tags.cast<String>().any((tag) => tag.length > 100)) {
+      throw const FormatException(
+        'Tags must be non-empty, trimmed and 100 characters or shorter.',
+      );
+    }
     if (tags.cast<String>().any(
-      (tag) =>
-          tag.isEmpty ||
-          tag.trim() != tag ||
-          tag.length > 100,
+      (tag) => tag.isEmpty || tag.trim() != tag,
     )) {
       throw const FormatException(
         'Tags must be non-empty, trimmed and 100 characters or shorter.',
@@ -835,8 +845,13 @@ class BackupCodec {
     void addNames(Iterable<String?> names) {
       for (final raw in names) {
         if (raw == null) continue;
+        if (raw.length > 80) {
+          throw const FormatException(
+            'Collection names must be between 1 and 80 characters.',
+          );
+        }
         final name = raw.trim();
-        if (name.isEmpty || name.length > 80) {
+        if (name.isEmpty) {
           throw const FormatException(
             'Collection names must be between 1 and 80 characters.',
           );
