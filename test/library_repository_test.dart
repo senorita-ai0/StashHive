@@ -717,6 +717,42 @@ void main() {
     );
   });
 
+  test('releases the mutation queue after a collection creation failure', () async {
+    final firstWriteEntered = Completer<void>();
+    final releaseFirstFailure = Completer<void>();
+    var hookCalls = 0;
+
+    LibraryRepository.addCollectionAfterWriteForTesting = () async {
+      hookCalls++;
+      if (hookCalls == 1) {
+        firstWriteEntered.complete();
+        await releaseFirstFailure.future;
+        throw StateError('simulated post-write collection failure');
+      }
+    };
+
+    final first = repository.addCollection('Fails');
+    await firstWriteEntered.future;
+    final second = repository.addCollection('Survives');
+    await Future<void>.delayed(Duration.zero);
+    final secondOvertookFirst = hookCalls > 1;
+
+    final firstFailure = expectLater(first, throwsA(isA<StateError>()));
+    releaseFirstFailure.complete();
+    try {
+      await Future.wait<void>([firstFailure, second]);
+    } finally {
+      LibraryRepository.addCollectionAfterWriteForTesting = null;
+    }
+
+    expect(secondOvertookFirst, isFalse);
+    expect(repository.collections.value, equals(['Survives']));
+    expect(
+      Hive.box<dynamic>('stashhive_preferences_v1').get('collections'),
+      equals(['Survives']),
+    );
+  });
+
   test('normalizes legacy collection names and counts malformed entries', () async {
     final preferences = Hive.box<dynamic>('stashhive_preferences_v1');
     await preferences.put(
