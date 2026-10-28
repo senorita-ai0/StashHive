@@ -1235,7 +1235,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 ### TC-173 — Bound the waiting queue for incoming share batches
 
 - Keep one share batch active for user review, then deliver more unique share events until the waiting-batch limit is reached.
-- Confirm the queue accepts no more than `maxPendingIncomingShareBatches` waiting batches and rejects subsequent events with a message asking the user to finish current shares before sending more.
+- Confirm the queue accepts no more than `maxPendingIncomingShareBatches` waiting batches and explicitly tells the user that the newly received share was not queued and must be shared again after current batches finish.
 - Confirm the active batch can complete and waiting batches continue in FIFO order after capacity is available. An event declined for queue pressure must not be recorded in the de-duplication cache, so it can be retried after capacity returns.
 - **Status:** Queue-limit unit regression source is committed but unrun; queue-full feedback, event ordering and teardown behavior still need Android device verification at the manual checkpoint.
 
