@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-192 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -634,3 +634,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added widget regression **TC-192**: the failed read must leave the existing library unchanged, hide provider diagnostics, clear the busy state and permit a second valid backup selection/import.
 - [x] Added traceability task **TSK-482** and updated the test plan.
 - [ ] Run TC-192 and verify restore byte-stream failures and retries on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — protect active backup restore from accidental navigation (2026-10-28)
+
+- [x] Backup & privacy now guards its route with `PopScope<bool>` while `_restoring` is true and disables the app-bar Back action for the same commit window.
+- [x] Added widget regression **TC-193** to pause a restore after staging, simulate system back, assert the route remains visible, then release restore and verify completion.
+- [x] Added traceability task **TSK-483** and updated the test plan.
+- [ ] Run TC-193 and verify system-back gesture/navigation behavior with slow native and browser storage at the manual checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
