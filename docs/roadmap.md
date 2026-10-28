@@ -1371,3 +1371,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** SavedItem.toMap now rejects created/updated millisecond timestamps outside the supported DateTime range before returning a serialized map. Direct serialization and parsing use the same timestamp bounds and safe error.
 - **Regression:** TC-236 covers invalid created/updated timestamps and an ordinary in-range serialization.
 - **Status:** Source and regression are committed; tests remain unrun. Verify serialization, parsing, backup encode/decode and repository-save validation at the manual checkpoint. CI remains manual-only.
+
+### TSK-524 — Guard direct SavedItem date getters — 2026-10-28
+
+- **Requirements:** FR-002 and NFR-003.
+- **Source:** The `createdAt` and `updatedAt` getters now validate their millisecond values against the shared supported date range before constructing a local `DateTime`, and report a stable error for invalid direct model instances.
+- **Regression:** TC-237 covers invalid created/updated timestamps accessed through the public getters and a valid-value control.
+- **Status:** Source and regression committed; tests remain unrun. Validate with TC-235/TC-236, repository timestamp checks and backup encode/decode at the manual checkpoint. CI remains manual-only.
