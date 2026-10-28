@@ -2614,7 +2614,16 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
       _message('There is no local file attached to this item.');
       return;
     }
-    final data = await widget.repository.readAttachment(key);
+    Uint8List? data;
+    try {
+      data = await widget.repository.readAttachment(key);
+    } catch (_) {
+      _message(
+        'Could not read the saved file. Check local storage and try again.',
+      );
+      return;
+    }
+    if (!mounted) return;
     if (data == null || data.isEmpty) {
       _message('The local file is missing. Restore a backup if you have one.');
       return;
