@@ -1644,6 +1644,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
   String? _selectedMimeType;
   bool _saving = false;
   bool _pickingAttachment = false;
+  bool _allowSaveCompletionPop = false;
   int _attachmentSelectionRevision = 0;
 
   @override
@@ -1867,7 +1868,13 @@ class _QuickSavePageState extends State<QuickSavePage> {
                 : null,
       );
       await widget.repository.save(item, attachmentBytes: _selectedBytes);
-      if (mounted) Navigator.of(context).pop(true);
+      if (mounted) {
+        // Re-enable route popping only after the successful save has completed,
+        // then wait for PopScope to rebuild before closing the route.
+        setState(() => _allowSaveCompletionPop = true);
+        await WidgetsBinding.instance.endOfFrame;
+        if (mounted) Navigator.of(context).pop(true);
+      }
     } catch (error) {
       _showMessage(
         'Could not save this item. ' +
@@ -1894,10 +1901,12 @@ class _QuickSavePageState extends State<QuickSavePage> {
   Widget build(BuildContext context) {
     final isEditing = widget.existingItem != null;
     final fileKind = _kind == ItemKind.image || _kind == ItemKind.document;
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          tooltip: 'Back',
+    return PopScope<bool>(
+      canPop: !_saving || _allowSaveCompletionPop,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            tooltip: 'Back',
           onPressed: _saving ? null : () => Navigator.of(context).maybePop(),
           icon: const Icon(Icons.arrow_back_rounded),
         ),
@@ -2100,6 +2109,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
               ),
             ),
           ),
+        ),
         ),
       ),
     );
