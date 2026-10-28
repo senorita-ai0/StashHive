@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride, TargetPlatform;
 import 'package:flutter/material.dart';
@@ -10,6 +12,21 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/main.dart' as app;
+
+final class _FailingBackupLengthFile extends PlatformFile {
+  _FailingBackupLengthFile();
+
+  @override
+  String get name => 'private-backup-provider.json';
+
+  @override
+  Future<int> length() async {
+    throw StateError('private backup provider detail should not be shown');
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 double _contrastRatio(Color first, Color second) {
   final a = first.computeLuminance();
@@ -391,6 +408,81 @@ void main() {
       expect(
         tester.widget<DropdownButtonFormField<double>>(control).initialValue,
         1.3,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'recovers from a backup size lookup failure and allows a retry',
+    (tester) async {
+      const item = SavedItem(
+        id: 'backup-retry-source',
+        kind: ItemKind.link,
+        title: 'Backup retry source',
+        content: 'A saved item for retry coverage.',
+        url: 'https://example.com/backup-retry',
+        tags: <String>['Backup'],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 100,
+        updatedAtMs: 101,
+      );
+      await repository.save(item);
+      final backupBytes = Uint8List.fromList(
+        utf8.encode(await repository.createBackup()),
+      );
+      var pickerAttempts = 0;
+      app.backupFilePickerForTesting = () async {
+        pickerAttempts++;
+        if (pickerAttempts == 1) return _FailingBackupLengthFile();
+        return PlatformFile(
+          name: 'retry-backup.json',
+          size: backupBytes.length,
+          bytes: backupBytes,
+        );
+      };
+      addTearDown(() {
+        app.backupFilePickerForTesting = null;
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: app.BackupPrivacyPage(repository: repository),
+        ),
+      );
+      await tester.ensureVisible(find.text('Choose backup file'));
+      await tester.tap(find.text('Choose backup file'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(
+          'Could not restore this backup. Check the selected file and try again.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('private backup provider detail should not be shown'),
+        findsNothing,
+      );
+      expect(find.text('Choosing backup…'), findsNothing);
+      expect(repository.items.value, hasLength(1));
+      expect(tester.takeException(), isNull);
+
+      await tester.ensureVisible(find.text('Choose backup file'));
+      await tester.tap(find.text('Choose backup file'));
+      await tester.pumpAndSettle();
+
+      expect(pickerAttempts, 2);
+      expect(find.text('Merge this backup?'), findsOneWidget);
+      await tester.tap(find.text('Merge backup'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Restored 1 item.'), findsOneWidget);
+      expect(repository.items.value, hasLength(2));
+      expect(
+        repository.items.value.where((saved) => saved.title == item.title),
+        hasLength(2),
       );
       expect(tester.takeException(), isNull);
     },
