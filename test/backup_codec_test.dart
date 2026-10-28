@@ -980,6 +980,62 @@ void main() {
       expect(() => BackupCodec.decode(jsonEncode(payload)), throwsFormatException);
     });
 
+    test(
+      'rejects more attachment entries than the item-count cap',
+      () {
+        final oneAttachment = BackupAttachment(
+          name: 'orphan.bin',
+          mimeType: 'application/octet-stream',
+          bytes: Uint8List.fromList([1]),
+        );
+        final tooManyInMemory = <String, BackupAttachment>{
+          for (var i = 0; i <= BackupCodec.maxItems; i++)
+            'orphan-$i': oneAttachment,
+        };
+        final decoded = DecodedBackup(
+          items: [sampleLink()],
+          attachments: tooManyInMemory,
+          collections: const [],
+          exportedAt: '2026-10-28T00:00:00Z',
+        );
+
+        expect(
+          () => BackupCodec.validateDecodedBackup(decoded),
+          throwsA(
+            isA<FormatException>().having(
+              (error) => error.message,
+              'message',
+              'The backup contains too many attachment entries.',
+            ),
+          ),
+        );
+
+        final tooManyJsonEntries = <String, Object?>{
+          for (var i = 0; i <= BackupCodec.maxItems; i++)
+            'orphan-$i': <String, Object?>{},
+        };
+        final source = jsonEncode(<String, Object?>{
+          'app': 'StashHive',
+          'formatVersion': BackupCodec.formatVersion,
+          'exportedAt': '2026-10-28T00:00:00Z',
+          'collections': <String>[],
+          'items': <Object?>[sampleLink().toMap()],
+          'attachments': tooManyJsonEntries,
+        });
+
+        expect(
+          () => BackupCodec.decode(source),
+          throwsA(
+            isA<FormatException>().having(
+              (error) => error.message,
+              'message',
+              'The backup contains too many attachment entries.',
+            ),
+          ),
+        );
+      },
+    );
+
     test('preserves the version-1 StashHive marker for backup compatibility', () {
       final legacyPayload = <String, Object?>{
         'app': 'StashHive',
