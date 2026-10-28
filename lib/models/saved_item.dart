@@ -116,6 +116,7 @@ class SavedItem {
   /// once and reuse the result across many items instead of allocating the
   /// same lower-case query again for every saved record.
   bool matchesNormalizedQuery(String normalizedQuery) {
+    if (normalizedQuery.length > maxSearchQueryCharacters) return false;
     if (normalizedQuery.isEmpty) return true;
     final searchable = <String>[
       title,
