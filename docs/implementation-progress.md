@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-190 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-191 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -620,3 +620,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added widget regression **TC-190**: the first selected backup fails during size lookup; StashHive must hide provider details, leave library state unchanged, unlock the restore action and successfully retry with a valid backup.
 - [x] Added traceability task **TSK-480** and updated the test plan and roadmap.
 - [ ] Run TC-190 and verify backup picker metadata/read errors on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 2/3 — ignore oversized unused whitespace in share metadata (2026-10-28)
+
+- [x] Text-share intake now checks whether the provider message contains actual non-whitespace content before rejecting it for length. An oversized whitespace-only message is ignored as unused metadata and the bounded path becomes the effective draft text.
+- [x] The check uses a non-whitespace match rather than trimming/copying an oversized string, while genuine over-limit message content remains rejected.
+- [x] Added regression source **TC-191**, traceability task **TSK-481**, and test-plan coverage.
+- [ ] Run TC-191 and verify actual Android share-provider path/message combinations at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
