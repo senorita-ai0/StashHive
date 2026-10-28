@@ -1305,7 +1305,7 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-514 — Prevent overlapping backup export and restore actions — 2026-10-28
 
 - **Requirements:** FR-012/FR-013 and NFR-003.
-- **Source:** Backup & privacy blocks the opposite operation while export or restore is active and shows a clear activity label. Handler guards also reject competing taps, while the repository queue remains the consistency backstop.
-- **Regression:** TC-226 pauses backup preparation and checks Restore cannot start; TC-227 pauses file selection and checks Create backup cannot start until picker cancellation; the existing restore-commit test checks Create backup cannot start.
+- **Source:** Backup & privacy blocks the opposite operation while export or restore is active, shows a clear activity label, and exposes disabled-operation status as a live region for assistive technology. Handler guards also reject competing taps, while the repository queue remains the consistency backstop.
+- **Regression:** TC-226 pauses backup preparation and checks Restore cannot start with a live status; TC-227 pauses file selection and checks Create backup cannot start until picker cancellation; both tests assert accessible status announcements.
 - **Status:** Source and widget regression source committed, unrun. Verify real Android/web file picker and share-sheet transitions at the manual checkpoint.
 
