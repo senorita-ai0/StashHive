@@ -600,6 +600,8 @@ void main() {
   testWidgets(
     'blocks back navigation while a restore is committing',
     (tester) async {
+      final semantics = tester.ensureSemantics();
+      addTearDown(semantics.dispose);
       const item = SavedItem(
         id: 'restore-navigation-guard-source',
         kind: ItemKind.link,
@@ -668,6 +670,12 @@ void main() {
 
         expect(find.text('Restoring…'), findsOneWidget);
         expect(find.text('Restore in progress…'), findsOneWidget);
+        expect(
+          tester
+              .getSemantics(find.bySemanticsLabel('Restore in progress…'))
+              .hasFlag(SemanticsFlag.isLiveRegion),
+          isTrue,
+        );
         final exportAction = find.ancestor(
           of: find.text('Restore in progress…'),
           matching: find.byType(FilledButton),
@@ -810,6 +818,8 @@ void main() {
   testWidgets(
     'disables restore while backup preparation is in progress',
     (tester) async {
+      final semantics = tester.ensureSemantics();
+      addTearDown(semantics.dispose);
       final preparationEntered = Completer<void>();
       final releasePreparation = Completer<void>();
       var pickerCalls = 0;
@@ -842,6 +852,12 @@ void main() {
 
       expect(find.text('Preparing…'), findsOneWidget);
       expect(find.text('Backup in progress…'), findsOneWidget);
+      expect(
+        tester
+            .getSemantics(find.bySemanticsLabel('Backup in progress…'))
+            .hasFlag(SemanticsFlag.isLiveRegion),
+        isTrue,
+      );
       final restoreAction = find.ancestor(
         of: find.text('Backup in progress…'),
         matching: find.byType(FilledButton),
@@ -876,6 +892,8 @@ void main() {
   testWidgets(
     'disables backup export while the backup file picker is open',
     (tester) async {
+      final semantics = tester.ensureSemantics();
+      addTearDown(semantics.dispose);
       final pickerStarted = Completer<void>();
       final pendingPicker = Completer<PlatformFile?>();
       var preparationHookCalls = 0;
@@ -905,6 +923,14 @@ void main() {
 
       expect(find.text('Choosing backup…'), findsOneWidget);
       expect(find.text('Backup selection in progress…'), findsOneWidget);
+      expect(
+        tester
+            .getSemantics(
+              find.bySemanticsLabel('Backup selection in progress…'),
+            )
+            .hasFlag(SemanticsFlag.isLiveRegion),
+        isTrue,
+      );
       final exportAction = find.ancestor(
         of: find.text('Backup selection in progress…'),
         matching: find.byType(FilledButton),
