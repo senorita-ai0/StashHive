@@ -146,6 +146,9 @@ final class _DelayedPlatformFile extends PlatformFile {
     lengthCalls++;
     return 1;
   }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 void main() {
