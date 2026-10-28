@@ -2060,9 +2060,12 @@ class _QuickSavePageState extends State<QuickSavePage> {
   }
 
   void _selectKind(ItemKind kind) {
+    // Tapping the already-selected option is not a type change; in particular,
+    // preserve bytes prefilled by an incoming file share.
+    if (_kind == kind) return;
     setState(() {
       _kind = kind;
-      // Changing type clears only the type-specific attachment selection.
+      // Clear type-specific attachment selection only for an actual change.
       // Keep shared notes/content just as we preserve title, tags and URL.
       _selectedBytes = null;
       _selectedName = null;
