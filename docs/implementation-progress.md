@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-226 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-227 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -856,4 +856,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added **TC-226** for a paused backup-preparation operation and extended the active-restore widget case to assert export is disabled.
 - [x] Added **TSK-514** to the test plan, roadmap and traceability matrix.
 - [ ] Run TC-226 and verify real picker/share-sheet handoff on Android and browser at the manual checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — keep export disabled while backup selection is pending (2026-10-28)
+
+- [x] Added **TC-227** for the file-picker window before restore begins: while the picker future is unresolved, export remains disabled, no backup-preparation hook runs, and canceling the picker restores the export action.
+- [x] Extended **TSK-514** coverage and added TC-227 to FR-012/FR-013 traceability.
+- [ ] Run TC-226/TC-227 and verify Android/web picker and share-sheet state transitions at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
