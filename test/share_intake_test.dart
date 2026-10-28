@@ -395,6 +395,36 @@ void main() {
       expect(media, hasLength(maxIncomingShareBatchItems + 3));
     });
 
+    test('counts whitespace-only provider messages toward fingerprint budget', () {
+      final deduplicator = ShareEventDeduplicator();
+      final whitespace = List<String>.filled(900000, ' ').join();
+      final shared = <SharedMediaFile>[
+        SharedMediaFile(
+          path: 'remember',
+          message: whitespace,
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+        SharedMediaFile(
+          path: 'later',
+          message: whitespace,
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      ];
+      final start = DateTime.utc(2026, 10, 28, 18);
+
+      expect(deduplicator.shouldAccept(shared, now: start), isTrue);
+      expect(
+        deduplicator.shouldAccept(
+          shared,
+          now: start.add(const Duration(milliseconds: 100)),
+        ),
+        isTrue,
+        reason: 'Whitespace-only messages still incur trim/serialization work, so oversized aggregate input must bypass fingerprint caching.',
+      );
+    });
+
     test('does not fingerprint oversized text before normal validation', () async {
       final deduplicator = ShareEventDeduplicator();
       final oversizedText =
