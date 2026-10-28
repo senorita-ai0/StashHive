@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193 and TC-196–TC-197 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193 and TC-196–TC-198 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -662,3 +662,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] HomeShell now resets summary counters only when a non-empty combined message can be presented after the waiting queue drains.
 - [x] Added **TC-196** for bounded/deduplicated summary hints and **TC-197** for suppressing empty summaries; added traceability task **TSK-486**.
 - [ ] Run TC-196/TC-197 and complete the end-to-end manual share queue/accessibility case TC-195. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — verify restore navigation unlock after rollback (2026-10-28)
+
+- [x] Added widget regression **TC-198** for a restore interrupted before collection commit.
+- [x] The regression checks the existing item remains, raw injected diagnostics stay hidden, the restoring state ends and system back can dismiss the route after failure.
+- [x] Added traceability task **TSK-487** and updated the test plan.
+- [ ] Run TC-198 and verify the failed-restore navigation lifecycle on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
