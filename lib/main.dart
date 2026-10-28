@@ -2511,6 +2511,23 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
             child: FutureBuilder<Uint8List?>(
               future: _attachmentFuture,
               builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return _previewLoading(item, height: 180);
+                }
+                if (snapshot.hasError) {
+                  return const SizedBox(
+                    height: 180,
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Text(
+                          'Preview unavailable. The original attachment is still saved and can be shared.',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  );
+                }
                 if (snapshot.data == null || snapshot.data!.isEmpty) {
                   return const SizedBox(
                     height: 180,
@@ -2708,7 +2725,12 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                   FutureBuilder<Uint8List?>(
                     future: _attachmentFuture,
                     builder: (context, snapshot) {
-                      if (snapshot.data == null || snapshot.data!.isEmpty) {
+                      if (snapshot.connectionState != ConnectionState.done) {
+                        return _previewLoading(item, height: 210);
+                      }
+                      if (snapshot.hasError ||
+                          snapshot.data == null ||
+                          snapshot.data!.isEmpty) {
                         return _previewPlaceholder(item, height: 210);
                       }
                       return ClipRRect(
@@ -2889,6 +2911,30 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _previewLoading(SavedItem item, {required double height}) {
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        color: item.kind.softAccent,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Center(
+        child: Semantics(
+          liveRegion: true,
+          label: 'Loading image preview',
+          child: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 12),
+              Text('Loading image…'),
+            ],
           ),
         ),
       ),
