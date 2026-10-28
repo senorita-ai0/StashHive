@@ -58,18 +58,26 @@ class LibraryRepository {
     }();
   }
 
-  final ValueNotifier<List<SavedItem>> items =
+  final ValueNotifier<List<SavedItem>> _items =
       ValueNotifier<List<SavedItem>>(<SavedItem>[]);
+  ValueListenable<List<SavedItem>> get items => _items;
+
   // Synchronous lookups use the last published item snapshot, not raw Hive
   // records that may be temporarily staged inside an in-flight mutation.
   final Map<String, SavedItem> _visibleItemsById = <String, SavedItem>{};
-  final ValueNotifier<List<String>> collections =
+
+  final ValueNotifier<List<String>> _collections =
       ValueNotifier<List<String>>(<String>[]);
+  ValueListenable<List<String>> get collections => _collections;
+
   /// Raw local records skipped because their shape could not be read.
-  final ValueNotifier<int> skippedRecordCount = ValueNotifier<int>(0);
+  final ValueNotifier<int> _skippedRecordCount = ValueNotifier<int>(0);
+  ValueListenable<int> get skippedRecordCount => _skippedRecordCount;
+
   /// Invalid, duplicate or over-limit collection preference entries skipped
   /// while recovering the collection list.
-  final ValueNotifier<int> skippedCollectionCount = ValueNotifier<int>(0);
+  final ValueNotifier<int> _skippedCollectionCount = ValueNotifier<int>(0);
+  ValueListenable<int> get skippedCollectionCount => _skippedCollectionCount;
 
   /// Fault-injection seam for verifying that a failed restore removes writes
   /// already staged before the collection preferences are committed.
@@ -284,7 +292,7 @@ class LibraryRepository {
         skipped++;
       }
     }
-    skippedRecordCount.value = skipped;
+    _skippedRecordCount.value = skipped;
     result.sort((a, b) => b.updatedAtMs.compareTo(a.updatedAtMs));
     _publishVisibleItems(result);
   }
@@ -296,7 +304,7 @@ class LibraryRepository {
     _visibleItemsById
       ..clear()
       ..addEntries(snapshot.map((item) => MapEntry(item.id, item)));
-    items.value = snapshot;
+    _items.value = snapshot;
   }
 
   void _refreshCollections() {
@@ -365,8 +373,8 @@ class LibraryRepository {
     )) {
       _publishVisibleItems(normalizedItems);
     }
-    skippedCollectionCount.value = skipped;
-    collections.value = List<String>.unmodifiable(names);
+    _skippedCollectionCount.value = skipped;
+    _collections.value = List<String>.unmodifiable(names);
   }
 
   SavedItem _canonicalizeCollectionAssignment(SavedItem item) {
@@ -1254,9 +1262,9 @@ class LibraryRepository {
   }
 
   void dispose() {
-    items.dispose();
-    collections.dispose();
-    skippedRecordCount.dispose();
-    skippedCollectionCount.dispose();
+    _items.dispose();
+    _collections.dispose();
+    _skippedRecordCount.dispose();
+    _skippedCollectionCount.dispose();
   }
 }
