@@ -1224,3 +1224,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the write, decode the backup, and confirm the exported item metadata and attachment bytes both reflect the same completed edit.
 - **Status:** Repository regression source is committed but unrun. Validate backup consistency during concurrent saves/deletes/restores and real browser/Android storage operations at the manual checkpoint.
 
+### TC-172 — Ignore incoming share events after the home shell is disposed
+
+- Start a share event, then close/dispose the host app shell while the Android share stream is being canceled.
+- Confirm an event delivered after disposal is ignored without creating a queued completion future, showing SnackBars on a dead context, or starting new navigation.
+- Confirm any share batch already being reviewed is allowed to unwind and its pending completion is released.
+- **Status:** Manual lifecycle case; source guard is committed, but plugin cancellation and app-stop/restart behavior require Android device verification at the manual checkpoint.
+
