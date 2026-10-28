@@ -7,6 +7,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/main.dart' as app;
 import 'package:stashhive/models/saved_item.dart';
+import 'package:stashhive/services/share_intake.dart';
 
 late Directory testDirectory;
 late LibraryRepository repository;
@@ -151,6 +152,60 @@ void main() {
 
     expect(tester.getSemantics(noteChoice).hasFlag(SemanticsFlag.isSelected), isTrue);
     expect(tester.getSemantics(linkChoice).hasFlag(SemanticsFlag.isSelected), isFalse);
+  });
+
+  testWidgets('reselecting a shared image kind keeps its attachment', (tester) async {
+    final bytes = Uint8List.fromList([4, 8, 15, 16, 23, 42]);
+    final share = IncomingShare(
+      kind: ItemKind.image,
+      title: 'Shared image draft',
+      bytes: bytes,
+      fileName: 'shared.png',
+      mimeType: 'image/png',
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: TextButton(
+                key: const ValueKey('open-shared-image'),
+                onPressed: () {
+                  Navigator.of(context).push<void>(
+                    MaterialPageRoute<void>(
+                      builder: (_) => app.QuickSavePage(
+                        repository: repository,
+                        initialShare: share,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('Open shared image'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('open-shared-image')));
+    await tester.pumpAndSettle();
+
+    tester.getSemantics(find.bySemanticsLabel('Image'))
+        .performAction(SemanticsAction.tap);
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Save to StashHive'));
+    await tester.tap(find.text('Save to StashHive'));
+    await tester.pumpAndSettle();
+
+    expect(repository.items.value, hasLength(1));
+    expect(repository.items.value.single.kind, ItemKind.image);
+    expect(repository.items.value.single.attachmentName, 'shared.png');
+    expect(
+      await repository.readAttachment(
+        repository.items.value.single.attachmentKey!,
+      ),
+      orderedEquals(bytes),
+    );
   });
 
   testWidgets('changing item kind preserves shared note content', (tester) async {
