@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-207 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-208 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -726,4 +726,12 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] The regression complements **TC-206**, which checks that overlapping reads coalesce only when no queued repository operation separates them.
 - [x] Added traceability task **TSK-495** and updated the test plan and roadmap.
 - [ ] Run TC-206/TC-207 and verify same-key reads, retries, slow replacement, and failure rollback on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — keep synchronous item lookups on the published repository snapshot (2026-10-28)
+
+- [x] Added an O(1) item-ID index that is published in sync with the immutable `items` notifier snapshot. The index is updated before notifier listeners are notified.
+- [x] Changed `findById` to return the last published item rather than decoding a raw Hive record that may have been written temporarily during an in-flight save.
+- [x] Added repository regression **TC-208**: pause an image replacement after its raw item write, confirm public lookup still shows the previous published title, then release the save and verify the new metadata and attachment bytes.
+- [x] Added traceability task **TSK-496** and documented the concurrency scenario in the test plan.
+- [ ] Run TC-208 and verify lookup consistency during delayed save/delete/restore and rollback on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
