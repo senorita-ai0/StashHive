@@ -1539,3 +1539,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Build a valid saved item using a test tag-list implementation whose declared size exceeds the 100-tag limit and whose element access throws if the list is traversed.
 - Call the shared saved-item validator and confirm it rejects the size with the expected `FormatException` before iterating/copying the caller-owned tag list.
 - **Status:** Codec regression source is committed but unrun. Verify oversized tag and content boundaries through repository save, backup encode and decoded-backup validation at the manual checkpoint.
+
+### TC-216 — Reject more attachment entries than saved items
+
+- Validate a directly constructed `DecodedBackup` with more than 10,000 distinct attachment entries and confirm it receives the fixed attachment-entry-count error before scanning or validating all payloads.
+- Decode a JSON backup candidate with more than 10,000 attachment keys and the same number of no-value orphan payloads; confirm decode stops at the entry-count limit before iterating attachment keys/base64 metadata.
+- **Status:** Codec regression source is committed but unrun. Verify malformed backup limits and restore preflight at the manual validation checkpoint.
+
