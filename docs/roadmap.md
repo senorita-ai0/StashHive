@@ -1126,3 +1126,18 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** Backup export distinguishes `success`, `dismissed` and `unavailable` results. The UI no longer uses one generic fallback for all non-success outcomes: messages state what was reported and avoid claiming the backup definitely reached its destination.
 - **Regression:** TC-199 covers each result-to-message mapping. Actual destination delivery is still platform-dependent and needs manual confirmation.
 - **Status:** Source and regression documentation committed but unrun. Check the share sheet and resulting file/Downloads behavior at the manual checkpoint; CI remains manual-only.
+
+### TSK-489 — Snapshot caller-owned decoded backup inputs before restore awaits — 2026-10-28
+
+- **Requirements:** FR-013 and NFR-003.
+- **Source:** After validation, the repository copies decoded item tag lists, collection names, attachment metadata and attachment byte arrays into an owned snapshot before the first asynchronous boundary. Restore staging and persistence use that snapshot instead of references held by the caller.
+- **Regression:** TC-200 mutates the original decoded item/list/map/bytes after the owned snapshot is created but before the first persistent write, then verifies the restored item, tags, collection and bytes remain the originally validated values.
+- **Status:** Source and regression committed but unrun. Review peak memory and verify restore consistency with web/Android storage at the manual checkpoint.
+
+### TSK-490 — Snapshot mutable item tags before repository save — 2026-10-28
+
+- **Requirements:** FR-002 and NFR-003.
+- **Source:** Repository save clones and freezes the tag list before validation and storage awaits, so mutation of a caller-owned mutable tags list cannot change the metadata that is persisted after the save has started.
+- **Regression:** TC-201 pauses save before the record write, mutates the caller's list and checks both the visible item and raw stored record retain the original tags.
+- **Status:** Source and regression committed but unrun. Verify together with attachment-byte snapshot and rollback cases at the manual checkpoint.
+
