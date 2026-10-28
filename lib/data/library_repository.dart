@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -23,6 +24,26 @@ class LibraryRepository {
   final Box<dynamic> _itemsBox;
   final Box<dynamic> _attachmentsBox;
   final Box<dynamic> _preferencesBox;
+
+  // Serialize state-changing operations so two fast UI actions cannot both
+  // derive writes from the same stale notifier snapshot and overwrite each
+  // other's library/collection changes.
+  Future<void> _mutationTail = Future<void>.value();
+
+  Future<T> _serializeMutation<T>(Future<T> Function() operation) {
+    final previous = _mutationTail;
+    final release = Completer<void>();
+    _mutationTail = release.future;
+
+    return () async {
+      await previous;
+      try {
+        return await operation();
+      } finally {
+        release.complete();
+      }
+    }();
+  }
 
   final ValueNotifier<List<SavedItem>> items =
       ValueNotifier<List<SavedItem>>(<SavedItem>[]);
@@ -315,7 +336,12 @@ class LibraryRepository {
     return false;
   }
 
-  Future<void> save(SavedItem item, {List<int>? attachmentBytes}) async {
+  Future<void> save(SavedItem item, {List<int>? attachmentBytes}) =>
+      _serializeMutation(
+        () => _save(item, attachmentBytes: attachmentBytes),
+      );
+
+  Future<void> _save(SavedItem item, {List<int>? attachmentBytes}) async {
     final saveItem = _canonicalizeCollectionAssignment(item);
     BackupCodec.validateSavedItem(saveItem);
     final alreadyVisible = items.value.any((saved) => saved.id == saveItem.id);
@@ -465,7 +491,10 @@ class LibraryRepository {
     _refreshCollections();
   }
 
-  Future<void> delete(String id) async {
+  Future<void> delete(String id) =>
+      _serializeMutation(() => _delete(id));
+
+  Future<void> _delete(String id) async {
     final hadItemKey = _itemsBox.containsKey(id);
     if (!hadItemKey) return;
 
@@ -610,7 +639,10 @@ class LibraryRepository {
     }
   }
 
-  Future<void> addCollection(String name) async {
+  Future<void> addCollection(String name) =>
+      _serializeMutation(() => _addCollection(name));
+
+  Future<void> _addCollection(String name) async {
     final cleaned = name.trim();
     if (cleaned.isEmpty || cleaned.length > 80) {
       throw const FormatException('Collection names must be between 1 and 80 characters.');
@@ -649,7 +681,10 @@ class LibraryRepository {
     _refreshCollections();
   }
 
-  Future<void> renameCollection(String oldName, String newName) async {
+  Future<void> renameCollection(String oldName, String newName) =>
+      _serializeMutation(() => _renameCollection(oldName, newName));
+
+  Future<void> _renameCollection(String oldName, String newName) async {
     final cleaned = newName.trim();
     if (cleaned.isEmpty || cleaned.length > 80) {
       throw const FormatException('Collection names must be between 1 and 80 characters.');
@@ -681,7 +716,10 @@ class LibraryRepository {
     );
   }
 
-  Future<void> deleteCollection(String name) async {
+  Future<void> deleteCollection(String name) =>
+      _serializeMutation(() => _deleteCollection(name));
+
+  Future<void> _deleteCollection(String name) async {
     final exists = collections.value.any(
       (item) => item.toLowerCase() == name.toLowerCase(),
     );
@@ -876,7 +914,10 @@ class LibraryRepository {
   /// Restores a backup that has already passed codec validation. The UI can
   /// decode once before confirmation and avoid parsing large JSON/base64 data
   /// a second time after the user accepts the merge.
-  Future<int> restoreDecodedBackup(DecodedBackup decoded) async {
+  Future<int> restoreDecodedBackup(DecodedBackup decoded) =>
+      _serializeMutation(() => _restoreDecodedBackup(decoded));
+
+  Future<int> _restoreDecodedBackup(DecodedBackup decoded) async {
     BackupCodec.validateDecodedBackup(decoded);
     BackupCodec.validateItemCount(
       currentCount: items.value.length,
