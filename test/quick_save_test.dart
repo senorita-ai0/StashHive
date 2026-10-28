@@ -158,6 +158,54 @@ void main() {
   });
 
   testWidgets(
+    'invalidates a picker result after switching away and back to its original type',
+    (tester) async {
+      final semantics = tester.ensureSemantics();
+      addTearDown(semantics.dispose);
+      final pickerStarted = Completer<ItemKind>();
+      final pendingPicker = Completer<PlatformFile?>();
+      final delayedFile = _DelayedPlatformFile('stale-image.png');
+      app.quickSaveAttachmentPickerForTesting = (kind) {
+        pickerStarted.complete(kind);
+        return pendingPicker.future;
+      };
+      addTearDown(() {
+        app.quickSaveAttachmentPickerForTesting = null;
+      });
+
+      await openNewKind(tester, ItemKind.image);
+      await tester.ensureVisible(find.text('Choose an image'));
+      await tester.tap(find.text('Choose an image'));
+      await tester.pump();
+      expect(await pickerStarted.future, ItemKind.image);
+
+      tester.getSemantics(find.bySemanticsLabel('Document'))
+          .performAction(SemanticsAction.tap);
+      await tester.pumpAndSettle();
+      tester.getSemantics(find.bySemanticsLabel('Image'))
+          .performAction(SemanticsAction.tap);
+      await tester.pumpAndSettle();
+
+      pendingPicker.complete(delayedFile);
+      await tester.pumpAndSettle();
+
+      expect(
+        delayedFile.lengthCalls,
+        0,
+        reason: 'Switching back must not revive an earlier picker request.',
+      );
+      expect(find.text('Choose an image'), findsOneWidget);
+      await tester.ensureVisible(find.text('Save to StashHive'));
+      await tester.tap(find.text('Save to StashHive'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Choose a file before saving.'), findsOneWidget);
+      expect(repository.items.value, isEmpty);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'discards a delayed file selection after the draft type changes',
     (tester) async {
       final semantics = tester.ensureSemantics();
