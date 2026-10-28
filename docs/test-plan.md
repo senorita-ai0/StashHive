@@ -1245,3 +1245,15 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm duplicate-event fingerprinting remains best-effort and does not throw before the item can reach the normal intake error path.
 - **Status:** Regression source is committed but unrun. Verify actual URI shapes emitted by file providers on Android at the manual validation checkpoint.
 
+### TC-175 — Keep the newest dark-mode choice after an older write fails
+
+- Start a dark-mode write and pause it after the preference write; queue two newer switch actions before releasing the first operation with a simulated failure.
+- Confirm the repository serializes the writes, the newest queued value persists, the visible switch stays aligned with the latest user choice and the injected exception does not escape the UI.
+- **Status:** Widget regression source is committed but unrun. Verify rapid theme changes with actual browser/device storage latency at the manual checkpoint.
+
+### TC-176 — Keep the newest text-size choice after an older write fails
+
+- Start a text-size preference write and pause it after the preference write; choose a different text scale while the first operation is still pending.
+- Release the earlier operation with a simulated failure and confirm the newest scale persists and remains selected rather than being reset by the stale failure handler.
+- **Status:** Widget regression source is committed but unrun. Verify rapid text-size changes under storage delay on web and Android at the manual checkpoint.
+
