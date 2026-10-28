@@ -190,8 +190,17 @@ class ShareEventDeduplicator {
   String _effectiveFileMime(SharedMediaFile item) {
     final rawPath = item.path.trim();
     final parsedPath = Uri.tryParse(rawPath);
-    final localPath =
-        parsedPath?.scheme == 'file' ? parsedPath!.toFilePath() : rawPath;
+    var localPath = rawPath;
+    if (parsedPath?.scheme == 'file') {
+      // A provider may supply a file URI whose authority/path cannot be
+      // converted on this platform. Fingerprinting must remain best-effort;
+      // actual intake will show a safe file-read failure if it is unusable.
+      try {
+        localPath = parsedPath!.toFilePath();
+      } catch (_) {
+        localPath = rawPath;
+      }
+    }
     final inferredByExtension = guessMimeTypeFromFilename(localPath);
     final sharedMime = item.mimeType?.trim().toLowerCase() ?? '';
     final inferred = inferredByExtension != defaultBinaryMimeType
