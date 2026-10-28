@@ -1639,3 +1639,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Clear the fault and confirm ordinary file sharing remains available.
 - **Status:** Widget regression source is committed but unrun. Verify read-failure feedback and recovery under real Android/browser storage conditions at the manual validation checkpoint.
 
+### TC-230 — Retry an image preview after a transient attachment-read error
+
+- Save an image, inject a single transient read error, open Item Details and choose **View image**.
+- Confirm the preview shows a recoverable message and a **Retry preview** action without exposing internal storage diagnostics.
+- Retry and confirm a fresh repository read occurs, the retry action disappears after the read succeeds, and the saved attachment remains intact.
+- **Status:** Widget regression source is committed but unrun. Verify retry behavior and screen-reader feedback with real browser/Android storage errors at the manual validation checkpoint.
+
