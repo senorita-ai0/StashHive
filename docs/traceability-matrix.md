@@ -1538,3 +1538,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-226 pauses backup preparation and verifies the Restore button is disabled with a live-region status; TC-227 pauses the backup file picker and verifies export is disabled/announced until picker cancellation; the existing restore-commit regression checks Create backup is disabled.
 - **Verification:** Widget test source is committed but unrun. Verify operation transitions and real Android/web picker/share-sheet handoff at the manual validation checkpoint.
 
+### TSK-515 — Release the backup JSON string before share-sheet await
+
+- **Requirements:** FR-012 and NFR-003/NFR-007; exporting a portable backup should avoid retaining avoidable full-size serialized representations while waiting for a user-controlled platform share flow.
+- **Implementation:** After encoding the backup JSON into UTF-8 bytes, Backup & privacy clears its local reference to the JSON string before awaiting SharePlus. The byte payload remains the data passed to the share sheet.
+- **Regression/manual check:** TC-228 verifies UTF-8 backup payload integrity and asks for a peak-memory review while the share sheet remains open.
+- **Verification:** Source change is committed but no platform export or memory profile has run. Validate representative large backups on web and Android at the manual checkpoint.
+
