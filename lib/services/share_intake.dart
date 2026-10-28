@@ -15,6 +15,15 @@ const int maxIncomingAttachmentBytes = BackupCodec.maxAttachmentBytes;
 const int maxIncomingUrlCharacters = maxSavedItemUrlCharacters;
 const int maxIncomingTextCharacters = 1000000;
 
+/// Maximum number of entries reviewed from one operating-system share batch.
+/// Larger selections are truncated with a user-facing warning before queuing.
+const int maxIncomingShareBatchItems = 100;
+
+/// Bound the input copied into a single de-duplication fingerprint. Oversized
+/// payloads go to normal validation without creating a large JSON/UTF-8 copy.
+const int _maxShareFingerprintCharacters =
+    maxIncomingTextCharacters + maxIncomingShareBatchItems * maxIncomingUrlCharacters;
+
 /// Reads and acknowledges a launch-time share before waiting for interactive
 /// review. Quick Save can remain open while the user reviews a batch; delaying
 /// [resetInitialMedia] until then can leave the consumed OS intent pending if
@@ -86,6 +95,29 @@ class IncomingShare {
   }
 }
 
+/// A share batch limited to the number of entries StashHive will review.
+class BoundedShareBatch {
+  const BoundedShareBatch({
+    required this.media,
+    required this.skippedCount,
+  });
+
+  final List<SharedMediaFile> media;
+  final int skippedCount;
+}
+
+/// Keeps only the first [maxIncomingShareBatchItems] entries from a very
+/// large OS share selection. The caller must explain any skipped entries.
+BoundedShareBatch boundIncomingShareBatch(List<SharedMediaFile> media) {
+  final retainedCount = media.length > maxIncomingShareBatchItems
+      ? maxIncomingShareBatchItems
+      : media.length;
+  return BoundedShareBatch(
+    media: List<SharedMediaFile>.unmodifiable(media.take(retainedCount)),
+    skippedCount: media.length - retainedCount,
+  );
+}
+
 /// Filters only near-simultaneous duplicate deliveries from the initial intent
 /// API and the broadcast stream. A later deliberate share of the same URL is
 /// accepted after the short de-duplication window.
@@ -99,6 +131,49 @@ class ShareEventDeduplicator {
   final Duration window;
   final int maxEntries;
   final Map<String, DateTime> _seen = <String, DateTime>{};
+
+  bool _canFingerprint(List<SharedMediaFile> media) {
+    if (media.length > maxIncomingShareBatchItems) return false;
+
+    var totalCharacters = 0;
+    for (final item in media) {
+      final pathLength = item.path.length;
+      final messageLength = item.message?.length ?? 0;
+      final mimeLength = item.mimeType?.length ?? 0;
+      var charactersForItem = 0;
+
+      switch (item.type) {
+        case SharedMediaType.text:
+          // Text intake selects one effective field. Bound its length before
+          // trim/URL parsing so oversized text reaches the normal validator.
+          if (messageLength > maxIncomingTextCharacters) return false;
+          final usesMessage =
+              item.message != null && item.message!.trim().isNotEmpty;
+          final effectiveLength = usesMessage ? messageLength : pathLength;
+          if (effectiveLength > maxIncomingTextCharacters) return false;
+          charactersForItem = effectiveLength;
+        case SharedMediaType.url:
+          if (pathLength > maxIncomingUrlCharacters ||
+              messageLength > maxIncomingTextCharacters) {
+            return false;
+          }
+          charactersForItem = pathLength + messageLength;
+        case SharedMediaType.image:
+        case SharedMediaType.file:
+        case SharedMediaType.video:
+          // Provider paths/MIME values are metadata, not note content. Avoid
+          // parsing pathological provider fields just to compute a hash.
+          if (pathLength > maxIncomingUrlCharacters || mimeLength > 128) {
+            return false;
+          }
+          charactersForItem = pathLength + mimeLength;
+      }
+
+      totalCharacters += charactersForItem;
+      if (totalCharacters > _maxShareFingerprintCharacters) return false;
+    }
+    return true;
+  }
 
   String _effectiveFileMime(SharedMediaFile item) {
     final rawPath = item.path.trim();
@@ -154,6 +229,9 @@ class ShareEventDeduplicator {
     DateTime? now,
   }) {
     if (media.isEmpty) return false;
+    // Let the regular intake validator report oversized payloads without first
+    // serializing an unbounded JSON representation just for de-duplication.
+    if (!_canFingerprint(media)) return true;
     final timestamp = now ?? DateTime.now();
     _seen.removeWhere((_, seenAt) {
       final age = timestamp.difference(seenAt);
