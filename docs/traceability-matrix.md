@@ -1492,7 +1492,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-508 — Check raw metadata lengths before normalization
 
 - **Requirements:** FR-012/FR-013 and NFR-003; backup/local preference normalization must reject oversized strings before trimming or copying untrusted content.
-- **Implementation:** Backup decoding, direct decoded-backup validation and backup collection normalization now check collection lengths before trimming. Strict item-map validation checks tag lengths before whitespace normalization. Direct attachment metadata validates name/MIME/key lengths before trimming. Repository collection recovery and collection add/rename apply the same early size checks.
+- **Implementation:** Backup decoding, direct decoded-backup validation and backup collection normalization now check collection lengths before trimming. Strict item-map validation checks tag lengths before whitespace normalization. JSON attachment entries and directly constructed attachment metadata validate key/name/MIME lengths before trimming. Repository collection recovery and collection add/rename apply the same early size checks.
 - **Regression:** TC-220 covers oversized tags/collection names in backups, direct decoded inputs, backup encoding and local preference recovery.
 - **Verification:** Regression source is committed but unrun. Validate resource bounds and legacy-data recovery at the manual validation checkpoint.
 
