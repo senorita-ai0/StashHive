@@ -179,6 +179,7 @@ void main() {
       });
 
       await openNewKind(tester, ItemKind.image);
+      await tester.ensureVisible(find.text('Choose an image'));
       await tester.tap(find.text('Choose an image'));
       await tester.pump();
 
