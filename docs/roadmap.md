@@ -1036,3 +1036,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-185 confirms a valid short message is retained as a note even when the unused provider path exceeds the text limit.
 - **Status:** Source behavior and regression are committed, but tests remain unrun. Verify against real Android source apps at the manual checkpoint.
 
+### TSK-476 — Recover from attachment size metadata failures — 2026-10-28
+
+- **Requirements:** FR-008 and NFR-003/NFR-006.
+- **Source:** Quick Save's recoverable file-selection path is now explicitly covered when a provider returns a file but throws while reporting its size.
+- **Regression:** TC-186 confirms safe error feedback, cleared busy state, retained draft, successful retry, and exact persisted image bytes.
+- **Status:** Regression source is committed but unrun; verify failure and retry behavior on actual Android and supported browser/desktop pickers at the manual checkpoint.
+
