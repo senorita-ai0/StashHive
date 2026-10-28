@@ -1253,3 +1253,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-218 covers oversized and unknown types through direct model parsing, backup decode and local repository recovery while valid neighboring items remain accessible.
 - **Status:** Source and regression documentation committed; TC-218 is authored but unrun. Validate malformed backup feedback and legacy local-store recovery at the manual checkpoint; CI remains manual-only.
 
+### TSK-507 — Bound optional backup export timestamp metadata — 2026-10-28
+
+- **Requirements:** FR-012/FR-013 and NFR-002/NFR-003.
+- **Source:** Optional `exportedAt` metadata is retained from JSON backups only when the string is no longer than 64 characters; missing, malformed or oversized values normalize to empty while valid item data stays importable. Direct constructed backup objects with overlong timestamps fail restore preflight with fixed text.
+- **Regression:** TC-219 verifies both JSON normalization and direct in-memory validation.
+- **Status:** Source and regression documentation committed but unrun. Confirm normal timestamp and older v1 backup compatibility at the manual validation checkpoint; CI remains manual-only.
+
