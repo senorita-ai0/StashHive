@@ -11,10 +11,10 @@
 | FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427, TSK-479 | TC-005, TC-118, TC-135, TC-189 | IN PROGRESS — search normalizes once, bounds oversized queries and retains Unicode metadata search; execution/platform review pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
-| FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476, TSK-477, TSK-491 | TC-008, TC-122, TC-186, TC-187, TC-202, TC-203 | IN PROGRESS — bounded attachment reads, retry recovery and mutation-consistent byte reads are source-covered; platform validation pending |
+| FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476, TSK-477, TSK-491, TSK-493 | TC-008, TC-122, TC-186, TC-187, TC-202, TC-203, TC-205 | IN PROGRESS — bounded attachment reads, retry recovery, mutation-consistent reads and thumbnail future reuse are source-covered; platform validation pending |
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475, TSK-481, TSK-484, TSK-485, TSK-486 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185, TC-191, TC-194, TC-195, TC-196, TC-197 | IN PROGRESS — source bounds batch/fingerprint/queue work and aggregates/count-limits share review feedback; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423, TSK-474 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
-| FR-011 | SCR-004 | TSK-203, TSK-491, TSK-492 | TC-011, TC-202, TC-203, TC-204 | IN PROGRESS — attachment reads now wait for commit/rollback and Item Details distinguishes loading from missing bytes; execution/platform review pending |
+| FR-011 | SCR-004 | TSK-203, TSK-491, TSK-492, TSK-493 | TC-011, TC-202, TC-203, TC-204, TC-205 | IN PROGRESS — attachment reads wait for commit/rollback, Item Details distinguishes loading from missing bytes, and thumbnails reuse read futures; execution/platform review pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471, TSK-472, TSK-473, TSK-474, TSK-488 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181, TC-182, TC-183, TC-184, TC-199 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful backup preparation/share-outcome feedback are source-covered; execution and platform export pending |
 | FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415, TSK-472, TSK-480, TSK-482, TSK-483, TSK-487, TSK-489 | TC-013, TC-117, TC-119, TC-120, TC-182, TC-190, TC-192, TC-193, TC-198, TC-200 | IN PROGRESS — codec/source, restore rollback, picker size/read recovery, restore input snapshot isolation and navigation recovery are source-covered; validation pending |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | IN PROGRESS — local-first flows are implemented in source; offline/restart tests pending |
@@ -25,11 +25,11 @@
 | FR-019 | SCR-001, SCR-002 | Later if approved | TC-019 | NOT STARTED / Could |
 | NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | IN PROGRESS — no backend/account integration in core source; offline and network inspection pending |
 | NFR-002 | SCR-006, SCR-004 | TSK-304, TSK-428, TSK-429, TSK-444 | TC-018, TC-136, TC-137, TC-152 | IN PROGRESS — startup and routine error UI hide raw unexpected storage/plugin details; permissions/logging/network inspection pending |
-| NFR-003 | SCR-006, SCR-004 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426, TSK-444, TSK-482, TSK-483, TSK-487, TSK-488, TSK-489, TSK-490, TSK-491 | TC-012–015, TC-117, TC-120, TC-122, TC-134, TC-152, TC-192, TC-193, TC-198, TC-199, TC-200, TC-201, TC-202, TC-203 | IN PROGRESS — bounded backup reads, consistent mutable-input snapshots, truthful share outcome messages, restore recovery and attachment read isolation are source-covered; execution/platform verification pending |
+| NFR-003 | SCR-006, SCR-004 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426, TSK-444, TSK-482, TSK-483, TSK-487, TSK-488, TSK-489, TSK-490, TSK-491, TSK-493 | TC-012–015, TC-117, TC-120, TC-122, TC-134, TC-152, TC-192, TC-193, TC-198, TC-199, TC-200, TC-201, TC-202, TC-203, TC-205 | IN PROGRESS — bounded backups, owned mutable-input snapshots, restore recovery, attachment read isolation and repeat-read prevention are source-covered; execution/platform verification pending |
 | NFR-004 | SCR-004, SCR-006 | TSK-203, TSK-425, TSK-427 | TC-006, TC-017, TC-133, TC-135 | IN PROGRESS — platform-specific local-storage/search copy added; end-to-end wording review pending |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
 | NFR-006 | All screens | TSK-103, TSK-304, TSK-443, TSK-468, TSK-484, TSK-485, TSK-486, TSK-487, TSK-492 | UI/accessibility checklist, TC-151, TC-175, TC-176, TC-177, TC-194–TC-198, TC-204 | IN PROGRESS — text scaling, queued-share feedback, restore navigation recovery and accessible attachment-loading status are source-covered; execution and platform checks pending |
-| NFR-007 | Search/list | TSK-003, TSK-305, TSK-412, TSK-479 | TC-116, TC-189 / Performance baseline | IN PROGRESS — non-gating harness and bounded-query source added; measurements pending |
+| NFR-007 | Search/list | TSK-003, TSK-305, TSK-412, TSK-479, TSK-493 | TC-116, TC-189, TC-205 / Performance baseline | IN PROGRESS — non-gating harness, bounded-query source and thumbnail read reuse are added; measurements pending |
 | NFR-008 | Attachments / OCR | TSK-005, TSK-305 | Package-size benchmark | NOT STARTED |
 | NFR-009 | Architecture | TSK-002, TSK-101 | Static checks/build | NOT STARTED |
 | NFR-010 | Dependency register | TSK-003, TSK-403, TSK-464 | License/dependency review | IN PROGRESS — direct constraints and package license metadata recorded; transitive audit and lockfile resolution remain pending |
@@ -1383,4 +1383,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** Item Details and its image dialog show a live loading state while the attachment future is pending. Only a completed read with no bytes shows the missing-file guidance; read errors receive preview-unavailable feedback.
 - **Regression:** TC-204 pauses an attachment replacement before metadata commit, opens Item Details, and confirms both the page and image dialog show loading instead of missing-file messaging.
 - **Verification:** Widget regression source is committed but unrun. Validate slow-storage and screen-reader behavior on web/Android at the manual checkpoint.
+
+### TSK-493 — Reuse image thumbnail read futures across library rebuilds
+
+- **Requirements:** FR-008, FR-011 and NFR-003/NFR-007; a local image thumbnail should not schedule repeated repository reads on unrelated UI rebuilds.
+- **Implementation:** The thumbnail is now stateful and holds its attachment future. It refreshes the future when the repository or saved-item identity/revision changes, while harmless parent rebuilds retain the same future. A repository test seam counts read starts in widget coverage.
+- **Regression:** TC-205 mounts a library image, triggers an unrelated parent rebuild, and confirms the same item revision performs one attachment read rather than queuing another.
+- **Verification:** Widget regression source is committed but unrun. Check thumbnail refresh after edits/replacements and capture the repository performance baseline at the manual checkpoint.
 
