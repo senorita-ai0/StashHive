@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-205 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-206 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -711,4 +711,12 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Thumbnail reads refresh when the repository or item identity/revision changes, so edits and attachment replacement can show the new payload.
 - [x] Added a test-only repository read seam and widget regression **TC-205** to check an unrelated parent rebuild uses only one read for the same item revision. Added traceability task **TSK-493**.
 - [ ] Run TC-205 and verify thumbnail refresh after attachment replacement while reviewing the 100/1,000/10,000-item performance baseline. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — coalesce concurrent attachment reads safely (2026-10-28)
+
+- [x] Repository calls for the same attachment key now share an in-flight read when no later repository operation has been queued.
+- [x] Added queue-sequence tracking so a same-key read requested after a queued save/delete/restore cannot attach to an older Future and return stale bytes; it receives its own queue position.
+- [x] Added **TC-206** with a paused read, overlapping same-key caller, an intervening attachment replacement, and a read requested after that replacement is queued. It checks the first two callers receive original bytes and the last caller receives committed replacement bytes.
+- [x] Added traceability task **TSK-494** and updated the test plan and roadmap.
+- [ ] Run TC-206 and review shared-key thumbnail/detail reads under slow storage on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
