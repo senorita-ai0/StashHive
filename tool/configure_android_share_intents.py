@@ -4,7 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import os
+import stat
 import sys
+import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -122,7 +125,33 @@ def configure_manifest(manifest_path: str | Path) -> int:
         added += 1
 
     ET.indent(tree, space="    ")
-    tree.write(path, encoding="utf-8", xml_declaration=True)
+
+    # Write beside the destination and replace only after serialization
+    # succeeds. A failed write must not truncate a previously valid manifest.
+    original_mode = stat.S_IMODE(path.stat().st_mode)
+    temporary_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="wb",
+            prefix=f".{path.name}.",
+            suffix=".tmp",
+            dir=path.parent,
+            delete=False,
+        ) as temporary_file:
+            temporary_path = Path(temporary_file.name)
+            tree.write(temporary_file, encoding="utf-8", xml_declaration=True)
+            temporary_file.flush()
+            os.fsync(temporary_file.fileno())
+
+        os.chmod(temporary_path, original_mode)
+        os.replace(temporary_path, path)
+        temporary_path = None
+    finally:
+        if temporary_path is not None:
+            try:
+                temporary_path.unlink()
+            except FileNotFoundError:
+                pass
     return added
 
 
