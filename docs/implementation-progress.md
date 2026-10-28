@@ -485,7 +485,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 
 ## Phase 3 — visible attachment picker progress and retry recovery (2026-10-28)
 
-- [x] Quick Save's attachment area now changes from the idle upload label/icon to a “Selecting file…” status and progress indicator while the picker result is being checked.
+- [x] Quick Save's attachment area now changes from the idle upload label/icon to a “Selecting file…” status and progress indicator while file selection and reading are pending.
 - [x] Added widget regression **TC-168**: a delayed provider error must clear the busy state, show safe retry guidance without leaking raw exception details, and allow a second picker attempt to save valid attachment bytes.
 - [x] Added traceability task **TSK-461** and updated the test plan.
 - [ ] Run TC-168 and inspect picker/byte-read progress and recovery on real Android and supported browser/desktop platforms at the manual checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
