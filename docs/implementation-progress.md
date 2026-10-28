@@ -938,3 +938,9 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added **TC-238** to round-trip SavedItem instances using the exact minimum and maximum supported millisecond timestamps, ensuring the bounds are inclusive rather than accidentally rejecting valid endpoints.
 - [x] Added **TSK-525** to the roadmap.
 - [ ] Run TC-238 with TC-235–TC-237 and repository/backup timestamp tests at the manual validation checkpoint. Per owner direction, no CI, formatter, analyzer, test suite or platform build was started for this source-only increment.
+
+## Phase 3 — immutable SavedItem copy snapshots (2026-10-29)
+
+- [x] `SavedItem.copyWith()` now copies tags into an unmodifiable list so external mutation of either the replacement list or the source item’s mutable list cannot silently mutate the copied model.
+- [x] Added regression **TC-239** and roadmap task **TSK-526**.
+- [ ] Run TC-239 with model, repository snapshot, backup encode/decode and restore tests at the manual validation checkpoint. No tests or builds were run for this change.
