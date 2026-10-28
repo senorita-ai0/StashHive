@@ -12,7 +12,7 @@
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476, TSK-477 | TC-008, TC-122, TC-186, TC-187 | IN PROGRESS — bounded attachment reads and retry recovery are source-covered; platform validation pending |
-| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475, TSK-481, TSK-484 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185, TC-191, TC-194 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; defers share truncation warning until review ends; Android build/device test pending |
+| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475, TSK-481, TSK-484, TSK-485 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185, TC-191, TC-194, TC-195 | IN PROGRESS — source bounds batch/fingerprint/queue work and aggregates omitted/invalid share feedback after queued reviews; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423, TSK-474 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471, TSK-472, TSK-473, TSK-474 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181, TC-182, TC-183, TC-184 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status and rollback-safe export concurrency added; execution and platform export pending |
@@ -1327,3 +1327,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** A queued share batch now retains its `skippedCount`. Omitted counts are accumulated across truncated batches and the warning is shown only after all already-queued batches finish their sequential reviews, when the host returns to the home screen rather than opening another Quick Save route.
 - **Manual regression:** TC-194 shares more than 100 items, confirms the first 100 are reviewed sequentially, and checks the omitted-count warning appears after the last supported/unsupported entry has been handled.
 - **Verification:** Source change is committed; TC-194 remains a manual UX case. Confirm source-app batch behavior on a physical Android device at the validation checkpoint.
+
+### TSK-485 — Aggregate share review feedback after the queue drains
+
+- **Requirements:** FR-009 and NFR-006; users need understandable feedback for unsupported, invalid and omitted items, and messages must not be obscured by immediately opening the next review route.
+- **Implementation:** HomeShell records counts for unsupported, invalid/unreadable and over-limit entries. It retains at most three distinct, app-defined safe validation hints and presents a single combined message only after all currently queued share batches finish.
+- **Manual regression:** TC-195 queues multiple share batches containing unsupported/invalid entries plus an over-limit batch, checks sequential review proceeds first, then verifies one combined summary appears on the Library screen with appropriate counts and no raw provider details.
+- **Verification:** Source change is committed; TC-195 is a manual UX case. Confirm counts, timing and readability on a physical Android device at the validation checkpoint.
