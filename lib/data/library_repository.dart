@@ -453,19 +453,44 @@ class LibraryRepository {
     return false;
   }
 
-  Future<void> save(SavedItem item, {List<int>? attachmentBytes}) =>
-      _serializeOperation(
-        () => _save(item, attachmentBytes: attachmentBytes),
+  Future<void> save(SavedItem item, {List<int>? attachmentBytes}) {
+    // Capture mutable inputs when save is requested, not when its queued
+    // operation eventually starts. Otherwise a caller could mutate tags/bytes
+    // while this save waits behind an earlier repository operation.
+    try {
+      if (item.tags.length > 100 || item.tags.any((tag) => tag.length > 100)) {
+        throw const FormatException('A saved item exceeds supported limits.');
+      }
+      if (attachmentBytes != null) {
+        if (attachmentBytes.length > BackupCodec.maxAttachmentBytes) {
+          throw const FormatException('Attachments must be 15 MB or smaller.');
+        }
+        if (attachmentBytes.isEmpty ||
+            attachmentBytes.any((byte) => byte < 0 || byte > 255)) {
+          throw const FormatException(
+            'The selected attachment is empty or contains invalid byte values.',
+          );
+        }
+      }
+
+      final itemSnapshot = item.copyWith(
+        tags: List<String>.unmodifiable(item.tags),
       );
+      final attachmentSnapshot = attachmentBytes == null
+          ? null
+          : Uint8List.fromList(attachmentBytes);
+      return _serializeOperation(
+        () => _save(itemSnapshot, attachmentBytes: attachmentSnapshot),
+      );
+    } catch (error, stackTrace) {
+      // Keep save's Future-based error contract even for invalid input rejected
+      // before it enters the operation queue.
+      return Future<void>.error(error, stackTrace);
+    }
+  }
 
   Future<void> _save(SavedItem item, {List<int>? attachmentBytes}) async {
-    // SavedItem fields are final, but the caller may have supplied a mutable
-    // tags list. Own that list before validation or any asynchronous storage
-    // writes so it cannot change the persisted metadata mid-save.
-    final itemSnapshot = item.copyWith(
-      tags: List<String>.unmodifiable(item.tags),
-    );
-    final saveItem = _canonicalizeCollectionAssignment(itemSnapshot);
+    final saveItem = _canonicalizeCollectionAssignment(item);
     BackupCodec.validateSavedItem(saveItem);
     final alreadyVisible = items.value.any((saved) => saved.id == saveItem.id);
     BackupCodec.validateItemCount(
@@ -539,12 +564,8 @@ class LibraryRepository {
       }
     }
 
-    // Take ownership of the bytes after validation and before the first
-    // storage await. Callers may retain/mutate their input list; that must not
-    // change a saved payload behind the repository's back.
-    final attachmentSnapshot = attachmentBytes == null
-        ? null
-        : Uint8List.fromList(attachmentBytes);
+    // Public save() already owns a bounded attachment snapshot before queue
+    // entry. Internal favorite updates pass no bytes and reuse existing keys.
     final hadPreviousAttachment =
         key != null && _attachmentsBox.containsKey(key);
     final previousAttachment =
