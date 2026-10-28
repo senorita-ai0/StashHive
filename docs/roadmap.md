@@ -1050,3 +1050,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-187 retries after a simulated stream failure and verifies the exact bytes persisted from the subsequent valid image.
 - **Status:** Source/test authored and committed, unrun. Confirm partial stream/provider failure behavior on Android and supported browser/desktop targets at the manual validation checkpoint. CI remains manual-only.
 
+### TSK-478 — Bound pasted URL and tag input before parsing — 2026-10-28
+
+- **Requirements:** FR-002 and NFR-003.
+- **Source:** Quick Save checks raw URL length before URL parsing and caps the comma-separated tags field at 12,000 characters. It rejects oversized tag text inline and defensively before splitting it into individual tags, while retaining the existing 100-tag and 100-characters-per-tag limits.
+- **Regression:** TC-188 verifies oversized tag input is rejected without creating an item; the URL-length regression covers the 4,096-character bound.
+- **Status:** Source and regression are committed but unrun. Confirm large paste behavior and ordinary field editing on web/Android during the manual validation checkpoint.
+
