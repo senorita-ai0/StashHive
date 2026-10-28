@@ -24,6 +24,10 @@ const int maxIncomingShareBatchItems = 100;
 /// The active batch is tracked separately from this waiting queue.
 const int maxPendingIncomingShareBatches = 8;
 
+/// Hard upper bound for the share-event fingerprint cache, even if callers
+/// supply a custom capacity instead of using the default.
+const int maxShareEventDeduplicatorEntries = 256;
+
 /// Bound the amount of provider/error guidance inspected for one summary.
 const int maxShareReviewHintCandidates = 16;
 const int maxShareReviewHintCharacters = 160;
@@ -211,11 +215,11 @@ class ShareEventDeduplicator {
   }
 
   static int _validateMaxEntries(int value) {
-    if (value <= 0) {
+    if (value <= 0 || value > maxShareEventDeduplicatorEntries) {
       throw ArgumentError.value(
         value,
         'maxEntries',
-        'Must be greater than zero.',
+        'Must be between 1 and $maxShareEventDeduplicatorEntries.',
       );
     }
     return value;
