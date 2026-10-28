@@ -55,7 +55,7 @@ The last pre-Phase-2 CI run passed dependency resolution, Dart formatting, stati
 ## Current limitations
 
 - OCR/PDF text extraction is not implemented; search covers stored metadata and user-entered text.
-- PDF/document content is not rendered inside StashTrail; files are handed off through the platform share flow.
+- PDF/document content is not rendered inside StashHive; files are handed off through the platform share flow.
 - Multi-item shares are presented sequentially, one editable draft per supported entry; the user explicitly saves or cancels each before the next opens.
 - Android runner files are generated rather than committed. After generating them locally, run python3 tool/configure_android_share_intents.py.
 - Web and Android libraries remain separate; cloud sync is not present.
