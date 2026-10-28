@@ -1458,3 +1458,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the save and confirm both readers leave the loading state without an uncaught framework exception.
 - **Status:** Widget regression source is committed but unrun. Verify loading, missing-file and preview-error states with slow web/Android storage at the manual validation checkpoint.
 
+### TC-205 — Reuse an image thumbnail read across unrelated rebuilds
+
+- Create a library item with an image attachment and count repository attachment reads through the test seam.
+- Render the Library, then trigger an unrelated parent rebuild without editing the saved item.
+- Confirm the existing thumbnail reuses its pending/completed read future rather than adding another serialized read for the same item revision.
+- **Status:** Widget regression source is committed but unrun. Review thumbnail refresh behavior after item edits and attachment replacement on web/Android at the manual checkpoint.
+
