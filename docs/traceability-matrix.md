@@ -1162,6 +1162,6 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-459 — Prevent draft edits while a save is pending
 
 - **Requirement:** FR-003 and NFR-003/NFR-006; user edits must not be silently discarded after the save snapshot is submitted, and busy state must be understandable and operable with assistive technology.
-- **Implementation:** Quick Save disables editable fields, the item-kind selector, collection selector, attachment picker, and route buttons while saving. Save is guarded against reentry, and the primary action reports when file selection or persistence is in progress.
-- **Regression:** TC-166 in `test/quick_save_test.dart` pauses repository save after the item record write, checks fields/type navigation are disabled, and confirms the persisted draft matches the submitted values.
+- **Implementation:** Quick Save disables editable fields, the item-kind selector, collection selector, attachment picker, route buttons, and system back while saving. `PopScope` permits the app's own successful-save pop after the save has completed. Save is guarded against reentry, and the primary action reports when file selection or persistence is in progress.
+- **Regression:** TC-166 in `test/quick_save_test.dart` pauses repository save after the item record write, checks fields/type navigation and system-back handling are blocked while saving, and confirms the persisted draft matches the submitted values.
 - **Verification:** Widget regression source is committed but unrun; slow storage and screen-reader behavior require manual validation.
