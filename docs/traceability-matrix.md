@@ -8,7 +8,7 @@
 | FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104, TSK-473, TSK-478 | TC-002, TC-183, TC-188 | IN PROGRESS — URL/tag input bounds are source-covered; build/test pending |
 | FR-003 | SCR-004 | TSK-102, TSK-105, TSK-424 | TC-003, TC-132 | IN PROGRESS — delete failure now reports feedback; rollback/platform validation pending |
 | FR-004 | SCR-001, SCR-003, SCR-004 | TSK-103, TSK-201, TSK-416, TSK-444 | TC-004, TC-121, TC-152 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
-| FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427 | TC-005, TC-118, TC-135 | IN PROGRESS — Unicode search source and search-scope explanation aligned; execution/platform review pending |
+| FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427, TSK-479 | TC-005, TC-118, TC-135, TC-189 | IN PROGRESS — search normalizes once, bounds oversized queries and retains Unicode metadata search; execution/platform review pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476, TSK-477 | TC-008, TC-122, TC-186, TC-187 | IN PROGRESS — bounded attachment reads and retry recovery are source-covered; platform validation pending |
@@ -29,7 +29,7 @@
 | NFR-004 | SCR-004, SCR-006 | TSK-203, TSK-425, TSK-427 | TC-006, TC-017, TC-133, TC-135 | IN PROGRESS — platform-specific local-storage/search copy added; end-to-end wording review pending |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
 | NFR-006 | All screens | TSK-103, TSK-304, TSK-443, TSK-468 | UI/accessibility checklist, TC-151, TC-175, TC-176, TC-177 | IN PROGRESS — in-app text-size preference layers over platform scaling, stale rollback callbacks cannot overwrite a newer choice, and the visible dropdown resets on rollback; execution and platform checks pending |
-| NFR-007 | Search/list | TSK-003, TSK-305, TSK-412 | TC-116 / Performance baseline | IN PROGRESS — non-gating harness added; measurements pending |
+| NFR-007 | Search/list | TSK-003, TSK-305, TSK-412, TSK-479 | TC-116, TC-189 / Performance baseline | IN PROGRESS — non-gating harness and bounded-query source added; measurements pending |
 | NFR-008 | Attachments / OCR | TSK-005, TSK-305 | Package-size benchmark | NOT STARTED |
 | NFR-009 | Architecture | TSK-002, TSK-101 | Static checks/build | NOT STARTED |
 | NFR-010 | Dependency register | TSK-003, TSK-403, TSK-464 | License/dependency review | IN PROGRESS — direct constraints and package license metadata recorded; transitive audit and lockfile resolution remain pending |
@@ -1285,4 +1285,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** Quick Save checks a raw URL's character count before trimming or parsing. The comma-separated tag field has a 12,000-character limit validated inline and defensively before tag splitting; existing limits of 100 tags and 100 characters per tag still apply.
 - **Regression:** TC-188 covers oversized tag text and the existing URL-length test verifies the documented 4,096-character error.
 - **Verification:** Regression source is committed but unrun. Review large-paste behavior and ordinary URL/tag editing on web and Android during the manual checkpoint.
+
+### TSK-479 — Normalize search once and bound oversized queries
+
+- **Requirements:** FR-005 and NFR-007; search should remain responsive as the saved library grows and avoid repeated normalization of the same query for every item.
+- **Implementation:** SavedItem exposes a matcher for already trimmed/lower-case queries while preserving the existing convenience method. SearchPage normalizes once per search, skips scanning the item list if the query exceeds 4,096 characters, and displays an inline limit message.
+- **Regression:** TC-189 checks oversized initial queries return no results with clear feedback; the SavedItem unit regression covers the reusable normalized-query matcher.
+- **Verification:** Widget/model regression sources are committed but unrun. Measure search performance at 100/1,000/10,000 items and verify Unicode, paste behavior and accessibility on web/Android at the manual checkpoint.
 
