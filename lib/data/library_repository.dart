@@ -119,6 +119,52 @@ class LibraryRepository {
   bool get hasSeenStorageReminder =>
       _preferencesBox.get('storageReminderSeen') == true;
 
+  /// Most recent time a portable backup JSON was successfully generated.
+  ///
+  /// This records file preparation, not whether a destination in the platform
+  /// share sheet ultimately saved the file. Invalid legacy values are ignored.
+  int? get lastBackupPreparedAtMs {
+    final value = _preferencesBox.get('lastBackupPreparedAtMs');
+    if (value is! int || value <= 0) return null;
+    final latestPlausible =
+        DateTime.now().millisecondsSinceEpoch + const Duration(minutes: 5).inMilliseconds;
+    if (value > latestPlausible) return null;
+    return value;
+  }
+
+  /// Stores backup-preparation time in the local app/browser profile.
+  /// This metadata is not included in the portable backup itself.
+  Future<void> recordBackupPreparedAt(int timestampMs) =>
+      _serializeMutation(() async {
+        final latestPlausible =
+            DateTime.now().millisecondsSinceEpoch +
+            const Duration(minutes: 5).inMilliseconds;
+        if (timestampMs <= 0 || timestampMs > latestPlausible) {
+          throw const FormatException('The backup timestamp is invalid.');
+        }
+
+        const key = 'lastBackupPreparedAtMs';
+        final hadPreviousValue = _preferencesBox.containsKey(key);
+        final previousValue = _preferencesBox.get(key);
+        try {
+          await _preferencesBox.put(key, timestampMs);
+        } catch (_) {
+          // A preference write may commit then report a late error. Restore
+          // the prior informational value where possible, without masking the
+          // original failure or interrupting an already prepared backup.
+          try {
+            if (hadPreviousValue) {
+              await _preferencesBox.put(key, previousValue);
+            } else {
+              await _preferencesBox.delete(key);
+            }
+          } catch (_) {
+            // Preserve the original error; this timestamp never blocks export.
+          }
+          rethrow;
+        }
+      });
+
   /// Persists the reminder acknowledgement in this local app/browser profile.
   Future<void> markStorageReminderSeen() =>
       _preferencesBox.put('storageReminderSeen', true);
