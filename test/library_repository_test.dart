@@ -125,6 +125,41 @@ void main() {
     },
   );
 
+  test('lookups expose the last committed item while a save is staged', () async {
+    await repository.save(buildLink());
+    final previous = repository.findById('link-1');
+    expect(previous, isNotNull);
+    expect(previous!.title, 'Flutter documentation');
+
+    final stagedWriteEntered = Completer<void>();
+    final releaseStagedWrite = Completer<void>();
+    LibraryRepository.saveBeforeItemCommitForTesting = () async {
+      stagedWriteEntered.complete();
+      await releaseStagedWrite.future;
+    };
+
+    try {
+      final saving = repository.save(
+        buildLink().copyWith(title: 'Updated title'),
+      );
+      await stagedWriteEntered.future;
+
+      // The backing Hive record may be mid-transaction, but synchronous
+      // consumers must keep seeing the last published/committed revision.
+      expect(repository.findById('link-1')!.title, 'Flutter documentation');
+      expect(repository.items.value.single.title, 'Flutter documentation');
+
+      releaseStagedWrite.complete();
+      await saving;
+
+      expect(repository.findById('link-1')!.title, 'Updated title');
+      expect(repository.items.value.single.title, 'Updated title');
+    } finally {
+      if (!releaseStagedWrite.isCompleted) releaseStagedWrite.complete();
+      LibraryRepository.saveBeforeItemCommitForTesting = null;
+    }
+  });
+
   test('saved metadata survives closing and reopening the local boxes', () async {
     await repository.save(buildLink());
     repository.dispose();
