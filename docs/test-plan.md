@@ -1379,6 +1379,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - Deliver an operating-system share batch with more than 100 entries.
 - Confirm StashHive reviews the first 100 supported entries one editable draft at a time, without showing the truncation warning behind the first Quick Save route.
-- After the final item has been saved/canceled or skipped, confirm the home screen shows how many additional entries were omitted and advises sharing the remainder in smaller batches.
+- If another share batch is already waiting, confirm its drafts are reviewed before the omission warning is shown; the warning should not be covered by a later Quick Save route.
+- After all already-queued batch reviews finish, confirm the home screen shows the combined number of omitted entries and advises sharing the remainder in smaller batches.
 - Confirm the warning remains readable when the batch contains unsupported entries and the app returns to the Library tab.
 - **Status:** Manual UX regression documented; no device test is claimed. Verify sequential review, skipped count, and warning visibility on a real Android share source at the manual checkpoint.
