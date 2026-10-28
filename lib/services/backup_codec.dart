@@ -776,7 +776,10 @@ class BackupCodec {
         'A saved item contains fields beyond supported storage limits.',
       );
     }
-    if (!ItemKind.values.any((candidate) => candidate.name == kind)) {
+    final isKnownKind = ItemKind.values.any(
+      (candidate) => candidate.name == kind,
+    );
+    if (!isKnownKind) {
       throw const FormatException('A saved item has an invalid type.');
     }
     if (title.trim().isEmpty) {
