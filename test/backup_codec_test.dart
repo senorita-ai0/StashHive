@@ -817,6 +817,28 @@ void main() {
       );
     });
 
+    test(
+      'does not echo a large malformed format-version field into errors',
+      () {
+        final rawVersion = List<String>.filled(100000, 'x').join();
+        final source = jsonEncode(<String, Object?>{
+          'app': 'StashHive',
+          'formatVersion': rawVersion,
+        });
+
+        expect(
+          () => BackupCodec.decode(source),
+          throwsA(
+            isA<FormatException>().having(
+              (error) => error.message,
+              'message',
+              'The backup format version is invalid.',
+            ),
+          ),
+        );
+      },
+    );
+
     test('rejects unsafe or invalid URL schemes', () {
       final item = sampleLink().copyWith(url: 'javascript:alert(1)');
       final payload = <String, Object?>{
