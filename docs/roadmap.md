@@ -1403,3 +1403,11 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source review:** The repository publishes an immutable item snapshot and updates its ID index before notifying listeners. A regression now pauses a replacement save before the item record commits and checks that both findById() and items continue to expose the previous revision until commit.
 - **Regression:** TC-240.
 - **Status:** Regression source is committed to main; test execution, formatting and analyzer checks remain pending. CI remains manual-only.
+
+
+### TSK-528 — Make SavedItem constructor tags immutable — 2026-10-29
+
+- **Requirements:** FR-001 and NFR-003.
+- **Source:** The SavedItem constructor now snapshots its caller-supplied tags into an unmodifiable list. This closes the remaining direct-construction path where an external mutable list could change an existing model instance.
+- **Regression:** TC-241 mutates the source list after construction and attempts direct mutation through the model.
+- **Status:** Source and regression are committed to main. Tests, formatting and analysis are intentionally pending until the manual validation checkpoint; CI remains manual-only.
