@@ -153,6 +153,31 @@ void main() {
     expect(tester.getSemantics(linkChoice).hasFlag(SemanticsFlag.isSelected), isFalse);
   });
 
+  testWidgets('changing item kind preserves shared note content', (tester) async {
+    await openNewLink(tester);
+
+    final noteChoice = find.bySemanticsLabel('Note');
+    final linkChoice = find.bySemanticsLabel('Link');
+    tester.getSemantics(noteChoice).performAction(SemanticsAction.tap);
+    await tester.pumpAndSettle();
+
+    final noteContent = find.byType(TextFormField).at(1);
+    await tester.enterText(noteContent, 'Keep this note while changing types.');
+
+    tester.getSemantics(linkChoice).performAction(SemanticsAction.tap);
+    await tester.pumpAndSettle();
+    tester.getSemantics(noteChoice).performAction(SemanticsAction.tap);
+    await tester.pumpAndSettle();
+
+    expect(
+      tester.widget<TextFormField>(find.byType(TextFormField).at(1))
+          .controller!
+          .text,
+      'Keep this note while changing types.',
+    );
+    expect(repository.items.value, isEmpty);
+  });
+
   testWidgets('normalizes uppercase URL schemes before saving', (tester) async {
     await openNewLink(tester);
     await tester.enterText(
