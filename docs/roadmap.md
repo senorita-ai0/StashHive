@@ -1344,3 +1344,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-232 pauses an image picker and checks in-form navigation and system back remain blocked until the picker returns canceled.
 - **Status:** Source and widget regression committed; test not run. Confirm Android/browser picker cancellation and navigation manually at the validation checkpoint. CI stays manual-only.
 
+### TSK-520 — Preflight public SavedItem serialization dimensions — 2026-10-28
+
+- **Requirements:** FR-001 and NFR-003.
+- **Source:** SavedItem.toMap() rejects overlong raw item fields and tag lists before copying tags or returning the serialized map. This aligns direct model serialization with repository and backup validation limits.
+- **Regression:** TC-233 covers an oversized title, overlong tag, excessive tag count, and a normal valid serialization.
+- **Status:** Source and regression committed; test not run. Run TC-233 together with direct parsing and backup/repository boundary cases at the manual validation checkpoint. CI remains manual-only.
+
