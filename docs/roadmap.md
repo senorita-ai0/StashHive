@@ -987,3 +987,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-175 covers rapid dark-mode actions behind a delayed failure; TC-176 covers text-size changes while an earlier write fails; TC-177 checks that the visible dropdown returns to the persisted option after a failed choice.
 - **Status:** Source and widget regression coverage committed but unrun. Verify real browser/Android storage behavior at the manual checkpoint.
 
+### TSK-469 — Track the last generated backup honestly — 2026-10-28
+
+- **Requirements:** FR-012–015 / NFR-004.
+- **Source:** Stores a local timestamp after backup JSON generation succeeds and shows the localized date/time in Backup & privacy. UI copy explicitly distinguishes generation from confirmed destination delivery; a timestamp preference failure does not block sharing.
+- **Regression:** TC-178 verifies persistence/validation, and TC-179 checks the UI's empty state, formatted time and honest caveat.
+- **Status:** Source and regressions committed but unrun; native/browser share-sheet update behavior remains pending manual validation.
+
