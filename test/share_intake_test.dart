@@ -616,6 +616,28 @@ void main() {
       );
     });
 
+    test('rejects non-positive de-duplication windows', () {
+      expect(
+        () => ShareEventDeduplicator(window: Duration.zero),
+        throwsArgumentError,
+      );
+      expect(
+        () => ShareEventDeduplicator(window: const Duration(microseconds: -1)),
+        throwsArgumentError,
+      );
+    });
+
+    test('rejects non-positive fingerprint cache capacities', () {
+      expect(
+        () => ShareEventDeduplicator(maxEntries: 0),
+        throwsArgumentError,
+      );
+      expect(
+        () => ShareEventDeduplicator(maxEntries: -1),
+        throwsArgumentError,
+      );
+    });
+
     test('suppresses immediate initial/stream duplicates but accepts later repeats', () {
       final deduplicator = ShareEventDeduplicator(
         window: const Duration(seconds: 3),
