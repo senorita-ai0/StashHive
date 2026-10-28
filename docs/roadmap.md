@@ -969,7 +969,14 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-466 — Bound the waiting queue for share batches — 2026-10-28
 
 - **Requirements:** FR-009 / NFR-003.
-- **Source:** The app now admits at most eight waiting share batches independently of the currently active batch. Additional unique events receive clear recovery guidance rather than growing the queue without limit.
+- **Source:** The app now admits at most eight waiting share batches independently of the currently active batch. Additional unique events receive clear recovery guidance rather than growing the queue without limit. Capacity is checked before de-duplication cache insertion so declined events can be retried after the queue drains.
 - **Regression:** TC-173 checks the queue-admission boundary; manual Android verification must also exercise queue-full messaging, FIFO draining and teardown.
 - **Status:** Source and test plan committed; the unit regression has not been run and native stream behavior remains unverified.
+
+### TSK-467 — Keep share fingerprinting resilient to unusual file URIs — 2026-10-28
+
+- **Requirements:** FR-009 / NFR-002–003.
+- **Source:** MIME inference during duplicate-event fingerprinting now catches file-URI local-path conversion errors and falls back to the original bounded provider path instead of throwing in the stream callback.
+- **Regression:** TC-174 covers a file URI with a non-local authority.
+- **Status:** Source and regression committed but unrun; validate actual Android provider URI shapes and safe fallback behavior at the manual checkpoint.
 
