@@ -1783,6 +1783,77 @@ void main() {
     },
   );
 
+  testWidgets(
+    'Item Details shows loading while attachment bytes await a save commit',
+    (tester) async {
+      const item = SavedItem(
+        id: 'details-attachment-read-commit',
+        kind: ItemKind.image,
+        title: 'Image being replaced',
+        content: '',
+        tags: <String>[],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 2,
+        attachmentKey: 'details-attachment-read-commit',
+        attachmentName: 'sample.png',
+        attachmentMimeType: 'image/png',
+      );
+      final originalBytes = Uint8List.fromList([1, 2, 3]);
+      final replacementBytes = Uint8List.fromList([4, 5, 6]);
+      await repository.save(item, attachmentBytes: originalBytes);
+
+      final writeEntered = Completer<void>();
+      final releaseWrite = Completer<void>();
+      LibraryRepository.saveBeforeItemCommitForTesting = () async {
+        writeEntered.complete();
+        await releaseWrite.future;
+      };
+      final pendingSave = repository.save(
+        item.copyWith(title: 'Replacement committed'),
+        attachmentBytes: replacementBytes,
+      );
+      await writeEntered.future;
+
+      try {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: app.ItemDetailsPage(
+              repository: repository,
+              itemId: item.id,
+            ),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.text('Loading image…'), findsOneWidget);
+        expect(find.text('The local image is missing.'), findsNothing);
+
+        await tester.tap(find.text('View image'));
+        await tester.pump();
+
+        expect(
+          find.text('Loading image…'),
+          findsWidgets,
+          reason: 'The page and image dialog should distinguish pending reads from missing bytes.',
+        );
+        expect(find.text('The local image is missing.'), findsNothing);
+      } finally {
+        if (!releaseWrite.isCompleted) releaseWrite.complete();
+        try {
+          await pendingSave;
+        } finally {
+          LibraryRepository.saveBeforeItemCommitForTesting = null;
+        }
+      }
+
+      await tester.pumpAndSettle();
+      expect(find.text('Loading image…'), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('Item Details labels native attachment storage accurately', (tester) async {
     const item = SavedItem(
       id: 'attachment-storage-label',
