@@ -2234,7 +2234,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
         : name ??
             (_kind == ItemKind.image ? 'Choose an image' : 'Choose a document');
     final pickerHint = _pickingAttachment
-        ? 'Please wait while the selected file is checked'
+        ? 'Please wait while the file is selected and checked'
         : hasCurrent
             ? 'Select a replacement file, up to 15 megabytes'
             : 'Select a file, up to 15 megabytes';
@@ -2274,7 +2274,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                       const SizedBox(height: 4),
                       Text(
                         _pickingAttachment
-                            ? 'Checking file size and reading content…'
+                            ? 'Please wait while the file is selected and checked'
                             : hasCurrent
                                 ? 'Tap to choose a replacement file'
                                 : 'Select a file up to 15 MB',
