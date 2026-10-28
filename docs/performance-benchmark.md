@@ -1,4 +1,4 @@
-# StashTrail — Local Performance Baseline
+# StashHive — Local Performance Baseline
 
 ## Purpose
 
