@@ -5,7 +5,7 @@
 | Requirement | Design / screen | Planned task | Test | Implementation status |
 |---|---|---|---|---|
 | FR-001 | SCR-001, SCR-004 | TSK-102, TSK-105 | TC-001 | IN PROGRESS — source added; build/test pending |
-| FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104, TSK-473 | TC-002, TC-183 | IN PROGRESS — source added; build/test pending |
+| FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104, TSK-473, TSK-478 | TC-002, TC-183, TC-188 | IN PROGRESS — URL/tag input bounds are source-covered; build/test pending |
 | FR-003 | SCR-004 | TSK-102, TSK-105, TSK-424 | TC-003, TC-132 | IN PROGRESS — delete failure now reports feedback; rollback/platform validation pending |
 | FR-004 | SCR-001, SCR-003, SCR-004 | TSK-103, TSK-201, TSK-416, TSK-444 | TC-004, TC-121, TC-152 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
 | FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427 | TC-005, TC-118, TC-135 | IN PROGRESS — Unicode search source and search-scope explanation aligned; execution/platform review pending |
@@ -1278,4 +1278,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** Quick Save's existing bounded stream reader is wrapped by the same safe picker error path as size lookup. The failure clears busy state without exposing provider details and permits a fresh selection.
 - **Regression:** TC-187 provides a PlatformFile whose length succeeds but whose byte stream throws, then retries with a valid image and verifies exact stored bytes.
 - **Verification:** Widget regression source is committed but unrun. Confirm partial-stream/provider failure behavior on Android and supported browser/desktop platforms at the manual validation checkpoint.
+
+### TSK-478 — Bound pasted URL and tag input before parsing
+
+- **Requirements:** FR-002 and NFR-003; large pasted values should fail early and predictably rather than trigger unnecessary normalization or temporary list allocation.
+- **Implementation:** Quick Save checks a raw URL's character count before trimming or parsing. The comma-separated tag field has a 12,000-character limit validated inline and defensively before tag splitting; existing limits of 100 tags and 100 characters per tag still apply.
+- **Regression:** TC-188 covers oversized tag text and the existing URL-length test verifies the documented 4,096-character error.
+- **Verification:** Regression source is committed but unrun. Review large-paste behavior and ordinary URL/tag editing on web and Android during the manual checkpoint.
 
