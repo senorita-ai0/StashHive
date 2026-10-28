@@ -1674,3 +1674,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm ordinary valid item search still succeeds.
 - **Status:** Model regression source is committed but unrun. Verify alongside TC-221 direct model parsing, TC-222 helper input limits and TC-233 direct serialization at the manual checkpoint.
 
+### TC-235 — Reject out-of-range timestamps in direct model parsing
+
+- Construct raw saved-item maps whose created or updated timestamp is just outside the supported DateTime range, then call SavedItem.fromMap() directly without the repository/backup validators.
+- Confirm the factory emits a fixed timestamp-range FormatException instead of constructing a model whose createdAt/updatedAt getter may throw later.
+- Confirm a normal in-range map still parses and preserves both timestamps.
+- **Status:** Model regression source is committed but unrun. Validate along with malformed local records, backup decoding and the shared timestamp constants at the manual checkpoint.
+
