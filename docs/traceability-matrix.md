@@ -1464,7 +1464,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-504 — Bound the attachment-entry count in backups
 
 - **Requirements:** FR-013 and NFR-003; a portable backup cannot reference more unique attachment keys than it contains saved items, and malformed maps should be rejected before an unbounded key traversal.
-- **Implementation:** Both JSON decode and direct `DecodedBackup` validation reject attachment maps larger than the 10,000-item portable cap before walking attachment keys or examining individual payload metadata. Valid backups already require each attachment entry to be referenced by an item, and each item permits at most one attachment key.
-- **Regression:** TC-216 supplies oversized attachment maps through both the JSON decoder and the direct in-memory validation API, and asserts the fixed count-limit error.
+- **Implementation:** Both JSON decode and direct `DecodedBackup` validation reject attachment maps whose entry count exceeds the saved-item count before walking attachment keys or examining individual payload metadata. Valid backups already require each attachment entry to be referenced by an item, and each item permits at most one attachment key.
+- **Regression:** TC-216 supplies attachment maps with more entries than item records through both JSON decode and direct in-memory validation, and asserts the fixed count-invariant error.
 - **Verification:** Codec regression source is committed but unrun. Verify large and malformed backup handling during the manual validation checkpoint.
 
