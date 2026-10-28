@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-161 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-163 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -443,3 +443,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added repository regression **TC-161** for two overlapping toggles and assertions against the visible notifier and raw persisted record.
 - [x] Added traceability task **TSK-454**.
 - [ ] Run TC-161 and the related favorite-update persistence/error tests at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+
+## Phase 3 — serialize preference writes against late rollback (2026-10-28)
+
+- [x] Dark-mode and text-size preference read/write/rollback sequences now enter the shared mutation queue, preventing an older failed operation from erasing a later setting.
+- [x] Added regressions **TC-162** and **TC-163** and traceability tasks **TSK-455** and **TSK-456**.
+- [ ] Run TC-162/TC-163 and related preference persistence tests at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
