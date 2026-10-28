@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-213 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-214 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -768,4 +768,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] The queued save now consumes those owned values, so callers cannot change the pending operation by mutating their original lists while it waits behind another repository operation.
 - [x] Added regression **TC-213** for a queued image save whose original tag list and byte buffer are mutated after submission; added traceability task **TSK-501**.
 - [ ] Run TC-213 with the metadata/attachment snapshot and rollback regressions at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — capture decoded restore inputs before asynchronous queueing (2026-10-28)
+
+- [x] `restoreDecodedBackup()` now validates and snapshots caller-owned item/tag lists, collection names, attachment metadata/map and byte arrays before enqueueing the restore.
+- [x] The queued restore consumes only its owned snapshot, so a caller cannot mutate a decoded backup while it waits behind an earlier repository operation and change the later import.
+- [x] Added regression **TC-214** to block the operation queue, submit a mutable decoded backup, mutate the original inputs, then verify imported tags, collection assignment and attachment bytes match the submitted snapshot. Added traceability task **TSK-502**.
+- [ ] Run TC-200 and TC-214 with large-attachment memory review and restore rollback cases at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
