@@ -150,9 +150,15 @@ class ShareEventDeduplicator {
           if (messageLength > maxIncomingTextCharacters) return false;
           final usesMessage =
               item.message != null && item.message!.trim().isNotEmpty;
-          final effectiveLength = usesMessage ? messageLength : pathLength;
-          if (effectiveLength > maxIncomingTextCharacters) return false;
-          charactersForItem = effectiveLength;
+          if (usesMessage) {
+            charactersForItem = messageLength;
+          } else {
+            if (pathLength > maxIncomingTextCharacters) return false;
+            // Even an unused whitespace-only message was trimmed while
+            // deciding whether the path is the fallback, so count that work
+            // against the aggregate fingerprint budget as well.
+            charactersForItem = pathLength + messageLength;
+          }
           break;
         case SharedMediaType.url:
           if (pathLength > maxIncomingUrlCharacters ||
