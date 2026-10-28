@@ -54,10 +54,16 @@ enum ItemKind {
       };
 
   static ItemKind fromWire(Object? value) {
-    return ItemKind.values.firstWhere(
-      (kind) => kind.name == value,
-      orElse: () => throw FormatException('Unknown saved-item type: $value'),
-    );
+    // Wire values may come from malformed local records or user-supplied
+    // backups. Bound them before comparison and never echo arbitrary input in
+    // an exception that may reach a UI error message.
+    if (value is! String || value.length > 16) {
+      throw const FormatException('Unknown saved-item type.');
+    }
+    for (final kind in ItemKind.values) {
+      if (kind.name == value) return kind;
+    }
+    throw const FormatException('Unknown saved-item type.');
   }
 }
 
