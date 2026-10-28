@@ -16,7 +16,7 @@
 | FR-010 | SCR-005 | TSK-203, TSK-423, TSK-474 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471, TSK-472, TSK-473, TSK-474 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181, TC-182, TC-183, TC-184 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status and rollback-safe export concurrency added; execution and platform export pending |
-| FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415, TSK-472, TSK-480, TSK-482 | TC-013, TC-117, TC-119, TC-120, TC-182, TC-190, TC-192 | IN PROGRESS — codec/source, restore rollback and picker size/read failure recovery are source-covered; validation pending |
+| FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415, TSK-472, TSK-480, TSK-482, TSK-483 | TC-013, TC-117, TC-119, TC-120, TC-182, TC-190, TC-192, TC-193 | IN PROGRESS — codec/source, restore rollback, picker size/read recovery and active-restore navigation guard are source-covered; validation pending |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | IN PROGRESS — local-first flows are implemented in source; offline/restart tests pending |
 | FR-015 | SCR-006, SCR-001, SCR-004 | TSK-003, TSK-303, TSK-422, TSK-425 | TC-015, TC-130, TC-133 | IN PROGRESS — storage reminders and platform-specific attachment copy added; browser restart/platform review pending |
 | FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205 | TC-016 | BLOCKED pending POC |
@@ -25,7 +25,7 @@
 | FR-019 | SCR-001, SCR-002 | Later if approved | TC-019 | NOT STARTED / Could |
 | NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | IN PROGRESS — no backend/account integration in core source; offline and network inspection pending |
 | NFR-002 | SCR-006, SCR-004 | TSK-304, TSK-428, TSK-429, TSK-444 | TC-018, TC-136, TC-137, TC-152 | IN PROGRESS — startup and routine error UI hide raw unexpected storage/plugin details; permissions/logging/network inspection pending |
-| NFR-003 | SCR-006, SCR-004 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426, TSK-444 | TC-012–015, TC-117, TC-120, TC-122, TC-134, TC-152 | IN PROGRESS — backup byte limits and preference-write rollback source added; execution/platform verification pending |
+| NFR-003 | SCR-006, SCR-004 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426, TSK-444, TSK-482, TSK-483 | TC-012–015, TC-117, TC-120, TC-122, TC-134, TC-152, TC-192, TC-193 | IN PROGRESS — bounded backup reads, mutation-consistent export and restore failure/navigation recovery are source-covered; execution/platform verification pending |
 | NFR-004 | SCR-004, SCR-006 | TSK-203, TSK-425, TSK-427 | TC-006, TC-017, TC-133, TC-135 | IN PROGRESS — platform-specific local-storage/search copy added; end-to-end wording review pending |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
 | NFR-006 | All screens | TSK-103, TSK-304, TSK-443, TSK-468 | UI/accessibility checklist, TC-151, TC-175, TC-176, TC-177 | IN PROGRESS — in-app text-size preference layers over platform scaling, stale rollback callbacks cannot overwrite a newer choice, and the visible dropdown resets on rollback; execution and platform checks pending |
@@ -1313,3 +1313,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** The restore UI's existing bounded stream reader and safe catch/finally path now have an explicit widget regression for a provider that reports length successfully but errors during byte reading.
 - **Regression:** TC-192 confirms generic retry guidance, no raw exception leak, unchanged library state, unlocked controls, and successful import after a second valid selection.
 - **Verification:** Regression source is committed but unrun. Verify real browser/Android picker stream errors and retry behavior at the manual validation checkpoint.
+
+### TSK-483 — Block navigation during an active restore commit
+
+- **Requirements:** FR-013 and NFR-003/NFR-006; once a user confirms restore and staged writes begin, leaving the screen should not make a running data operation appear canceled or remove its completion feedback.
+- **Implementation:** Backup & privacy wraps its route in `PopScope<bool>` with `canPop: !_restoring`; the app-bar Back action is also disabled during the commit. Navigation remains available again when restore finishes or fails.
+- **Regression:** TC-193 pauses restore before the collection commit, attempts both app-bar and system back, verifies the page remains in its restoring state, then releases the operation and checks successful completion.
+- **Verification:** Widget regression source is committed but unrun. Validate system-back gestures and slow-storage behavior on Android and web at the manual validation checkpoint.
