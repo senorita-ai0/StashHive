@@ -1411,3 +1411,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the UI shows safe failure guidance, the existing library remains intact, raw injected diagnostics are hidden, and the restoring state clears.
 - Trigger system back after the failure and confirm the route can now close; the guard must not trap the user after an error.
 - **Status:** Widget regression source is committed but unrun. Verify rollback, SnackBar feedback and back navigation on web/Android at the manual validation checkpoint.
+
+### TC-199 — Distinguish backup share result states
+
+- Verify backup export feedback separately for `ShareResultStatus.success`, `dismissed`, and `unavailable`.
+- Confirm a completed share action tells the user to verify the destination rather than promising the file was saved; a dismissed sheet advises retrying when the file was not saved; an unavailable result states that the destination outcome is unknown and recommends checking Downloads/selected destination.
+- Confirm uncertain outcomes never display the older generic message that implies a destination should still be chosen after the share sheet has already closed.
+- **Status:** Message-mapping regression source is committed but unrun. Platform-specific share-sheet behavior and delivery remain unverified until the manual validation checkpoint.
