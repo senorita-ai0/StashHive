@@ -1723,3 +1723,18 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Construct a SavedItem using a caller-owned mutable tag list, mutate that list after construction, and confirm the item retains only the original tags.
 - Confirm direct mutation through the item's tags list throws UnsupportedError.
 - **Status:** Regression source is committed but unrun. Run with TC-239 and the model/repository/backup regression suites at the manual checkpoint; CI remains manual-only.
+
+
+### TC-242 — Reject invalid share de-duplication limits
+
+- Construct ShareEventDeduplicator with a zero and a negative time window; confirm each construction throws ArgumentError.
+- Construct ShareEventDeduplicator with zero and negative cache capacities; confirm each construction throws ArgumentError rather than failing later during cache eviction.
+- Preserve control coverage for ordinary positive values and bounded-cache eviction.
+- **Status:** Regression source is committed but unrun. Execute with the complete share-intake suite at the manual validation checkpoint; CI remains manual-only.
+
+### TC-243 — Preserve Android manifest when atomic replacement fails
+
+- Start from a valid temporary AndroidManifest.xml and simulate an operating-system replacement error after the updated manifest has been serialized.
+- Confirm configure_manifest propagates the replacement error, leaves the original manifest byte-for-byte unchanged, and removes the temporary file.
+- Retain coverage for malformed input, missing application/activity, MIME filters, app label, launch mode and idempotent configuration.
+- **Status:** Regression source is committed but unrun. Execute the Python configurator suite at the manual validation checkpoint; CI remains manual-only.
