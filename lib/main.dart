@@ -2579,7 +2579,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
       final attachmentKey = item.attachmentKey!;
       await showDialog<void>(
         context: context,
-        builder: (dialogContext) => Dialog(
+        builder: (context) => Dialog(
           insetPadding: const EdgeInsets.all(16),
           child: Padding(
             padding: const EdgeInsets.all(12),
