@@ -2567,9 +2567,12 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Text(
-                                'Preview unavailable. The original attachment is still saved and can be shared.',
-                                textAlign: TextAlign.center,
+                              const Semantics(
+                                liveRegion: true,
+                                child: Text(
+                                  'Preview unavailable. The original attachment is still saved and can be shared.',
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                               const SizedBox(height: 12),
                               TextButton.icon(
