@@ -1203,3 +1203,17 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Retry file selection with a valid image. Confirm the selected filename is shown and saving the draft persists the exact file bytes.
 - **Status:** Widget regression source is committed but unrun. Verify picker cancellation, provider failures, byte-reading failures and retry behavior on Android and supported browser/desktop platforms at the manual checkpoint.
 
+### TC-169 — Bound incoming share batches and fingerprint work
+
+- Provide a batch with more than 100 entries and confirm the batch limiter preserves the first 100 items in original order and reports the remaining count instead of queuing the entire selection.
+- Provide oversized shared text to the event deduplicator and confirm it bypasses JSON/UTF-8 fingerprint construction, reaches normal input validation, and is rejected with the documented length error.
+- Confirm ordinary in-limit events still deduplicate during the short window.  
+- **Status:** Regression source is committed but unrun. Verify the warning and sequential review flow with Android source apps on a real device at the manual checkpoint.
+
+### TC-170 — Accept text shares when the provider message is the only content
+
+- Provide a text share whose path is empty but whose message contains valid note text.
+- Confirm the message becomes an editable note draft rather than being rejected because an unused provider path is empty.
+- Confirm URL, text, provider path and MIME length checks occur before potentially large trim/case-normalization copies.
+- **Status:** Regression source is committed but unrun. Confirm provider-field conventions with real Android share sources at the manual checkpoint.
+
