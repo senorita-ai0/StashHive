@@ -1504,3 +1504,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the restore and confirm the incoming item appears through both `findById` and the items notifier only after the restore commits.
 - **Status:** Repository regression source is committed but unrun. Verify staged visibility and rollback behavior during restore on web and Android at the manual validation checkpoint.
 
+### TC-211 — Expose repository state through read-only reactive interfaces
+
+- Bind the public item and collection accessors to `ValueListenable` interfaces and subscribe to their changes.
+- Add a collection and save an item through the repository; confirm listeners are notified and the public snapshots contain the committed data.
+- Confirm the published item and collection lists reject direct mutation.
+- **Status:** Repository regression source is committed but unrun. Check widget reactivity and API compatibility during the manual validation checkpoint. No test/build result is claimed.
+
