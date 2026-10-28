@@ -1099,3 +1099,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** The Quick Save kind-selection handler now returns without mutating draft state when the chosen kind is already active. A real type change still clears type-specific attachment bytes and metadata.
 - **Regression:** TC-157 in test/quick_save_test.dart opens Quick Save with a prefilled image share, taps Image again, saves and checks that persisted attachment bytes are unchanged.
 - **Verification:** Regression source authored but unrun; real Android share integration and save behavior remain pending.
+
+### TSK-451 — Roll back collection mutations after late preference failures
+
+- **Requirement:** FR-010 and NFR-003; renaming/deleting a collection must keep item assignments consistent if a local preference write reports failure after it has committed.
+- **Implementation:** `LibraryRepository._commitCollectionMutation` retains its rollback path and now exposes a fault-injection seam directly after the collection preference write to exercise late-failure recovery.
+- **Regression:** TC-158 in `test/library_repository_test.dart` simulates the post-commit failure during rename and checks both item maps, visible items/collections and the persisted collection preference.
+- **Verification:** Source regression authored but unrun; browser/Android storage interruption behavior remains pending.
