@@ -300,6 +300,12 @@ class BackupCodec {
     if (items.length > maxItems) {
       throw const FormatException('The library contains too many items to export.');
     }
+    // Mirror the decoder's raw collection-entry cap before walking items or
+    // building normalization intermediates. A portable file can declare no
+    // more than 500 collection entries, even if some names are duplicates.
+    if (collections.length > maxCollections) {
+      throw const FormatException('The backup contains too many collections.');
+    }
     final ids = <String>{};
     for (final item in items) {
       validateSavedItem(item);
@@ -786,19 +792,27 @@ class BackupCodec {
   ) {
     final result = <String>[];
     final seen = <String>{};
-    for (final raw in [...declared, ...assigned]) {
-      if (raw == null) continue;
-      final name = raw.trim();
-      if (name.isEmpty || name.length > 80) {
-        throw const FormatException(
-          'Collection names must be between 1 and 80 characters.',
-        );
-      }
-      if (seen.add(name.toLowerCase())) result.add(name);
-      if (result.length > maxCollections) {
-        throw const FormatException('The backup contains too many collections.');
+
+    void addNames(Iterable<String?> names) {
+      for (final raw in names) {
+        if (raw == null) continue;
+        final name = raw.trim();
+        if (name.isEmpty || name.length > 80) {
+          throw const FormatException(
+            'Collection names must be between 1 and 80 characters.',
+          );
+        }
+        if (seen.add(name.toLowerCase())) result.add(name);
+        if (result.length > maxCollections) {
+          throw const FormatException('The backup contains too many collections.');
+        }
       }
     }
+
+    // Stream the collections and item assignments instead of allocating a
+    // combined list of every declared/assigned name before validating the cap.
+    addNames(declared);
+    addNames(assigned);
     return List<String>.unmodifiable(result);
   }
 
