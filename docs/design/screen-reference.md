@@ -103,7 +103,7 @@ Traceability: FR-012–015, FR-018.
 
 Purpose: expose real preferences and data-management controls without invented account, notification or sync switches.
 
-Visible hierarchy: appearance; system text sizing; backup/privacy; search help; help/feedback; About; local-first status cue.
+Visible hierarchy: appearance; system text sizing; backup/privacy; search help; Help & tips; About; local-first status cue.
 
 Interactions: appearance updates shared tokens; Backup & Privacy opens SCR-006; About reads the actual app version at runtime.
 
