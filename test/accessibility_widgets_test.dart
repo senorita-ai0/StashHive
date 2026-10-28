@@ -703,6 +703,15 @@ void main() {
       expect(find.text('Restored 1 item.'), findsOneWidget);
       expect(repository.items.value, hasLength(2));
       expect(repository.findById(item.id), isNotNull);
+      final exportActionAfterRestore = find.ancestor(
+        of: find.text('Create backup'),
+        matching: find.byType(FilledButton),
+      );
+      expect(exportActionAfterRestore, findsOneWidget);
+      expect(
+        tester.widget<FilledButton>(exportActionAfterRestore).onPressed,
+        isNotNull,
+      );
       expect(tester.takeException(), isNull);
     },
   );
@@ -803,12 +812,18 @@ void main() {
     (tester) async {
       final preparationEntered = Completer<void>();
       final releasePreparation = Completer<void>();
+      var pickerCalls = 0;
+      app.backupFilePickerForTesting = () async {
+        pickerCalls++;
+        return null;
+      };
       LibraryRepository.backupPreparedAtAfterWriteForTesting = () async {
         preparationEntered.complete();
         await releasePreparation.future;
       };
       addTearDown(() {
         LibraryRepository.backupPreparedAtAfterWriteForTesting = null;
+        app.backupFilePickerForTesting = null;
         if (!releasePreparation.isCompleted) {
           releasePreparation.complete();
         }
@@ -837,6 +852,7 @@ void main() {
       // A second entry point must not start while the export owns the screen.
       await tester.tap(find.text('Backup in progress…'));
       await tester.pump();
+      expect(pickerCalls, 0);
       expect(find.text('Choosing backup…'), findsNothing);
 
       LibraryRepository.backupPreparedAtAfterWriteForTesting = null;
@@ -844,6 +860,15 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Preparing…'), findsNothing);
+      final restoreActionAfterExport = find.ancestor(
+        of: find.text('Choose backup file'),
+        matching: find.byType(FilledButton),
+      );
+      expect(restoreActionAfterExport, findsOneWidget);
+      expect(
+        tester.widget<FilledButton>(restoreActionAfterExport).onPressed,
+        isNotNull,
+      );
       expect(tester.takeException(), isNull);
     },
   );
