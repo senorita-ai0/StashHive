@@ -1411,3 +1411,18 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** The SavedItem constructor now snapshots its caller-supplied tags into an unmodifiable list. This closes the remaining direct-construction path where an external mutable list could change an existing model instance.
 - **Regression:** TC-241 mutates the source list after construction and attempts direct mutation through the model.
 - **Status:** Source and regression are committed to main. Tests, formatting and analysis are intentionally pending until the manual validation checkpoint; CI remains manual-only.
+
+
+### TSK-529 — Validate share de-duplication limits in release builds — 2026-10-29
+
+- **Requirements:** FR-008 and NFR-003.
+- **Source:** ShareEventDeduplicator now validates its public time-window and cache-capacity parameters at runtime instead of relying on assertions that are omitted in release builds. This prevents invalid zero/negative configuration from reaching de-duplication logic and triggering a later cache-eviction failure.
+- **Regression:** TC-242 covers zero and negative time windows and capacities.
+- **Status:** Source and regression are committed to main; tests, formatting and analysis remain pending at the manual validation checkpoint. CI remains manual-only.
+
+### TSK-530 — Atomically update Android share manifest — 2026-10-29
+
+- **Requirements:** FR-008 and NFR-003.
+- **Source:** The Android share configurator writes the serialized manifest to a same-directory temporary file, flushes it, preserves the existing file mode and atomically replaces the target only after serialization succeeds. Failed replacement cleans up the temporary file and leaves the old manifest in place.
+- **Regression:** TC-243 simulates replacement failure and checks the original manifest remains unchanged and no temporary file is left behind.
+- **Status:** Source and regression are committed to main; Python tests remain pending at the manual validation checkpoint. CI remains manual-only.
