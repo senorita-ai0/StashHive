@@ -1383,3 +1383,8 @@ Settings now includes a local **App text size** preference with System default, 
 
 - Added **TC-238** to verify both inclusive timestamp limits survive direct SavedItem.toMap() / SavedItem.fromMap() round-trips, complementing the existing rejection checks for values one millisecond outside the supported range.
 - Added **TSK-525** to track this boundary regression. Source is committed; no formatter, analyzer, tests or builds were run. Validation remains deferred to the owner’s manual checkpoint.
+
+### Phase 3 — immutable model copy snapshots (2026-10-29)
+
+- `SavedItem.copyWith()` now creates an unmodifiable snapshot of its tag list, including when no replacement list is supplied. This closes a shallow-copy path where later caller mutation could silently change a supposedly immutable model.
+- Added **TC-239** and **TSK-526**. Regression source is committed; execution remains pending because CI/builds are intentionally manual-only.
