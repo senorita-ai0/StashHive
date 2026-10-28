@@ -1203,3 +1203,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** Repository item, collection and recovery-counter notifiers are private. Public read-only `ValueListenable` wrappers preserve widget subscriptions and reads without exposing mutable notifier instances or direct setters that can replace snapshots without persistence.
 - **Regression:** TC-211 checks state notification after repository operations and confirms published item/collection lists remain unmodifiable through the public interface.
 - **Status:** Source and regression plan committed but unrun. Review widget reactivity, formatting, static analysis and platform behavior at the agreed manual validation checkpoint; CI remains manual-only.
+
+### TSK-500 — Keep malformed backup-version errors bounded — 2026-10-28
+
+- **Requirements:** FR-013, NFR-002 and NFR-003.
+- **Source:** Backup decoding now validates the format-version field's type before formatting an unsupported-version message. Non-integer input receives concise fixed text rather than echoing untrusted strings or structured values; unknown integer versions remain explicit.
+- **Regression:** TC-212 uses a 100,000-character string in `formatVersion` and expects the fixed invalid-version message.
+- **Status:** Source and regression plan committed but unrun. Verify large malformed backup handling and restore feedback at the manual checkpoint; CI remains manual-only.
