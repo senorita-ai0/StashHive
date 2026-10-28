@@ -1118,39 +1118,45 @@ class LibraryRepository {
   /// Restores a backup that has already passed codec validation. The UI can
   /// decode once before confirmation and avoid parsing large JSON/base64 data
   /// a second time after the user accepts the merge.
-  Future<int> restoreDecodedBackup(DecodedBackup decoded) =>
-      _serializeOperation(() => _restoreDecodedBackup(decoded));
-
-  Future<int> _restoreDecodedBackup(DecodedBackup decoded) async {
-    // Validate before copying so an invalid public object cannot force a
-    // second oversized attachment buffer allocation, then take an owned
-    // snapshot before the first asynchronous boundary. DecodedBackup exposes
-    // lists, maps, item tag lists and Uint8Lists that callers can otherwise
-    // mutate while this restore is waiting on storage.
-    BackupCodec.validateDecodedBackup(decoded);
-    final backup = DecodedBackup(
-      items: List<SavedItem>.unmodifiable(
-        decoded.items.map(
-          (item) => item.copyWith(
-            tags: List<String>.unmodifiable(item.tags),
+  Future<int> restoreDecodedBackup(DecodedBackup decoded) {
+    try {
+      // Validate before copying so malformed public objects cannot force
+      // unbounded allocations. Own every mutable component before queue entry:
+      // the caller may change its lists/maps/byte buffers while this restore
+      // waits behind another repository operation.
+      BackupCodec.validateDecodedBackup(decoded);
+      final backup = DecodedBackup(
+        items: List<SavedItem>.unmodifiable(
+          decoded.items.map(
+            (item) => item.copyWith(
+              tags: List<String>.unmodifiable(item.tags),
+            ),
           ),
         ),
-      ),
-      attachments: Map<String, BackupAttachment>.unmodifiable({
-        for (final entry in decoded.attachments.entries)
-          entry.key: BackupAttachment(
-            name: entry.value.name,
-            mimeType: entry.value.mimeType,
-            bytes: Uint8List.fromList(entry.value.bytes),
-          ),
-      }),
-      collections: List<String>.unmodifiable(decoded.collections),
-      exportedAt: decoded.exportedAt,
-      omittedUnreadableRecordCount: decoded.omittedUnreadableRecordCount,
-      omittedCollectionEntryCount: decoded.omittedCollectionEntryCount,
-      omittedUnexportableRecordCount: decoded.omittedUnexportableRecordCount,
-    );
-    BackupCodec.validateDecodedBackup(backup);
+        attachments: Map<String, BackupAttachment>.unmodifiable({
+          for (final entry in decoded.attachments.entries)
+            entry.key: BackupAttachment(
+              name: entry.value.name,
+              mimeType: entry.value.mimeType,
+              bytes: Uint8List.fromList(entry.value.bytes),
+            ),
+        }),
+        collections: List<String>.unmodifiable(decoded.collections),
+        exportedAt: decoded.exportedAt,
+        omittedUnreadableRecordCount: decoded.omittedUnreadableRecordCount,
+        omittedCollectionEntryCount: decoded.omittedCollectionEntryCount,
+        omittedUnexportableRecordCount: decoded.omittedUnexportableRecordCount,
+      );
+      BackupCodec.validateDecodedBackup(backup);
+      return _serializeOperation(() => _restoreDecodedBackup(backup));
+    } catch (error, stackTrace) {
+      // Preserve the async Future-based error contract even when validation
+      // rejects the input before it enters the operation queue.
+      return Future<int>.error(error, stackTrace);
+    }
+  }
+
+  Future<int> _restoreDecodedBackup(DecodedBackup backup) async {
     final afterSnapshot = restoreAfterSnapshotForTesting;
     if (afterSnapshot != null) await afterSnapshot();
 
