@@ -1197,3 +1197,9 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-210 pauses restore after its raw item write and confirms the incoming item remains invisible to `findById` until collection commit completes.
 - **Status:** Source/regression plan committed but unrun. Verify successful and interrupted restore visibility on web and Android at the manual checkpoint; CI remains manual-only.
 
+### TSK-499 — Expose repository state through read-only listenables — 2026-10-28
+
+- **Requirements:** FR-002/FR-010 and NFR-003.
+- **Source:** Repository item, collection and recovery-counter notifiers are now private. Public `ValueListenable` getters preserve widget subscriptions and reads without exposing a direct setter that can replace snapshots without persistence.
+- **Regression:** TC-211 checks state notification after repository operations and confirms published item/collection lists remain unmodifiable through the public interface.
+- **Status:** Source and regression plan committed but unrun. Review widget reactivity, formatting, static analysis and platform behavior at the agreed manual validation checkpoint; CI remains manual-only.
