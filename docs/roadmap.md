@@ -1095,6 +1095,6 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-484 — Show share truncation feedback after review — 2026-10-28
 
 - **Requirements:** FR-009 and NFR-006.
-- **Source:** Oversized share batches retain the omitted count in the waiting queue. The app now shows the truncation warning after sequential draft review finishes, when the Library/home screen is visible again.
+- **Source:** Oversized share batches retain the omitted count in the waiting queue. The app accumulates omitted counts and shows a combined truncation warning only after all already-queued sequential draft reviews finish, when the Library/home screen is visible again.
 - **Manual regression:** TC-194 checks first-100 sequential review, unsupported-item handling, and the final omitted-count warning.
 - **Status:** Source and documentation committed; manual Android UX confirmation remains pending. CI stays manual-only.
