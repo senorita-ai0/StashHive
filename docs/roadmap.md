@@ -1119,3 +1119,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** The route guard remains active only during `_restoring`; this regression documents and checks that `finally` releases the guard after a staged restore fails and repository rollback completes.
 - **Regression:** TC-198 injects a restore interruption, verifies existing library data is retained and private details are hidden, then triggers system back to confirm the user can leave the failed restore screen.
 - **Status:** Regression source and docs committed but unrun. Verify web/Android rollback and navigation at the manual checkpoint; CI remains manual-only.
+
+### TSK-488 — Make backup share-outcome feedback status-specific — 2026-10-28
+
+- **Requirements:** FR-012 and NFR-003.
+- **Source:** Backup export distinguishes `success`, `dismissed` and `unavailable` results. The UI no longer uses one generic fallback for all non-success outcomes: messages state what was reported and avoid claiming the backup definitely reached its destination.
+- **Regression:** TC-199 covers each result-to-message mapping. Actual destination delivery is still platform-dependent and needs manual confirmation.
+- **Status:** Source and regression documentation committed but unrun. Check the share sheet and resulting file/Downloads behavior at the manual checkpoint; CI remains manual-only.
