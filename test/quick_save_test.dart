@@ -842,6 +842,31 @@ void main() {
     expect(repository.items.value, isEmpty);
   });
 
+  testWidgets('rejects oversized tag input before splitting tags', (tester) async {
+    await openNewLink(tester);
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'https://example.com/',
+    );
+    final oversizedTags = List<String>.filled(
+      app.maxQuickSaveTagsInputCharacters + 1,
+      'x',
+    ).join();
+    await tester.enterText(find.byType(TextFormField).at(3), oversizedTags);
+    await tester.ensureVisible(find.text('Save to StashHive'));
+    await tester.tap(find.text('Save to StashHive'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text(
+        'Tag input must be ${app.maxQuickSaveTagsInputCharacters} characters or shorter.',
+      ),
+      findsOneWidget,
+    );
+    expect(repository.items.value, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('metadata-only edit preserves a shared attachment key', (tester) async {
     const sharedKey = 'shared-reference-bytes';
     final bytes = Uint8List.fromList([8, 6, 7, 5, 3, 0, 9]);
