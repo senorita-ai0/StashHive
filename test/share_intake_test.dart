@@ -441,7 +441,7 @@ void main() {
       expect(
         message,
         contains(
-          'Details: Invalid URL File could not be read. Shared text is too long.',
+          'Details: Invalid URL; File could not be read.; Shared text is too long.',
         ),
       );
       expect(message, isNot(contains('This fourth detail should be excluded.')));
