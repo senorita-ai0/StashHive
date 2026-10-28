@@ -1015,3 +1015,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-182 pauses restore after incoming media is staged, queues a backup, injects an interruption, and verifies that only the original library state is exported.
 - **Status:** Regression source is committed but unrun; browser/Android backup and restore concurrency remains pending the manual validation checkpoint.
 
+### TSK-473 — Keep backup exports consistent after save rollback — 2026-10-28
+
+- **Requirements:** FR-002, FR-012 and NFR-003.
+- **Source:** Backup export shares the mutation queue with item save and rollback. If a save fails after writing new metadata/attachment bytes, the queued export waits until the old record and payload have been restored.
+- **Regression:** TC-183 pauses an attachment replacement after the item write, requests a backup and injects a late failure; the backup must contain the prior title and exact prior bytes.
+- **Status:** Regression source is committed but unrun; browser/Android failure-path validation remains pending.
+
