@@ -1198,7 +1198,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-465 — Guard share enqueue against host disposal
 
 - **Requirements:** FR-009 / NFR-003; asynchronous share intake must not enqueue work into a disposed navigation host or leave awaited batch completions unresolved.
-- **Implementation:** `_enqueueShareBatch` now exits when `HomeShell` is no longer mounted, covering the race where an event is already in flight as stream cancellation begins.
+- **Implementation:** `_enqueueShareBatch` now exits when `HomeShell` is no longer mounted, covering a stream event already in flight during cancellation. The currently active batch completer is tracked and released during disposal along with waiting batches.
 - **Manual regression:** TC-172 exercises share-stream delivery racing with app-shell disposal, including an already-active batch's completion.
 - **Verification:** Source guard is committed; Android plugin cancellation, lifecycle and restart behavior remain pending physical-device validation.
 
