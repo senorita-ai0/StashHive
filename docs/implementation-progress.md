@@ -576,6 +576,6 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 
 - [x] Added repository regression **TC-184** to pause collection rename after persisted item assignments and collection preferences have been written but before visible notifiers refresh.
 - [x] The regression requests a backup during that pending operation and verifies the queued export waits, then contains the renamed collection and the matching saved-item assignment.
-- [x] Added traceability task **TSK-475** and updated the test plan.
+- [x] Added traceability task **TSK-474** and updated the test plan.
 - [ ] Run TC-184 and verify backup consistency during collection changes on browser and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
