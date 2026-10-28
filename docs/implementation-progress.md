@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-163 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-164 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -450,3 +450,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Dark-mode and text-size preference read/write/rollback sequences now enter the shared mutation queue, preventing an older failed operation from erasing a later setting.
 - [x] Added regressions **TC-162** and **TC-163** and traceability tasks **TSK-455** and **TSK-456**.
 - [ ] Run TC-162/TC-163 and related preference persistence tests at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+
+## Phase 3 — invalidate stale Quick Save file-picker results (2026-10-28)
+
+- [x] Quick Save now records the selected type/revision before opening the file picker, and discards results if the draft type changed before the picker, size read or byte read completes.
+- [x] Prevented duplicate simultaneous attachment-picker requests and retained the existing attachment size bound.
+- [x] Added widget regression **TC-164** and traceability task **TSK-457**.
+- [ ] Run TC-164 and verify image/document selection on real Android plus supported web/desktop flows at the manual checkpoint. No tests, formatter, analyzer or builds were run; CI remains manual-only.
