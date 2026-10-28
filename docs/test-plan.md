@@ -1186,3 +1186,12 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the text fields, type choices, collection selector, attachment picker and navigation controls, including a simulated system-back action, do not permit edits or cancellation while the snapshot is being persisted.
 - Release the save and confirm the saved link, URL and note content match the values visible when saving began.
 - **Status:** Widget regression source is committed but unrun. Verify slow-storage behavior and screen-reader state during the manual validation checkpoint.
+
+
+### TC-167 — Recover Quick Save after a delayed save failure
+
+- Enter a valid URL and note text, then pause the repository after the item write has started/committed but before save completes.
+- Confirm the form remains locked while the write is pending.
+- Release the operation with a simulated late storage failure and confirm the repository rolls back the item, Quick Save unlocks, and the entered URL/note remain in the controllers.
+- Retry the save without changing the draft; confirm exactly one item is saved with the original URL and note and no framework exception escapes.
+- **Status:** Widget regression source is committed but unrun. Verify late storage errors, retry behavior and accessible error feedback during the manual validation checkpoint.
