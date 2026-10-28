@@ -1064,6 +1064,107 @@ void main() {
     );
   });
 
+  test('attachment reads wait for a replacement commit', () async {
+    final originalBytes = Uint8List.fromList([1, 3, 5, 7]);
+    final replacementBytes = Uint8List.fromList([2, 4, 6, 8]);
+    final image = buildImage(id: 'attachment-read-commit-race');
+    await repository.save(image, attachmentBytes: originalBytes);
+
+    final writeEntered = Completer<void>();
+    final releaseWrite = Completer<void>();
+    LibraryRepository.saveBeforeItemCommitForTesting = () async {
+      writeEntered.complete();
+      await releaseWrite.future;
+    };
+
+    final pendingSave = repository.save(
+      image.copyWith(title: 'Committed replacement'),
+      attachmentBytes: replacementBytes,
+    );
+    await writeEntered.future;
+
+    var readCompleted = false;
+    final pendingRead = repository.readAttachment(image.attachmentKey!).then((bytes) {
+      readCompleted = true;
+      return bytes;
+    });
+
+    try {
+      await Future<void>.delayed(Duration.zero);
+      expect(
+        readCompleted,
+        isFalse,
+        reason: 'A reader must not observe replacement bytes before the item commit.',
+      );
+    } finally {
+      if (!releaseWrite.isCompleted) releaseWrite.complete();
+    }
+
+    try {
+      await pendingSave;
+    } finally {
+      LibraryRepository.saveBeforeItemCommitForTesting = null;
+    }
+
+    expect(await pendingRead, orderedEquals(replacementBytes));
+    expect(repository.findById(image.id)?.title, 'Committed replacement');
+  });
+
+  test('attachment reads wait for failed replacement rollback', () async {
+    final originalBytes = Uint8List.fromList([9, 2, 6, 5]);
+    final replacementBytes = Uint8List.fromList([3, 5, 8, 9]);
+    final image = buildImage(id: 'attachment-read-rollback-race');
+    await repository.save(image, attachmentBytes: originalBytes);
+
+    final writeEntered = Completer<void>();
+    final releaseFailure = Completer<void>();
+    LibraryRepository.saveBeforeItemCommitForTesting = () async {
+      writeEntered.complete();
+      await releaseFailure.future;
+      throw StateError('simulated replacement failure');
+    };
+
+    final pendingSave = repository.save(
+      image.copyWith(title: 'Failed replacement'),
+      attachmentBytes: replacementBytes,
+    );
+    await writeEntered.future;
+    final saveFailure = expectLater(
+      pendingSave,
+      throwsA(isA<StateError>()),
+    );
+
+    var readCompleted = false;
+    final pendingRead = repository.readAttachment(image.attachmentKey!).then((bytes) {
+      readCompleted = true;
+      return bytes;
+    });
+
+    try {
+      await Future<void>.delayed(Duration.zero);
+      expect(
+        readCompleted,
+        isFalse,
+        reason: 'A reader must wait while replacement bytes are being rolled back.',
+      );
+    } finally {
+      if (!releaseFailure.isCompleted) releaseFailure.complete();
+    }
+
+    try {
+      await saveFailure;
+    } finally {
+      LibraryRepository.saveBeforeItemCommitForTesting = null;
+    }
+
+    expect(await pendingRead, orderedEquals(originalBytes));
+    expect(repository.findById(image.id)?.title, image.title);
+    expect(
+      await repository.readAttachment(image.attachmentKey!),
+      orderedEquals(originalBytes),
+    );
+  });
+
   test('creates a consistent backup after a pending attachment replacement', () async {
     final originalBytes = Uint8List.fromList([1, 3, 5, 7]);
     final replacementBytes = Uint8List.fromList([2, 4, 6, 8]);
