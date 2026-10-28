@@ -3369,6 +3369,10 @@ class SettingsPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<double>(
+                        // FormField keeps its internal selection across parent
+                        // rebuilds. Recreate it when an optimistic choice is
+                        // rolled back so the visible option follows persisted state.
+                        key: ValueKey<double>(textScaleMultiplier),
                         initialValue: textScaleMultiplier,
                         decoration: const InputDecoration(
                           labelText: 'App text size',
