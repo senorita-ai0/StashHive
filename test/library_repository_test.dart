@@ -218,6 +218,27 @@ void main() {
     expect(preferences.get('textScaleMultiplier'), 1.15);
   });
 
+  test('last backup-prepared timestamp persists across box reopen', () async {
+    expect(repository.lastBackupPreparedAtMs, isNull);
+
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    await repository.recordBackupPreparedAt(timestamp);
+    expect(repository.lastBackupPreparedAtMs, timestamp);
+
+    await expectLater(
+      repository.recordBackupPreparedAt(0),
+      throwsFormatException,
+    );
+    expect(repository.lastBackupPreparedAtMs, timestamp);
+
+    repository.dispose();
+    await Hive.close();
+    Hive.init(testDirectory.path);
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.lastBackupPreparedAtMs, timestamp);
+  });
+
   test('storage reminder acknowledgement persists across box reopen', () async {
     expect(repository.hasSeenStorageReminder, isFalse);
     await repository.markStorageReminderSeen();
