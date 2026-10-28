@@ -401,6 +401,82 @@ void main() {
     expect(repository.collections.value, isEmpty);
   });
 
+  test('restore owns mutable decoded inputs before its first storage await', () async {
+    final mutableTags = <String>['Original tag'];
+    final originalBytes = Uint8List.fromList([4, 5, 6, 7]);
+    final replacementBytes = Uint8List.fromList([99, 98, 97, 96]);
+    final mutableCollections = <String>['Original collection'];
+    final mutableItems = <SavedItem>[
+      buildImage(
+        id: 'mutable-restore-input',
+        attachmentKey: 'mutable-restore-source-key',
+      ).copyWith(
+        tags: mutableTags,
+        collection: 'Original collection',
+      ),
+    ];
+    final mutableAttachments = <String, BackupAttachment>{
+      'mutable-restore-source-key': BackupAttachment(
+        name: 'original.png',
+        mimeType: 'image/png',
+        bytes: originalBytes,
+      ),
+    };
+    final decoded = DecodedBackup(
+      items: mutableItems,
+      attachments: mutableAttachments,
+      collections: mutableCollections,
+      exportedAt: '2026-10-28T00:00:00Z',
+    );
+    final snapshotTaken = Completer<void>();
+    final releaseRestore = Completer<void>();
+    LibraryRepository.restoreAfterSnapshotForTesting = () async {
+      snapshotTaken.complete();
+      await releaseRestore.future;
+    };
+
+    final pendingRestore = repository.restoreDecodedBackup(decoded);
+    int? imported;
+    try {
+      await snapshotTaken.future;
+
+      // Mutate every caller-owned collection after validation/snapshot but
+      // before the restore is allowed to proceed to its first persistent write.
+      mutableTags
+        ..[0] = 'Injected tag'
+        ..add('Injected extra tag');
+      originalBytes[0] = 0;
+      mutableCollections
+        ..[0] = 'Injected collection'
+        ..add('Injected extra collection');
+      mutableItems.clear();
+      mutableAttachments['mutable-restore-source-key'] = BackupAttachment(
+        name: 'replacement.png',
+        mimeType: 'image/png',
+        bytes: replacementBytes,
+      );
+    } finally {
+      if (!releaseRestore.isCompleted) releaseRestore.complete();
+      try {
+        imported = await pendingRestore;
+      } finally {
+        LibraryRepository.restoreAfterSnapshotForTesting = null;
+      }
+    }
+
+    expect(imported, 1);
+    expect(repository.items.value, hasLength(1));
+    final restored = repository.items.value.single;
+    expect(restored.title, 'Reference image');
+    expect(restored.tags, ['Original tag']);
+    expect(restored.collection, 'Original collection');
+    expect(repository.collections.value, ['Original collection']);
+    expect(
+      await repository.readAttachment(restored.attachmentKey!),
+      orderedEquals([4, 5, 6, 7]),
+    );
+  });
+
   test('restore includes valid item-assigned collections omitted from input list', () async {
     final item = buildLink(
       id: 'constructed-collection-assignment',
