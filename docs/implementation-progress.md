@@ -784,7 +784,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 
 ## Phase 3 — cap backup attachment entry counts (2026-10-28)
 
-- [x] JSON backup decode and direct in-memory decoded-backup validation now reject more than 10,000 attachment entries before iterating payload keys/metadata. Valid portable backups cannot need more unique attachments than saved items because orphan payloads are disallowed and an item has only one attachment key.
+- [x] JSON backup decode and direct in-memory decoded-backup validation now reject attachment maps with more entries than saved items before iterating payload keys/metadata. Valid portable backups cannot need more unique attachments than saved items because orphan payloads are disallowed and an item has only one attachment key.
 - [x] Added codec regression **TC-216** for both oversized JSON attachment maps and directly constructed `DecodedBackup` objects. Added traceability task **TSK-504**.
 - [ ] Run TC-216 with the malformed backup, restore and size-limit regression set at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
