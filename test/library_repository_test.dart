@@ -923,6 +923,23 @@ void main() {
     );
   });
 
+  test('skips oversized legacy collection names during local recovery', () async {
+    final preferences = Hive.box<dynamic>('stashhive_preferences_v1');
+    await preferences.put(
+      'collections',
+      <String>[
+        'Learning',
+        List<String>.filled(100000, ' ').join(),
+      ],
+    );
+
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.collections.value, ['Learning']);
+    expect(repository.skippedCollectionCount.value, 1);
+  });
+
   test('serializes concurrent collection creation without losing updates', () async {
     final firstWriteEntered = Completer<void>();
     final releaseFirstWrite = Completer<void>();
