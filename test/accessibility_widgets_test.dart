@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/models/saved_item.dart';
@@ -54,6 +55,20 @@ double _contrastRatio(Color first, Color second) {
 }
 
 void main() {
+  test('backup share result messages distinguish confirmed, dismissed and unknown outcomes', () {
+    final completed = app.backupShareResultMessage(ShareResultStatus.success);
+    final dismissed = app.backupShareResultMessage(ShareResultStatus.dismissed);
+    final unavailable = app.backupShareResultMessage(ShareResultStatus.unavailable);
+
+    expect(completed, contains('Check the destination to confirm the file arrived'));
+    expect(completed, isNot(contains('Backup shared.')));
+    expect(dismissed, contains('share sheet was dismissed'));
+    expect(dismissed, contains('create a backup again'));
+    expect(unavailable, contains('could not confirm whether the backup was saved or shared'));
+    expect(unavailable, contains('Downloads'));
+    expect(unavailable, isNot(contains('Backup shared.')));
+  });
+
   late Directory testDirectory;
   late LibraryRepository repository;
 
