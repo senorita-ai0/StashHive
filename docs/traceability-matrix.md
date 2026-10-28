@@ -5,7 +5,7 @@
 | Requirement | Design / screen | Planned task | Test | Implementation status |
 |---|---|---|---|---|
 | FR-001 | SCR-001, SCR-004 | TSK-102, TSK-105 | TC-001 | IN PROGRESS — source added; build/test pending |
-| FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104, TSK-473, TSK-478 | TC-002, TC-183, TC-188 | IN PROGRESS — URL/tag input bounds are source-covered; build/test pending |
+| FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104, TSK-473, TSK-478, TSK-490 | TC-002, TC-183, TC-188, TC-201 | IN PROGRESS — URL/tag input bounds and repository-owned save metadata snapshots are source-covered; build/test pending |
 | FR-003 | SCR-004 | TSK-102, TSK-105, TSK-424 | TC-003, TC-132 | IN PROGRESS — delete failure now reports feedback; rollback/platform validation pending |
 | FR-004 | SCR-001, SCR-003, SCR-004 | TSK-103, TSK-201, TSK-416, TSK-444 | TC-004, TC-121, TC-152 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
 | FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427, TSK-479 | TC-005, TC-118, TC-135, TC-189 | IN PROGRESS — search normalizes once, bounds oversized queries and retains Unicode metadata search; execution/platform review pending |
@@ -16,7 +16,7 @@
 | FR-010 | SCR-005 | TSK-203, TSK-423, TSK-474 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471, TSK-472, TSK-473, TSK-474, TSK-488 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181, TC-182, TC-183, TC-184, TC-199 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful backup preparation/share-outcome feedback are source-covered; execution and platform export pending |
-| FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415, TSK-472, TSK-480, TSK-482, TSK-483, TSK-487 | TC-013, TC-117, TC-119, TC-120, TC-182, TC-190, TC-192, TC-193, TC-198 | IN PROGRESS — codec/source, restore rollback, picker size/read recovery and restore navigation guard recovery are source-covered; validation pending |
+| FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415, TSK-472, TSK-480, TSK-482, TSK-483, TSK-487, TSK-489 | TC-013, TC-117, TC-119, TC-120, TC-182, TC-190, TC-192, TC-193, TC-198, TC-200 | IN PROGRESS — codec/source, restore rollback, picker size/read recovery, restore input snapshot isolation and navigation recovery are source-covered; validation pending |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | IN PROGRESS — local-first flows are implemented in source; offline/restart tests pending |
 | FR-015 | SCR-006, SCR-001, SCR-004 | TSK-003, TSK-303, TSK-422, TSK-425 | TC-015, TC-130, TC-133 | IN PROGRESS — storage reminders and platform-specific attachment copy added; browser restart/platform review pending |
 | FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205 | TC-016 | BLOCKED pending POC |
@@ -1355,3 +1355,18 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `backupShareResultMessage` maps the three `ShareResultStatus` values to separate, truthful guidance. `success` still asks the user to verify the destination; `dismissed` directs them to retry if they did not save the file; `unavailable` says the outcome is uncertain and tells them to check the destination/Downloads.
 - **Regression:** TC-199 asserts the message for each outcome and guards against a false delivery claim.
 - **Verification:** Regression source is committed but unrun. Verify real browser/Android share outcomes and file arrival during the manual checkpoint.
+
+### TSK-489 — Snapshot caller-owned decoded backup inputs before restore awaits
+
+- **Requirements:** FR-013 and NFR-003; validating a restore must protect the in-flight import from later changes to publicly constructible input objects.
+- **Implementation:** The repository validates incoming DecodedBackup, then copies item tag lists and collections into unmodifiable lists, and copies attachment metadata/maps and byte arrays before the first asynchronous boundary. The restore stages and writes only from this owned snapshot.
+- **Regression:** TC-200 pauses after the snapshot is validated, mutates/clears the original input lists and map, replaces source bytes, then checks the import matches the original validated state.
+- **Verification:** Regression source is committed but unrun. Confirm peak memory and restore consistency on web/Android at the manual checkpoint.
+
+### TSK-490 — Snapshot mutable saved-item metadata before repository save
+
+- **Requirements:** FR-002 and NFR-003; the metadata persisted by a save must match the validated values submitted at the start of that repository operation.
+- **Implementation:** LibraryRepository.save() now clones and freezes the item tags list before validation or asynchronous storage operations. Caller mutations to the source list cannot change item metadata while a save is paused or in progress.
+- **Regression:** TC-201 mutates a caller-owned tag list while save is paused immediately before its record write, then checks the repository notifier and raw stored map both retain the original tags.
+- **Verification:** Regression source is committed but unrun. Verify save metadata snapshot behavior alongside attachment snapshot and rollback cases at the manual checkpoint.
+
