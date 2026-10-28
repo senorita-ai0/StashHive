@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-211 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-212 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -755,4 +755,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Kept the underlying notifiers private and prevented consumers from downcasting the public wrappers; normal listeners remain reactive and item/collection lists remain unmodifiable.
 - [x] Added repository regression **TC-211** for listener notifications through the public interface and rejected direct edits to item/collection list snapshots. Added traceability task **TSK-499**.
 - [ ] Run TC-211 and confirm Library/Search/Collections/Settings widgets continue to update correctly using read-only listenables at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — bound malformed backup-version errors (2026-10-28)
+
+- [x] Backup decoding now verifies that `formatVersion` is an integer before displaying the version in an error. Arbitrary strings, lists or maps receive a short fixed validation message rather than being echoed into an exception.
+- [x] Added codec regression **TC-212** with a 100,000-character non-integer version field and documented task **TSK-500** in traceability.
+- [ ] Run TC-212 alongside malformed-backup and oversized-import cases at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
