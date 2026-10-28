@@ -1596,3 +1596,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the raw preference list is not rewritten during recovery; the app reports what it skipped rather than silently erasing legacy data.
 - **Status:** Repository regression source is committed but unrun. Verify the bounded scan and recovery feedback against browser/Android local storage at the manual validation checkpoint.
 
+### TC-224 — Sanitize invalid provider file-URI failures
+
+- Submit a supported document share whose `file://` URI uses a non-local authority, causing platform path conversion to fail.
+- Confirm the intake path returns fixed recovery guidance without exposing the provider URI or raw exception details; the item is reported as skipped and the rest of the share batch can continue.
+- Confirm ordinary local file paths and local `file://` URIs still reach extension/MIME and bounded-byte validation.
+- **Status:** Share-intake regression source is committed but unrun. Verify provider URI shapes and recovery summaries using real Android share sources at the manual validation checkpoint.
+
