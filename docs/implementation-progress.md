@@ -408,3 +408,9 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - [x] Removed the unconditional clear of the shared Notes/content field when changing an unsaved draft's item type. Type-specific selected attachment bytes and metadata are still cleared to avoid attaching the previous file to another kind.
 - [x] Added widget regression **TC-156** and traceability task **TSK-448** to guard against silent loss of user-entered text.
 - [ ] Run TC-156 and verify the type-switch flow with keyboard, screen reader, and enlarged text at the manual checkpoint. No tests, formatter, analyzer, or builds were run; CI remains manual-only.
+
+## Phase 3 — prevent attachment loss on same-kind selection (2026-10-28)
+
+- [x] The kind-selection handler now does nothing if the requested item type is already selected, preserving a prefilled shared image/document and its metadata. Changing to a different kind still clears the old attachment selection.
+- [x] Added widget regression **TC-157** and traceability task **TSK-449**, covering a shared image whose active type is tapped before saving.
+- [ ] Run TC-156/TC-157 and related Quick Save tests at the manual validation checkpoint. Tests, formatting, analyzer and builds remain unrun; CI stays manual-only.
