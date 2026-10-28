@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-185 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-186 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -585,4 +585,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] The regression checks deduplication bypasses fingerprint construction for oversized provider metadata while intake still constructs the note from the effective message.
 - [x] Added traceability task **TSK-475** and updated the test plan.
 - [ ] Run TC-185 and confirm provider-field behavior with browser-independent Android source apps at the manual checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — attachment size lookup failure recovery (2026-10-28)
+
+- [x] Added widget regression **TC-186** for a picked attachment whose `length()` call fails with an unexpected provider error.
+- [x] The regression expects Quick Save to hide provider details, exit its busy state, preserve the draft, allow a second selection and save the original bytes of the successful retry.
+- [x] Added traceability task **TSK-476** and updated the test plan.
+- [ ] Run TC-186 and verify size metadata/read failures on actual Android and supported browser/desktop pickers at the manual checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
