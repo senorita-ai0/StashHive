@@ -982,3 +982,9 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] The Android share configurator now serializes to a temporary file beside the manifest, flushes it, preserves the previous file mode, and atomically replaces the destination only after serialization succeeds.
 - [x] Added a failure-path regression that simulates replacement failure and verifies the valid manifest remains unchanged and no temporary file is left behind.
 - [ ] Run the Python configurator suite and full manual validation before enabling testing builds. No tests, formatting, analysis or platform builds were run for this increment; CI remains manual-only.
+
+## Phase 3 — enforce a hard share fingerprint cache ceiling (2026-10-29)
+
+- [x] Added a maximum of 256 entries for custom ShareEventDeduplicator cache configurations; runtime validation now rejects zero/negative capacities and values above the cap, while accepting the cap itself.
+- [x] Expanded TC-242 boundary coverage and reflected the hard ceiling in the test plan and roadmap.
+- [ ] Run the share-intake regressions and full manual validation checkpoint. Tests, formatting, analysis and platform builds remain unrun; CI is manual-only.
