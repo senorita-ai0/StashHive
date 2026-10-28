@@ -1294,3 +1294,18 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** File-share intake catches URI-to-local-path conversion errors and returns fixed user-facing guidance instead of allowing raw provider URI/platform exception details into the share-review feedback.
 - **Regression:** TC-224 covers an incoming file URI with a non-local authority; TC-174 separately protects duplicate-event fingerprinting for unusual file URIs.
 - **Status:** Source and regression documentation committed but unrun. Validate local/non-local URI handling and batch continuation against real Android providers at the manual checkpoint; CI remains manual-only.
+
+### TSK-513 — Bound share-review summary hint processing — 2026-10-28
+
+- **Requirements:** FR-009 and NFR-002/NFR-003.
+- **Source:** The share-review summary helper checks at most 16 hint candidates, rejects raw hints over 160 characters before trimming, and keeps only three distinct safe hints.
+- **Regression:** TC-225 covers oversized hints and limits iteration over empty hints.
+- **Status:** Source and regression plan committed but unrun. Validate summary copy and screen-reader behavior on Android at the manual checkpoint.
+
+### TSK-514 — Prevent overlapping backup export and restore actions — 2026-10-28
+
+- **Requirements:** FR-012/FR-013 and NFR-003.
+- **Source:** Backup & privacy blocks the opposite operation while export or restore is active and shows a clear activity label. Handler guards also reject competing taps, while the repository queue remains the consistency backstop.
+- **Regression:** TC-226 pauses backup preparation and checks Restore cannot start; the existing restore-commit test checks Create backup cannot start.
+- **Status:** Source and widget regression source committed, unrun. Verify real Android/web file picker and share-sheet transitions at the manual checkpoint.
+
