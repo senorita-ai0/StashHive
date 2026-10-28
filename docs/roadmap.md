@@ -1395,3 +1395,11 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** `SavedItem.copyWith()` now wraps the chosen tag list in `List<String>.unmodifiable`, preventing caller-owned mutable lists from changing the copied model after construction.
 - **Regression:** TC-239 verifies mutation of a replacement list, mutation of the original item’s list, and rejection of direct mutation through the copied model.
 - **Status:** Source and test are committed. Test execution and formatting/analyzer checks remain pending at the manual checkpoint; CI remains manual-only.
+
+
+### TSK-527 — Keep synchronous item lookups on committed snapshots — 2026-10-29
+
+- **Requirements:** FR-002 and NFR-003.
+- **Source review:** The repository publishes an immutable item snapshot and updates its ID index before notifying listeners. A regression now pauses a replacement save before the item record commits and checks that both findById() and items continue to expose the previous revision until commit.
+- **Regression:** TC-240.
+- **Status:** Regression source is committed to main; test execution, formatting and analyzer checks remain pending. CI remains manual-only.
