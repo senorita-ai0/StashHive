@@ -1534,7 +1534,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-514 — Prevent overlapping backup export and restore actions
 
 - **Requirements:** FR-012/FR-013 and NFR-003; users should not start competing file picker/share-sheet flows, and backup/restore should clearly indicate which operation is active.
-- **Implementation:** Backup & privacy prevents export from starting while backup selection/restore is active and prevents restore from starting while export is active. The opposite action is disabled with an activity label, and both handlers enforce the same guard.
-- **Regression:** TC-226 pauses backup preparation and verifies the Restore button is disabled; TC-227 pauses the backup file picker and verifies export is disabled until picker cancellation; the existing restore-commit regression checks Create backup is disabled.
+- **Implementation:** Backup & privacy prevents export from starting while backup selection/restore is active and prevents restore from starting while export is active. The opposite action is disabled with an activity label exposed as a live region, and both handlers enforce the same guard.
+- **Regression:** TC-226 pauses backup preparation and verifies the Restore button is disabled with a live-region status; TC-227 pauses the backup file picker and verifies export is disabled/announced until picker cancellation; the existing restore-commit regression checks Create backup is disabled.
 - **Verification:** Widget test source is committed but unrun. Verify operation transitions and real Android/web picker/share-sheet handoff at the manual validation checkpoint.
 
