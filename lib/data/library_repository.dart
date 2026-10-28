@@ -34,13 +34,12 @@ class LibraryRepository {
       _pendingAttachmentReads = {};
 
   Future<T> _serializeOperation<T>(Future<T> Function() operation) {
-    final sequence = ++_operationSequence;
-    return _serializeOperationAtSequence(operation, sequence);
+    _operationSequence++;
+    return _serializeOperationAtSequence(operation);
   }
 
   Future<T> _serializeOperationAtSequence<T>(
     Future<T> Function() operation,
-    int sequence,
   ) {
     // The sequence is allocated when a caller queues its operation, not when
     // it starts running. Attachment-read coalescing uses it to avoid joining a
@@ -696,7 +695,7 @@ class LibraryRepository {
           _pendingAttachmentReads.remove(key);
         }
       }
-    }, sequence);
+    });
     _pendingAttachmentReads[key] = (sequence: sequence, future: future);
     return future;
   }
