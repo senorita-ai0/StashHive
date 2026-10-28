@@ -9,6 +9,24 @@ import '../models/saved_item.dart';
 import '../services/backup_codec.dart';
 import '../services/attachment_bytes.dart';
 
+/// Exposes notifications and the current value without leaking the
+/// underlying mutable ValueNotifier to UI consumers.
+class _ReadOnlyValueListenable<T> implements ValueListenable<T> {
+  const _ReadOnlyValueListenable(this._source);
+
+  final ValueListenable<T> _source;
+
+  @override
+  T get value => _source.value;
+
+  @override
+  void addListener(VoidCallback listener) => _source.addListener(listener);
+
+  @override
+  void removeListener(VoidCallback listener) =>
+      _source.removeListener(listener);
+}
+
 class LibraryRepository {
   LibraryRepository._({
     required Box<dynamic> itemsBox,
@@ -60,7 +78,8 @@ class LibraryRepository {
 
   final ValueNotifier<List<SavedItem>> _items =
       ValueNotifier<List<SavedItem>>(<SavedItem>[]);
-  ValueListenable<List<SavedItem>> get items => _items;
+  late final ValueListenable<List<SavedItem>> items =
+      _ReadOnlyValueListenable<List<SavedItem>>(_items);
 
   // Synchronous lookups use the last published item snapshot, not raw Hive
   // records that may be temporarily staged inside an in-flight mutation.
@@ -68,16 +87,19 @@ class LibraryRepository {
 
   final ValueNotifier<List<String>> _collections =
       ValueNotifier<List<String>>(<String>[]);
-  ValueListenable<List<String>> get collections => _collections;
+  late final ValueListenable<List<String>> collections =
+      _ReadOnlyValueListenable<List<String>>(_collections);
 
   /// Raw local records skipped because their shape could not be read.
   final ValueNotifier<int> _skippedRecordCount = ValueNotifier<int>(0);
-  ValueListenable<int> get skippedRecordCount => _skippedRecordCount;
+  late final ValueListenable<int> skippedRecordCount =
+      _ReadOnlyValueListenable<int>(_skippedRecordCount);
 
   /// Invalid, duplicate or over-limit collection preference entries skipped
   /// while recovering the collection list.
   final ValueNotifier<int> _skippedCollectionCount = ValueNotifier<int>(0);
-  ValueListenable<int> get skippedCollectionCount => _skippedCollectionCount;
+  late final ValueListenable<int> skippedCollectionCount =
+      _ReadOnlyValueListenable<int>(_skippedCollectionCount);
 
   /// Fault-injection seam for verifying that a failed restore removes writes
   /// already staged before the collection preferences are committed.
