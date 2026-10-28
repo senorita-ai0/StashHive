@@ -1645,6 +1645,45 @@ void main() {
   });
 
 
+  testWidgets('rejects oversized search input before scanning saved items', (tester) async {
+    const item = SavedItem(
+      id: 'oversized-search-query-target',
+      kind: ItemKind.note,
+      title: 'Searchable target',
+      content: 'This should not be scanned for an oversized query.',
+      tags: <String>[],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 100,
+      updatedAtMs: 101,
+    );
+    await repository.save(item);
+    final oversizedQuery = List<String>.filled(
+      app.maxSearchQueryCharacters + 1,
+      'x',
+    ).join();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.SearchPage(
+          repository: repository,
+          initialQuery: oversizedQuery,
+          onOpenItem: (_) {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Search text must be 4,096 characters or shorter.'),
+      findsOneWidget,
+    );
+    expect(find.bySemanticsLabel('0 results'), findsOneWidget);
+    expect(find.text('Searchable target'), findsNothing);
+    expect(find.text('No matches found'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Search empty state explains and clears an unmatched type filter', (
     tester,
   ) async {
