@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -159,6 +160,58 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets(
+    'an older dark-mode failure cannot revert the newest queued choice',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+      await tester.pumpWidget(
+        app.StashHiveApp(repository: repository, initialDarkMode: false),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Settings').last);
+      await tester.pumpAndSettle();
+
+      final switchFinder = find.byType(Switch);
+      final firstWriteEntered = Completer<void>();
+      final releaseFirstFailure = Completer<void>();
+      var hookCalls = 0;
+      LibraryRepository.setDarkModeAfterWriteForTesting = () async {
+        hookCalls++;
+        if (hookCalls == 1) {
+          firstWriteEntered.complete();
+          await releaseFirstFailure.future;
+          throw StateError('simulated older theme write failure');
+        }
+      };
+
+      try {
+        await tester.tap(switchFinder);
+        await tester.pump();
+        await firstWriteEntered.future;
+        await tester.pump();
+
+        // Queue false and then true while the first true write is unresolved.
+        await tester.tap(switchFinder);
+        await tester.pump();
+        await tester.tap(switchFinder);
+        await tester.pump();
+        expect(tester.widget<Switch>(switchFinder).value, isTrue);
+
+        releaseFirstFailure.complete();
+        await tester.pumpAndSettle();
+      } finally {
+        if (!releaseFirstFailure.isCompleted) releaseFirstFailure.complete();
+        LibraryRepository.setDarkModeAfterWriteForTesting = null;
+      }
+
+      expect(hookCalls, 3);
+      expect(repository.darkMode, isTrue);
+      expect(tester.widget<Switch>(switchFinder).value, isTrue);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('Text size preference increases app text and preserves platform scaling', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.linux;
     addTearDown(() => debugDefaultTargetPlatformOverride = null);
@@ -234,6 +287,66 @@ void main() {
     expect(repository.textScaleMultiplier, 1.0);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'an older text-size failure cannot revert the newest queued choice',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+      await tester.pumpWidget(
+        app.StashHiveApp(repository: repository, initialDarkMode: false),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Settings').last);
+      await tester.pumpAndSettle();
+
+      final control = find.byType(DropdownButtonFormField<double>);
+      final firstWriteEntered = Completer<void>();
+      final releaseFirstFailure = Completer<void>();
+      var hookCalls = 0;
+      LibraryRepository.setTextScaleMultiplierAfterWriteForTesting = () async {
+        hookCalls++;
+        if (hookCalls == 1) {
+          firstWriteEntered.complete();
+          await releaseFirstFailure.future;
+          throw StateError('simulated older text-size write failure');
+        }
+      };
+
+      try {
+        await tester.tap(control);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Large').last);
+        await tester.pump();
+        await firstWriteEntered.future;
+        await tester.pump();
+
+        await tester.tap(control);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Extra large').last);
+        await tester.pump();
+        expect(
+          tester.widget<DropdownButtonFormField<double>>(control).initialValue,
+          1.3,
+        );
+
+        releaseFirstFailure.complete();
+        await tester.pumpAndSettle();
+      } finally {
+        if (!releaseFirstFailure.isCompleted) releaseFirstFailure.complete();
+        LibraryRepository.setTextScaleMultiplierAfterWriteForTesting = null;
+      }
+
+      expect(hookCalls, 2);
+      expect(repository.textScaleMultiplier, 1.3);
+      expect(
+        tester.widget<DropdownButtonFormField<double>>(control).initialValue,
+        1.3,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('Library and Search avoid layout exceptions at narrow width with large text', (tester) async {
     await tester.binding.setSurfaceSize(const Size(320, 568));
