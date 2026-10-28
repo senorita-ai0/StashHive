@@ -15,7 +15,7 @@
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; handles effective text, disposal and unusual file URIs; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423 | TC-010, TC-131 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
-| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status added; execution and platform export pending |
+| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status and rollback-safe export concurrency added; execution and platform export pending |
 | FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415 | TC-013, TC-117, TC-119, TC-120 | IN PROGRESS — codec/source added; restore tests pending |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | IN PROGRESS — local-first flows are implemented in source; offline/restart tests pending |
 | FR-015 | SCR-006, SCR-001, SCR-004 | TSK-003, TSK-303, TSK-422, TSK-425 | TC-015, TC-130, TC-133 | IN PROGRESS — storage reminders and platform-specific attachment copy added; browser restart/platform review pending |
@@ -1229,4 +1229,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** The repository stores `lastBackupPreparedAtMs` in local preferences after backup JSON generation succeeds, before releasing the same serialized mutation operation that produced the snapshot. This prevents a queued edit from running between snapshot generation and timestamp storage. The Backup & privacy screen displays the local date/time and explicitly says it records file generation, not whether a destination saved the file. Failure to store this optional timestamp does not block sharing the prepared JSON; if a late write fails after committing, best-effort rollback restores the previous status.
 - **Regression:** TC-178 covers timestamp validation and repository reopen; TC-179 covers the empty state, formatted timestamp and truthful wording.
 - **Verification:** Source regression coverage is committed but unrun. Confirm status updates after native/web share-sheet return or cancellation at the manual validation checkpoint.
+
+### TSK-471 — Keep backup exports consistent after delete rollback
+
+- **Requirements:** FR-003, FR-012 and NFR-003; an export must not read a half-completed deletion or treat a temporarily removed attachment as a permanently unexportable item.
+- **Implementation:** Backup creation shares the repository mutation queue with deletes and their rollback handlers. A queued export captures the repository after the delete either commits or restores its previous item record and attachment bytes.
+- **Regression:** TC-181 pauses deletion after record/attachment removal, requests a backup, then injects a late delete failure and verifies the resulting backup contains the restored item's metadata and exact attachment bytes.
+- **Verification:** Repository regression source is committed but unrun. Verify concurrent delete/backup behavior against browser and Android storage at the manual validation checkpoint.
 
