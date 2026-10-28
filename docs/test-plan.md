@@ -1263,3 +1263,17 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the repository rolls back to the original multiplier and the dropdown visibly shows System default again, rather than retaining an internal stale FormField selection.
 - **Status:** Widget regression source is committed but unrun. Verify the selection and actual text scale after storage failures on web and Android at the manual checkpoint.
 
+### TC-178 — Persist the last backup-prepared timestamp
+
+- Record the timestamp only after the repository has generated the portable backup JSON.
+- Confirm invalid timestamps are rejected without replacing the previously stored value.
+- Close and reopen the repository boxes and confirm the latest valid timestamp remains available locally.
+- **Status:** Repository regression source is committed but unrun. Confirm the informational preference remains separate from the backup payload and survives browser/native repository reopen at the manual checkpoint.
+
+### TC-179 — Show backup preparation status truthfully
+
+- Open Backup & privacy before any backup has been generated and confirm the status reads “Not prepared yet.”
+- Record a generated-backup timestamp and rebuild the page; confirm the formatted local date/time is displayed.
+- Confirm the explanatory text says this is the time the backup file was generated, not proof that the share-sheet destination saved it.
+- **Status:** Widget regression source is committed but unrun. Verify status updates after the share sheet returns, including when it is canceled, on web and Android at the manual checkpoint.
+
