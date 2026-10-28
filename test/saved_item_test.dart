@@ -42,6 +42,23 @@ void main() {
       expect(restored.createdAtMs, original.createdAtMs);
     });
 
+    test('does not echo oversized or unknown item kinds in errors', () {
+      final oversizedKind = List<String>.filled(100000, 'x').join();
+
+      for (final value in <Object?>[oversizedKind, 'unknown-kind', <String>['not', 'a', 'kind']]) {
+        expect(
+          () => ItemKind.fromWire(value),
+          throwsA(
+            isA<FormatException>().having(
+              (error) => error.message,
+              'message',
+              'Unknown saved-item type.',
+            ),
+          ),
+        );
+      }
+    });
+
     test('searches titles, URLs, notes, tags and collections case-insensitively', () {
       final item = makeItem(content: 'Research local storage');
       expect(item.matchesQuery('FLUTTER'), isTrue);
