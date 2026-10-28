@@ -1385,6 +1385,40 @@ void main() {
     );
   });
 
+  test('snapshots caller-owned item tags before storage awaits', () async {
+    final callerTags = <String>['Original tag'];
+    final item = buildLink(id: 'caller-tags-snapshot').copyWith(
+      tags: callerTags,
+    );
+    final beforeItemCommit = Completer<void>();
+    final releaseItemCommit = Completer<void>();
+    LibraryRepository.saveBeforeItemCommitForTesting = () async {
+      beforeItemCommit.complete();
+      await releaseItemCommit.future;
+    };
+
+    final pendingSave = repository.save(item);
+    try {
+      await beforeItemCommit.future;
+      callerTags
+        ..[0] = 'Mutated tag'
+        ..add('Injected tag');
+    } finally {
+      if (!releaseItemCommit.isCompleted) releaseItemCommit.complete();
+      try {
+        await pendingSave;
+      } finally {
+        LibraryRepository.saveBeforeItemCommitForTesting = null;
+      }
+    }
+
+    final saved = repository.findById(item.id);
+    expect(saved, isNotNull);
+    expect(saved!.tags, ['Original tag']);
+    final raw = Hive.box<dynamic>('stashhive_items_v1').get(item.id) as Map;
+    expect(raw['tags'], ['Original tag']);
+  });
+
   test('snapshots caller-owned attachment bytes before storage awaits', () async {
     final callerBuffer = Uint8List.fromList([1, 2, 3, 4, 250]);
     final expected = Uint8List.fromList(callerBuffer);
