@@ -320,9 +320,9 @@ The Library's search-shaped navigation control now exposes a button role, the la
 - [x] Added widget regression source and manual case **TC-137**.
 - [ ] Run TC-137 and review startup recovery copy on web and Android during the manual privacy checkpoint.
 
-## Current validation state — 2026-10-25
+## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-159 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-160 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -427,3 +427,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added a per-repository asynchronous mutation queue around item save/delete, collection add/rename/delete and decoded backup restore. An operation releases the queue even when it throws, so a failed write does not permanently block later work.
 - [x] Added concurrency regression **TC-159** for two overlapping collection creation requests and traceability task **TSK-452**.
 - [ ] Run TC-159 and related repository mutation/rollback tests at the manual validation checkpoint. No tests, formatting, analyzer, web build or Android build were run; CI remains manual-only.
+
+
+## Phase 3 — mutation queue failure-path regression (2026-10-28)
+
+- [x] Added repository regression **TC-160** to exercise a queued collection mutation after the preceding mutation fails after writing preferences.
+- [x] The test asserts the second request waits for rollback, then leaves only its own collection in the visible list and persisted preference value.
+- [x] Added traceability task **TSK-453**.
+- [ ] Run TC-159/TC-160 and related mutation rollback cases at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
