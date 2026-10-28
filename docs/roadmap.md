@@ -980,3 +980,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-174 covers a file URI with a non-local authority.
 - **Status:** Source and regression committed but unrun; validate actual Android provider URI shapes and safe fallback behavior at the manual checkpoint.
 
+### TSK-468 — Prevent stale preference errors from reverting newer UI choices — 2026-10-28
+
+- **Requirements:** NFR-003/NFR-006.
+- **Source:** Dark-mode and text-size callbacks now use request revisions so a late failure from an earlier preference update cannot roll the UI over a newer choice already queued in the repository.
+- **Regression:** TC-175 covers rapid dark-mode actions behind a delayed failure; TC-176 covers text-size changes while an earlier write fails.
+- **Status:** Source and widget regression coverage committed but unrun. Verify real browser/Android storage behavior at the manual checkpoint.
+
