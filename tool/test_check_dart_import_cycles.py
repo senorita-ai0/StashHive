@@ -68,7 +68,7 @@ class DartImportCycleCheckTests(unittest.TestCase):
         cycles = find_import_cycles(build_import_graph(self.lib_root))
 
         self.assertEqual(len(cycles), 1)
-        self.assertEqual(cycles[0], [codec, nested, codec])
+        self.assertEqual(cycles[0], [nested, codec, nested])
 
 
 if __name__ == "__main__":
