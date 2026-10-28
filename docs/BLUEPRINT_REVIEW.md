@@ -1,4 +1,4 @@
-# StashTrail — Blueprint and Implementation Status
+# StashHive — Blueprint and Implementation Status
 
 **Blueprint:** Approved for implementation on 21 October 2026.  
 **Current phase:** Phase 3 — platform assurance source development; Phase 2 Android share/recovery and build verification remains pending.  
@@ -6,7 +6,7 @@
 
 ## Product
 
-StashTrail is a local-first personal library for links, images/screenshots, notes/snippets, PDFs and documents, searchable from one place.
+StashHive is a local-first personal library for links, images/screenshots, notes/snippets, PDFs and documents, searchable from one place.
 
 ## MVP direction
 
