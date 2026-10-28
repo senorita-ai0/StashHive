@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193 and TC-196–TC-197 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -655,3 +655,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added one post-queue summary with aggregate counts and a maximum of three distinct safe validation hints; raw plugin/provider exceptions remain hidden.
 - [x] Added manual UX case **TC-195** and traceability task **TSK-485**.
 - [ ] Run TC-195 with multiple queued Android share batches and check feedback timing, counts and accessibility. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 2/3 — bound the combined share-review feedback (2026-10-28)
+
+- [x] Extracted a share-service summary builder for unsupported, invalid/unreadable and omitted counts, with singular/plural wording and at most three unique safe validation hints.
+- [x] HomeShell now resets summary counters only when a non-empty combined message can be presented after the waiting queue drains.
+- [x] Added **TC-196** for bounded/deduplicated summary hints and **TC-197** for suppressing empty summaries; added traceability task **TSK-486**.
+- [ ] Run TC-196/TC-197 and complete the end-to-end manual share queue/accessibility case TC-195. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
