@@ -11,6 +11,7 @@ void main() {
     test('acknowledges a launch-time share before review finishes', () async {
       final events = <String>[];
       final reviewGate = Completer<void>();
+      final reviewEntered = Completer<void>();
       final media = <SharedMediaFile>[
         SharedMediaFile(
           path: 'https://example.com/launch-share',
@@ -30,11 +31,12 @@ void main() {
         enqueue: (received) async {
           expect(received, same(media));
           events.add('enqueue');
+          reviewEntered.complete();
           await reviewGate.future;
         },
       );
 
-      await Future<void>.delayed(Duration.zero);
+      await reviewEntered.future;
       final orderBeforeReviewFinishes = List<String>.from(events);
       reviewGate.complete();
       await consuming;
