@@ -990,7 +990,14 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-469 — Track the last generated backup honestly — 2026-10-28
 
 - **Requirements:** FR-012–015 / NFR-004.
-- **Source:** Stores a local timestamp after backup JSON generation succeeds but before the serialized snapshot operation is released, preventing a queued mutation from running between snapshot and timestamp. The Backup & privacy screen shows the localized date/time and explicitly distinguishes generation from confirmed destination delivery; a timestamp preference failure does not block sharing.
+- **Source:** Stores a local timestamp after backup JSON generation succeeds but before the serialized snapshot operation is released, preventing a queued mutation from running between snapshot and timestamp. The Backup & privacy screen shows the localized date/time and explicitly distinguishes generation from confirmed destination delivery; a timestamp preference failure does not block sharing, and late timestamp-write failures attempt to restore the prior status.
 - **Regression:** TC-178 verifies persistence/validation, and TC-179 checks the UI's empty state, formatted time and honest caveat.
 - **Status:** Source and regressions committed but unrun; native/browser share-sheet update behavior remains pending manual validation.
+
+### TSK-470 — Preserve backup export on timestamp storage failure — 2026-10-28
+
+- **Requirements:** FR-012 / NFR-003.
+- **Source:** Backup generation writes the informational timestamp before releasing the same serialized snapshot operation. Timestamp storage remains best-effort: a late write failure attempts rollback and never prevents returning already encoded backup JSON.
+- **Regression:** TC-180 injects a failure after the timestamp write and verifies valid backup JSON still returns while the previous timestamp remains persisted.
+- **Status:** Source and regression committed but unrun; real quota/storage failure behavior remains pending manual web/Android validation.
 
