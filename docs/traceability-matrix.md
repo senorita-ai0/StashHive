@@ -1412,3 +1412,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-208 pauses an attachment replacement after the item record write, verifies raw storage has the pending title while `items.value` and `findById` retain the old published title, then releases the save and checks the new title and bytes.
 - **Verification:** Regression source is committed but unrun. Exercise lookup consistency during delayed save/delete/restore and rollback on web and Android at the manual validation checkpoint.
 
+### TSK-497 — Preserve the published lookup snapshot during delete rollback
+
+- **Requirements:** FR-003 and NFR-003; synchronous item lookup must not report an item missing while a delete is still pending and may roll back.
+- **Implementation:** The item index used by `findById` is published together with the repository's immutable item list. The raw Hive record may be removed while a delete is paused, but the index retains the prior published item until commit or rollback refreshes the public snapshot.
+- **Regression:** TC-209 pauses delete after removing the raw item and attachment, confirms `findById` still returns the published item, then injects failure and verifies rollback restores the item and bytes.
+- **Verification:** Regression source is committed but unrun. Verify slow deletion/rollback and lookup behavior on web and Android during the manual checkpoint.
+
