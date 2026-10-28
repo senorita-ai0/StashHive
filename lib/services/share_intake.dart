@@ -559,8 +559,18 @@ class ShareIntake {
   }) async {
     final rawPath = media.path.trim();
     final parsedPath = Uri.tryParse(rawPath);
-    final localPath =
-        parsedPath?.scheme == 'file' ? parsedPath!.toFilePath() : rawPath;
+    var localPath = rawPath;
+    if (parsedPath?.scheme == 'file') {
+      try {
+        localPath = parsedPath!.toFilePath();
+      } catch (_) {
+        // Provider file URIs may contain a non-local authority or invalid
+        // path escaping. Hide the raw URI and use stable recovery guidance.
+        throw const FormatException(
+          'The shared file path could not be read safely.',
+        );
+      }
+    }
     final fileName = _basename(localPath);
     final extension = fileName.contains('.')
         ? fileName.split('.').last.toLowerCase()
