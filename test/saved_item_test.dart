@@ -31,6 +31,19 @@ SavedItem makeItem({
 
 void main() {
   group('SavedItem', () {
+    test('constructor snapshots tags into an unmodifiable list', () {
+      final sourceTags = <String>['original'];
+      final item = makeItem(tags: sourceTags);
+
+      sourceTags.add('later mutation');
+
+      expect(item.tags, ['original']);
+      expect(
+        () => item.tags.add('direct mutation'),
+        throwsUnsupportedError,
+      );
+    });
+
     test('serializes and deserializes without losing saved metadata', () {
       final original = makeItem();
       final restored = SavedItem.fromMap(original.toMap());
