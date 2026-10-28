@@ -1001,3 +1001,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-180 injects a failure after the timestamp write and verifies valid backup JSON still returns while the previous timestamp remains persisted.
 - **Status:** Source and regression committed but unrun; real quota/storage failure behavior remains pending manual web/Android validation.
 
+### TSK-471 — Keep backup exports consistent after delete rollback — 2026-10-28
+
+- **Requirements:** FR-003, FR-012 and NFR-003.
+- **Source:** Backup export uses the same serialized repository queue as delete and rollback. It waits until an in-flight deletion has either committed or restored its old state before taking the snapshot.
+- **Regression:** TC-181 pauses deletion after removing the record/attachment, requests a backup, then injects a late failure and verifies that the export includes the restored metadata and exact attachment bytes.
+- **Status:** Regression source is committed but unrun; browser/Android storage concurrency remains part of the manual validation checkpoint.
+
