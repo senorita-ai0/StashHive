@@ -260,6 +260,61 @@ void main() {
     },
   );
 
+  testWidgets('locks Quick Save controls while an item is being saved', (tester) async {
+    final semantics = tester.ensureSemantics();
+    addTearDown(semantics.dispose);
+    await openNewLink(tester);
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'https://example.com/safe-draft',
+    );
+    await tester.enterText(
+      find.byType(TextFormField).at(2),
+      'Keep the snapshot consistent.',
+    );
+
+    final saveHookEntered = Completer<void>();
+    final releaseSaveHook = Completer<void>();
+    LibraryRepository.saveAfterItemCommitForTesting = () async {
+      saveHookEntered.complete();
+      await releaseSaveHook.future;
+    };
+
+    try {
+      await tester.ensureVisible(find.text('Save to StashHive'));
+      await tester.tap(find.text('Save to StashHive'));
+      await tester.pump();
+      await saveHookEntered.future;
+      await tester.pump();
+
+      expect(find.text('Saving…'), findsOneWidget);
+      expect(
+        tester.widgetList<TextFormField>(find.byType(TextFormField))
+            .every((field) => field.enabled == false),
+        isTrue,
+      );
+      expect(
+        tester.getSemantics(find.bySemanticsLabel('Note'))
+            .hasAction(SemanticsAction.tap),
+        isFalse,
+      );
+      expect(tester.widget<IconButton>(find.byTooltip('Back')).onPressed, isNull);
+    } finally {
+      if (!releaseSaveHook.isCompleted) releaseSaveHook.complete();
+      LibraryRepository.saveAfterItemCommitForTesting = null;
+    }
+
+    await tester.pumpAndSettle();
+    expect(repository.items.value, hasLength(1));
+    expect(repository.items.value.single.kind, ItemKind.link);
+    expect(repository.items.value.single.url, 'https://example.com/safe-draft');
+    expect(
+      repository.items.value.single.content,
+      'Keep the snapshot consistent.',
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('item-kind options wrap for enlarged text', (tester) async {
     await openNewLink(tester, textScale: 2);
     final linkChoice = find.bySemanticsLabel('Link');
