@@ -1687,3 +1687,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Call `toMap()` on each object without repository or backup validation and confirm a fixed timestamp-range `FormatException` is thrown before returning a serialized map.
 - Confirm a normal in-range item still serializes its timestamp values unchanged.
 - **Status:** Model regression source is committed but unrun. Validate alongside TC-233 and TC-235, backup encoding and repository-save timestamp checks at the manual checkpoint.
+
+### TC-237 — Reject out-of-range timestamps in direct date getters
+
+- Construct a public `SavedItem` with a created timestamp above the supported maximum and another with an updated timestamp below the supported minimum.
+- Read `createdAt` and `updatedAt` directly and confirm each reports the fixed timestamp-range `FormatException` rather than leaking a lower-level date-construction error.
+- Confirm ordinary in-range timestamp fields remain unchanged and existing valid model behavior is preserved.
+- **Status:** Model regression source is committed but unrun. Validate alongside TC-235/TC-236 and repository recovery cases at the manual checkpoint.
