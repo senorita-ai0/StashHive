@@ -1078,3 +1078,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `LibraryRepository.restoreDecodedBackup` now attempts all staged item deletions before reclaiming distinct attachment keys, skips payloads still referenced by raw records, and refreshes visible notifiers after best-effort rollback.
 - **Regression:** TC-154 in `test/library_repository_test.dart` injects both a restore interruption and a staged-item rollback deletion failure, then checks that the remaining record still has its original bytes and collection preferences are restored.
 - **Verification:** Source regression authored but unrun. Real storage interruption, browser persistence, and Android persistence still require the manual validation checkpoint.
+
+### TSK-447 — Early acknowledgement of launch-time shares
+
+- **Requirement:** FR-009 (reliable incoming Android share intake); a fetched launch-time share should not remain pending merely because the user is still reviewing its Quick Save draft.
+- **Implementation:** `consumeInitialSharedMedia` in `lib/services/share_intake.dart` acknowledges the plugin's initial callback before awaiting batch review. If acknowledgement fails, the already-read share is still enqueued.
+- **Regression:** `test/share_intake_test.dart` verifies reset happens before an intentionally paused review queue and that reset failure does not discard the media.
+- **Verification:** Source regression authored but unrun. Restart/replay behavior and Android plugin timing require device validation.
