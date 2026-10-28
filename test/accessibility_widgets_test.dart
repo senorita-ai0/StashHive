@@ -96,12 +96,20 @@ void main() {
     'keeps the local library usable when native share-stream setup fails',
     (tester) async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      var initialReadAttempted = false;
       app.incomingShareStreamForTesting = () {
         throw StateError('private native share channel detail');
       };
+      app.incomingInitialShareReaderForTesting = () async {
+        initialReadAttempted = true;
+        return <SharedMediaFile>[];
+      };
+      app.resetIncomingInitialShareForTesting = () async {};
       addTearDown(() {
         debugDefaultTargetPlatformOverride = null;
         app.incomingShareStreamForTesting = null;
+        app.incomingInitialShareReaderForTesting = null;
+        app.resetIncomingInitialShareForTesting = null;
       });
 
       await tester.pumpWidget(
@@ -123,6 +131,7 @@ void main() {
         ),
         findsOneWidget,
       );
+      expect(initialReadAttempted, isTrue);
       expect(
         find.textContaining('private native share channel detail'),
         findsNothing,
