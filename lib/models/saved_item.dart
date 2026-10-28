@@ -130,21 +130,45 @@ class SavedItem {
     );
   }
 
-  Map<String, dynamic> toMap() => <String, dynamic>{
-        'id': id,
-        'kind': kind.name,
-        'title': title,
-        'content': content,
-        'url': url,
-        'tags': List<String>.from(tags),
-        'collection': collection,
-        'isFavorite': isFavorite,
-        'createdAtMs': createdAtMs,
-        'updatedAtMs': updatedAtMs,
-        'attachmentKey': attachmentKey,
-        'attachmentName': attachmentName,
-        'attachmentMimeType': attachmentMimeType,
-      };
+  Map<String, dynamic> toMap() {
+    // This public helper can be called without the repository or backup
+    // validators. Check raw dimensions before copying tags or returning a map,
+    // so oversized direct model instances cannot trigger an unbounded
+    // serialization copy before the normal validation boundary runs.
+    if (id.length > 128 ||
+        title.length > 500 ||
+        content.length > 1000000 ||
+        (url?.length ?? 0) > maxSavedItemUrlCharacters ||
+        (collection?.length ?? 0) > 80 ||
+        (attachmentKey?.length ?? 0) > 128 ||
+        (attachmentName?.length ?? 0) > 255 ||
+        (attachmentMimeType?.length ?? 0) > 128) {
+      throw const FormatException(
+        'A saved item contains fields beyond supported storage limits.',
+      );
+    }
+    if (tags.length > 100 || tags.any((tag) => tag.length > 100)) {
+      throw const FormatException(
+        'A saved item contains an invalid or oversized tag list.',
+      );
+    }
+
+    return <String, dynamic>{
+      'id': id,
+      'kind': kind.name,
+      'title': title,
+      'content': content,
+      'url': url,
+      'tags': List<String>.from(tags),
+      'collection': collection,
+      'isFavorite': isFavorite,
+      'createdAtMs': createdAtMs,
+      'updatedAtMs': updatedAtMs,
+      'attachmentKey': attachmentKey,
+      'attachmentName': attachmentName,
+      'attachmentMimeType': attachmentMimeType,
+    };
+  }
 
   factory SavedItem.fromMap(Map<dynamic, dynamic> raw) {
     final idValue = raw['id'];
