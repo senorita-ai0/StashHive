@@ -344,6 +344,27 @@ void main() {
       expect(result.url, isNull);
     });
 
+    test('uses effective text when an oversized provider path is unused', () async {
+      final ignoredPath =
+          List<String>.filled(maxIncomingTextCharacters + 1, 'x').join();
+      final shared = SharedMediaFile(
+        path: ignoredPath,
+        message: 'Read this later',
+        type: SharedMediaType.text,
+        mimeType: 'text/plain',
+      );
+
+      // Deduplication should bypass fingerprint allocation for this provider
+      // metadata, but the actual text field remains valid for normal intake.
+      expect(ShareEventDeduplicator().shouldAccept([shared]), isTrue);
+      final result = await ShareIntake.fromSharedMedia(shared);
+
+      expect(result, isNotNull);
+      expect(result!.kind, ItemKind.note);
+      expect(result.content, 'Read this later');
+      expect(result.url, isNull);
+    });
+
     test('preserves ordinary Unicode share text as a note draft', () async {
       const sharedText = 'قابلِ تلاش متن — Roman Urdu: mera khayal';
       final result = await ShareIntake.fromSharedMedia(
