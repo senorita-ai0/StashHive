@@ -1391,3 +1391,15 @@ The previous Android debug build failed when the generated plugin registrant cou
 - After the last queued batch finishes, confirm one combined summary reports counts for unsupported items, items that could not be prepared and additional entries omitted by the batch limit. The message may include a maximum of three distinct safe validation hints, without provider diagnostics.
 - Confirm the summary appears on the Library/home screen and that a normal batch with no skipped entries does not show an unnecessary warning.
 - **Status:** Manual UX regression documented; no device test is claimed. Verify waiting-queue timing, count accuracy and feedback readability with Android share events at the manual checkpoint.
+
+### TC-196 — Bound and de-duplicate share review summary hints
+
+- Build a share-review summary with unsupported, invalid/unreadable and over-limit counts.
+- Confirm singular/plural counts are clear, duplicate or blank validation hints are removed, no more than three distinct hints are shown, and the app-defined guidance is retained.
+- **Status:** Service regression source is committed but unrun. End-to-end timing and screen-reader behavior remain covered by manual case TC-195.
+
+### TC-197 — Suppress empty share-review summaries
+
+- Request a share-review summary with zero unsupported, invalid and omitted entries, even when an unused validation hint is supplied.
+- Confirm no summary is produced, so ordinary successful shares do not receive unnecessary error feedback.
+- **Status:** Service regression source is committed but unrun. End-to-end share queue behavior remains pending the manual validation checkpoint.
