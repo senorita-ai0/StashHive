@@ -1458,7 +1458,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 - **Requirements:** FR-002, FR-013 and NFR-003; shared item validation must reject oversized caller-provided tag lists before creating a copied representation.
 - **Implementation:** `BackupCodec.validateSavedItem` now checks tag count and individual tag lengths before calling `toMap()`, preventing an oversized caller-owned list from being copied merely to learn that it exceeds the supported limit. The public save boundary also performs its cheap tag-size check before full validation.
-- **Regression:** TC-215 supplies a list with a declared size above the maximum whose element access throws, and asserts the validator returns the normal limit `FormatException` before traversing/copying the list.
+- **Regression:** TC-215 supplies a list with a declared size above the maximum whose element access throws through item validation, backup encoding and decoded-backup validation; each path must return the normal limit `FormatException` before traversing/copying the list.
 - **Verification:** Regression source is committed but unrun. Check oversized item validation through direct save, backup encode and restore preflight at the manual validation checkpoint.
 
 ### TSK-504 — Bound the attachment-entry count in backups
