@@ -1131,6 +1131,31 @@ void main() {
           ),
         ),
       );
+
+      final oversizedAttachmentNameBackup = jsonEncode(<String, Object?>{
+        'app': 'StashHive',
+        'formatVersion': BackupCodec.formatVersion,
+        'exportedAt': '2026-10-28T00:00:00Z',
+        'collections': <String>[],
+        'items': [image.toMap()],
+        'attachments': <String, Object?>{
+          image.attachmentKey!: <String, Object?>{
+            'name': oversizedWhitespace,
+            'mimeType': 'image/png',
+            'base64': 'AQID',
+          },
+        },
+      });
+      expect(
+        () => BackupCodec.decode(oversizedAttachmentNameBackup),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'An attachment entry exceeds supported limits.',
+          ),
+        ),
+      );
     });
 
     test('rejects unsafe or invalid URL schemes', () {
