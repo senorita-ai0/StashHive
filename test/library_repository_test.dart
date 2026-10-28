@@ -2420,6 +2420,33 @@ void main() {
     expect(repository.items.value, isEmpty);
   });
 
+  test('skips a raw record with an oversized saved-item kind', () async {
+    const itemId = 'oversized-kind-record';
+    await Hive.box<dynamic>('stashhive_items_v1').put(
+      itemId,
+      <String, Object?>{
+        'id': itemId,
+        'kind': List<String>.filled(100000, 'x').join(),
+        'title': 'Malformed type',
+        'content': '',
+        'tags': <String>[],
+        'isFavorite': false,
+        'createdAtMs': 1000,
+        'updatedAtMs': 1000,
+      },
+    );
+    await repository.save(buildLink(id: 'valid-beside-oversized-kind'));
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.skippedRecordCount.value, 1);
+    expect(repository.findById(itemId), isNull);
+    expect(
+      repository.items.value.map((item) => item.id),
+      ['valid-beside-oversized-kind'],
+    );
+  });
+
   test('skips malformed or mismatched raw records without hiding valid items', () async {
     await Hive.box<dynamic>('stashhive_items_v1').put(
       'unknown-kind',
