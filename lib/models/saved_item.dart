@@ -166,6 +166,14 @@ class SavedItem {
         'A saved item contains an invalid or oversized tag list.',
       );
     }
+    if (createdAtMs < minSavedItemTimestampMs ||
+        createdAtMs > maxSavedItemTimestampMs ||
+        updatedAtMs < minSavedItemTimestampMs ||
+        updatedAtMs > maxSavedItemTimestampMs) {
+      throw const FormatException(
+        'A saved item contains a timestamp outside the supported date range.',
+      );
+    }
 
     return <String, dynamic>{
       'id': id,
