@@ -1650,6 +1650,6 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - On an Android-targeted app launch, inject an exception while requesting the incoming-share stream, before a stream subscription is created.
 - Confirm the app remains on the local library, offers manual capture guidance, and hides raw plugin/channel diagnostics.
-- Confirm startup continues without an uncaught framework exception and the screen's normal navigation remains available.
+- Confirm startup continues without an uncaught framework exception, the screen's normal navigation remains available, and the independent launch-time intent read is still attempted even if the stream cannot start.
 - **Status:** Widget regression source is committed but unrun. Verify behavior against native plugin/channel failures and normal Android share delivery at the manual validation checkpoint.
 
