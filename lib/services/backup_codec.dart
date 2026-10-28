@@ -123,6 +123,11 @@ class BackupCodec {
     if (backup.collections.length > maxCollections) {
       throw const FormatException('The backup contains too many collections.');
     }
+    // Each item can reference at most one attachment, and orphan payloads
+    // are invalid, so a portable backup never needs more entries than items.
+    if (backup.attachments.length > maxItems) {
+      throw const FormatException('The backup contains too many attachment entries.');
+    }
     if (backup.omittedUnreadableRecordCount < 0 ||
         backup.omittedCollectionEntryCount < 0 ||
         backup.omittedUnexportableRecordCount < 0) {
@@ -468,6 +473,11 @@ class BackupCodec {
     }
     if (itemsValue.length > maxItems) {
       throw const FormatException('The backup contains too many items.');
+    }
+    // Attachment keys must all be referenced by saved items; no valid backup
+    // can have more unique attachment entries than it has saved-item records.
+    if (attachmentsValue.length > maxItems) {
+      throw const FormatException('The backup contains too many attachment entries.');
     }
 
     if (collectionsValue.length > 500) {
