@@ -375,7 +375,7 @@ class BackupCodec {
           'Only image and document items can contain an attachment.',
         );
       }
-      if (key.trim().isEmpty || key.length > 128) {
+      if (key.length > 128 || key.trim().isEmpty) {
         throw const FormatException('An attachment key is invalid.');
       }
       // Multiple saved items may intentionally reference the same attachment.
