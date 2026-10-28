@@ -2489,6 +2489,16 @@ void main() {
 
       expect(find.text('Retry preview'), findsOneWidget);
       expect(
+        tester
+            .getSemantics(
+              find.text(
+                'Preview unavailable. The original attachment is still saved and can be shared.',
+              ),
+            )
+            .hasFlag(SemanticsFlag.isLiveRegion),
+        isTrue,
+      );
+      expect(
         find.textContaining('secret transient preview storage detail'),
         findsNothing,
       );
