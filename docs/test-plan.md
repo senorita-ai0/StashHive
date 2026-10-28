@@ -1609,3 +1609,12 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Supply an iterable with many empty hints and confirm the helper inspects no more than `maxShareReviewHintCandidates` entries before returning a summary without details.
 - Confirm count summaries and the first three distinct, in-limit validation hints remain unchanged.
 - **Status:** Regression source is committed but unrun. Verify share feedback remains concise after malformed/unsupported batches on Android at the manual validation checkpoint.
+
+### TC-226 — Prevent overlapping backup export and restore UI operations
+
+- Start a backup export and pause it after the JSON has been prepared but before the export action returns.
+- Confirm the Restore action is disabled and says “Backup in progress…”. A second tap must not start the file picker.
+- While a restore is committing, confirm Create backup is disabled and shows “Restore in progress…”.
+- Release the active operation and confirm the opposite action becomes available again. The repository queue remains the data-integrity backstop; this UI guard prevents competing file picker/share-sheet flows.
+- **Status:** Widget regression source is committed but unrun. Verify native share-sheet and file-picker behavior on Android and browser flows during the manual checkpoint.
+
