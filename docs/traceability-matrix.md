@@ -1293,3 +1293,9 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-189 checks oversized initial queries return no results with clear feedback; the SavedItem unit regression covers the reusable normalized-query matcher.
 - **Verification:** Widget/model regression sources are committed but unrun. Measure search performance at 100/1,000/10,000 items and verify Unicode, paste behavior and accessibility on web/Android at the manual checkpoint.
 
+### TSK-480 — Recover from backup picker metadata errors
+
+- **Requirements:** FR-013 and NFR-003/NFR-006; unreadable file metadata during restore must not leave the backup screen stuck in a busy state or expose private provider diagnostics.
+- **Implementation:** The backup restore picker can be injected for regression coverage; the production path keeps its existing safe error handling and resets the choosing-backup state in `finally` after a length lookup failure.
+- **Regression:** TC-190 injects a `PlatformFile.length()` failure, verifies generic guidance and no data changes, then provides a valid backup and confirms that merge succeeds.
+- **Verification:** Widget regression source is committed but unrun. Verify actual provider metadata errors and retry behavior on web and Android during the manual validation checkpoint.
