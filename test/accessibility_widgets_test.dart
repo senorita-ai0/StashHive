@@ -137,7 +137,7 @@ void main() {
         find.textContaining('private native share channel detail'),
         findsNothing,
       );
-      expect(find.text('Search your library'), findsOneWidget);
+      expect(find.bySemanticsLabel('Search your library'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
