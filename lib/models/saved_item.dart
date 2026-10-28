@@ -117,6 +117,18 @@ class SavedItem {
   /// same lower-case query again for every saved record.
   bool matchesNormalizedQuery(String normalizedQuery) {
     if (normalizedQuery.length > maxSearchQueryCharacters) return false;
+    // Persisted records already meet these limits, but this model helper is
+    // public and can be called on a directly constructed invalid instance.
+    // Reject oversized searchable fields before allocating lower-case copies
+    // or constructing the combined searchable field list.
+    if (title.length > 500 ||
+        content.length > 1000000 ||
+        (url?.length ?? 0) > maxSavedItemUrlCharacters ||
+        (collection?.length ?? 0) > 80 ||
+        tags.length > 100 ||
+        tags.any((tag) => tag.length > 100)) {
+      return false;
+    }
     if (normalizedQuery.isEmpty) return true;
     final searchable = <String>[
       title,
