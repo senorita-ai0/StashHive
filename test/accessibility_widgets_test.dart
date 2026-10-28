@@ -874,6 +874,69 @@ void main() {
   );
 
   testWidgets(
+    'disables backup export while the backup file picker is open',
+    (tester) async {
+      final pickerStarted = Completer<void>();
+      final pendingPicker = Completer<PlatformFile?>();
+      var preparationHookCalls = 0;
+      app.backupFilePickerForTesting = () {
+        pickerStarted.complete();
+        return pendingPicker.future;
+      };
+      LibraryRepository.backupPreparedAtAfterWriteForTesting = () async {
+        preparationHookCalls++;
+      };
+      addTearDown(() {
+        app.backupFilePickerForTesting = null;
+        LibraryRepository.backupPreparedAtAfterWriteForTesting = null;
+        if (!pendingPicker.isCompleted) pendingPicker.complete(null);
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: app.BackupPrivacyPage(repository: repository),
+        ),
+      );
+      await tester.ensureVisible(find.text('Choose backup file'));
+      await tester.tap(find.text('Choose backup file'));
+      await tester.pump();
+      await pickerStarted.future;
+      await tester.pump();
+
+      expect(find.text('Choosing backup…'), findsOneWidget);
+      expect(find.text('Backup selection in progress…'), findsOneWidget);
+      final exportAction = find.ancestor(
+        of: find.text('Backup selection in progress…'),
+        matching: find.byType(FilledButton),
+      );
+      expect(exportAction, findsOneWidget);
+      expect(tester.widget<FilledButton>(exportAction).onPressed, isNull);
+
+      // Even a direct tap on the disabled-looking label must not start export.
+      await tester.tap(find.text('Backup selection in progress…'));
+      await tester.pump();
+      expect(preparationHookCalls, 0);
+      expect(find.text('Preparing…'), findsNothing);
+
+      pendingPicker.complete(null);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Choosing backup…'), findsNothing);
+      expect(find.text('Backup selection in progress…'), findsNothing);
+      final exportActionAfterCancel = find.ancestor(
+        of: find.text('Create backup'),
+        matching: find.byType(FilledButton),
+      );
+      expect(exportActionAfterCancel, findsOneWidget);
+      expect(
+        tester.widget<FilledButton>(exportActionAfterCancel).onPressed,
+        isNotNull,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'Backup & privacy shows backup preparation time without claiming destination save',
     (tester) async {
       final backupPage = () => MaterialApp(
