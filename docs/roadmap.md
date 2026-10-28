@@ -1260,3 +1260,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-219 verifies both JSON normalization and direct in-memory validation.
 - **Status:** Source and regression documentation committed but unrun. Confirm normal timestamp and older v1 backup compatibility at the manual validation checkpoint; CI remains manual-only.
 
+### TSK-508 — Check raw metadata lengths before normalization — 2026-10-28
+
+- **Requirements:** FR-012/FR-013 and NFR-003.
+- **Source:** Backup decoding, direct decoded-backup validation and backup collection normalization now check collection lengths before trimming; raw tag lengths are checked before whitespace normalization; attachment key/name/MIME lengths are checked before trimming. Local collection recovery, creation and rename also reject overlong strings before normalization.
+- **Regression:** TC-220 covers oversized tag/collection values, direct decoded-backup validation, export encoding and legacy collection preference recovery.
+- **Status:** Source and regression documentation committed but unrun. Validate malformed-import and local recovery behavior at the manual checkpoint; CI remains manual-only.
+
