@@ -27,6 +27,8 @@ class _ReadOnlyValueListenable<T> implements ValueListenable<T> {
       _source.removeListener(listener);
 }
 
+const int _maxCollectionPreferenceEntriesToInspect = 10000;
+
 class LibraryRepository {
   LibraryRepository._({
     required Box<dynamic> itemsBox,
@@ -336,7 +338,22 @@ class LibraryRepository {
     var skipped = 0;
 
     if (value is List) {
-      for (final rawName in value) {
+      // Legacy/corrupt preferences should not make every app launch scan an
+      // unbounded collection array. At most 10,000 entries are inspected;
+      // skipped entries remain in storage until a later collection mutation.
+      final scanLimit = value.length < _maxCollectionPreferenceEntriesToInspect
+          ? value.length
+          : _maxCollectionPreferenceEntriesToInspect;
+      var index = 0;
+      for (; index < scanLimit; index++) {
+        // Once all portable collection slots are occupied, every remaining
+        // preference entry would be skipped anyway; count the remainder
+        // without traversing it.
+        if (names.length >= BackupCodec.maxCollections) {
+          skipped += value.length - index;
+          break;
+        }
+        final rawName = value[index];
         if (rawName is! String || rawName.length > 80) {
           skipped++;
           continue;
@@ -350,11 +367,10 @@ class LibraryRepository {
           skipped++;
           continue;
         }
-        if (names.length >= BackupCodec.maxCollections) {
-          skipped++;
-          continue;
-        }
         names.add(name);
+      }
+      if (index == scanLimit && value.length > scanLimit) {
+        skipped += value.length - scanLimit;
       }
     } else if (value != null) {
       skipped++;
