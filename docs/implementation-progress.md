@@ -908,6 +908,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 
 - [x] SavedItem.matchesNormalizedQuery() now checks stored field dimensions and tag count/length before allocating the searchable-field list or lowercasing each stored value.
 - [x] Added model regression TC-234 for oversized title/content/tag values and an excessive tag count, while retaining an ordinary valid-search assertion.
+- [x] Corrected a malformed test declaration discovered in source review; the pre-normalized-query and oversized-query cases are now separate test blocks.
 - [x] Added traceability task TSK-521.
 - [ ] Run TC-234 with TC-221/TC-222/TC-233 and capture the pending search performance baseline at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
