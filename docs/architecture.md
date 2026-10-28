@@ -163,4 +163,4 @@ Before export, the repository blocks any remaining visible item assignment that 
 
 ## Product identity and compatibility
 
-The user-facing product brand is StashHive. Keep the existing `stashhive` Dart package identifier, Hive store keys (`stashhive_*_v1`) and version-1 JSON backup marker (`StashHive`) stable. Older StashHive backup files remain importable for compatibility. Any future change to package, storage or backup identifiers requires an explicit migration and compatibility plan.
+The user-facing product brand is StashHive. Keep the existing `stashhive` Dart package identifier, Hive store keys (`stashhive_*_v1`) and version-1 JSON backup marker (`StashHive`) stable. Backups created under the former StashTrail product name must remain importable. Any future change to package, storage or backup identifiers requires an explicit migration and compatibility plan.
