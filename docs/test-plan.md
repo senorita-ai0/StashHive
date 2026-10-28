@@ -1568,3 +1568,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm normal ISO timestamp values and older backups without this field remain compatible.
 - **Status:** Regression source is committed but unrun. Verify malformed timestamp handling alongside the malformed-backup and restore-preflight matrix at the manual validation checkpoint.
 
+### TC-220 — Check raw metadata lengths before normalization
+
+- Decode a backup containing a 100,000-character whitespace-only tag and one containing an oversized whitespace-only collection name. Confirm both are rejected with their documented fixed validation errors.
+- Validate a directly constructed decoded backup with an oversized collection name and an attachment whose name is oversized; confirm preflight rejects it before normalization/copying.
+- Call backup encoding with an oversized declared collection name and confirm the declared-name cap is applied before normalization.
+- Reopen a local repository whose collection preferences include an oversized whitespace-only name. Confirm the malformed entry is skipped/counts toward recovery feedback while valid collection names remain available.
+- **Status:** Regression source is committed but unrun. Verify malformed backup/local-preference recovery and storage behavior at the manual validation checkpoint.
+
