@@ -395,3 +395,10 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - [x] Shared imported attachment keys are cleaned once, and visible item/collection notifiers are refreshed after best-effort rollback so they reflect persisted state if storage refuses a deletion.
 - [x] Added repository regression **TC-154** and traceability task **TSK-446** for a staged-item deletion failure after a restore interruption.
 - [ ] Run TC-154 and the related restore/attachment regression set at the agreed manual validation checkpoint. No tests, formatter, analyzer, web build, or Android build were run for this change; CI remains manual-only.
+
+## Phase 3 — early acknowledgement of launch-time shares (2026-10-28)
+
+- [x] Launch-time incoming media is now reset/acknowledged immediately after retrieval, before Quick Save can wait on a user reviewing a long-running batch.
+- [x] A reset failure no longer discards media that was already fetched; delivery continues, with a possible replay acknowledged as a limitation if the plugin could not clear its stored intent.
+- [x] Added two service-level regression cases and documented **TC-155** / **TSK-447**.
+- [ ] Run the share-intake tests and verify app-stop/restart behavior on Android at the manual checkpoint. No tests, formatter, analyzer, or builds were run; CI remains manual-only.
