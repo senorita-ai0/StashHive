@@ -68,4 +68,4 @@ The visible product name is StashHive. Keep the existing `stashhive` package/sto
 
 ## Approval note
 
-These requirements are an actionable draft. Product source code must remain unstarted until the user approves the blueprint and confirms any material decisions identified in `docs/BLUEPRINT_REVIEW.md`.
+These requirements were approved for source implementation on 21 October 2026. Treat them as the current MVP acceptance criteria while the implementation is in progress. Platform feasibility and acceptance verification remain pending; material scope or acceptance changes still require the owner's agreement.
