@@ -779,7 +779,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 ## Phase 3 — reject oversized tag lists before serialization (2026-10-28)
 
 - [x] `BackupCodec.validateSavedItem()` now checks tag count and tag-length limits before calling `toMap()`, avoiding copying oversized caller-owned tag lists before rejection. The public save boundary already uses the same cheap dimensions before full item validation.
-- [x] Added codec regression **TC-215** using a list whose declared size exceeds the limit and whose element access throws if validation traverses it prematurely. Added traceability task **TSK-503**.
+- [x] Added codec regression **TC-215** using a list whose declared size exceeds the limit and whose element access throws if validation traverses it prematurely; covers item validation, backup encoding and in-memory decoded-backup validation. Added traceability task **TSK-503**.
 - [ ] Run TC-215 alongside direct save/backup encode/restore validation cases at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
 ## Phase 3 — cap backup attachment entry counts (2026-10-28)
