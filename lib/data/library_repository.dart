@@ -584,11 +584,11 @@ class LibraryRepository {
     var itemWriteAttempted = false;
 
     try {
-      if (key != null && attachmentSnapshot != null) {
-        // Set the flag before awaiting: the storage call may take effect and
-        // then report an error, in which case rollback still needs to run.
+      if (key != null && attachmentBytes != null) {
+        // Public save() owns the byte snapshot before queueing. Set the flag
+        // before awaiting: storage may commit and then report an error.
         attachmentWriteAttempted = true;
-        await _attachmentsBox.put(key, attachmentSnapshot);
+        await _attachmentsBox.put(key, attachmentBytes);
       }
       final beforeItemCommit = saveBeforeItemCommitForTesting;
       if (beforeItemCommit != null) await beforeItemCommit();
