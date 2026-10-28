@@ -493,7 +493,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 ## Phase 2/3 — bound incoming share processing before fingerprinting (2026-10-28)
 
 - [x] One operating-system share event is now limited to 100 entries in original order. Larger selections show a warning explaining that remaining items should be shared in smaller batches.
-- [x] Share-event fingerprinting now preflights item count, relevant field lengths and aggregate character budget before JSON/UTF-8 serialization. Oversized payloads bypass deduplication hashing and reach the normal validation/error path instead of allocating an unbounded fingerprint copy.
+- [x] Share-event fingerprinting now performs a length-only first pass over raw fields and aggregate character budget before any trimming/normalization or JSON/UTF-8 serialization. Oversized payloads (including many whitespace-only messages) bypass deduplication hashing and reach the normal validation/error path instead of allocating a large aggregate fingerprint copy.
 - [x] Text intake now accepts the provider's message as the effective content when the path is empty or unused. Unsupported video shares skip path parsing, and URL/provider-path/MIME limits are checked before trim/case-normalization work.
 - [x] Added regression source **TC-169** for the batch limit/order and oversized-text fingerprint bypass, plus **TC-170** for message-only text shares. Added traceability task **TSK-462**.
 - [ ] Run TC-169/TC-170 and verify real source-app MIME/path fields, batch warning/order and share cancellation on a physical Android device at the manual checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
