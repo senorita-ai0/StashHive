@@ -58,6 +58,12 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function(int index)? collectionBeforeItemWriteForTesting;
 
+  /// Fault-injection seam for collection rename/delete when the preference
+  /// write commits and then reports an error.
+  @visibleForTesting
+  static Future<void> Function()?
+      collectionAfterPreferencesWriteForTesting;
+
   /// Fault-injection seam for a delete failure after attachment removal.
   @visibleForTesting
   static Future<void> Function()? deleteAfterAttachmentDeleteForTesting;
@@ -725,6 +731,8 @@ class LibraryRepository {
         await _itemsBox.put(item.id, transform(item).toMap());
       }
       await _preferencesBox.put('collections', updatedCollections);
+      final afterPreferencesWrite = collectionAfterPreferencesWriteForTesting;
+      if (afterPreferencesWrite != null) await afterPreferencesWrite();
     } catch (_) {
       for (final id in attemptedItemIds.reversed) {
         try {
