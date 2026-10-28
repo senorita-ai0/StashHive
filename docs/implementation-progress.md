@@ -658,7 +658,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 
 ## Phase 2/3 — bound the combined share-review feedback (2026-10-28)
 
-- [x] Extracted a share-service summary builder for unsupported, invalid/unreadable and omitted counts, with singular/plural wording and at most three unique safe validation hints.
+- [x] Extracted a share-service summary builder for unsupported, invalid/unreadable and omitted counts, with singular/plural wording, at most three unique safe validation hints, and an eight-second display duration for the combined message.
 - [x] HomeShell now resets summary counters only when a non-empty combined message can be presented after the waiting queue drains.
 - [x] Added **TC-196** for bounded/deduplicated summary hints and **TC-197** for suppressing empty summaries; added traceability task **TSK-486**.
 - [ ] Run TC-196/TC-197 and complete the end-to-end manual share queue/accessibility case TC-195. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
