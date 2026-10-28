@@ -60,6 +60,9 @@ class LibraryRepository {
 
   final ValueNotifier<List<SavedItem>> items =
       ValueNotifier<List<SavedItem>>(<SavedItem>[]);
+  // Synchronous lookups use the last published item snapshot, not raw Hive
+  // records that may be temporarily staged inside an in-flight mutation.
+  final Map<String, SavedItem> _visibleItemsById = <String, SavedItem>{};
   final ValueNotifier<List<String>> collections =
       ValueNotifier<List<String>>(<String>[]);
   /// Raw local records skipped because their shape could not be read.
@@ -283,7 +286,17 @@ class LibraryRepository {
     }
     skippedRecordCount.value = skipped;
     result.sort((a, b) => b.updatedAtMs.compareTo(a.updatedAtMs));
-    items.value = List<SavedItem>.unmodifiable(result);
+    _publishVisibleItems(result);
+  }
+
+  void _publishVisibleItems(List<SavedItem> nextItems) {
+    final snapshot = List<SavedItem>.unmodifiable(nextItems);
+    // Update the index before notifying listeners so a synchronous lookup
+    // triggered by an items listener sees the same published revision.
+    _visibleItemsById
+      ..clear()
+      ..addEntries(snapshot.map((item) => MapEntry(item.id, item)));
+    items.value = snapshot;
   }
 
   void _refreshCollections() {
@@ -350,7 +363,7 @@ class LibraryRepository {
     if (normalizedItems.indexed.any(
       (entry) => !identical(entry.$2, items.value[entry.$1]),
     )) {
-      items.value = List<SavedItem>.unmodifiable(normalizedItems);
+      _publishVisibleItems(normalizedItems);
     }
     skippedCollectionCount.value = skipped;
     collections.value = List<String>.unmodifiable(names);
@@ -367,18 +380,12 @@ class LibraryRepository {
     return item;
   }
 
-  SavedItem? findById(String id) {
-    final value = _itemsBox.get(id);
-    if (value is! Map) return null;
-    try {
-      BackupCodec.validateStoredRecordMap(value);
-      final item = SavedItem.fromMap(value);
-      if (item.id != id) return null;
-      return _canonicalizeCollectionAssignment(item);
-    } catch (_) {
-      return null;
-    }
-  }
+  /// Returns the last published repository view of an item.
+  ///
+  /// Reading the raw box here would expose a staged item record between the
+  /// metadata write and the commit/rollback of its attachment relationship.
+  /// The visible index is updated together with [items] after each operation.
+  SavedItem? findById(String id) => _visibleItemsById[id];
 
   /// Selects a safe key for replacement bytes without overwriting another
   /// item's shared payload or an orphaned/corrupt attachment record.
