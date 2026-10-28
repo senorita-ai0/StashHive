@@ -1217,3 +1217,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm URL, text, provider path and MIME length checks occur before potentially large trim/case-normalization copies.
 - **Status:** Regression source is committed but unrun. Confirm provider-field conventions with real Android share sources at the manual checkpoint.
 
+### TC-171 — Keep attachment metadata and bytes consistent during backup export
+
+- Save an image, then begin replacing its attachment and item metadata with a repository operation paused after the item write.
+- Request backup export while the replacement is still pending and confirm the export waits for the repository mutation queue.
+- Release the write, decode the backup, and confirm the exported item metadata and attachment bytes both reflect the same completed edit.
+- **Status:** Repository regression source is committed but unrun. Validate backup consistency during concurrent saves/deletes/restores and real browser/Android storage operations at the manual checkpoint.
+
