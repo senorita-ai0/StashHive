@@ -984,6 +984,40 @@ void main() {
       );
     });
 
+    test('bounds optional exported-at metadata in decoded backups', () {
+      final largeTimestamp = List<String>.filled(100000, 'x').join();
+      final source = jsonEncode(<String, Object?>{
+        'app': 'StashHive',
+        'formatVersion': BackupCodec.formatVersion,
+        'exportedAt': largeTimestamp,
+        'collections': ['Learning'],
+        'items': [sampleLink().toMap()],
+        'attachments': <String, Object?>{},
+      });
+
+      final decoded = BackupCodec.decode(source);
+      expect(decoded.exportedAt, isEmpty);
+      expect(decoded.items, hasLength(1));
+      expect(decoded.items.single.id, sampleLink().id);
+
+      final directBackup = DecodedBackup(
+        items: [sampleLink()],
+        attachments: const <String, BackupAttachment>{},
+        collections: const ['Learning'],
+        exportedAt: largeTimestamp,
+      );
+      expect(
+        () => BackupCodec.validateDecodedBackup(directBackup),
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'The backup export timestamp is too long.',
+          ),
+        ),
+      );
+    });
+
     test('rejects unsafe or invalid URL schemes', () {
       final item = sampleLink().copyWith(url: 'javascript:alert(1)');
       final payload = <String, Object?>{
