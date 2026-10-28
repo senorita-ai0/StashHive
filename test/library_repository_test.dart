@@ -1171,7 +1171,7 @@ void main() {
     await repository.save(image, attachmentBytes: bytes);
 
     var readAttempts = 0;
-    LibraryRepository.readAttachmentBeforeReadForTesting = (key) async {
+    LibraryRepository.readAttachmentBeforeReadForTesting = (_) async {
       readAttempts++;
       if (readAttempts == 1) {
         throw StateError('simulated transient attachment read failure');
@@ -1203,7 +1203,7 @@ void main() {
     final firstReadEntered = Completer<void>();
     final releaseFirstRead = Completer<void>();
     var readStarts = 0;
-    LibraryRepository.readAttachmentBeforeReadForTesting = (key) async {
+    LibraryRepository.readAttachmentBeforeReadForTesting = (_) async {
       readStarts++;
       if (readStarts == 1) {
         firstReadEntered.complete();
