@@ -14,6 +14,7 @@ import 'bounded_bytes_reader.dart';
 const int maxIncomingAttachmentBytes = BackupCodec.maxAttachmentBytes;
 const int maxIncomingUrlCharacters = maxSavedItemUrlCharacters;
 const int maxIncomingTextCharacters = 1000000;
+const int maxIncomingProviderPathCharacters = 4096;
 
 /// Maximum number of entries reviewed from one operating-system share batch.
 /// Larger selections are truncated with a user-facing warning before queuing.
@@ -329,51 +330,87 @@ class ShareIntake {
   };
 
   static Future<IncomingShare?> fromSharedMedia(SharedMediaFile media) async {
-    final path = media.path.trim();
-    if (path.isEmpty) {
-      throw const FormatException('The shared item did not contain any content.');
+    // Video shares are not supported yet, and do not need their path parsed.
+    if (media.type == SharedMediaType.video) return null;
+
+    if (media.type == SharedMediaType.text) {
+      final rawMessage = media.message ?? '';
+      if (rawMessage.length > maxIncomingTextCharacters) {
+        throw const FormatException(
+          'Shared text is over the 1,000,000-character limit.',
+        );
+      }
+      final message = rawMessage.trim();
+      if (message.isNotEmpty) {
+        // Some providers place the effective text in message and leave path
+        // empty or populate it with unused metadata. Do not require/copy path.
+        return _fromText(message);
+      }
+
+      final rawText = media.path;
+      if (rawText.length > maxIncomingTextCharacters) {
+        throw const FormatException(
+          'Shared text is over the 1,000,000-character limit.',
+        );
+      }
+      final text = rawText.trim();
+      if (text.isEmpty) {
+        throw const FormatException('The shared text is empty.');
+      }
+      return _fromText(text);
     }
 
-    switch (media.type) {
-      case SharedMediaType.url:
-        if (path.length > maxIncomingUrlCharacters) {
-          throw const FormatException(
-            'Shared URLs must be 4,096 characters or shorter.',
-          );
-        }
-        final sharedContext = media.message?.trim() ?? '';
-        if (sharedContext.length > maxIncomingTextCharacters) {
-          throw const FormatException(
-            'Shared text is over the 1,000,000-character limit.',
-          );
-        }
-        final uri = _parseWebUrl(path);
-        if (uri == null) {
-          throw const FormatException('Only http and https links can be saved.');
-        }
-        if (uri.toString().length > maxIncomingUrlCharacters) {
-          throw const FormatException(
-            'Shared URLs must be 4,096 characters or shorter.',
-          );
-        }
-        return IncomingShare(
-          kind: ItemKind.link,
-          title: uri.host,
-          url: uri.toString(),
-          content: sharedContext,
+    if (media.type == SharedMediaType.url) {
+      final rawPath = media.path;
+      if (rawPath.length > maxIncomingUrlCharacters) {
+        throw const FormatException(
+          'Shared URLs must be 4,096 characters or shorter.',
         );
-      case SharedMediaType.text:
-        final text = (media.message?.trim().isNotEmpty ?? false)
-            ? media.message!.trim()
-            : path;
-        return _fromText(text);
-      case SharedMediaType.image:
-        return _fromFile(media, forceImage: true);
-      case SharedMediaType.file:
-        return _fromFile(media);
-      case SharedMediaType.video:
-        return null;
+      }
+      final path = rawPath.trim();
+      if (path.isEmpty) {
+        throw const FormatException(
+          'The shared item did not contain any content.',
+        );
+      }
+
+      final rawContext = media.message ?? '';
+      if (rawContext.length > maxIncomingTextCharacters) {
+        throw const FormatException(
+          'Shared text is over the 1,000,000-character limit.',
+        );
+      }
+      final sharedContext = rawContext.trim();
+      final uri = _parseWebUrl(path);
+      if (uri == null) {
+        throw const FormatException('Only http and https links can be saved.');
+      }
+      if (uri.toString().length > maxIncomingUrlCharacters) {
+        throw const FormatException(
+          'Shared URLs must be 4,096 characters or shorter.',
+        );
+      }
+      return IncomingShare(
+        kind: ItemKind.link,
+        title: uri.host,
+        url: uri.toString(),
+        content: sharedContext,
+      );
     }
+
+    final rawPath = media.path;
+    if (rawPath.length > maxIncomingProviderPathCharacters) {
+      throw const FormatException(
+        'The shared file path is too long to read safely.',
+      );
+    }
+    if (rawPath.trim().isEmpty) {
+      throw const FormatException('The shared item did not contain any content.');
+    }
+    if (media.type == SharedMediaType.image) {
+      return _fromFile(media, forceImage: true);
+    }
+    return _fromFile(media);
   }
 
   static IncomingShare _fromText(String text) {
@@ -458,7 +495,13 @@ class ShareIntake {
     final extension = fileName.contains('.')
         ? fileName.split('.').last.toLowerCase()
         : '';
-    final sharedMime = media.mimeType?.toLowerCase().trim() ?? '';
+    final rawSharedMime = media.mimeType ?? '';
+    if (rawSharedMime.length > 128) {
+      throw const FormatException(
+        'The shared file type metadata is too long to validate safely.',
+      );
+    }
+    final sharedMime = rawSharedMime.trim().toLowerCase();
     final guessedMime = guessMimeTypeFromExtension(extension);
     final hasRecognizedExtension =
         guessedMime != defaultBinaryMimeType;
