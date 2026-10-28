@@ -1701,3 +1701,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm direct model serialization and parsing accept both inclusive boundaries and preserve the exact timestamp values.
 - Confirm the existing TC-235–TC-237 cases still reject values one millisecond outside the range.
 - **Status:** Regression source is committed but unrun. Run at the manual validation checkpoint with the model, repository and backup timestamp suites.
+
+### TC-239 — Keep copied SavedItem tags immutable
+
+- Call SavedItem.copyWith() with a mutable replacement tag list, mutate the caller-owned list after the call, and confirm the copied item retains the submitted snapshot.
+- Call copyWith() without replacement tags on a directly constructed item with a mutable tag list, mutate the original list, and confirm the copied item remains unchanged.
+- Confirm attempts to mutate the copied item tag list throw UnsupportedError.
+- **Status:** Regression source is committed but unrun. Run with model round-trip, repository save snapshot and backup validation tests at the manual checkpoint.
