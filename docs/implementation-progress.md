@@ -421,3 +421,9 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - [x] Added regression **TC-158** for a collection rename with multiple assigned items and verified in source assertions that item maps, visible collections and raw preferences should roll back to their prior values.
 - [x] Added traceability task **TSK-451**.
 - [ ] Run TC-158 and related collection mutation regressions during the manual validation checkpoint. No tests, formatting, analyzer or builds were run; CI remains manual-only.
+
+## Phase 3 — serialize repository mutations against stale snapshots (2026-10-28)
+
+- [x] Added a per-repository asynchronous mutation queue around item save/delete, collection add/rename/delete and decoded backup restore. An operation releases the queue even when it throws, so a failed write does not permanently block later work.
+- [x] Added concurrency regression **TC-159** for two overlapping collection creation requests and traceability task **TSK-452**.
+- [ ] Run TC-159 and related repository mutation/rollback tests at the manual validation checkpoint. No tests, formatting, analyzer, web build or Android build were run; CI remains manual-only.
