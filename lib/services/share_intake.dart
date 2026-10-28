@@ -209,6 +209,15 @@ class ShareEventDeduplicator {
     return <Object?>[category, path, mimeType];
   }
 
+  List<Object?> _textItemFingerprint(SharedMediaFile item) {
+    final message = item.message?.trim() ?? '';
+    // When a provider has supplied the effective message, do not copy/trim an
+    // unused path that may be very large. Text intake uses the path only when
+    // the message field is empty.
+    final path = message.isNotEmpty ? '' : item.path.trim();
+    return _textFingerprint(path, message);
+  }
+
   List<Object?> _textFingerprint(String path, String message) {
     final effectiveText = message.isNotEmpty ? message : path;
     final urlCandidate =
@@ -246,25 +255,29 @@ class ShareEventDeduplicator {
     // Canonical JSON preserves field and batch boundaries before hashing.
     final canonical = jsonEncode(
       media.map((item) {
-        final path = item.path.trim();
-        final message = item.message?.trim() ?? '';
         return switch (item.type) {
-          // Text intake selects exactly one effective text field; ignore the
-          // unused path/message representation to match the actual draft.
-          SharedMediaType.text => _textFingerprint(path, message),
+          // Text intake uses only the message when present; keep unused provider
+          // paths out of temporary string copies and out of the fingerprint.
+          SharedMediaType.text => _textItemFingerprint(item),
           // URL and standalone-text URL shares should deduplicate when their
           // normalized web destination/context produces the same draft.
-          SharedMediaType.url => _urlFingerprint(path, message),
+          SharedMediaType.url => _urlFingerprint(
+              item.path.trim(),
+              item.message?.trim() ?? '',
+            ),
           // Image-intent and generic-file events can produce the same image
           // draft for the same path. Fingerprint that effective category rather
           // than the provider's raw type label.
           SharedMediaType.image ||
           SharedMediaType.file =>
-            _fileFingerprint(item, path),
+            _fileFingerprint(item, item.path.trim()),
           // Videos are currently skipped by intake, but keep their events
           // distinct from supported image/document drafts.
-          SharedMediaType.video =>
-            <Object?>[item.type.name, path, _effectiveFileMime(item)],
+          SharedMediaType.video => <Object?>[
+              item.type.name,
+              item.path.trim(),
+              _effectiveFileMime(item),
+            ],
         };
       }).toList(growable: false),
     );
