@@ -2445,6 +2445,65 @@ void main() {
   });
 
   testWidgets(
+    'retries an image preview after a transient attachment read failure',
+    (tester) async {
+      const item = SavedItem(
+        id: 'details-image-preview-retry',
+        kind: ItemKind.image,
+        title: 'Preview retry sample',
+        content: '',
+        tags: <String>[],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 10,
+        updatedAtMs: 11,
+        attachmentKey: 'details-image-preview-retry',
+        attachmentName: 'sample.png',
+        attachmentMimeType: 'image/png',
+      );
+      await repository.save(item, attachmentBytes: Uint8List.fromList([1, 2, 3]));
+
+      var readAttempts = 0;
+      LibraryRepository.readAttachmentBeforeReadForTesting = (_) async {
+        readAttempts++;
+        if (readAttempts == 1) {
+          throw StateError('secret transient preview storage detail');
+        }
+      };
+      addTearDown(() {
+        LibraryRepository.readAttachmentBeforeReadForTesting = null;
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: app.ItemDetailsPage(
+            repository: repository,
+            itemId: item.id,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('View image'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Retry preview'), findsOneWidget);
+      expect(
+        find.textContaining('secret transient preview storage detail'),
+        findsNothing,
+      );
+
+      await tester.tap(find.text('Retry preview'));
+      await tester.pumpAndSettle();
+
+      expect(readAttempts, 2);
+      expect(find.text('Retry preview'), findsNothing);
+      expect(find.byType(InteractiveViewer), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'Item Details reports attachment read failure without leaking storage details',
     (tester) async {
       final bytes = Uint8List.fromList([1, 2, 3, 4]);
