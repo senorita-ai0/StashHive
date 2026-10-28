@@ -43,6 +43,17 @@ String _messageForOperationError(
   return fallback;
 }
 
+/// Keeps backup feedback honest when the platform cannot prove delivery.
+@visibleForTesting
+String backupShareResultMessage(ShareResultStatus status) => switch (status) {
+      ShareResultStatus.success =>
+        'Backup share action completed. Check the destination to confirm the file arrived.',
+      ShareResultStatus.dismissed =>
+        'The share sheet was dismissed before a destination was confirmed. If you did not save the file, create a backup again and choose a destination.',
+      ShareResultStatus.unavailable =>
+        'The platform could not confirm whether the backup was saved or shared. Check the selected destination or Downloads; retry if the file is missing.',
+    };
+
 /// Combines the platform accessibility scaler with StashHive's optional
 /// extra text-size preference without lowering platform-provided scaling.
 class _PreferenceTextScaler extends TextScaler {
@@ -3735,11 +3746,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         ),
       );
       if (mounted) {
-        _message(
-          result.status == ShareResultStatus.success
-              ? 'Backup shared. Check the destination you selected.'
-              : 'Backup prepared. Choose a destination in the share sheet to keep it safe.',
-        );
+        _message(backupShareResultMessage(result.status));
       }
     } catch (error) {
       _message(
