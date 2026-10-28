@@ -981,7 +981,7 @@ void main() {
     });
 
     test(
-      'rejects more attachment entries than the item-count cap',
+      'rejects more attachment entries than saved items',
       () {
         final oneAttachment = BackupAttachment(
           name: 'orphan.bin',
@@ -1005,7 +1005,7 @@ void main() {
             isA<FormatException>().having(
               (error) => error.message,
               'message',
-              'The backup contains too many attachment entries.',
+              'The backup contains more attachment entries than saved items.',
             ),
           ),
         );
@@ -1029,7 +1029,7 @@ void main() {
             isA<FormatException>().having(
               (error) => error.message,
               'message',
-              'The backup contains too many attachment entries.',
+              'The backup contains more attachment entries than saved items.',
             ),
           ),
         );
