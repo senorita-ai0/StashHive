@@ -28,6 +28,24 @@ final class _FailingBackupLengthFile extends PlatformFile {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+final class _FailingBackupByteStreamFile extends PlatformFile {
+  _FailingBackupByteStreamFile();
+
+  @override
+  String get name => 'private-backup-stream-provider.json';
+
+  @override
+  Future<int> length() async => 16;
+
+  @override
+  Stream<Uint8List> readAsByteStream() => Stream<Uint8List>.error(
+        StateError('private backup byte stream location should not be shown'),
+      );
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 double _contrastRatio(Color first, Color second) {
   final a = first.computeLuminance();
   final b = second.computeLuminance();
@@ -467,6 +485,82 @@ void main() {
       );
       expect(find.text('Choosing backup…'), findsNothing);
       expect(repository.items.value, hasLength(1));
+      expect(tester.takeException(), isNull);
+
+      await tester.ensureVisible(find.text('Choose backup file'));
+      await tester.tap(find.text('Choose backup file'));
+      await tester.pumpAndSettle();
+
+      expect(pickerAttempts, 2);
+      expect(find.text('Merge this backup?'), findsOneWidget);
+      await tester.tap(find.text('Merge backup'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Restored 1 item.'), findsOneWidget);
+      expect(repository.items.value, hasLength(2));
+      expect(
+        repository.items.value.where((saved) => saved.title == item.title),
+        hasLength(2),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'recovers from a backup byte-stream failure and allows a retry',
+    (tester) async {
+      const item = SavedItem(
+        id: 'backup-stream-retry-source',
+        kind: ItemKind.link,
+        title: 'Backup stream retry source',
+        content: 'A saved item for read-failure coverage.',
+        url: 'https://example.com/backup-stream-retry',
+        tags: <String>['Backup'],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 200,
+        updatedAtMs: 201,
+      );
+      await repository.save(item);
+      final backupBytes = Uint8List.fromList(
+        utf8.encode(await repository.createBackup()),
+      );
+      var pickerAttempts = 0;
+      app.backupFilePickerForTesting = () async {
+        pickerAttempts++;
+        if (pickerAttempts == 1) return _FailingBackupByteStreamFile();
+        return PlatformFile(
+          name: 'retry-after-stream-error.json',
+          size: backupBytes.length,
+          bytes: backupBytes,
+        );
+      };
+      addTearDown(() {
+        app.backupFilePickerForTesting = null;
+      });
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: app.BackupPrivacyPage(repository: repository),
+        ),
+      );
+      await tester.ensureVisible(find.text('Choose backup file'));
+      await tester.tap(find.text('Choose backup file'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(
+          'Could not restore this backup. Check the selected file and try again.',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('private backup byte stream location should not be shown'),
+        findsNothing,
+      );
+      expect(find.text('Choosing backup…'), findsNothing);
+      expect(repository.items.value, hasLength(1));
+      expect(repository.findById(item.id), isNotNull);
       expect(tester.takeException(), isNull);
 
       await tester.ensureVisible(find.text('Choose backup file'));
