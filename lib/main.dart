@@ -383,6 +383,9 @@ class _HomeShellState extends State<HomeShell> {
   bool _processingShareBatches = false;
   Completer<void>? _activeShareBatchDone;
   int _pendingOmittedShareItemCount = 0;
+  int _pendingUnsupportedShareItemCount = 0;
+  int _pendingInvalidShareItemCount = 0;
+  final List<String> _pendingShareErrorHints = <String>[];
   bool _showStorageReminder = false;
 
   @override
@@ -499,15 +502,8 @@ class _HomeShellState extends State<HomeShell> {
           }
         }
       }
-      if (mounted &&
-          _pendingShareBatches.isEmpty &&
-          _pendingOmittedShareItemCount > 0) {
-        final omittedCount = _pendingOmittedShareItemCount;
-        _pendingOmittedShareItemCount = 0;
-        _showShareMessage(
-          'Incoming share batches omitted $omittedCount additional item(s) '
-          'beyond the review limit. Share the remaining items in smaller batches.',
-        );
+      if (mounted && _pendingShareBatches.isEmpty) {
+        _showPendingShareFeedback();
       }
     } finally {
       _processingShareBatches = false;
@@ -515,6 +511,49 @@ class _HomeShellState extends State<HomeShell> {
         unawaited(_drainShareQueue());
       }
     }
+  }
+
+  void _recordShareErrorHint(String message) {
+    final hint = message.trim();
+    if (hint.isEmpty ||
+        _pendingShareErrorHints.length >= 3 ||
+        _pendingShareErrorHints.contains(hint)) {
+      return;
+    }
+    _pendingShareErrorHints.add(hint);
+  }
+
+  void _showPendingShareFeedback() {
+    final parts = <String>[];
+    if (_pendingUnsupportedShareItemCount > 0) {
+      parts.add(
+        '$_pendingUnsupportedShareItemCount unsupported item(s) were skipped',
+      );
+    }
+    if (_pendingInvalidShareItemCount > 0) {
+      parts.add(
+        '$_pendingInvalidShareItemCount item(s) could not be prepared',
+      );
+    }
+    if (_pendingOmittedShareItemCount > 0) {
+      parts.add(
+        '$_pendingOmittedShareItemCount additional item(s) were omitted '
+        'because each share batch is limited to 100 items',
+      );
+    }
+    if (parts.isEmpty || !mounted) return;
+
+    final detail = _pendingShareErrorHints.isEmpty
+        ? ''
+        : ' Details: ${_pendingShareErrorHints.join(' ')}';
+    _pendingUnsupportedShareItemCount = 0;
+    _pendingInvalidShareItemCount = 0;
+    _pendingOmittedShareItemCount = 0;
+    _pendingShareErrorHints.clear();
+    _showShareMessage(
+      'Share review complete. ${parts.join('; ')}.$detail '
+      'You can add skipped items manually.',
+    );
   }
 
   Future<void> _presentSharedItem(List<SharedMediaFile> media) async {
@@ -528,9 +567,7 @@ class _HomeShellState extends State<HomeShell> {
         final incoming = await ShareIntake.fromSharedMedia(media[index]);
         if (!mounted) return;
         if (incoming == null) {
-          _showShareMessage(
-            'Item ${index + 1} of ${media.length} is not supported yet; it was skipped.',
-          );
+          _pendingUnsupportedShareItemCount++;
           continue;
         }
         final prepared = incoming.withShareProgress(
@@ -547,12 +584,12 @@ class _HomeShellState extends State<HomeShell> {
           ),
         );
       } on FormatException catch (error) {
-        _showShareMessage(
-          'Item ${index + 1} of ${media.length}: ${error.message}',
-        );
+        _pendingInvalidShareItemCount++;
+        _recordShareErrorHint(error.message.toString());
       } catch (_) {
-        _showShareMessage(
-          'Item ${index + 1} of ${media.length} could not be prepared and was skipped.',
+        _pendingInvalidShareItemCount++;
+        _recordShareErrorHint(
+          'Some shared items could not be read or prepared.',
         );
       }
     }
