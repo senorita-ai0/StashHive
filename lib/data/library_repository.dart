@@ -39,6 +39,12 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function()? restoreBeforeCollectionsCommitForTesting;
 
+  /// Fault-injection seam for a staged item deletion that fails during restore
+  /// rollback, so attachment cleanup can be checked against surviving references.
+  @visibleForTesting
+  static Future<void> Function(String itemId)?
+      restoreBeforeRollbackItemDeleteForTesting;
+
   /// Fault-injection seam for testing the save path after attachment bytes are
   /// staged but before the saved-item record is committed.
   @visibleForTesting
@@ -973,21 +979,34 @@ class LibraryRepository {
       await _preferencesBox.put('collections', mergedCollections);
     } catch (_) {
       // Every staged ID is guaranteed not to have existed before this restore.
-      // Attempt cleanup item-by-item so one rollback failure does not prevent
-      // cleanup attempts for other records or attachment payloads.
+      // Remove item records first so attachment cleanup can check all surviving
+      // references, including records whose rollback deletion itself failed.
       for (final entry in staged.reversed) {
         try {
+          final beforeRollbackItemDelete =
+              restoreBeforeRollbackItemDeleteForTesting;
+          if (beforeRollbackItemDelete != null) {
+            await beforeRollbackItemDelete(entry.item.id);
+          }
           await _itemsBox.delete(entry.item.id);
         } catch (_) {
           // Preserve the original restore error; don't mask the primary failure.
         }
-        final key = entry.item.attachmentKey;
-        if (key != null) {
-          try {
-            await _attachmentsBox.delete(key);
-          } catch (_) {
-            // Continue best-effort rollback of the remaining staged entries.
-          }
+      }
+      // Shared payload keys can be referenced by multiple imported records.
+      // Only reclaim a payload after all item-delete attempts and only when no
+      // surviving raw record (including an unreadable legacy-shaped record)
+      // still references it.
+      final rollbackAttachmentKeys = staged
+          .map((entry) => entry.item.attachmentKey)
+          .whereType<String>()
+          .toSet();
+      for (final key in rollbackAttachmentKeys) {
+        if (_hasAttachmentReference(key)) continue;
+        try {
+          await _attachmentsBox.delete(key);
+        } catch (_) {
+          // Continue best-effort rollback of the remaining attachment payloads.
         }
       }
       try {
@@ -1000,6 +1019,10 @@ class LibraryRepository {
         // Preserve the original restore error if preferences cannot be rolled
         // back. Storage-interruption recovery still requires platform testing.
       }
+      // A best-effort rollback can leave staged records behind if storage
+      // refuses deletion; keep the notifiers aligned with what is actually stored.
+      _refreshItems();
+      _refreshCollections();
       rethrow;
     }
     _refreshItems();
