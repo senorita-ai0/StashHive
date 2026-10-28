@@ -507,14 +507,14 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 
 ## Documentation consistency and dependency inventory (2026-10-28)
 
-- [x] Corrected stale StashTrail branding in the current architecture, security/privacy, risk, performance, AI workflow, blueprint and assumptions documents while preserving explicit legacy-backup compatibility wording.
+- [x] Corrected stale StashTrail branding in the project intake, architecture, security/privacy, risk, performance, AI workflow, blueprint, assumptions and design references/mockups while preserving explicit legacy-backup compatibility wording.
 - [x] Aligned the requirements document's approval status with the approved blueprint and the still-pending platform verification state.
 - [x] Added `docs/dependency-register.md` with the direct `pubspec.yaml` constraints, current Pub.dev license metadata, purpose and compatibility notes; linked it from the README and traceability matrix (**TSK-464**).
 - [ ] Complete the transitive license/security review after resolving and committing a dependency lockfile at the manual validation checkpoint. No package upgrades, tests, formatting, analysis or builds were run.
 
 ## Phase 3 — ignore share events received after disposal (2026-10-28)
 
-- [x] `HomeShell._enqueueShareBatch` now returns immediately when the host state is no longer mounted, covering an event that was already in flight while the stream subscription is being canceled.
+- [x] `HomeShell._enqueueShareBatch` now returns immediately when the host state is no longer mounted, covering an event that was already in flight while the stream subscription is being canceled. The active batch completer is also tracked and released during disposal, as are batches waiting in the queue.
 - [x] Added **TC-172** as a manual lifecycle scenario and traceability task **TSK-465**.
 - [ ] Exercise share-stream cancellation, app stop/restart and active-batch completion on Android at the manual validation checkpoint. No tests, formatter, analyzer or builds were run; CI remains manual-only.
 
