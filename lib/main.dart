@@ -1668,7 +1668,7 @@ class SavedItemTile extends StatelessWidget {
       ][month - 1];
 }
 
-class _ItemThumbnail extends StatelessWidget {
+class _ItemThumbnail extends StatefulWidget {
   const _ItemThumbnail({
     required this.item,
     required this.repository,
@@ -1680,10 +1680,46 @@ class _ItemThumbnail extends StatelessWidget {
   final double size;
 
   @override
+  State<_ItemThumbnail> createState() => _ItemThumbnailState();
+}
+
+class _ItemThumbnailState extends State<_ItemThumbnail> {
+  Future<Uint8List?>? _attachmentFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAttachment();
+  }
+
+  @override
+  void didUpdateWidget(covariant _ItemThumbnail oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.repository != widget.repository ||
+        !identical(oldWidget.item, widget.item) ||
+        oldWidget.item.id != widget.item.id ||
+        oldWidget.item.kind != widget.item.kind ||
+        oldWidget.item.attachmentKey != widget.item.attachmentKey ||
+        oldWidget.item.updatedAtMs != widget.item.updatedAtMs) {
+      _loadAttachment();
+    }
+  }
+
+  void _loadAttachment() {
+    final item = widget.item;
+    _attachmentFuture =
+        item.kind == ItemKind.image && item.attachmentKey != null
+            ? widget.repository.readAttachment(item.attachmentKey!)
+            : null;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final item = widget.item;
+    final size = widget.size;
     if (item.kind == ItemKind.image && item.attachmentKey != null) {
       return FutureBuilder<Uint8List?>(
-        future: repository.readAttachment(item.attachmentKey!),
+        future: _attachmentFuture,
         builder: (context, snapshot) {
           if (snapshot.data != null && snapshot.data!.isNotEmpty) {
             return ClipRRect(
@@ -1706,6 +1742,8 @@ class _ItemThumbnail extends StatelessWidget {
   }
 
   Widget _fallback() {
+    final item = widget.item;
+    final size = widget.size;
     return Container(
       height: size,
       width: size,
