@@ -1149,3 +1149,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** Quick Save captures the requested item kind and a revision number when opening the picker. A real type change increments the revision, and the picker request is checked after each asynchronous boundary before it may read or update the draft. Duplicate picker requests are ignored while one request is pending.
 - **Regression:** TC-164 in `test/quick_save_test.dart` delays the image picker result, changes the draft to Document, then confirms the outdated result is discarded before file I/O and cannot be saved as a document.
 - **Verification:** Widget regression source is committed but unrun; browser/Android picker interaction remains pending.
+
+
+### TSK-458 — Invalidate old picker requests even when the draft returns to its original type
+
+- **Requirement:** FR-008–009 and NFR-003; asynchronous attachment results must belong to the same draft selection that initiated the request, not merely match the currently selected type by coincidence.
+- **Implementation:** Quick Save uses an attachment-selection revision in addition to the requested item kind, so switching Image → Document → Image invalidates the original in-flight request.
+- **Regression:** TC-165 in `test/quick_save_test.dart` resolves an old Image picker after switching away and back, then checks that the result is discarded before file I/O.
+- **Verification:** Widget regression source is committed but unrun; real platform picker behavior is pending.
