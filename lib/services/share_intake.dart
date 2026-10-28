@@ -20,6 +20,13 @@ const int maxIncomingProviderPathCharacters = 4096;
 /// Larger selections are truncated with a user-facing warning before queuing.
 const int maxIncomingShareBatchItems = 100;
 
+/// Maximum waiting batches accepted while the user is reviewing earlier shares.
+/// The active batch is tracked separately from this waiting queue.
+const int maxPendingIncomingShareBatches = 8;
+
+bool hasCapacityForIncomingShareBatch(int pendingBatchCount) =>
+    pendingBatchCount < maxPendingIncomingShareBatches;
+
 /// Bound the input copied into a single de-duplication fingerprint. Oversized
 /// payloads go to normal validation without creating a large JSON/UTF-8 copy.
 const int _maxShareFingerprintCharacters =
