@@ -805,7 +805,7 @@ void main() {
       );
     });
 
-    test('rejects unknown format versions', () {
+    test('rejects unknown format versions with the numeric version', () {
       expect(
         () => BackupCodec.decode(jsonEncode({
           'app': 'StashHive',
@@ -813,7 +813,13 @@ void main() {
           'items': [],
           'attachments': {},
         })),
-        throwsFormatException,
+        throwsA(
+          isA<FormatException>().having(
+            (error) => error.message,
+            'message',
+            'Unsupported backup version: 999.',
+          ),
+        ),
       );
     });
 
