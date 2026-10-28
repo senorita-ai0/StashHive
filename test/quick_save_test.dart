@@ -429,6 +429,10 @@ void main() {
 
       expect(find.text('Selecting file…'), findsOneWidget);
       expect(
+        find.text('Checking file size and reading content…'),
+        findsOneWidget,
+      );
+      expect(
         find.byType(CircularProgressIndicator),
         findsWidgets,
         reason: 'The attachment picker shows local progress while selection is pending.',
