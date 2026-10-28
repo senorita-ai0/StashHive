@@ -1419,3 +1419,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-209 pauses delete after removing the raw item and attachment, confirms `findById` still returns the published item, then injects failure and verifies rollback restores the item and bytes.
 - **Verification:** Regression source is committed but unrun. Verify slow deletion/rollback and lookup behavior on web and Android during the manual checkpoint.
 
+### TSK-498 — Keep staged restore records out of the published lookup
+
+- **Requirements:** FR-013 and NFR-003; incoming records must not be visible to application callers until restore has completed its staged writes and committed the merged collection state.
+- **Implementation:** `findById` reads from the same published item index as the `items` notifier. Raw item records written during the restore staging phase remain hidden until the repository refresh publishes the committed snapshot.
+- **Regression:** TC-210 pauses restore after its raw item write, verifies lookup cannot see the staged record and existing items remain visible, then releases commit and checks the incoming item becomes visible.
+- **Verification:** Regression source is committed but unrun. Verify normal and interrupted restore visibility/rollback on web and Android during the manual checkpoint.
+
