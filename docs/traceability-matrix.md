@@ -1173,3 +1173,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** Quick Save keeps the form values when repository save fails, releases its saving state, restores interactive controls and reports safe recovery guidance. The save-pending route guard returns to its normal state when the failure handler unlocks the form.
 - **Regression:** TC-167 in `test/quick_save_test.dart` pauses a write, injects a late failure, checks the item rolls back and URL/note remain editable, then retries and confirms the draft saves.
 - **Verification:** Widget regression source is committed but unrun; real browser/Android storage failure and retry behavior remain pending.
+
+### TSK-461 — Show attachment selection progress and recover from picker errors
+
+- **Requirement:** FR-008 and NFR-006; file selection should communicate busy state, provide safe and actionable failure feedback, and allow recovery without discarding the draft.
+- **Implementation:** Quick Save now changes the attachment area's label and hint while a selected file is being checked, and shows an inline progress indicator instead of the idle upload icon.
+- **Regression:** TC-168 in `test/quick_save_test.dart` pauses the picker, injects an unexpected provider error, checks that the busy UI clears and raw details remain hidden, then retries with a valid image and verifies exact persisted bytes.
+- **Verification:** Widget regression source is committed but unrun; real picker and byte-stream failure behavior remains pending on Android and supported browsers/desktop platforms.
+
