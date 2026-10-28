@@ -1694,3 +1694,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Read `createdAt` and `updatedAt` directly and confirm each reports the fixed timestamp-range `FormatException` rather than leaking a lower-level date-construction error.
 - Confirm ordinary in-range timestamp fields remain unchanged and existing valid model behavior is preserved.
 - **Status:** Model regression source is committed but unrun. Validate alongside TC-235/TC-236 and repository recovery cases at the manual checkpoint.
+
+### TC-238 — Preserve inclusive timestamp boundaries
+
+- Create valid saved items with both timestamps set to the minimum supported millisecond value and, separately, the maximum supported value.
+- Confirm direct model serialization and parsing accept both inclusive boundaries and preserve the exact timestamp values.
+- Confirm the existing TC-235–TC-237 cases still reject values one millisecond outside the range.
+- **Status:** Regression source is committed but unrun. Run at the manual validation checkpoint with the model, repository and backup timestamp suites.
