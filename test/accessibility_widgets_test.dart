@@ -1854,6 +1854,61 @@ void main() {
     },
   );
 
+  testWidgets(
+    'image thumbnails reuse their attachment read across parent rebuilds',
+    (tester) async {
+      const image = SavedItem(
+        id: 'thumbnail-read-cache',
+        kind: ItemKind.image,
+        title: 'Thumbnail cache test',
+        content: '',
+        tags: <String>[],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 2,
+        attachmentKey: 'thumbnail-read-cache',
+        attachmentName: 'thumbnail.png',
+        attachmentMimeType: 'image/png',
+      );
+      await repository.save(image, attachmentBytes: Uint8List.fromList([1, 2, 3]));
+
+      var readCount = 0;
+      LibraryRepository.readAttachmentBeforeReadForTesting = (_) async {
+        readCount++;
+      };
+
+      try {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: StatefulBuilder(
+              builder: (context, rebuildParent) => app.LibraryPage(
+                repository: repository,
+                onAdd: (_) {},
+                onSearch: (_) => rebuildParent(() {}),
+                onOpenItem: (_) {},
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(readCount, 1);
+        await tester.tap(find.bySemanticsLabel('Search your library'));
+        await tester.pumpAndSettle();
+
+        expect(
+          readCount,
+          1,
+          reason: 'An unrelated parent rebuild should reuse the thumbnail future.',
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        LibraryRepository.readAttachmentBeforeReadForTesting = null;
+      }
+    },
+  );
+
   testWidgets('Item Details labels native attachment storage accurately', (tester) async {
     const item = SavedItem(
       id: 'attachment-storage-label',
