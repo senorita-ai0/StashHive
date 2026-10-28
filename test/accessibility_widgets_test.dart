@@ -246,6 +246,44 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets(
+    'text-size dropdown visibly restores the persisted choice after a write fails',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+      addTearDown(() => debugDefaultTargetPlatformOverride = null);
+
+      await tester.pumpWidget(
+        app.StashHiveApp(repository: repository, initialDarkMode: false),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Settings').last);
+      await tester.pumpAndSettle();
+
+      LibraryRepository.setTextScaleMultiplierAfterWriteForTesting = () async {
+        throw StateError('simulated text-size dropdown failure');
+      };
+      try {
+        final control = find.byType(DropdownButtonFormField<double>);
+        await tester.tap(control);
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Large').last);
+        await tester.pumpAndSettle();
+      } finally {
+        LibraryRepository.setTextScaleMultiplierAfterWriteForTesting = null;
+      }
+
+      expect(repository.textScaleMultiplier, 1.0);
+      expect(
+        tester.widget<DropdownButtonFormField<double>>(
+          find.byType(DropdownButtonFormField<double>),
+        ).initialValue,
+        1.0,
+      );
+      expect(find.text('System default'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('Text size preference supports Extra large and resets to system default', (tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.linux;
     addTearDown(() => debugDefaultTargetPlatformOverride = null);
