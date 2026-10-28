@@ -1553,3 +1553,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm an in-limit collection list still encodes and is normalized against item assignments as before.
 - **Status:** Codec regression source is committed but unrun. Check direct encoder limits and legacy collection normalization at the manual validation checkpoint.
 
+### TC-218 — Bound saved-item type fields before parsing
+
+- Construct a malformed backup whose saved-item `kind` field contains a very long string. Confirm decoding rejects it using a fixed size-limit message before `SavedItem.fromMap` can create an exception containing the value.
+- Construct a backup with a short but unknown kind and confirm the decoder reports a fixed invalid-type message rather than echoing the raw value.
+- Call model parsing with a non-string, oversized or unknown kind and confirm it produces the same bounded error.
+- Place a raw local record with an oversized kind beside a valid item; reopen the repository and confirm the malformed row is counted/skipped without hiding the valid item.
+- **Status:** Regression source is committed but unrun. Verify malformed import and legacy-record recovery at the manual validation checkpoint.
+
