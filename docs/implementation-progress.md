@@ -414,3 +414,10 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - [x] The kind-selection handler now does nothing if the requested item type is already selected, preserving a prefilled shared image/document and its metadata. Changing to a different kind still clears the old attachment selection.
 - [x] Added widget regression **TC-157** and traceability task **TSK-449**, covering a shared image whose active type is tapped before saving.
 - [ ] Run TC-156/TC-157 and related Quick Save tests at the manual validation checkpoint. Tests, formatting, analyzer and builds remain unrun; CI stays manual-only.
+
+## Phase 3 — late collection-preference failure coverage (2026-10-28)
+
+- [x] Added a collection mutation fault-injection seam after the preference write, exercising failures where the storage write may already have committed.
+- [x] Added regression **TC-158** for a collection rename with multiple assigned items and verified in source assertions that item maps, visible collections and raw preferences should roll back to their prior values.
+- [x] Added traceability task **TSK-451**.
+- [ ] Run TC-158 and related collection mutation regressions during the manual validation checkpoint. No tests, formatting, analyzer or builds were run; CI remains manual-only.
