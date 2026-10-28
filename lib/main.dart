@@ -1158,10 +1158,16 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   List<SavedItem> _search(List<SavedItem> items) {
-    final query = _controller.text;
+    final rawQuery = _controller.text;
+    // Avoid trimming/lowercasing a very large query or scanning every item
+    // when the input exceeds the supported search length.
+    if (rawQuery.length > maxSearchQueryCharacters) {
+      return const <SavedItem>[];
+    }
+    final normalizedQuery = rawQuery.trim().toLowerCase();
     final results = items.where((item) {
       final kindMatch = _filter == 'All' || item.kind.pluralLabel == _filter;
-      return kindMatch && item.matchesQuery(query);
+      return kindMatch && item.matchesNormalizedQuery(normalizedQuery);
     }).toList();
 
     final sortMode = switch (_sort) {
@@ -1212,6 +1218,16 @@ class _SearchPageState extends State<SearchPage> {
                           ),
                   ),
                 ),
+                if (_controller.text.length > maxSearchQueryCharacters) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    'Search text must be 4,096 characters or shorter.',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 14),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -1311,7 +1327,9 @@ class _SearchPageState extends State<SearchPage> {
                           Expanded(
                             child: results.isEmpty
                                 ? EmptySearchState(
-                                    hasQuery: _controller.text.trim().isNotEmpty,
+                                    hasQuery: _controller.text.length >
+                                            maxSearchQueryCharacters ||
+                                        _controller.text.trim().isNotEmpty,
                                     hasFilter: _filter != 'All',
                                     hasLibraryItems: items.isNotEmpty,
                                     onClear: () {
