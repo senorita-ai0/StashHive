@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173–TC-184 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-185 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -578,4 +578,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] The regression requests a backup during that pending operation and verifies the queued export waits, then contains the renamed collection and the matching saved-item assignment.
 - [x] Added traceability task **TSK-474** and updated the test plan.
 - [ ] Run TC-184 and verify backup consistency during collection changes on browser and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 2/3 — use effective text when provider path is oversized (2026-10-28)
+
+- [x] Added repository service regression **TC-185** for a text share whose message is valid but whose unused provider path exceeds the normal text bound.
+- [x] The regression checks deduplication bypasses fingerprint construction for oversized provider metadata while intake still constructs the note from the effective message.
+- [x] Added traceability task **TSK-475** and updated the test plan.
+- [ ] Run TC-185 and confirm provider-field behavior with browser-independent Android source apps at the manual checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
