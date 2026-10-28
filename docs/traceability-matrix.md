@@ -1120,3 +1120,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** The mutation queue resolves its release signal in a `finally` path; collection creation attempts to roll back a late preference-write failure before the next queued mutation can proceed.
 - **Regression:** TC-160 in `test/library_repository_test.dart` pauses the first collection add, injects a post-write failure, and checks the next queued add succeeds with only its own collection persisted.
 - **Verification:** Regression source is committed but unrun. Browser/Android persistence and rollback-write failure behavior remain pending.
+
+### TSK-454 — Serialize favorite reads and updates
+
+- **Requirement:** FR-004 and NFR-003; repeated item actions must apply to the latest persisted state instead of overwriting a preceding action calculated from a stale read.
+- **Implementation:** `LibraryRepository.toggleFavorite` now enters the repository mutation queue before reading the item and calls the internal save path within that same queued operation.
+- **Regression:** TC-161 calls `toggleFavorite` twice without awaiting either call and checks the final notifier and raw stored favorite value match the starting state.
+- **Verification:** Regression source is committed but unrun; interaction behavior and persistence require validation at the manual checkpoint.
