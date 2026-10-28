@@ -432,6 +432,11 @@ void main() {
         find.text('Please wait while the file is selected and checked'),
         findsOneWidget,
       );
+      final pickerSemantics = tester.getSemantics(
+        find.bySemanticsLabel('Selecting file…'),
+      );
+      expect(pickerSemantics.hasFlag(SemanticsFlag.isLiveRegion), isTrue);
+      expect(pickerSemantics.hasAction(SemanticsAction.tap), isFalse);
       expect(
         find.byType(CircularProgressIndicator),
         findsWidgets,
