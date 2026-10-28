@@ -1084,3 +1084,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** Backup restore's existing bounded byte-stream read and error/finally path has explicit coverage for the case where the provider returns a size successfully but fails while emitting bytes. The UI must retain the existing library, suppress raw provider details and allow a retry.
 - **Regression:** TC-192 injects a stream error, checks the library remains unchanged and then imports a valid backup after a second file-selection attempt.
 - **Status:** Regression source and roadmap entry committed but unrun. Verify actual native/web read failures at the manual checkpoint; CI remains manual-only.
+
+### TSK-483 — Block navigation during an active restore commit — 2026-10-28
+
+- **Requirements:** FR-013 and NFR-003/NFR-006.
+- **Source:** Backup & privacy disables the app-bar Back action and blocks system-back navigation after the restore merge is confirmed and the repository begins its staged write/commit phase. When restore completes or fails, the route becomes navigable again.
+- **Regression:** TC-193 pauses restore before collection commit, simulates system back and checks the page stays open while restoring, then confirms the restore completes.
+- **Status:** Source and regression documentation committed but unrun. Verify slow-storage and real Android back-gesture behavior at the manual checkpoint; CI remains manual-only.
