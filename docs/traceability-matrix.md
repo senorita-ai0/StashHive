@@ -12,7 +12,7 @@
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476, TSK-477 | TC-008, TC-122, TC-186, TC-187 | IN PROGRESS — bounded attachment reads and retry recovery are source-covered; platform validation pending |
-| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475, TSK-481 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185, TC-191 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; handles effective text, disposal and unusual file URIs; Android build/device test pending |
+| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475, TSK-481, TSK-484 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185, TC-191, TC-194 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; defers share truncation warning until review ends; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423, TSK-474 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471, TSK-472, TSK-473, TSK-474 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181, TC-182, TC-183, TC-184 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status and rollback-safe export concurrency added; execution and platform export pending |
@@ -1320,3 +1320,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** Backup & privacy wraps its route in `PopScope<bool>` with `canPop: !_restoring`; the app-bar Back action is also disabled during the commit. Navigation remains available again when restore finishes or fails.
 - **Regression:** TC-193 pauses restore before the collection commit, attempts both app-bar and system back, verifies the page remains in its restoring state, then releases the operation and checks successful completion.
 - **Verification:** Widget regression source is committed but unrun. Validate system-back gestures and slow-storage behavior on Android and web at the manual validation checkpoint.
+
+### TSK-484 — Show share truncation feedback after review completes
+
+- **Requirements:** FR-009 and NFR-006; feedback about an oversized multi-item share must remain visible and useful instead of appearing beneath a Quick Save route that immediately covers it.
+- **Implementation:** A queued share batch now retains its `skippedCount`. The truncation warning is shown when the whole batch has finished its sequential review and the host returns to the home screen, rather than before the first item route opens.
+- **Manual regression:** TC-194 shares more than 100 items, confirms the first 100 are reviewed sequentially, and checks the omitted-count warning appears after the last supported/unsupported entry has been handled.
+- **Verification:** Source change is committed; TC-194 remains a manual UX case. Confirm source-app batch behavior on a physical Android device at the validation checkpoint.
