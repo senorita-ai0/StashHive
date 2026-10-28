@@ -53,6 +53,15 @@ void main() {
       expect(item.matchesQuery('  '), isTrue);
     });
 
+    test('matches pre-normalized queries for reuse across items', () {
+      final item = makeItem(content: 'Research local storage');
+
+      expect(item.matchesNormalizedQuery('local storage'), isTrue);
+      expect(item.matchesNormalizedQuery('reading'), isTrue);
+      expect(item.matchesNormalizedQuery('missing'), isFalse);
+      expect(item.matchesNormalizedQuery(''), isTrue);
+    });
+
     test('trims padded legacy metadata without changing note content', () {
       final raw = makeItem(attachmentKey: 'sample-key').toMap();
       raw['title'] = '  A saved title  ';
