@@ -145,13 +145,18 @@ class StashHiveApp extends StatefulWidget {
 class _StashHiveAppState extends State<StashHiveApp> {
   late bool _darkMode = widget.initialDarkMode;
   late double _textScaleMultiplier = widget.repository.textScaleMultiplier;
+  int _darkModeRequestRevision = 0;
+  int _textScaleRequestRevision = 0;
 
   Future<void> _setTextScaleMultiplier(double value) async {
+    final requestRevision = ++_textScaleRequestRevision;
     setState(() => _textScaleMultiplier = value);
     try {
       await widget.repository.setTextScaleMultiplier(value);
     } catch (_) {
-      if (mounted) {
+      // A late failure from an older request must not roll back a newer,
+      // optimistic selection that is already queued behind it.
+      if (mounted && requestRevision == _textScaleRequestRevision) {
         setState(() {
           _textScaleMultiplier = widget.repository.textScaleMultiplier;
         });
@@ -160,14 +165,15 @@ class _StashHiveAppState extends State<StashHiveApp> {
   }
 
   Future<void> _setDarkMode(bool value) async {
+    final requestRevision = ++_darkModeRequestRevision;
     setState(() => _darkMode = value);
     try {
       await widget.repository.setDarkMode(value);
     } catch (_) {
-      // The repository attempts to roll back a failed preference write. Keep
-      // the visible theme aligned with whatever value remains persisted, and
-      // do not leak an unhandled async exception from the Switch callback.
-      if (mounted) {
+      // The repository attempts to roll back a failed preference write. Only
+      // the latest request may reset the visible theme; an older failure must
+      // not overwrite a newer queued user choice.
+      if (mounted && requestRevision == _darkModeRequestRevision) {
         setState(() => _darkMode = widget.repository.darkMode);
       }
     }
