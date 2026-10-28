@@ -885,7 +885,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 
 ## Phase 3 — recover from native share-stream setup failures (2026-10-28)
 
-- [x] Android share-intake startup now catches synchronous errors while obtaining/subscribing to the native event stream and shows safe guidance that manual capture remains available.
+- [x] Android share-intake startup now catches synchronous errors while obtaining/subscribing to the native event stream and shows safe guidance that manual capture remains available. It still attempts the independent launch-time share read, allowing cold-start capture to proceed if only stream setup fails.
 - [x] Initial-intent processing starts only after stream subscription setup succeeds, so stream setup failure does not also trigger a competing initial-read flow.
 - [x] Added widget regression **TC-231** and traceability task **TSK-518**.
 - [ ] Run TC-231 and verify native stream startup failures, subsequent ordinary manual capture and normal Android share delivery at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
