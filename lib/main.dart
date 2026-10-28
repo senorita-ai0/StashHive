@@ -93,6 +93,11 @@ Future<PlatformFile?> Function(ItemKind kind)? quickSaveAttachmentPickerForTesti
 @visibleForTesting
 Future<PlatformFile?> Function()? backupFilePickerForTesting;
 
+/// Test hook for simulating native share-stream setup failures. Production
+/// leaves this unset and uses receive_sharing_intent directly.
+@visibleForTesting
+Stream<List<SharedMediaFile>> Function()? incomingShareStreamForTesting;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -433,17 +438,27 @@ class _HomeShellState extends State<HomeShell> {
   }
 
   void _startShareIntake() {
-    _shareSubscription = ReceiveSharingIntent.instance.getMediaStream().listen(
-      (media) {
-        unawaited(_enqueueShareBatch(media));
-      },
-      onError: (Object _) {
-        _showShareMessage(
-          'Could not receive that share. You can still add the item manually.',
-        );
-      },
-    );
-    unawaited(_readInitialShare());
+    try {
+      final shareStream = incomingShareStreamForTesting?.call() ??
+          ReceiveSharingIntent.instance.getMediaStream();
+      _shareSubscription = shareStream.listen(
+        (media) {
+          unawaited(_enqueueShareBatch(media));
+        },
+        onError: (Object _) {
+          _showShareMessage(
+            'Could not receive that share. You can still add the item manually.',
+          );
+        },
+      );
+      unawaited(_readInitialShare());
+    } catch (_) {
+      // A plugin/channel can fail before it returns a stream. Keep the local
+      // library usable and give the user a manual capture path.
+      _showShareMessage(
+        'Sharing is unavailable right now. You can still add items manually.',
+      );
+    }
   }
 
   Future<void> _readInitialShare() async {
