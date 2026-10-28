@@ -1046,6 +1046,72 @@ void main() {
     );
   });
 
+  test('backup waits for a failed save to restore previous attachment state', () async {
+    final originalBytes = Uint8List.fromList([1, 4, 1, 4]);
+    final replacementBytes = Uint8List.fromList([2, 7, 1, 8]);
+    final original = buildImage(id: 'backup-save-rollback-race');
+    await repository.save(original, attachmentBytes: originalBytes);
+
+    final saveEntered = Completer<void>();
+    final releaseSaveFailure = Completer<void>();
+    LibraryRepository.saveAfterItemCommitForTesting = () async {
+      saveEntered.complete();
+      await releaseSaveFailure.future;
+      throw StateError('simulated late save failure');
+    };
+
+    final pendingSave = repository.save(
+      original.copyWith(title: 'Uncommitted replacement'),
+      attachmentBytes: replacementBytes,
+    );
+    await saveEntered.future;
+    final saveFailure = expectLater(
+      pendingSave,
+      throwsA(isA<StateError>()),
+    );
+
+    var backupCompleted = false;
+    final pendingBackup = repository.createBackup().then((source) {
+      backupCompleted = true;
+      return source;
+    });
+
+    try {
+      await Future<void>.delayed(Duration.zero);
+      expect(
+        backupCompleted,
+        isFalse,
+        reason: 'Backup must wait until the failed save has restored prior state.',
+      );
+    } finally {
+      if (!releaseSaveFailure.isCompleted) {
+        releaseSaveFailure.complete();
+      }
+    }
+
+    try {
+      await saveFailure;
+    } finally {
+      LibraryRepository.saveAfterItemCommitForTesting = null;
+    }
+
+    final source = await pendingBackup;
+    final decoded = BackupCodec.decode(source);
+
+    expect(decoded.items, hasLength(1));
+    expect(decoded.items.single.title, original.title);
+    expect(
+      decoded.attachments[original.attachmentKey!]!.bytes,
+      orderedEquals(originalBytes),
+      reason: 'The failed replacement bytes must not leak into the queued backup.',
+    );
+    expect(repository.findById(original.id)?.title, original.title);
+    expect(
+      await repository.readAttachment(original.attachmentKey!),
+      orderedEquals(originalBytes),
+    );
+  });
+
   test('backup waits for a failed delete to restore its item and attachment', () async {
     final originalBytes = Uint8List.fromList([4, 2, 4, 2]);
     final image = buildImage(id: 'backup-delete-rollback-race');
