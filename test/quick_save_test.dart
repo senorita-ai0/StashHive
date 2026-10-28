@@ -43,8 +43,8 @@ Future<void> openEditor(WidgetTester tester, SavedItem item) async {
             child: TextButton(
               key: const ValueKey('open-editor'),
               onPressed: () {
-                Navigator.of(context).push<void>(
-                  MaterialPageRoute<void>(
+                Navigator.of(context).push<bool>(
+                  MaterialPageRoute<bool>(
                     builder: (_) => app.QuickSavePage(
                       repository: repository,
                       existingItem: item,
@@ -81,8 +81,8 @@ Future<void> openNewLink(
             child: TextButton(
               key: const ValueKey('open-new-link'),
               onPressed: () {
-                Navigator.of(context).push<void>(
-                  MaterialPageRoute<void>(
+                Navigator.of(context).push<bool>(
+                  MaterialPageRoute<bool>(
                     builder: (_) => app.QuickSavePage(
                       repository: repository,
                       initialKind: ItemKind.link,
@@ -110,8 +110,8 @@ Future<void> openNewKind(WidgetTester tester, ItemKind kind) async {
             child: TextButton(
               key: const ValueKey('open-new-kind'),
               onPressed: () {
-                Navigator.of(context).push<void>(
-                  MaterialPageRoute<void>(
+                Navigator.of(context).push<bool>(
+                  MaterialPageRoute<bool>(
                     builder: (_) => app.QuickSavePage(
                       repository: repository,
                       initialKind: kind,
@@ -304,6 +304,14 @@ void main() {
         ).first,
       );
       expect(backButton.onPressed, isNull);
+
+      await tester.binding.handlePopRoute();
+      await tester.pump();
+      expect(
+        find.text('Saving…'),
+        findsOneWidget,
+        reason: 'A system back action must not dismiss an in-progress save.',
+      );
     } finally {
       if (!releaseSaveHook.isCompleted) releaseSaveHook.complete();
       LibraryRepository.saveAfterItemCommitForTesting = null;
@@ -380,8 +388,8 @@ void main() {
               child: TextButton(
                 key: const ValueKey('open-shared-image'),
                 onPressed: () {
-                  Navigator.of(context).push<void>(
-                    MaterialPageRoute<void>(
+                  Navigator.of(context).push<bool>(
+                    MaterialPageRoute<bool>(
                       builder: (_) => app.QuickSavePage(
                         repository: repository,
                         initialShare: share,
