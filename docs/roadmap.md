@@ -1238,3 +1238,11 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** Backup JSON decode and in-memory `DecodedBackup` validation now reject attachment maps with more entries than saved items before walking attachment keys. The portable format already rejects unreferenced payloads, and each saved item can reference at most one attachment.
 - **Regression:** TC-216 tests both a direct in-memory attachment map and a JSON backup whose attachment-entry count exceeds its item count.
 - **Status:** Source and regression plan committed but unrun. Validate malformed backup limits and restore error handling at the manual checkpoint; CI remains manual-only.
+
+### TSK-505 — Bound collection count before backup export normalization — 2026-10-28
+
+- **Requirements:** FR-012/FR-013 and NFR-003.
+- **Source:** Backup encoding now rejects raw collection lists over 500 before walking saved items. The normalizer streams the declared collection list and item-assigned collection names separately rather than spreading both into an intermediate list.
+- **Regression:** TC-217 provides an over-limit list whose indexed access throws and confirms the encoder returns the fixed collection-count error based on the list length alone.
+- **Status:** Source and regression documentation committed; TC-217 is authored but unrun. Confirm parity between direct encode/decode limits, older backup compatibility and restore behavior at the manual checkpoint.
+
