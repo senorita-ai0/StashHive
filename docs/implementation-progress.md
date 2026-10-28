@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-217 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-220 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -809,4 +809,12 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Direct in-memory `DecodedBackup` inputs with oversized timestamp metadata are rejected during restore preflight with a fixed validation error.
 - [x] Added regression source **TC-219** for JSON normalization and direct object validation, and traceability task **TSK-507**.
 - [ ] Run TC-219 with version-1 compatibility and malformed restore-input tests at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — preflight raw metadata lengths before normalization (2026-10-28)
+
+- [x] Backup JSON decode, direct decoded-backup validation and backup collection normalization now reject overlong collection names before calling trim.
+- [x] Strict raw item validation now rejects oversized tags before trim; direct attachment metadata validates key/name/MIME lengths before trimming.
+- [x] Local collection recovery and add/rename operations now reject overlong collection names before normalization, while continuing to count/skip malformed legacy preference entries.
+- [x] Added regressions **TC-220** covering oversized tag/collection/attachment metadata paths and local preference recovery; added traceability task **TSK-508**.
+- [ ] Run TC-220 with malformed backup, legacy preferences and restore-preflight coverage at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
