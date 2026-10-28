@@ -943,6 +943,59 @@ void main() {
     );
   });
 
+  test('creates a consistent backup after a pending attachment replacement', () async {
+    final originalBytes = Uint8List.fromList([1, 3, 5, 7]);
+    final replacementBytes = Uint8List.fromList([2, 4, 6, 8]);
+    final original = buildImage(id: 'backup-snapshot-race');
+    await repository.save(original, attachmentBytes: originalBytes);
+
+    final writeEntered = Completer<void>();
+    final releaseWrite = Completer<void>();
+    LibraryRepository.saveAfterItemCommitForTesting = () async {
+      writeEntered.complete();
+      await releaseWrite.future;
+    };
+
+    final edited = original.copyWith(title: 'Updated attachment metadata');
+    final pendingSave = repository.save(
+      edited,
+      attachmentBytes: replacementBytes,
+    );
+    await writeEntered.future;
+
+    var backupCompleted = false;
+    final pendingBackup = repository.createBackup().then((source) {
+      backupCompleted = true;
+      return source;
+    });
+    try {
+      await Future<void>.delayed(Duration.zero);
+      expect(
+        backupCompleted,
+        isFalse,
+        reason: 'Backup export must wait for the in-flight item/attachment commit.',
+      );
+    } finally {
+      if (!releaseWrite.isCompleted) releaseWrite.complete();
+    }
+
+    try {
+      await pendingSave;
+    } finally {
+      LibraryRepository.saveAfterItemCommitForTesting = null;
+    }
+    final source = await pendingBackup;
+    final decoded = BackupCodec.decode(source);
+
+    expect(decoded.items, hasLength(1));
+    expect(decoded.items.single.title, 'Updated attachment metadata');
+    expect(
+      decoded.attachments[original.attachmentKey]!.bytes,
+      orderedEquals(replacementBytes),
+      reason: 'Backup metadata and bytes must reflect the same committed edit.',
+    );
+  });
+
   test('snapshots caller-owned attachment bytes before storage awaits', () async {
     final callerBuffer = Uint8List.fromList([1, 2, 3, 4, 250]);
     final expected = Uint8List.fromList(callerBuffer);
