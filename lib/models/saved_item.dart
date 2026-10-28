@@ -107,8 +107,10 @@ class SavedItem {
   DateTime get updatedAt =>
       DateTime.fromMillisecondsSinceEpoch(updatedAtMs, isUtc: true).toLocal();
 
-  bool matchesQuery(String query) =>
-      matchesNormalizedQuery(query.trim().toLowerCase());
+  bool matchesQuery(String query) {
+    if (query.length > maxSearchQueryCharacters) return false;
+    return matchesNormalizedQuery(query.trim().toLowerCase());
+  }
 
   /// Matches an already trimmed, lower-case query. Search views can normalize
   /// once and reuse the result across many items instead of allocating the
