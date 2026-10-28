@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-222 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-223 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -830,4 +830,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] `SavedItem.matchesQuery` and `SavedItem.matchesNormalizedQuery` reject search queries over the existing 4,096-character limit before normalization or scanning saved fields; normal case-insensitive search remains unchanged.
 - [x] Added regression source **TC-222** and traceability task **TSK-510** for direct helper calls outside the form UI.
 - [ ] Run TC-222 with URL validation and search regressions at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — bound legacy collection preference recovery scans (2026-10-28)
+
+- [x] Repository initialization now inspects at most 10,000 raw collection preference entries in one recovery pass, and counts uninspected remainder as skipped instead of traversing it indefinitely.
+- [x] When all 500 supported collection slots are filled, any remaining raw entries are counted as skipped without further processing. Valid collection assignments from saved items are still merged after preference recovery, and the raw preference value is not rewritten during the recovery pass.
+- [x] Added regression source **TC-223** and traceability task **TSK-511** for a large duplicate list, skip-count accuracy, saved-item assignment preservation and raw preference retention.
+- [ ] Run TC-223 and inspect the recovery warning on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
