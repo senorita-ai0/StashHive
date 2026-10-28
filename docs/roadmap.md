@@ -1231,3 +1231,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** Shared item validation now bounds tag-list count and each tag length before `SavedItem.toMap()` copies the list. The public save boundary also performs the cheap tag-size preflight before full validation.
 - **Regression:** TC-215 passes a guard list whose declared count is above the maximum and expects the fixed validation error without any element traversal.
 - **Status:** Source and regression plan committed but unrun. Verify direct save, backup encode and restore validation at the manual checkpoint; CI remains manual-only.
+
+### TSK-504 — Bound the attachment-entry count in backups — 2026-10-28
+
+- **Requirements:** FR-013 and NFR-003.
+- **Source:** Backup JSON decode and in-memory `DecodedBackup` validation now reject more than 10,000 attachment entries before walking attachment keys. The portable format already rejects unreferenced payloads, and each saved item can reference at most one attachment.
+- **Regression:** TC-216 tests both an oversized attachment map passed directly to the validator and a JSON backup with more than 10,000 attachment entries.
+- **Status:** Source and regression plan committed but unrun. Validate malformed backup limits and restore error handling at the manual checkpoint; CI remains manual-only.
