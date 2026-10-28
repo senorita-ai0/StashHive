@@ -1207,6 +1207,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - Provide a batch with more than 100 entries and confirm the batch limiter preserves the first 100 items in original order and reports the remaining count instead of queuing the entire selection.
 - Provide oversized shared text to the event deduplicator and confirm it bypasses JSON/UTF-8 fingerprint construction, reaches normal input validation, and is rejected with the documented length error.
+- Provide a batch containing whitespace-only provider messages whose aggregate raw field length exceeds the fingerprint budget; confirm length preflight bypasses hashing before trimming those fields.
 - Confirm ordinary in-limit events still deduplicate during the short window.  
 - **Status:** Regression source is committed but unrun. Verify the warning and sequential review flow with Android source apps on a real device at the manual checkpoint.
 
