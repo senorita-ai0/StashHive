@@ -1680,7 +1680,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
       _kind == requestedKind;
 
   Future<void> _pickAttachment() async {
-    if (_pickingAttachment) return;
+    if (_saving || _pickingAttachment) return;
     final requestedKind = _kind;
     final requestRevision = _attachmentSelectionRevision;
     setState(() => _pickingAttachment = true);
@@ -1769,6 +1769,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
   }
 
   Future<void> _save() async {
+    if (_saving || _pickingAttachment) return;
     if (!_formKey.currentState!.validate()) return;
     final existing = widget.existingItem;
     final needsAttachment =
@@ -1897,7 +1898,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
       appBar: AppBar(
         leading: IconButton(
           tooltip: 'Back',
-          onPressed: () => Navigator.of(context).maybePop(),
+          onPressed: _saving ? null : () => Navigator.of(context).maybePop(),
           icon: const Icon(Icons.arrow_back_rounded),
         ),
         title: Text(isEditing ? 'Edit item' : 'Quick save'),
@@ -1905,7 +1906,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
           if (isEditing)
             IconButton(
               tooltip: 'Cancel',
-              onPressed: () => Navigator.of(context).pop(false),
+              onPressed: _saving ? null : () => Navigator.of(context).pop(false),
               icon: const Icon(Icons.close_rounded),
             ),
         ],
@@ -1950,6 +1951,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                   if (_kind == ItemKind.link) ...[
                     TextFormField(
                       controller: _urlController,
+                      enabled: !_saving,
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.next,
                       autocorrect: false,
@@ -1976,6 +1978,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                   ],
                   TextFormField(
                     controller: _titleController,
+                    enabled: !_saving,
                     textInputAction: TextInputAction.next,
                     maxLength: 500,
                     validator: _validateTitle,
@@ -1990,6 +1993,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _contentController,
+                    enabled: !_saving,
                     minLines: _kind == ItemKind.note ? 5 : 2,
                     maxLines: _kind == ItemKind.note ? 8 : 4,
                     maxLength: 1000000,
@@ -2015,6 +2019,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _tagsController,
+                    enabled: !_saving,
                     decoration: const InputDecoration(
                       labelText: 'Tags (optional)',
                       hintText: 'Design, Reading, Work',
@@ -2039,7 +2044,9 @@ class _QuickSavePageState extends State<QuickSavePage> {
                       for (final name in widget.repository.collections.value)
                         DropdownMenuItem<String?>(value: name, child: Text(name)),
                     ],
-                    onChanged: (value) => setState(() => _collection = value),
+                    onChanged: _saving
+                        ? null
+                        : (value) => setState(() => _collection = value),
                   ),
                   if (_kind == ItemKind.link) ...[
                     const SizedBox(height: 16),
@@ -2066,15 +2073,23 @@ class _QuickSavePageState extends State<QuickSavePage> {
                   ],
                   const SizedBox(height: 24),
                   FilledButton.icon(
-                    onPressed: _saving ? null : _save,
-                    icon: _saving
+                    onPressed: (_saving || _pickingAttachment) ? null : _save,
+                    icon: (_saving || _pickingAttachment)
                         ? const SizedBox(
                             height: 18,
                             width: 18,
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
                         : const Icon(Icons.check_rounded),
-                    label: Text(_saving ? 'Saving…' : isEditing ? 'Save changes' : 'Save to StashHive'),
+                    label: Text(
+                      _saving
+                          ? 'Saving…'
+                          : _pickingAttachment
+                              ? 'Selecting file…'
+                              : isEditing
+                                  ? 'Save changes'
+                                  : 'Save to StashHive',
+                    ),
                   ),
                   const SizedBox(height: 8),
                   TextButton(
@@ -2091,9 +2106,9 @@ class _QuickSavePageState extends State<QuickSavePage> {
   }
 
   void _selectKind(ItemKind kind) {
-    // Tapping the already-selected option is not a type change; in particular,
-    // preserve bytes prefilled by an incoming file share.
-    if (_kind == kind) return;
+    // A save captures the current draft; don't permit type changes while that
+    // snapshot is being persisted. Re-selecting a type otherwise remains a no-op.
+    if (_saving || _kind == kind) return;
     // Invalidate any picker result started for a previous draft type. This
     // also handles switching away and back before the native dialog completes.
     _attachmentSelectionRevision++;
@@ -2137,12 +2152,13 @@ class _QuickSavePageState extends State<QuickSavePage> {
                 width: width,
                 child: Semantics(
                   button: true,
+                  enabled: !_saving,
                   selected: _kind == kind,
                   label: kind.label,
-                  onTap: () => _selectKind(kind),
+                  onTap: _saving ? null : () => _selectKind(kind),
                   child: ExcludeSemantics(
                     child: InkWell(
-                      onTap: () => _selectKind(kind),
+                      onTap: _saving ? null : () => _selectKind(kind),
                       borderRadius: BorderRadius.circular(14),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -2210,13 +2226,17 @@ class _QuickSavePageState extends State<QuickSavePage> {
         : 'Select a file, up to 15 megabytes';
     return Semantics(
       button: true,
-      enabled: !_pickingAttachment,
+      enabled: !_saving && !_pickingAttachment,
       label: pickerLabel,
-      hint: _pickingAttachment ? 'A file selection is already in progress' : pickerHint,
-      onTap: _pickingAttachment ? null : _pickAttachment,
+      hint: _saving
+          ? 'Wait for the item to finish saving'
+          : _pickingAttachment
+              ? 'A file selection is already in progress'
+              : pickerHint,
+      onTap: (_saving || _pickingAttachment) ? null : _pickAttachment,
       child: ExcludeSemantics(
         child: InkWell(
-          onTap: _pickingAttachment ? null : _pickAttachment,
+          onTap: (_saving || _pickingAttachment) ? null : _pickAttachment,
           borderRadius: BorderRadius.circular(16),
           child: Container(
             padding: const EdgeInsets.all(16),
