@@ -1660,3 +1660,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Resolve the picker as canceled, confirm the busy state clears and navigation becomes available again, then navigate back normally.
 - **Status:** Widget regression source is committed but unrun. Verify native picker cancellation and route navigation on Android and supported browser/desktop platforms at the manual checkpoint.
 
+### TC-233 — Preflight direct SavedItem serialization dimensions
+
+- Construct a SavedItem with an overlong title and call toMap() directly, without the repository or backup codec; confirm a fixed field-limit error is raised before the map is returned.
+- Repeat with an overlong tag and with more than 100 tags; confirm tag limits reject both before a copied tag list is allocated.
+- Confirm ordinary toMap() output retains the existing field names and tags round-trip through SavedItem.fromMap().
+- **Status:** Model regression source is committed but unrun. Validate alongside TC-221 direct model parsing and TC-222 direct helper bounds at the manual checkpoint.
+
