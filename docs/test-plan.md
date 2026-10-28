@@ -1140,3 +1140,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Let the first operation throw after the write so it exercises its rollback path.
 - Confirm the second request did not start before the first failure was handled, then confirm it completes successfully and only the second collection remains in visible state and persisted preferences.
 - **Status:** Regression source is committed but unrun. Confirm failure recovery against browser/Android persistence during the manual validation checkpoint.
+
+### TC-161 — Simultaneous favorite toggles use the latest saved value
+
+- Start with one saved item and call `toggleFavorite` twice without awaiting the first call.
+- Confirm the two queued operations behave as two sequential user actions, so the final favorite value matches the original value.
+- Check the repository notifier and the raw stored item record agree.
+- **Status:** Regression source is committed but unrun. Validate repeated favorite actions during the manual persistence checkpoint.
