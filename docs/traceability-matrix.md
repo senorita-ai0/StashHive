@@ -1552,3 +1552,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-229 injects an unexpected repository read error while opening a saved document, checks safe feedback/no raw diagnostic leak, and verifies the original record and bytes remain intact.
 - **Verification:** Widget regression source is committed but unrun. Verify actual browser/Android storage-read errors and share recovery at the manual validation checkpoint.
 
+### TSK-517 — Retry transient image-preview read failures
+
+- **Requirements:** FR-011 and NFR-002/NFR-003; image preview should recover from transient local-storage failures without forcing the user to leave Item Details or losing the saved attachment.
+- **Implementation:** The image-preview dialog now provides a **Retry preview** action when the repository read fails. It starts a fresh repository read and updates both the dialog's FutureBuilder and the page's cached future so reopening the preview uses the latest attempt.
+- **Regression:** TC-230 injects a one-time attachment-read failure, checks safe feedback and hidden diagnostics, retries, and confirms the new read succeeds without a framework exception.
+- **Verification:** Widget regression source is committed but unrun. Verify real read-error recovery and assistive-technology feedback on web/Android during the manual validation checkpoint.
+
