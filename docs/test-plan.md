@@ -1653,3 +1653,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm startup continues without an uncaught framework exception, the screen's normal navigation remains available, and the independent launch-time intent read is still attempted even if the stream cannot start.
 - **Status:** Widget regression source is committed but unrun. Verify behavior against native plugin/channel failures and normal Android share delivery at the manual validation checkpoint.
 
+### TC-232 — Keep Quick Save open while attachment selection is pending
+
+- Open an Image draft and pause the file-picker request before it returns.
+- Confirm the in-form Back and Cancel actions are disabled and a simulated system-back action does not close the route while the picker is still pending.
+- Resolve the picker as canceled, confirm the busy state clears and navigation becomes available again, then navigate back normally.
+- **Status:** Widget regression source is committed but unrun. Verify native picker cancellation and route navigation on Android and supported browser/desktop platforms at the manual checkpoint.
+
