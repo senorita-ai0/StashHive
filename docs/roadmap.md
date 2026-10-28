@@ -1029,3 +1029,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-184 pauses a collection rename after persisted writes, queues a backup and verifies that the resulting export contains only the committed new collection assignment.
 - **Status:** Regression source is committed but unrun; browser/Android backup consistency remains pending the manual validation checkpoint.
 
+### TSK-475 — Preserve effective text when an unused provider path is oversized — 2026-10-28
+
+- **Requirements:** FR-009 and NFR-003.
+- **Source:** Text intake consumes the non-empty effective message before inspecting unused provider path metadata. Oversized inputs bypass fingerprint serialization and then follow normal intake validation.
+- **Regression:** TC-185 confirms a valid short message is retained as a note even when the unused provider path exceeds the text limit.
+- **Status:** Source behavior and regression are committed, but tests remain unrun. Verify against real Android source apps at the manual checkpoint.
+
