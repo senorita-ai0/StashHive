@@ -753,6 +753,24 @@ void main() {
     );
   });
 
+  test('serializes simultaneous favorite toggles from the latest record', () async {
+    final item = buildLink(id: 'favorite-double-toggle');
+    await repository.save(item);
+
+    final first = repository.toggleFavorite(item.id);
+    final second = repository.toggleFavorite(item.id);
+    await Future.wait<void>([first, second]);
+
+    final stored = repository.findById(item.id);
+    final raw = Hive.box<dynamic>('stashhive_items_v1').get(item.id) as Map;
+    expect(stored?.isFavorite, item.isFavorite);
+    expect(
+      repository.items.value.singleWhere((saved) => saved.id == item.id).isFavorite,
+      item.isFavorite,
+    );
+    expect(raw['isFavorite'], item.isFavorite);
+  });
+
   test('normalizes legacy collection names and counts malformed entries', () async {
     final preferences = Hive.box<dynamic>('stashhive_preferences_v1');
     await preferences.put(
