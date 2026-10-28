@@ -4117,7 +4117,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                           : _restoring
                               ? 'Restore in progress…'
                               : _choosingBackup
-                                  ? 'Choose backup first…'
+                                  ? 'Backup selection in progress…'
                                   : 'Create backup',
                       loading: _exporting,
                       onPressed: (_choosingBackup || _restoring)
