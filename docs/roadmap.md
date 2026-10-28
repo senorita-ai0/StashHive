@@ -1323,3 +1323,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-229 injects a storage-read error, checks the raw diagnostic is hidden, and verifies the saved attachment remains intact.
 - **Status:** Source and regression documentation committed; test remains unrun. Verify storage error recovery and ordinary attachment sharing on web and Android at the manual validation checkpoint. CI stays manual-only.
 
+### TSK-517 — Retry transient image-preview read failures — 2026-10-28
+
+- **Requirements:** FR-011 and NFR-002/NFR-003.
+- **Source:** Item Details' image-preview dialog now provides **Retry preview** when an attachment read fails. A retry starts a fresh repository read and updates the dialog and page cache so the failed Future is not reused.
+- **Regression:** TC-230 injects a one-time read failure, checks that safe feedback hides raw storage diagnostics, then retries and confirms the preview's attachment read succeeds.
+- **Status:** Source and regression documentation committed but unrun. Verify retry behavior, screen-reader feedback and image decoding on web/Android at the manual validation checkpoint. CI remains manual-only.
+
