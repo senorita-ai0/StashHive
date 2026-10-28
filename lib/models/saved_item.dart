@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 const int maxSavedItemUrlCharacters = 4096;
 const int maxSearchQueryCharacters = 4096;
+const int minSavedItemTimestampMs = -8640000000000000;
+const int maxSavedItemTimestampMs = 8640000000000000;
 
 enum ItemKind {
   link,
@@ -209,6 +211,19 @@ class SavedItem {
       );
     }
 
+    final createdAtValue = raw['createdAtMs'];
+    final updatedAtValue = raw['updatedAtMs'];
+    if ((createdAtValue is int &&
+            (createdAtValue < minSavedItemTimestampMs ||
+                createdAtValue > maxSavedItemTimestampMs)) ||
+        (updatedAtValue is int &&
+            (updatedAtValue < minSavedItemTimestampMs ||
+                updatedAtValue > maxSavedItemTimestampMs))) {
+      throw const FormatException(
+        'A saved item contains a timestamp outside the supported date range.',
+      );
+    }
+
     final tagsValue = raw['tags'];
     if (tagsValue is List) {
       if (tagsValue.length > 100 ||
@@ -244,8 +259,8 @@ class SavedItem {
               : (raw['collection'] as String).trim()
           : null,
       isFavorite: raw['isFavorite'] == true,
-      createdAtMs: raw['createdAtMs'] is int ? raw['createdAtMs'] as int : 0,
-      updatedAtMs: raw['updatedAtMs'] is int ? raw['updatedAtMs'] as int : 0,
+      createdAtMs: createdAtValue is int ? createdAtValue : 0,
+      updatedAtMs: updatedAtValue is int ? updatedAtValue : 0,
       attachmentKey: raw['attachmentKey'] is String
           ? raw['attachmentKey'] as String
           : null,
