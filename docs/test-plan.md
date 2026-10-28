@@ -1667,3 +1667,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm ordinary toMap() output retains the existing field names and tags round-trip through SavedItem.fromMap().
 - **Status:** Model regression source is committed but unrun. Validate alongside TC-221 direct model parsing and TC-222 direct helper bounds at the manual checkpoint.
 
+### TC-234 — Bound direct SavedItem search-field processing
+
+- Construct SavedItem instances directly with an overlong title, overlong content, one overlong tag and more than 100 tags.
+- Confirm matchesQuery() and matchesNormalizedQuery() reject these invalid searchable fields before building the searchable-field list or lowercasing stored values.
+- Confirm ordinary valid item search still succeeds.
+- **Status:** Model regression source is committed but unrun. Verify alongside TC-221 direct model parsing, TC-222 helper input limits and TC-233 direct serialization at the manual checkpoint.
+
