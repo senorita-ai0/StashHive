@@ -1,6 +1,6 @@
 # StashHive — Implementation Progress
 
-**As of:** 2026-10-28  
+**As of:** 2026-10-29  
 **Active phase:** Phase 3 — Platform assurance (Phase 2 sharing/build validation remains pending)  
 **Owner direction:** Develop features first; run CI/builds only when manually requested.
 
@@ -944,3 +944,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] `SavedItem.copyWith()` now copies tags into an unmodifiable list so external mutation of either the replacement list or the source item’s mutable list cannot silently mutate the copied model.
 - [x] Added regression **TC-239** and roadmap task **TSK-526**.
 - [ ] Run TC-239 with model, repository snapshot, backup encode/decode and restore tests at the manual validation checkpoint. No tests or builds were run for this change.
+
+## Phase 3 — model copy immutability and timestamp boundaries (2026-10-29)
+
+- [x] Added TC-238 for inclusive minimum/maximum supported timestamp round-trips through direct model serialization and parsing.
+- [x] Updated SavedItem.copyWith() to snapshot tags into an unmodifiable list, preventing caller-owned list mutations from changing the copied model after creation.
+- [x] Added TC-239 for replacement-list mutation, source-list mutation and direct mutation rejection; linked TSK-526 in the roadmap and FR-001/FR-002 traceability.
+- [ ] Run TC-238/TC-239 with model, repository snapshot, backup encode/decode and restore regression suites. Formatting, analyzer, unit tests, Python tests, web build and Android build remain unrun for these latest commits; CI remains manual-only.
