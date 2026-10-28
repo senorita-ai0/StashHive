@@ -1106,3 +1106,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `LibraryRepository._commitCollectionMutation` retains its rollback path and now exposes a fault-injection seam directly after the collection preference write to exercise late-failure recovery.
 - **Regression:** TC-158 in `test/library_repository_test.dart` simulates the post-commit failure during rename and checks both item maps, visible items/collections and the persisted collection preference.
 - **Verification:** Source regression authored but unrun; browser/Android storage interruption behavior remains pending.
+
+### TSK-452 — Serialize repository mutations to avoid lost updates
+
+- **Requirement:** FR-002–003, FR-010, FR-013 and NFR-003; simultaneous local operations must not derive updates from stale notifier snapshots and overwrite one another's item or collection changes.
+- **Implementation:** `LibraryRepository` uses a per-instance asynchronous mutation queue around item save/delete, collection add/rename/delete, and decoded backup restore. The queue releases after success or failure so one failed operation does not block later mutations.
+- **Regression:** TC-159 in `test/library_repository_test.dart` pauses the first collection creation after its write, requests a second, and checks neither operation overtakes the other and both names persist.
+- **Verification:** Source and test are committed but unrun; real browser/Android persistence remains pending.
