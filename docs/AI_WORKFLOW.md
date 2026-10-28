@@ -1,6 +1,6 @@
 # StashHive — AI Project Workflow
 
-Implementation was explicitly approved by the owner on 21 October 2026. BUILD mode is active for Phase 2; don't ask for the same approval again.
+Implementation was explicitly approved by the owner on 21 October 2026. BUILD mode remains active for Phase 2/3 source completion; do not ask for the same approval again. Keep GitHub Actions manual-only and defer tests, formatting, analysis and platform builds until the owner requests the validation checkpoint.
 
 ## Modes
 
