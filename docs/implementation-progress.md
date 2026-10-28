@@ -803,3 +803,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added regression source **TC-218** across model parsing, backup decoding and local-record recovery; added traceability task **TSK-506**.
 - [ ] Run TC-218 with malformed-backup and legacy-record recovery cases at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
+## Phase 3 — bound optional backup export timestamp metadata (2026-10-28)
+
+- [x] JSON backup decoding now retains optional `exportedAt` metadata only when it is 64 characters or shorter; missing, malformed or oversized timestamps become an empty informational value without discarding otherwise valid items.
+- [x] Direct in-memory `DecodedBackup` inputs with oversized timestamp metadata are rejected during restore preflight with a fixed validation error.
+- [x] Added regression source **TC-219** for JSON normalization and direct object validation, and traceability task **TSK-507**.
+- [ ] Run TC-219 with version-1 compatibility and malformed restore-input tests at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
