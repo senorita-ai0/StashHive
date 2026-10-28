@@ -3624,17 +3624,10 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
         if (confirmed != true || !mounted) return;
       }
 
+      // Repository export records the preparation time while it still owns
+      // the serialized snapshot operation, preventing the timestamp from
+      // being newer than a queued mutation that was absent from this backup.
       final json = await widget.repository.createBackup();
-      // Track successful file generation, not destination completion: the
-      // platform share sheet may be canceled or may not save to a file.
-      try {
-        await widget.repository.recordBackupPreparedAt(
-          DateTime.now().millisecondsSinceEpoch,
-        );
-      } catch (_) {
-        // Backup generation succeeded; failure to update this informational
-        // timestamp must not block the user from receiving the file.
-      }
       final name = 'stashhive-backup-' + DateTime.now().toUtc().toIso8601String().substring(0, 10) + '.json';
       final bytes = utf8.encode(json);
       final result = await SharePlus.instance.share(
