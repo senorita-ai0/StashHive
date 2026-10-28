@@ -752,7 +752,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 ## Phase 3 — make repository state read-only to UI consumers (2026-10-28)
 
 - [x] Changed the public item, collection and recovery-counter accessors from mutable `ValueNotifier` fields to stable read-only `ValueListenable` wrappers.
-- [x] Kept the underlying notifiers private so only repository mutations can replace published snapshots; normal listeners remain reactive and item/collection lists remain unmodifiable.
+- [x] Kept the underlying notifiers private and prevented consumers from downcasting the public wrappers; normal listeners remain reactive and item/collection lists remain unmodifiable.
 - [x] Added repository regression **TC-211** for listener notifications through the public interface and rejected direct edits to item/collection list snapshots. Added traceability task **TSK-499**.
 - [ ] Run TC-211 and confirm Library/Search/Collections/Settings widgets continue to update correctly using read-only listenables at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
