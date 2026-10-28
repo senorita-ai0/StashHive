@@ -645,6 +645,6 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 ## Phase 2/3 — show share truncation warning after review (2026-10-28)
 
 - [x] Share batches now carry their omitted-item count through the waiting queue instead of showing the warning just before Quick Save opens.
-- [x] The truncation warning is shown after sequential review finishes, when the host is back on the home screen, so it is not hidden by the first item route.
+- [x] Omitted counts are accumulated and the warning is shown after the waiting share queue drains, when the host is back on the home screen, so it is not hidden by a later item route.
 - [x] Added manual UX case **TC-194** and traceability task **TSK-484**.
 - [ ] Run TC-194 on a physical Android device with a share batch over 100 entries, including unsupported items. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
