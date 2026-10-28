@@ -956,13 +956,13 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-464 — Dependency inventory and project-document consistency — 2026-10-28
 
 - **Requirements:** NFR-010 and project documentation maintainability.
-- **Source/docs:** Added the direct dependency/license register, linked it from the README, updated the NFR-010 traceability row, corrected stale StashTrail branding in current project documents, and aligned requirements approval status with the approved blueprint.
+- **Source/docs:** Added the direct dependency/license register, linked it from the README, updated the NFR-010 traceability row, corrected stale StashTrail branding in project intake and all current design references/mockups, and aligned requirements approval status with the approved blueprint.
 - **Status:** Initial direct dependency inventory is committed. The transitive dependency graph, exact resolved versions and license/security audit are still open because no `pubspec.lock` is committed. Do not claim a completed license review until the lockfile and platform build checkpoint are available.
 
 ### TSK-465 — Guard share enqueue against host disposal — 2026-10-28
 
 - **Requirements:** FR-009 / NFR-003.
-- **Source:** Incoming share events are ignored once `HomeShell` is no longer mounted, preventing a late stream event from entering a queue whose consumer has been disposed.
+- **Source:** Incoming share events are ignored once `HomeShell` is no longer mounted, preventing a late stream event from entering a queue whose consumer has been disposed. The active batch completer is tracked and released during host disposal alongside waiting batches.
 - **Manual regression:** TC-172 covers stream cancellation, app stop/restart and active-batch completion.
 - **Status:** Source guard and manual case committed; Android plugin lifecycle behavior has not been tested on a device. CI remains manual-only by owner request.
 
