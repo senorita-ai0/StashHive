@@ -12,7 +12,7 @@
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417 | TC-008, TC-122 | IN PROGRESS — repository-owned byte snapshot source/test added; platform validation pending |
-| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465 | TC-009, TC-169, TC-170, TC-172 | IN PROGRESS — source has bounded share batches, bounded fingerprint work, effective-text fallback and a disposal guard; Android build/device test pending |
+| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466 | TC-009, TC-169, TC-170, TC-172, TC-173 | IN PROGRESS — source bounds batch size, fingerprint work and the waiting queue, handles effective text and disposal; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423 | TC-010, TC-131 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463 | TC-012, TC-117, TC-119, TC-120, TC-171 | IN PROGRESS — bounded-size source and mutation-consistent snapshot queue added; execution and platform export pending |
@@ -1201,4 +1201,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `_enqueueShareBatch` now exits when `HomeShell` is no longer mounted, covering a stream event already in flight during cancellation. The currently active batch completer is tracked and released during disposal along with waiting batches.
 - **Manual regression:** TC-172 exercises share-stream delivery racing with app-shell disposal, including an already-active batch's completion.
 - **Verification:** Source guard is committed; Android plugin cancellation, lifecycle and restart behavior remain pending physical-device validation.
+
+### TSK-466 — Bound the waiting queue for share batches
+
+- **Requirements:** FR-009 / NFR-003; incoming share events must not accumulate unbounded pending work while the user reviews existing content.
+- **Implementation:** The active share batch is tracked separately; the waiting queue admits at most `maxPendingIncomingShareBatches` (8) batches. Further unique events are declined with a clear instruction to finish current shares before sending more.
+- **Regression:** TC-173 checks queue admission at the exact capacity boundary and documents the required queue-full/FIFO/lifecycle device checks.
+- **Verification:** The queue-limit unit regression is committed but unrun; real stream ordering and capacity-recovery UX remain pending Android validation.
 
