@@ -1092,3 +1092,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `_QuickSavePageState._selectKind` in `lib/main.dart` clears the type-specific selected attachment, but retains the shared notes/content controller.
 - **Regression:** TC-156 in `test/quick_save_test.dart` enters note content, switches to Link and back to Note, and verifies the text remains without saving an item.
 - **Verification:** Source regression authored but unrun; keyboard/screen-reader and platform interaction review remain pending.
+
+### TSK-449 — Preserve attachment when current Quick Save kind is reselected
+
+- **Requirement:** FR-008–009 and NFR-003; reviewing or confirming the selected type must not silently discard a file already selected or supplied by an Android share.
+- **Implementation:** The Quick Save kind-selection handler now returns without mutating draft state when the chosen kind is already active. A real type change still clears type-specific attachment bytes and metadata.
+- **Regression:** TC-157 in test/quick_save_test.dart opens Quick Save with a prefilled image share, taps Image again, saves and checks that persisted attachment bytes are unchanged.
+- **Verification:** Regression source authored but unrun; real Android share integration and save behavior remain pending.
