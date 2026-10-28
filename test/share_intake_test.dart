@@ -328,6 +328,22 @@ void main() {
       expect(invalidTotal.shareTotal, 1);
     });
 
+    test('uses the message when a text share has an empty provider path', () async {
+      final result = await ShareIntake.fromSharedMedia(
+        SharedMediaFile(
+          path: '',
+          message: 'Read this later',
+          type: SharedMediaType.text,
+          mimeType: 'text/plain',
+        ),
+      );
+
+      expect(result, isNotNull);
+      expect(result!.kind, ItemKind.note);
+      expect(result.content, 'Read this later');
+      expect(result.url, isNull);
+    });
+
     test('preserves ordinary Unicode share text as a note draft', () async {
       const sharedText = 'قابلِ تلاش متن — Roman Urdu: mera khayal';
       final result = await ShareIntake.fromSharedMedia(
