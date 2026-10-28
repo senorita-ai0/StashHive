@@ -1111,3 +1111,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the previously entered text remains in the shared content field and no item was saved as a side effect of changing type.
 - Repeat from a file or image draft where optional notes are entered; changing type may clear the type-specific attachment selection, but should not silently erase shared content.
 - **Status:** Widget regression source is committed but unrun. Verify the interaction with keyboard, screen reader, and enlarged text during the manual checkpoint.
+
+### TC-157 — Reselecting the active type keeps a shared attachment
+
+- Open Quick Save using an incoming shared image or document so its attachment is prefilled.
+- Tap the already-selected **Image** or **Document** type option, then save the draft.
+- Confirm the attachment remains present, the correct item kind is saved, and the stored bytes match the originally shared payload.
+- **Status:** Widget regression source is committed but unrun. Validate with real Android image/document shares at the manual checkpoint.
