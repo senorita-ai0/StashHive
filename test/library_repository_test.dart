@@ -1046,6 +1046,67 @@ void main() {
     );
   });
 
+  test('backup waits for a failed delete to restore its item and attachment', () async {
+    final originalBytes = Uint8List.fromList([4, 2, 4, 2]);
+    final image = buildImage(id: 'backup-delete-rollback-race');
+    await repository.save(image, attachmentBytes: originalBytes);
+
+    final deleteEntered = Completer<void>();
+    final releaseDeleteFailure = Completer<void>();
+    LibraryRepository.deleteAfterAttachmentDeleteForTesting = () async {
+      deleteEntered.complete();
+      await releaseDeleteFailure.future;
+      throw StateError('simulated late delete failure');
+    };
+
+    final pendingDelete = repository.delete(image.id);
+    await deleteEntered.future;
+    final deleteFailure = expectLater(
+      pendingDelete,
+      throwsA(isA<StateError>()),
+    );
+
+    var backupCompleted = false;
+    final pendingBackup = repository.createBackup().then((source) {
+      backupCompleted = true;
+      return source;
+    });
+
+    try {
+      await Future<void>.delayed(Duration.zero);
+      expect(
+        backupCompleted,
+        isFalse,
+        reason: 'Backup must wait while delete rollback is still in progress.',
+      );
+      expect(repository.items.value, hasLength(1));
+    } finally {
+      if (!releaseDeleteFailure.isCompleted) {
+        releaseDeleteFailure.complete();
+      }
+    }
+
+    try {
+      await deleteFailure;
+      LibraryRepository.deleteAfterAttachmentDeleteForTesting = null;
+    } finally {
+      LibraryRepository.deleteAfterAttachmentDeleteForTesting = null;
+    }
+
+    final source = await pendingBackup;
+    final decoded = BackupCodec.decode(source);
+
+    expect(repository.items.value, hasLength(1));
+    expect(repository.findById(image.id)?.title, image.title);
+    expect(decoded.items, hasLength(1));
+    expect(decoded.items.single.id, image.id);
+    expect(
+      decoded.attachments[image.attachmentKey!]!.bytes,
+      orderedEquals(originalBytes),
+      reason: 'The backup must include the bytes restored after delete rollback.',
+    );
+  });
+
   test('snapshots caller-owned attachment bytes before storage awaits', () async {
     final callerBuffer = Uint8List.fromList([1, 2, 3, 4, 250]);
     final expected = Uint8List.fromList(callerBuffer);
