@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-210 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-211 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -748,4 +748,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] The regression asserts the incoming item remains absent from `findById` and the public list until commit, while the previously published item remains visible.
 - [x] Added traceability task **TSK-498** and documented the visibility invariant in the test plan.
 - [ ] Run TC-208–TC-210 and exercise public lookup consistency through delayed save, delete rollback and staged restore on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — make repository state read-only to UI consumers (2026-10-28)
+
+- [x] Changed the public item, collection and recovery-counter accessors from mutable `ValueNotifier` fields to read-only `ValueListenable` getters.
+- [x] Kept the underlying notifiers private so only repository mutations can replace published snapshots; normal listeners remain reactive and item/collection lists remain unmodifiable.
+- [x] Added repository regression **TC-211** for listener notifications through the public interface and rejected direct edits to item/collection list snapshots. Added traceability task **TSK-499**.
+- [ ] Run TC-211 and confirm Library/Search/Collections/Settings widgets continue to update correctly using read-only listenables at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
