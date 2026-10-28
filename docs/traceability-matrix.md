@@ -5,7 +5,7 @@
 | Requirement | Design / screen | Planned task | Test | Implementation status |
 |---|---|---|---|---|
 | FR-001 | SCR-001, SCR-004 | TSK-102, TSK-105 | TC-001 | IN PROGRESS — source added; build/test pending |
-| FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104, TSK-473, TSK-478, TSK-490, TSK-496, TSK-499 | TC-002, TC-183, TC-188, TC-201, TC-208, TC-211 | IN PROGRESS — URL/tag input bounds, repository-owned metadata snapshots, published item lookup and read-only state access are source-covered; build/test pending |
+| FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104, TSK-473, TSK-478, TSK-490, TSK-496, TSK-499, TSK-501 | TC-002, TC-183, TC-188, TC-201, TC-208, TC-211, TC-213 | IN PROGRESS — URL/tag input bounds, repository-owned metadata snapshots before queueing, published item lookup and read-only state access are source-covered; build/test pending |
 | FR-003 | SCR-004 | TSK-102, TSK-105, TSK-424, TSK-497 | TC-003, TC-132, TC-209 | IN PROGRESS — delete failure feedback and stable published lookup during delete rollback are source-covered; rollback/platform validation pending |
 | FR-004 | SCR-001, SCR-003, SCR-004 | TSK-103, TSK-201, TSK-416, TSK-444 | TC-004, TC-121, TC-152 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
 | FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427, TSK-479 | TC-005, TC-118, TC-135, TC-189 | IN PROGRESS — search normalizes once, bounds oversized queries and retains Unicode metadata search; execution/platform review pending |
@@ -25,7 +25,7 @@
 | FR-019 | SCR-001, SCR-002 | Later if approved | TC-019 | NOT STARTED / Could |
 | NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | IN PROGRESS — no backend/account integration in core source; offline and network inspection pending |
 | NFR-002 | SCR-006, SCR-004 | TSK-304, TSK-428, TSK-429, TSK-444, TSK-500 | TC-018, TC-136, TC-137, TC-152, TC-212 | IN PROGRESS — startup and routine operation messages hide raw unexpected diagnostics; malformed backup version errors now avoid echoing untrusted field content; privacy review pending |
-| NFR-003 | SCR-006, SCR-004 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426, TSK-444, TSK-482, TSK-483, TSK-487, TSK-488, TSK-489, TSK-490, TSK-491, TSK-493, TSK-496, TSK-497, TSK-498, TSK-499, TSK-500 | TC-012–015, TC-117, TC-120, TC-122, TC-134, TC-152, TC-192, TC-193, TC-198, TC-199, TC-200, TC-201, TC-202, TC-203, TC-205, TC-208–TC-212 | IN PROGRESS — bounded backups, owned-input snapshots, restore recovery, attachment-read consistency, published lookup visibility, read-only state and bounded malformed-input errors are source-covered; execution/platform verification pending |
+| NFR-003 | SCR-006, SCR-004 | TSK-006, TSK-301–305, TSK-413, TSK-415, TSK-417, TSK-426, TSK-444, TSK-482, TSK-483, TSK-487, TSK-488, TSK-489, TSK-490, TSK-491, TSK-493, TSK-496, TSK-497, TSK-498, TSK-499, TSK-500, TSK-501 | TC-012–015, TC-117, TC-120, TC-122, TC-134, TC-152, TC-192, TC-193, TC-198, TC-199, TC-200, TC-201, TC-202, TC-203, TC-205, TC-208–TC-213 | IN PROGRESS — bounded backups, owned-input snapshots before queue entry, restore recovery, attachment-read consistency, published lookup visibility, read-only state and bounded malformed-input errors are source-covered; execution/platform verification pending |
 | NFR-004 | SCR-004, SCR-006 | TSK-203, TSK-425, TSK-427 | TC-006, TC-017, TC-133, TC-135 | IN PROGRESS — platform-specific local-storage/search copy added; end-to-end wording review pending |
 | NFR-005 | SCR-001, SCR-003 | TSK-202, TSK-414 | TC-005, TC-016, TC-118 | IN PROGRESS — English/Urdu/Roman Urdu plus emoji/accent/punctuation source tests added; execution pending |
 | NFR-006 | All screens | TSK-103, TSK-304, TSK-443, TSK-468, TSK-484, TSK-485, TSK-486, TSK-487, TSK-492 | UI/accessibility checklist, TC-151, TC-175, TC-176, TC-177, TC-194–TC-198, TC-204 | IN PROGRESS — text scaling, queued-share feedback, restore navigation recovery and accessible attachment-loading status are source-covered; execution and platform checks pending |
@@ -1439,4 +1439,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** The decoder now requires `formatVersion` to be an integer before building an unsupported-version message. Non-integer values receive a fixed, concise validation message; unknown integer versions remain explicit.
 - **Regression:** TC-212 supplies a 100,000-character string as the version field and asserts a fixed invalid-version message rather than an error that repeats the untrusted field.
 - **Verification:** Codec regression source is committed but unrun. Confirm malformed/large backup handling and user-facing feedback at the manual validation checkpoint.
+
+### TSK-501 — Snapshot mutable save inputs before queueing
+
+- **Requirements:** FR-002 and NFR-003; a repository save must persist the values supplied when the operation is requested, even if it waits behind another storage operation.
+- **Implementation:** The public `save()` boundary now enforces cheap input bounds and owns a defensive snapshot of tags and attachment bytes before enqueueing the operation. The queued mutation consumes that snapshot rather than reading caller-owned collections after waiting.
+- **Regression:** TC-213 pauses an earlier save, enqueues an image save with mutable tags/bytes, mutates the original inputs, then confirms persisted metadata and attachment bytes match the submitted snapshot.
+- **Verification:** Regression source is committed but unrun. Verify queue-time snapshot behavior with delayed web/Android storage at the manual validation checkpoint.
 
