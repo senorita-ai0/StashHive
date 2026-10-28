@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-216 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171, TC-173–TC-193, TC-196–TC-217 are source-authored, not passed; TC-172, TC-194 and TC-195 are manual lifecycle/UX cases. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -787,4 +787,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] JSON backup decode and direct in-memory decoded-backup validation now reject attachment maps with more entries than saved items before iterating payload keys/metadata. Valid portable backups cannot need more unique attachments than saved items because orphan payloads are disallowed and an item has only one attachment key.
 - [x] Added codec regression **TC-216** for both oversized JSON attachment maps and directly constructed `DecodedBackup` objects. Added traceability task **TSK-504**.
 - [ ] Run TC-216 with the malformed backup, restore and size-limit regression set at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — reject oversized collection lists before backup normalization (2026-10-28)
+
+- [x] Backup encoding now checks the raw collection-entry count against the 500-entry portable limit before walking item records or normalizing caller-owned collection data.
+- [x] Collection normalization now streams declared names and item assignments separately instead of allocating a combined spread list before enforcing the cap.
+- [x] Added codec regression **TC-217** using an over-limit list whose item accessor throws, plus traceability task **TSK-505** in the matrix and roadmap.
+- [ ] Run TC-217 with direct encoder/decoder validation, legacy backup compatibility and restore tests at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
