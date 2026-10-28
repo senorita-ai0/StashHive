@@ -1496,3 +1496,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the injected failure and confirm rollback restores the item record, exact attachment bytes and published lookup.
 - **Status:** Repository regression source is committed but unrun. Verify lookup consistency during delete rollback and real slow-storage deletion on web and Android at the manual validation checkpoint.
 
+### TC-210 — Keep staged restore records out of synchronous lookup
+
+- Save an existing item, then begin restoring a backup that contains a new item and pause after the restore writes the staged item record but before the collection commit.
+- Confirm raw storage contains the incoming record but `findById` returns null and the public item list does not show the staged item.
+- Confirm lookups for previously published items remain stable during the pause.
+- Release the restore and confirm the incoming item appears through both `findById` and the items notifier only after the restore commits.
+- **Status:** Repository regression source is committed but unrun. Verify staged visibility and rollback behavior during restore on web and Android at the manual validation checkpoint.
+
