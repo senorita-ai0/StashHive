@@ -1043,3 +1043,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-186 confirms safe error feedback, cleared busy state, retained draft, successful retry, and exact persisted image bytes.
 - **Status:** Regression source is committed but unrun; verify failure and retry behavior on actual Android and supported browser/desktop pickers at the manual checkpoint.
 
+### TSK-477 — Recover from attachment byte-stream read failures — 2026-10-28
+
+- **Requirements:** FR-008 and NFR-003/NFR-006.
+- **Source:** Quick Save's bounded byte reader is already guarded by a safe error path. The new regression covers a provider whose size lookup succeeds but whose byte stream fails, ensuring the user can recover through a fresh selection rather than losing the draft or seeing private provider diagnostics.
+- **Regression:** TC-187 retries after a simulated stream failure and verifies the exact bytes persisted from the subsequent valid image.
+- **Status:** Source/test authored and committed, unrun. Confirm partial stream/provider failure behavior on Android and supported browser/desktop targets at the manual validation checkpoint. CI remains manual-only.
+
