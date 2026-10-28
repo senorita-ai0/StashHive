@@ -187,14 +187,39 @@ BoundedShareBatch boundIncomingShareBatch(List<SharedMediaFile> media) {
 /// accepted after the short de-duplication window.
 class ShareEventDeduplicator {
   ShareEventDeduplicator({
-    this.window = const Duration(seconds: 3),
-    this.maxEntries = 64,
-  })  : assert(window > Duration.zero),
-        assert(maxEntries > 0);
+    Duration window = const Duration(seconds: 3),
+    int maxEntries = 64,
+  })  : window = _validateWindow(window),
+        maxEntries = _validateMaxEntries(maxEntries);
 
   final Duration window;
   final int maxEntries;
   final Map<String, DateTime> _seen = <String, DateTime>{};
+
+  // These are public construction parameters; assert-only checks disappear in
+  // release builds. Validate them at runtime so invalid values cannot create
+  // a zero-capacity cache that fails while evicting its first entry.
+  static Duration _validateWindow(Duration value) {
+    if (value <= Duration.zero) {
+      throw ArgumentError.value(
+        value,
+        'window',
+        'Must be greater than zero.',
+      );
+    }
+    return value;
+  }
+
+  static int _validateMaxEntries(int value) {
+    if (value <= 0) {
+      throw ArgumentError.value(
+        value,
+        'maxEntries',
+        'Must be greater than zero.',
+      );
+    }
+    return value;
+  }
 
   bool _canFingerprint(List<SharedMediaFile> media) {
     if (media.length > maxIncomingShareBatchItems) return false;
