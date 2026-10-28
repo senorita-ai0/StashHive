@@ -591,7 +591,10 @@ class LibraryRepository {
     return Uint8List.fromList((value as List).cast<int>());
   }
 
-  Future<void> setDarkMode(bool value) async {
+  Future<void> setDarkMode(bool value) =>
+      _serializeMutation(() => _setDarkMode(value));
+
+  Future<void> _setDarkMode(bool value) async {
     final hadDarkModeKey = _preferencesBox.containsKey('darkMode');
     final previousValue = _preferencesBox.get('darkMode');
     try {
@@ -614,7 +617,10 @@ class LibraryRepository {
     }
   }
 
-  Future<void> setTextScaleMultiplier(double value) async {
+  Future<void> setTextScaleMultiplier(double value) =>
+      _serializeMutation(() => _setTextScaleMultiplier(value));
+
+  Future<void> _setTextScaleMultiplier(double value) async {
     const supported = <double>{1.0, 1.15, 1.3};
     if (!supported.contains(value)) {
       throw const FormatException(
