@@ -1176,3 +1176,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-207 injects a transient read error and confirms the next read succeeds with the original bytes.
 - **Status:** Source and regression committed but unrun. Check read-error recovery with real browser/Android storage at the manual validation checkpoint.
 
+### TSK-496 — Keep synchronous item lookups on the published repository snapshot — 2026-10-28
+
+- **Requirements:** FR-002/FR-003 and NFR-003.
+- **Source:** `findById` now resolves against an O(1) index of the last published item snapshot, updated before `items` listeners are notified. This avoids exposing raw Hive records staged inside a save before the repository finishes its commit/rollback and refresh.
+- **Regression:** TC-208 pauses an attachment replacement after the raw item write and confirms synchronous lookup still returns the old published item until the write completes.
+- **Status:** Source and regression plan committed but unrun. Validate delayed saves and rollback on web and Android at the manual checkpoint; CI remains manual-only.
+
