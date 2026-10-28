@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -7,6 +8,61 @@ import 'package:stashhive/services/share_intake.dart';
 
 void main() {
   group('ShareIntake', () {
+    test('acknowledges a launch-time share before review finishes', () async {
+      final events = <String>[];
+      final reviewGate = Completer<void>();
+      final media = <SharedMediaFile>[
+        SharedMediaFile(
+          path: 'https://example.com/launch-share',
+          type: SharedMediaType.url,
+          mimeType: 'text/uri-list',
+        ),
+      ];
+
+      final consuming = consumeInitialSharedMedia(
+        readInitialMedia: () async {
+          events.add('read');
+          return media;
+        },
+        resetInitialMedia: () async {
+          events.add('reset');
+        },
+        enqueue: (received) async {
+          expect(received, same(media));
+          events.add('enqueue');
+          await reviewGate.future;
+        },
+      );
+
+      await Future<void>.delayed(Duration.zero);
+      final orderBeforeReviewFinishes = List<String>.from(events);
+      reviewGate.complete();
+      await consuming;
+
+      expect(orderBeforeReviewFinishes, ['read', 'reset', 'enqueue']);
+    });
+
+    test('still queues a launch-time share when plugin reset fails', () async {
+      var queued = false;
+
+      await consumeInitialSharedMedia(
+        readInitialMedia: () async => <SharedMediaFile>[
+          SharedMediaFile(
+            path: 'https://example.com/reset-failure',
+            type: SharedMediaType.url,
+            mimeType: 'text/uri-list',
+          ),
+        ],
+        resetInitialMedia: () async {
+          throw StateError('simulated plugin acknowledgement failure');
+        },
+        enqueue: (received) async {
+          queued = received.isNotEmpty;
+        },
+      );
+
+      expect(queued, isTrue);
+    });
     test('accepts the URL length supported by backup format', () async {
       const prefix = 'https://example.com/';
       final url = prefix +
