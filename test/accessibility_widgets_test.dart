@@ -175,6 +175,7 @@ void main() {
       final switchFinder = find.byType(Switch);
       final firstWriteEntered = Completer<void>();
       final releaseFirstFailure = Completer<void>();
+      final allWritesEntered = Completer<void>();
       var hookCalls = 0;
       LibraryRepository.setDarkModeAfterWriteForTesting = () async {
         hookCalls++;
@@ -182,6 +183,9 @@ void main() {
           firstWriteEntered.complete();
           await releaseFirstFailure.future;
           throw StateError('simulated older theme write failure');
+        }
+        if (hookCalls == 3 && !allWritesEntered.isCompleted) {
+          allWritesEntered.complete();
         }
       };
 
@@ -199,6 +203,7 @@ void main() {
         expect(tester.widget<Switch>(switchFinder).value, isTrue);
 
         releaseFirstFailure.complete();
+        await allWritesEntered.future;
         await tester.pumpAndSettle();
       } finally {
         if (!releaseFirstFailure.isCompleted) releaseFirstFailure.complete();
@@ -304,6 +309,7 @@ void main() {
       final control = find.byType(DropdownButtonFormField<double>);
       final firstWriteEntered = Completer<void>();
       final releaseFirstFailure = Completer<void>();
+      final allWritesEntered = Completer<void>();
       var hookCalls = 0;
       LibraryRepository.setTextScaleMultiplierAfterWriteForTesting = () async {
         hookCalls++;
@@ -311,6 +317,9 @@ void main() {
           firstWriteEntered.complete();
           await releaseFirstFailure.future;
           throw StateError('simulated older text-size write failure');
+        }
+        if (hookCalls == 2 && !allWritesEntered.isCompleted) {
+          allWritesEntered.complete();
         }
       };
 
@@ -332,6 +341,7 @@ void main() {
         );
 
         releaseFirstFailure.complete();
+        await allWritesEntered.future;
         await tester.pumpAndSettle();
       } finally {
         if (!releaseFirstFailure.isCompleted) releaseFirstFailure.complete();
