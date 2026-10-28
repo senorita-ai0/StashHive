@@ -71,12 +71,12 @@ enum ItemKind {
 
 @immutable
 class SavedItem {
-  const SavedItem({
+  SavedItem({
     required this.id,
     required this.kind,
     required this.title,
     required this.content,
-    required this.tags,
+    required List<String> tags,
     required this.isFavorite,
     required this.createdAtMs,
     required this.updatedAtMs,
@@ -85,7 +85,7 @@ class SavedItem {
     this.attachmentKey,
     this.attachmentName,
     this.attachmentMimeType,
-  });
+  }) : tags = List<String>.unmodifiable(tags);
 
   final String id;
   final ItemKind kind;
