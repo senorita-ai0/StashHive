@@ -562,20 +562,24 @@ class BackupCodec {
       final mimeType = value['mimeType'];
       final encoded = value['base64'];
       final checksum = value['sha256'];
-      if (key.trim().isEmpty ||
-          key.length > 128 ||
+      if (key.length > 128 ||
           name is! String ||
-          name.trim().isEmpty ||
-          name.length > 255 ||
+          (name as String).length > 255 ||
           mimeType is! String ||
-          mimeType.trim().isEmpty ||
-          mimeType.length > 128 ||
+          (mimeType as String).length > 128 ||
           encoded is! String ||
           encoded.length > ((maxAttachmentBytes * 4 ~/ 3) + 8) ||
           (checksum != null &&
               (checksum is! String ||
                   checksum.length != 64 ||
                   !RegExp(r'^[0-9a-fA-F]{64}').hasMatch(checksum)))) {
+        throw const FormatException('An attachment entry exceeds supported limits.');
+      }
+      final attachmentName = name as String;
+      final attachmentMimeType = mimeType as String;
+      if (key.trim().isEmpty ||
+          attachmentName.trim().isEmpty ||
+          attachmentMimeType.trim().isEmpty) {
         throw const FormatException('An attachment entry exceeds supported limits.');
       }
       final remainingBytes = maxTotalAttachmentBytes - totalBytes;
@@ -608,8 +612,8 @@ class BackupCodec {
         throw const FormatException('Combined attachments exceed 100 MB.');
       }
       attachments[key] = BackupAttachment(
-        name: name,
-        mimeType: mimeType,
+        name: attachmentName,
+        mimeType: attachmentMimeType,
         bytes: bytes,
       );
       // jsonDecode keeps the original base64 strings in its dynamic tree.
