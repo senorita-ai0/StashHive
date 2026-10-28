@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 are source-authored, not passed; TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -517,4 +517,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] `HomeShell._enqueueShareBatch` now returns immediately when the host state is no longer mounted, covering an event that was already in flight while the stream subscription is being canceled. The active batch completer is also tracked and released during disposal, as are batches waiting in the queue.
 - [x] Added **TC-172** as a manual lifecycle scenario and traceability task **TSK-465**.
 - [ ] Exercise share-stream cancellation, app stop/restart and active-batch completion on Android at the manual validation checkpoint. No tests, formatter, analyzer or builds were run; CI remains manual-only.
+
+## Phase 2/3 — cap queued incoming share batches (2026-10-28)
+
+- [x] Added `maxPendingIncomingShareBatches = 8` for waiting batches; the active batch is tracked independently, so repeated distinct events cannot grow the waiting queue without a limit while a user reviews prior shares.
+- [x] Events arriving at queue capacity are rejected with a recoverable message to finish current shares before sending more.
+- [x] Added unit regression source **TC-173** for queue admission at and beyond the configured capacity; traced as **TSK-466**.
+- [ ] Run TC-173 and verify queue-full feedback, FIFO draining and teardown recovery with real Android share events. No tests, formatter, analyzer or builds were run; CI remains manual-only.
 
