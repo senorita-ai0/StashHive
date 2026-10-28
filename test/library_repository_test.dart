@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:stashhive/data/library_repository.dart';
@@ -77,6 +78,42 @@ void main() {
     await Hive.close();
     await testDirectory.delete(recursive: true);
   });
+
+  test(
+    'publishes read-only reactive item and collection listenables',
+    () async {
+      final ValueListenable<List<SavedItem>> visibleItems = repository.items;
+      final ValueListenable<List<String>> visibleCollections =
+          repository.collections;
+      var itemNotifications = 0;
+      var collectionNotifications = 0;
+      void onItemsChanged() => itemNotifications++;
+      void onCollectionsChanged() => collectionNotifications++;
+      visibleItems.addListener(onItemsChanged);
+      visibleCollections.addListener(onCollectionsChanged);
+
+      try {
+        await repository.addCollection('Learning');
+        await repository.save(buildLink(collection: 'Learning'));
+
+        expect(itemNotifications, greaterThan(0));
+        expect(collectionNotifications, greaterThan(0));
+        expect(
+          () => visibleItems.value.clear(),
+          throwsUnsupportedError,
+        );
+        expect(
+          () => visibleCollections.value.add('Injected collection'),
+          throwsUnsupportedError,
+        );
+        expect(visibleCollections.value, ['Learning']);
+        expect(visibleItems.value.single.collection, 'Learning');
+      } finally {
+        visibleItems.removeListener(onItemsChanged);
+        visibleCollections.removeListener(onCollectionsChanged);
+      }
+    },
+  );
 
   test('saved metadata survives closing and reopening the local boxes', () async {
     await repository.save(buildLink());
