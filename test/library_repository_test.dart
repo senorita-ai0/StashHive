@@ -160,6 +160,31 @@ void main() {
     }
   });
 
+  test('indexed lookups retain the committed item after a late save failure', () async {
+    await repository.save(buildLink());
+    final original = repository.findById('link-1');
+    expect(original, isNotNull);
+    expect(original!.title, 'Flutter documentation');
+
+    LibraryRepository.saveAfterItemCommitForTesting = () async {
+      throw StateError('simulated failure after item write');
+    };
+    try {
+      await expectLater(
+        repository.save(
+          buildLink().copyWith(title: 'Uncommitted replacement'),
+        ),
+        throwsA(isA<StateError>()),
+      );
+    } finally {
+      LibraryRepository.saveAfterItemCommitForTesting = null;
+    }
+
+    expect(repository.findById('link-1')?.title, 'Flutter documentation');
+    expect(repository.items.value, hasLength(1));
+    expect(repository.items.value.single.title, 'Flutter documentation');
+  });
+
   test('saved metadata survives closing and reopening the local boxes', () async {
     await repository.save(buildLink());
     repository.dispose();
