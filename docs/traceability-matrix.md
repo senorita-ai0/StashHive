@@ -15,7 +15,7 @@
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462 | TC-009, TC-169, TC-170 | IN PROGRESS — source has bounded share batches, bounded fingerprint work and effective-text fallback; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423 | TC-010, TC-131 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
-| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415 | TC-012, TC-117, TC-119, TC-120 | IN PROGRESS — bounded-size source added; execution and platform export pending |
+| FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463 | TC-012, TC-117, TC-119, TC-120, TC-171 | IN PROGRESS — bounded-size source and mutation-consistent snapshot queue added; execution and platform export pending |
 | FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415 | TC-013, TC-117, TC-119, TC-120 | IN PROGRESS — codec/source added; restore tests pending |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | IN PROGRESS — local-first flows are implemented in source; offline/restart tests pending |
 | FR-015 | SCR-006, SCR-001, SCR-004 | TSK-003, TSK-303, TSK-422, TSK-425 | TC-015, TC-130, TC-133 | IN PROGRESS — storage reminders and platform-specific attachment copy added; browser restart/platform review pending |
@@ -1187,4 +1187,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** One incoming share batch is limited to the first 100 entries, with a user-facing warning for the remainder. Duplicate-fingerprint work now has preflight limits for batch count, effective text/URL/path/MIME lengths and total characters; over-limit input bypasses fingerprint serialization so the normal intake path can give actionable validation feedback. Text shares now consume a non-empty message even if the provider path is empty, video shares exit as unsupported before path parsing, and URL/path/MIME lengths are checked before expensive string transformations.
 - **Regression:** TC-169 covers batch truncation/order and large text bypass; TC-170 covers message-only text shares.
 - **Verification:** Regression source is committed but unrun. Validate actual provider field conventions, warnings, multi-select order and error behavior on a real Android device at the manual checkpoint.
+
+### TSK-463 — Serialize backup export with pending mutations
+
+- **Requirements:** FR-012/FR-013 and NFR-003; exported metadata, attachment payloads and collection preferences must represent a consistent repository state.
+- **Implementation:** `LibraryRepository.createBackup()` now takes a position in the same asynchronous queue as item save/delete, collection mutations, and restore. Export waits for an in-flight write and snapshots metadata and attachments after it has either completed or rolled back.
+- **Regression:** TC-171 pauses an attachment replacement after the item write, requests a backup, then verifies the export does not finish early and decodes with matching edited metadata and replacement bytes.
+- **Verification:** Regression source is committed but unrun. Real web/Android storage consistency and concurrent backup scenarios remain pending the manual validation checkpoint.
 
