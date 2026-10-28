@@ -1,11 +1,11 @@
-# StashTrail — Project Intake Summary
+# StashHive — Project Intake Summary
 
-**Status:** Phase 0 complete as a working draft; blueprint approval pending.  
+**Status:** Blueprint approved for implementation on 21 October 2026; Phase 2/3 source development continues while platform verification remains pending.  
 **Prepared:** 2026-10-21
 
 ## Problem statement
 
-People save useful digital items across different apps and locations—screenshots, website links, articles, social/video links, copied text, notes, PDFs, and documents. Later they forget which app/source contained the item or cannot search inside the content. StashTrail aims to make saving, organizing, and retrieving those items feel like one personal library.
+People save useful digital items across different apps and locations—screenshots, website links, articles, social/video links, copied text, notes, PDFs, and documents. Later they forget which app/source contained the item or cannot search inside the content. StashHive aims to make saving, organizing, and retrieving those items feel like one personal library.
 
 ## Intended users
 
@@ -20,18 +20,18 @@ A polished, reliable Android-first app with a companion web experience. A user c
 
 ## Confirmed direction
 
-- Product name: **StashTrail** (current user-facing brand; domain/trademark clearance remains separate).
+- Product name: **StashHive** (current user-facing brand; domain/trademark clearance remains separate).
 - Broad purpose: more than screenshot management; links, websites, notes, snippets, PDFs, and documents are in scope for product planning.
 - Product model: direct-to-user app; no external service providers or customer marketplace are required.
 - Cost constraint: prefer free tools and local processing; avoid recurring backend and paid-API costs for the core product.
 - Framework preference: Flutter, based on the user's established app workflow.
-- Workflow: create initial product/blueprint files first and stop for approval before implementation.
+- Workflow: keep requirements, architecture, traceability and test plans aligned; source implementation is approved, while public publishing, spending and paid services require separate approval.
 
 ## Identity compatibility
 
-StashTrail is the current visible product name. Preserve the existing `stashhive` Dart package and Hive box identifiers, and keep the version-1 JSON backup marker as `StashHive` so existing local data and backup files remain compatible. Renaming those internal identifiers requires a separate migration plan.
+StashHive is the current visible product name. Preserve the existing `stashhive` Dart package and Hive box identifiers and the version-1 JSON backup marker (`StashHive`). Earlier StashTrail-branded backup files remain a compatibility concern; do not change storage/schema identifiers without a separate migration plan.
 
-## Proposed defaults (not yet approved)
+## Approved defaults (platform validation still pending)
 
 - Android is the primary MVP target; Flutter web is a companion target with browser-specific limitations.
 - App language is English initially; saved text should handle Unicode, including Urdu and Roman Urdu. UI localization and Urdu OCR require validation before being promised.
@@ -68,4 +68,4 @@ Testers can save one link, one image, one note, and one PDF/document; close/reop
 
 ## Open decisions
 
-See `docs/assumptions.md` and `docs/BLUEPRINT_REVIEW.md`. The material approval gate is whether this proposed scope/platform split is approved before product coding starts.
+See `docs/assumptions.md` and `docs/BLUEPRINT_REVIEW.md`. The initial scope/platform split was approved on 21 October 2026. Continue the approved Phase 2/3 source work; close the remaining Android/browser validation gates before release-readiness work.
