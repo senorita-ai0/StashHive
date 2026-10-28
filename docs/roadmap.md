@@ -1091,3 +1091,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** Backup & privacy disables the app-bar Back action and blocks system-back navigation after the restore merge is confirmed and the repository begins its staged write/commit phase. When restore completes or fails, the route becomes navigable again.
 - **Regression:** TC-193 pauses restore before collection commit, simulates system back and checks the page stays open while restoring, then confirms the restore completes.
 - **Status:** Source and regression documentation committed but unrun. Verify slow-storage and real Android back-gesture behavior at the manual checkpoint; CI remains manual-only.
+
+### TSK-484 — Show share truncation feedback after review — 2026-10-28
+
+- **Requirements:** FR-009 and NFR-006.
+- **Source:** Oversized share batches retain the omitted count in the waiting queue. The app now shows the truncation warning after sequential draft review finishes, when the Library/home screen is visible again.
+- **Manual regression:** TC-194 checks first-100 sequential review, unsupported-item handling, and the final omitted-count warning.
+- **Status:** Source and documentation committed; manual Android UX confirmation remains pending. CI stays manual-only.
