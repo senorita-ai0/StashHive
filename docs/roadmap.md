@@ -1183,3 +1183,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-208 pauses an attachment replacement after the raw item write and confirms synchronous lookup still returns the old published item until the write completes.
 - **Status:** Source and regression plan committed but unrun. Validate delayed saves and rollback on web and Android at the manual checkpoint; CI remains manual-only.
 
+### TSK-497 — Preserve the published lookup snapshot during delete rollback — 2026-10-28
+
+- **Requirements:** FR-003 and NFR-003.
+- **Source:** `findById` reads the O(1) index of the last published item snapshot rather than the raw Hive box. When delete temporarily removes a record and then fails, public lookup retains the old item until rollback refreshes the snapshot.
+- **Regression:** TC-209 pauses delete after raw item/attachment removal, checks the item remains visible through `findById`, then verifies the simulated failure restores the item and exact attachment bytes.
+- **Status:** Source and regression plan committed but unrun. Verify slow delete/rollback and consistency on web and Android at the manual checkpoint; CI remains manual-only.
+
