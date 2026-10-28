@@ -2244,9 +2244,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
       label: pickerLabel,
       hint: _saving
           ? 'Wait for the item to finish saving'
-          : _pickingAttachment
-              ? 'A file selection is already in progress'
-              : pickerHint,
+          : pickerHint,
       onTap: (_saving || _pickingAttachment) ? null : _pickAttachment,
       child: ExcludeSemantics(
         child: InkWell(
