@@ -890,3 +890,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added widget regression **TC-231** and traceability task **TSK-518**.
 - [ ] Run TC-231 and verify native stream startup failures, subsequent ordinary manual capture and normal Android share delivery at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
+## Phase 3 — prevent Quick Save route dismissal during file selection (2026-10-28)
+
+- [x] Quick Save's `PopScope`, app-bar Back button and Cancel action now refuse route navigation while an attachment-picker request is pending, matching the existing save-pending navigation protection.
+- [x] Item-kind changes remain available while the picker is active, preserving the stale-result revision guard. Completing or canceling the picker unlocks normal navigation.
+- [x] Added widget regression **TC-232** and traceability task **TSK-519**.
+- [ ] Run TC-232 and verify the native picker handles cancellation/system back cleanly on Android and supported browsers/desktop platforms at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
