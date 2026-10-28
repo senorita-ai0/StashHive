@@ -1089,3 +1089,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Recreate the app widget using the same repository and confirm the Settings control initializes to **Extra large** from the persisted preference.
 - Select **System default** and confirm the stored multiplier returns to `1.0` without an uncaught widget exception.
 - **Status:** Regression source is committed but unrun. Execute during the requested manual validation checkpoint; real browser/device restart behavior remains pending.
+
+
+### TC-154 — Restore rollback preserves attachment bytes when item cleanup fails
+
+- Start with an existing saved item and collection, then prepare a backup containing an image and its attachment bytes.
+- Inject an interruption after restore has staged the imported record, and separately inject a failure while rollback tries to delete that staged item.
+- Confirm the restore reports the original interruption, keeps the surviving item and its attachment bytes consistent, and restores the collection preferences to their pre-restore value.
+- **Status:** Regression source is committed but unrun. The case checks best-effort recovery when storage refuses a rollback deletion; it does not claim that a real browser/device storage interruption has been validated.
