@@ -1277,7 +1277,7 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-510 — Bound direct URL and search helper input — 2026-10-28
 
 - **Requirements:** FR-005/FR-006 and NFR-003.
-- **Source:** Both web URL parsing helpers reject input over 4,096 characters before trimming/parsing. Model-level search rejects over-limit queries before trimming/lowercasing, matching the size policy already present in the UI.
+- **Source:** Both web URL parsing helpers reject input over 4,096 characters before trimming/parsing. Both model-level search helpers reject over-limit queries before normalization or scanning saved fields, matching the size policy already present in the UI.
 - **Regression:** TC-222 covers oversized direct URL helper input and oversized model search queries.
 - **Status:** Source and regression documentation committed but unrun. Verify direct helper behavior, form validation and Search UI messaging at the manual checkpoint.
 
