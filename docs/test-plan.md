@@ -1383,3 +1383,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - After all already-queued batch reviews finish, confirm the home screen shows the combined number of omitted entries and advises sharing the remainder in smaller batches.
 - Confirm the warning remains readable when the batch contains unsupported entries and the app returns to the Library tab.
 - **Status:** Manual UX regression documented; no device test is claimed. Verify sequential review, skipped count, and warning visibility on a real Android share source at the manual checkpoint.
+
+### TC-195 — Summarize share-batch omissions after the waiting queue drains
+
+- Keep one share batch active for review and queue another batch behind it. Include unsupported entries and at least one invalid/unreadable entry; make one of the batches exceed the 100-item limit.
+- Confirm StashHive continues sequential review without presenting transient per-item SnackBars immediately before opening the next Quick Save route.
+- After the last queued batch finishes, confirm one combined summary reports counts for unsupported items, items that could not be prepared and additional entries omitted by the batch limit. The message may include a maximum of three distinct safe validation hints, without provider diagnostics.
+- Confirm the summary appears on the Library/home screen and that a normal batch with no skipped entries does not show an unnecessary warning.
+- **Status:** Manual UX regression documented; no device test is claimed. Verify waiting-queue timing, count accuracy and feedback readability with Android share events at the manual checkpoint.
