@@ -1374,3 +1374,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Pause repository restore after staged writes but before collection commit. Confirm the screen shows a restoring state, the app-bar Back action is disabled, and a simulated system-back action cannot dismiss the route.
 - Release the restore and confirm it completes, shows feedback, preserves existing items and adds the backed-up item without a framework exception.
 - **Status:** Widget regression source is committed but unrun. Verify Android system-back behavior and navigation during slow browser/native storage writes at the manual checkpoint.
+
+### TC-194 — Show oversized-share warning after batch review
+
+- Deliver an operating-system share batch with more than 100 entries.
+- Confirm StashHive reviews the first 100 supported entries one editable draft at a time, without showing the truncation warning behind the first Quick Save route.
+- After the final item has been saved/canceled or skipped, confirm the home screen shows how many additional entries were omitted and advises sharing the remainder in smaller batches.
+- Confirm the warning remains readable when the batch contains unsupported entries and the app returns to the Library tab.
+- **Status:** Manual UX regression documented; no device test is claimed. Verify sequential review, skipped count, and warning visibility on a real Android share source at the manual checkpoint.
