@@ -1632,3 +1632,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Review the export path's memory lifetime: once UTF-8 bytes have been produced, the UI should drop its reference to the large JSON string before awaiting the share-sheet result.
 - **Status:** Source change is committed; no memory profile or platform export was run. Check payload integrity and peak memory on web/Android during the manual validation checkpoint.
 
+### TC-229 — Recover safely when Item Details cannot read a saved attachment
+
+- Save a document with known attachment bytes, open Item Details, then inject an unexpected storage-read failure when the user selects “Open / share file.”
+- Confirm the page shows safe retry guidance rather than a raw storage/path exception, no system share sheet is launched, and the saved record and attachment remain intact.
+- Clear the fault and confirm ordinary file sharing remains available.
+- **Status:** Widget regression source is committed but unrun. Verify read-failure feedback and recovery under real Android/browser storage conditions at the manual validation checkpoint.
+
