@@ -1205,7 +1205,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-466 — Bound the waiting queue for share batches
 
 - **Requirements:** FR-009 / NFR-003; incoming share events must not accumulate unbounded pending work while the user reviews existing content.
-- **Implementation:** The active share batch is tracked separately; the waiting queue admits at most `maxPendingIncomingShareBatches` (8) batches. Further unique events are declined with a clear instruction to finish current shares before sending more. Capacity is checked before recording a de-duplication fingerprint so a declined event can be retried after capacity returns.
+- **Implementation:** The active share batch is tracked separately; the waiting queue admits at most `maxPendingIncomingShareBatches` (8) batches. Further unique events are declined with explicit feedback that the new share was not queued and must be shared again after current batches finish. Capacity is checked before recording a de-duplication fingerprint so a declined event can be retried after capacity returns.
 - **Regression:** TC-173 checks queue admission at the exact capacity boundary and documents the required queue-full/FIFO/lifecycle device checks.
 - **Verification:** The queue-limit unit regression is committed but unrun; real stream ordering and capacity-recovery UX remain pending Android validation.
 
