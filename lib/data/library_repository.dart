@@ -404,7 +404,13 @@ class LibraryRepository {
       );
 
   Future<void> _save(SavedItem item, {List<int>? attachmentBytes}) async {
-    final saveItem = _canonicalizeCollectionAssignment(item);
+    // SavedItem fields are final, but the caller may have supplied a mutable
+    // tags list. Own that list before validation or any asynchronous storage
+    // writes so it cannot change the persisted metadata mid-save.
+    final itemSnapshot = item.copyWith(
+      tags: List<String>.unmodifiable(item.tags),
+    );
+    final saveItem = _canonicalizeCollectionAssignment(itemSnapshot);
     BackupCodec.validateSavedItem(saveItem);
     final alreadyVisible = items.value.any((saved) => saved.id == saveItem.id);
     BackupCodec.validateItemCount(
