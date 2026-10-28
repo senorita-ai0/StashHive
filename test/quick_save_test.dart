@@ -395,6 +395,78 @@ void main() {
     },
   );
 
+  testWidgets(
+    'recovers from an attachment picker error and allows a successful retry',
+    (tester) async {
+      final pickerStarted = Completer<void>();
+      final releaseFailure = Completer<void>();
+      var pickerAttempts = 0;
+      final attachmentBytes = Uint8List.fromList([1, 2, 3]);
+      app.quickSaveAttachmentPickerForTesting = (kind) async {
+        pickerAttempts++;
+        if (pickerAttempts == 1) {
+          pickerStarted.complete();
+          await releaseFailure.future;
+          throw StateError('private provider path should not be shown');
+        }
+        return PlatformFile(
+          name: 'retry.png',
+          size: attachmentBytes.length,
+          bytes: attachmentBytes,
+        );
+      };
+      addTearDown(() {
+        app.quickSaveAttachmentPickerForTesting = null;
+        if (!releaseFailure.isCompleted) releaseFailure.complete();
+      });
+
+      await openNewKind(tester, ItemKind.image);
+      await tester.ensureVisible(find.text('Choose an image'));
+      await tester.tap(find.text('Choose an image'));
+      await tester.pump();
+      await pickerStarted.future;
+      await tester.pump();
+
+      expect(find.text('Selecting file…'), findsOneWidget);
+      expect(
+        find.byType(CircularProgressIndicator),
+        findsWidgets,
+        reason: 'The attachment picker shows local progress while selection is pending.',
+      );
+
+      releaseFailure.complete();
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('The file could not be selected. Try choosing it again.'),
+        findsOneWidget,
+      );
+      expect(find.text('private provider path should not be shown'), findsNothing);
+      expect(find.text('Choose an image'), findsOneWidget);
+      expect(repository.items.value, isEmpty);
+
+      await tester.ensureVisible(find.text('Choose an image'));
+      await tester.tap(find.text('Choose an image'));
+      await tester.pumpAndSettle();
+
+      expect(pickerAttempts, 2);
+      expect(find.text('retry.png'), findsOneWidget);
+      await tester.ensureVisible(find.text('Save to StashHive'));
+      await tester.tap(find.text('Save to StashHive'));
+      await tester.pumpAndSettle();
+
+      expect(repository.items.value, hasLength(1));
+      final saved = repository.items.value.single;
+      expect(saved.kind, ItemKind.image);
+      expect(saved.attachmentName, 'retry.png');
+      expect(
+        await repository.readAttachment(saved.attachmentKey!),
+        orderedEquals(attachmentBytes),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('item-kind options wrap for enlarged text', (tester) async {
     await openNewLink(tester, textScale: 2);
     final linkChoice = find.bySemanticsLabel('Link');
