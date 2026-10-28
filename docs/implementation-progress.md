@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-232 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-233 have source-authored coverage, not pass results; TC-172, TC-194 and TC-195 remain manual lifecycle/UX scenarios. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -896,4 +896,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Item-kind changes remain available while the picker is active, preserving the stale-result revision guard. Completing or canceling the picker unlocks normal navigation.
 - [x] Added widget regression **TC-232** and traceability task **TSK-519**.
 - [ ] Run TC-232 and verify the native picker handles cancellation/system back cleanly on Android and supported browsers/desktop platforms at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — preflight public model serialization dimensions (2026-10-28)
+
+- [x] SavedItem.toMap() now checks raw dimensions of IDs, title/content, URL, collection, attachment metadata and tags before copying the tag list into a serialized map.
+- [x] Added model regression TC-233 for an overlong title, an overlong tag, more than 100 tags, and a valid serialization round-trip.
+- [x] Added traceability task TSK-520.
+- [ ] Run TC-233 with TC-221/TC-222 and the repository/backup validation suite at the manual checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
