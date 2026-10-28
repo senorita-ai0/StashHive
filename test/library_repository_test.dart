@@ -1107,6 +1107,93 @@ void main() {
     );
   });
 
+  test('backup waits for an interrupted restore to roll back staged data', () async {
+    await repository.addCollection('Existing');
+    await repository.save(
+      buildLink(id: 'restore-backup-race-existing', collection: 'Existing'),
+    );
+
+    final importedBytes = Uint8List.fromList([5, 9, 2, 6]);
+    const incomingImage = SavedItem(
+      id: 'restore-backup-race-incoming',
+      kind: ItemKind.image,
+      title: 'Staged image',
+      content: '',
+      url: null,
+      tags: ['Import'],
+      collection: 'Imported',
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 2000,
+      attachmentKey: 'restore-backup-race-incoming',
+      attachmentName: 'staged.png',
+      attachmentMimeType: 'image/png',
+    );
+    final incomingBackup = BackupCodec.encode(
+      items: const [incomingImage],
+      attachmentBytes: {
+        incomingImage.attachmentKey!: importedBytes,
+      },
+      collections: const ['Imported'],
+    );
+
+    final restoreEntered = Completer<void>();
+    final releaseRestoreFailure = Completer<void>();
+    LibraryRepository.restoreBeforeCollectionsCommitForTesting = () async {
+      restoreEntered.complete();
+      await releaseRestoreFailure.future;
+      throw StateError('simulated restore interruption');
+    };
+
+    final pendingRestore = repository.restoreBackup(incomingBackup);
+    await restoreEntered.future;
+    final restoreFailure = expectLater(
+      pendingRestore,
+      throwsA(isA<StateError>()),
+    );
+
+    var backupCompleted = false;
+    final pendingBackup = repository.createBackup().then((source) {
+      backupCompleted = true;
+      return source;
+    });
+
+    try {
+      await Future<void>.delayed(Duration.zero);
+      expect(
+        backupCompleted,
+        isFalse,
+        reason: 'Backup must wait until staged restore writes are committed or rolled back.',
+      );
+    } finally {
+      if (!releaseRestoreFailure.isCompleted) {
+        releaseRestoreFailure.complete();
+      }
+    }
+
+    try {
+      await restoreFailure;
+    } finally {
+      LibraryRepository.restoreBeforeCollectionsCommitForTesting = null;
+    }
+
+    final source = await pendingBackup;
+    final decoded = BackupCodec.decode(source);
+
+    expect(
+      decoded.items.map((item) => item.id),
+      ['restore-backup-race-existing'],
+    );
+    expect(decoded.collections, ['Existing']);
+    expect(decoded.attachments, isEmpty);
+    expect(repository.findById(incomingImage.id), isNull);
+    expect(
+      Hive.box<dynamic>('stashhive_attachments_v1')
+          .containsKey(incomingImage.attachmentKey),
+      isFalse,
+    );
+  });
+
   test('snapshots caller-owned attachment bytes before storage awaits', () async {
     final callerBuffer = Uint8List.fromList([1, 2, 3, 4, 250]);
     final expected = Uint8List.fromList(callerBuffer);
