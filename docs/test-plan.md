@@ -1519,3 +1519,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the error does not echo attacker-controlled version content into an exception or UI message; unknown integer versions should still report the numeric version.
 - **Status:** Codec regression source is committed but unrun. Verify malformed backup error handling with large inputs at the manual validation checkpoint.
 
+### TC-213 — Snapshot mutable save inputs before queueing
+
+- Start a repository save and pause it after the item record is written so a second save must wait behind it.
+- Submit a second image save with caller-owned mutable tags and attachment bytes, then mutate both original inputs before releasing the first save.
+- Confirm the queued second save persists the tags and byte payload as they were when its `save()` call was made, even though the caller's original lists were later changed.
+- **Status:** Repository regression source is committed but unrun. Verify queued save consistency and rollback behavior at the manual validation checkpoint.
+
