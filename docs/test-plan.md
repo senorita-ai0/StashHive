@@ -1646,3 +1646,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Retry and confirm a fresh repository read occurs, the retry action disappears after the read succeeds, and the saved attachment remains intact.
 - **Status:** Widget regression source is committed but unrun. Verify retry behavior and screen-reader feedback with real browser/Android storage errors at the manual validation checkpoint.
 
+### TC-231 — Keep the local library usable when native share-stream setup fails
+
+- On an Android-targeted app launch, inject an exception while requesting the incoming-share stream, before a stream subscription is created.
+- Confirm the app remains on the local library, offers manual capture guidance, and hides raw plugin/channel diagnostics.
+- Confirm startup continues without an uncaught framework exception and the screen's normal navigation remains available.
+- **Status:** Widget regression source is committed but unrun. Verify behavior against native plugin/channel failures and normal Android share delivery at the manual validation checkpoint.
+
