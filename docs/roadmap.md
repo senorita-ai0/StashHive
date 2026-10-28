@@ -959,3 +959,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source/docs:** Added the direct dependency/license register, linked it from the README, updated the NFR-010 traceability row, corrected stale StashTrail branding in current project documents, and aligned requirements approval status with the approved blueprint.
 - **Status:** Initial direct dependency inventory is committed. The transitive dependency graph, exact resolved versions and license/security audit are still open because no `pubspec.lock` is committed. Do not claim a completed license review until the lockfile and platform build checkpoint are available.
 
+### TSK-465 — Guard share enqueue against host disposal — 2026-10-28
+
+- **Requirements:** FR-009 / NFR-003.
+- **Source:** Incoming share events are ignored once `HomeShell` is no longer mounted, preventing a late stream event from entering a queue whose consumer has been disposed.
+- **Manual regression:** TC-172 covers stream cancellation, app stop/restart and active-batch completion.
+- **Status:** Source guard and manual case committed; Android plugin lifecycle behavior has not been tested on a device. CI remains manual-only by owner request.
+
