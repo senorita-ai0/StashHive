@@ -1488,3 +1488,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Release the save and confirm `findById` returns the updated item and the attachment read returns the replacement bytes.
 - **Status:** Repository regression source is committed but unrun. Verify lookups during delayed save, delete and restore operations on web and Android at the manual validation checkpoint.
 
+### TC-209 — Keep published lookup visible during delete rollback
+
+- Save an image with known attachment bytes and start deleting it.
+- Pause deletion after the raw item record and unreferenced attachment payload have been removed but before the simulated delete failure is released.
+- Confirm the raw item key is temporarily absent while the public items list and `findById` still return the last published item.
+- Release the injected failure and confirm rollback restores the item record, exact attachment bytes and published lookup.
+- **Status:** Repository regression source is committed but unrun. Verify lookup consistency during delete rollback and real slow-storage deletion on web and Android at the manual validation checkpoint.
+
