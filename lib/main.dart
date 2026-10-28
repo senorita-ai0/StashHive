@@ -2229,11 +2229,15 @@ class _QuickSavePageState extends State<QuickSavePage> {
     final existing = widget.existingItem;
     final name = _selectedName ?? existing?.attachmentName;
     final hasCurrent = _selectedBytes != null || (existing?.hasAttachment ?? false);
-    final pickerLabel = name ??
-        (_kind == ItemKind.image ? 'Choose an image' : 'Choose a document');
-    final pickerHint = hasCurrent
-        ? 'Select a replacement file, up to 15 megabytes'
-        : 'Select a file, up to 15 megabytes';
+    final pickerLabel = _pickingAttachment
+        ? 'Selecting file…'
+        : name ??
+            (_kind == ItemKind.image ? 'Choose an image' : 'Choose a document');
+    final pickerHint = _pickingAttachment
+        ? 'Please wait while the selected file is checked'
+        : hasCurrent
+            ? 'Select a replacement file, up to 15 megabytes'
+            : 'Select a file, up to 15 megabytes';
     return Semantics(
       button: true,
       enabled: !_saving && !_pickingAttachment,
@@ -2282,7 +2286,14 @@ class _QuickSavePageState extends State<QuickSavePage> {
                     ],
                   ),
                 ),
-                const Icon(Icons.upload_file_rounded),
+                if (_pickingAttachment)
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                else
+                  const Icon(Icons.upload_file_rounded),
               ],
             ),
           ),
