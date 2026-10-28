@@ -1526,3 +1526,11 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the queued second save persists the tags and byte payload as they were when its `save()` call was made, even though the caller's original lists were later changed.
 - **Status:** Repository regression source is committed but unrun. Verify queued save consistency and rollback behavior at the manual validation checkpoint.
 
+### TC-214 — Snapshot mutable restore inputs before queueing
+
+- Start a repository save and pause it after the raw item record write so a restore request must wait behind it.
+- Submit a valid `DecodedBackup` with caller-owned mutable item/tag lists, collection list, attachment map and byte buffer.
+- Mutate/clear all original input collections and alter the attachment bytes while the restore remains queued.
+- Release the blocking save and confirm restore uses the validated values captured at the time of the restore call, including the original tags, collection assignment and exact attachment bytes.
+- **Status:** Repository regression source is committed but unrun. Verify restore input isolation and peak memory with large backups during the manual validation checkpoint.
+
