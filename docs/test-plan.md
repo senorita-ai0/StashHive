@@ -1232,3 +1232,10 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm any share batch already being reviewed is allowed to unwind and its pending completion is released.
 - **Status:** Manual lifecycle case; source guard is committed, but plugin cancellation and app-stop/restart behavior require Android device verification at the manual checkpoint.
 
+### TC-173 — Bound the waiting queue for incoming share batches
+
+- Keep one share batch active for user review, then deliver more unique share events until the waiting-batch limit is reached.
+- Confirm the queue accepts no more than `maxPendingIncomingShareBatches` waiting batches and rejects subsequent events with a message asking the user to finish current shares before sending more.
+- Confirm the active batch can complete and waiting batches continue in FIFO order after capacity is available.
+- **Status:** Queue-limit unit regression source is committed but unrun; queue-full feedback, event ordering and teardown behavior still need Android device verification at the manual checkpoint.
+
