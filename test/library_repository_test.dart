@@ -940,6 +940,32 @@ void main() {
     expect(repository.skippedCollectionCount.value, 1);
   });
 
+  test('bounds recovery scans for oversized legacy collection lists', () async {
+    await repository.save(buildLink(id: 'kept-assignment', collection: 'Pinned'));
+    final preferences = Hive.box<dynamic>('stashhive_preferences_v1');
+    const entries = 10001;
+    await preferences.put(
+      'collections',
+      List<String>.filled(entries, 'Learning'),
+    );
+
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.collections.value, ['Learning', 'Pinned']);
+    expect(
+      repository.skippedCollectionCount.value,
+      entries - 1,
+      reason: 'Repeated entries and entries beyond the scan cap are counted.',
+    );
+    expect(repository.findById('kept-assignment')?.collection, 'Pinned');
+    expect(
+      (preferences.get('collections') as List).length,
+      entries,
+      reason: 'Recovery must report skipped raw entries without rewriting them.',
+    );
+  });
+
   test('serializes concurrent collection creation without losing updates', () async {
     final firstWriteEntered = Completer<void>();
     final releaseFirstWrite = Completer<void>();
