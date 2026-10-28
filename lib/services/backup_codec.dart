@@ -62,7 +62,7 @@ class BackupCodec {
   // Retained as the character guard for decoding in-memory JSON; the UTF-8
   // byte limit is the portable file-size boundary enforced on every path.
   static const int maxJsonCharacters = maxBackupBytes;
-  static const int minSupportedTimestampMs = -8640000000000000;
+  static const int minSupportedTimestampMs = minSavedItemTimestampMs;
 
   /// Counts the UTF-8 size without allocating a second full-size byte buffer.
   /// Stops as soon as the portable backup cap is exceeded.
@@ -110,7 +110,7 @@ class BackupCodec {
       );
     }
   }
-  static const int maxSupportedTimestampMs = 8640000000000000;
+  static const int maxSupportedTimestampMs = maxSavedItemTimestampMs;
 
   /// Revalidates an in-memory decoded backup at the mutation boundary.
   ///
