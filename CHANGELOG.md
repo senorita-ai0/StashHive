@@ -4,12 +4,12 @@ Changes worth noting are recorded here. StashHive is in source development and p
 
 ## Unreleased — 2026-10-28
 
-- Bounded incoming Android share batches to 100 ordered entries with a visible warning for the remainder; preflight share-event fingerprint inputs by raw field lengths before normalizing or serializing.
+- Bounded incoming Android share batches to 100 ordered entries with a visible warning for the remainder, capped waiting batches at eight, and preflighted share-event fingerprint inputs by raw field lengths before normalizing or serializing.
 - Hardened text-share handling when provider message text is the effective content even if its path is empty; oversized aggregate payloads and whitespace-heavy metadata now bypass fingerprint hashing for normal validation.
 - Serialized backup export with repository mutations and added source regression coverage for keeping exported item metadata and attachment bytes consistent during an attachment replacement.
 - Guarded incoming share processing against HomeShell disposal and released active/queued batch completion futures during teardown.
 - Added Quick Save attachment-picker progress/accessibility and retry regressions, aligned current design references with the StashHive name, and documented direct dependencies/licenses plus remaining transitive audit work.
-- Regression source through TC-171 is committed but unrun; TC-172 is a manual Android lifecycle scenario. No formatter, analyzer, tests, web build or Android build were run for this update. GitHub Actions remains manual-only.
+- Regression source through TC-171 and TC-173 is committed but unrun; TC-172 is a manual Android lifecycle scenario. No formatter, analyzer, tests, web build or Android build were run for this update. GitHub Actions remains manual-only.
 
 ## Initial blueprint package — 2026-10-21
 
