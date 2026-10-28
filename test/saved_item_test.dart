@@ -45,7 +45,11 @@ void main() {
     test('does not echo oversized or unknown item kinds in errors', () {
       final oversizedKind = List<String>.filled(100000, 'x').join();
 
-      for (final value in <Object?>[oversizedKind, 'unknown-kind', <String>['not', 'a', 'kind']]) {
+      for (final value in <Object?>[
+        oversizedKind,
+        'unknown-kind',
+        <String>['not', 'a', 'kind'],
+      ]) {
         expect(
           () => ItemKind.fromWire(value),
           throwsA(
