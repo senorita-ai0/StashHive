@@ -1563,6 +1563,6 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 - **Requirements:** FR-009 and NFR-002/NFR-003; platform share integration must fail safely without preventing ordinary manual capture or exposing plugin/channel diagnostics.
 - **Implementation:** The native share-intake startup handler catches synchronous exceptions while requesting or subscribing to the live event stream and shows manual-capture guidance. The independent launch-time intent read is still attempted afterward, so cold-start shares can be salvaged when only stream initialization fails.
-- **Regression:** TC-231 injects a stream setup exception in an Android-targeted widget test, checks recovery copy and hidden raw diagnostics, and confirms Library navigation is still available.
+- **Regression:** TC-231 injects a stream setup exception, confirms the independent initial-share read still runs, checks recovery copy and hidden raw diagnostics, and confirms Library navigation is still available.
 - **Verification:** Widget regression source is committed but unrun. Verify real plugin/channel failure behavior and normal share delivery on Android at the manual validation checkpoint.
 
