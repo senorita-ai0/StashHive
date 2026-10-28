@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173–TC-181 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173–TC-182 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -557,4 +557,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] The regression injects a late delete failure and expects the queued backup to wait for repository rollback, then include the restored item metadata and exact original attachment bytes.
 - [x] Added traceability task **TSK-471** and updated the test plan.
 - [ ] Run TC-181 and verify delete/backup concurrency with browser and Android storage at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
+## Phase 3 — wait for interrupted restore rollback before backup generation (2026-10-28)
+
+- [x] Added repository regression **TC-182** to stage an incoming image/attachment during restore, pause before collection commit, then request a backup while restore remains pending.
+- [x] The regression injects a restore interruption and expects the queued backup to wait for rollback, then include only the original item/collection and no staged attachment payload.
+- [x] Added traceability task **TSK-472** and updated the test plan.
+- [ ] Run TC-182 and verify backup/restore concurrency and interruption recovery on browser and Android storage at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
