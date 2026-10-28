@@ -1613,15 +1613,15 @@ The previous Android debug build failed when the generated plugin registrant cou
 ### TC-226 — Prevent overlapping backup export and restore UI operations
 
 - Start a backup export and pause it after the JSON has been prepared but before the export action returns.
-- Confirm the Restore action is disabled and says “Backup in progress…”. A second tap must not start the file picker.
-- While a restore is committing, confirm Create backup is disabled and shows “Restore in progress…”.
+- Confirm the Restore action is disabled and says “Backup in progress…”. The status is exposed as a live region, and a second tap must not start the file picker.
+- While a restore is committing, confirm Create backup is disabled and shows “Restore in progress…” as an announced live status.
 - Release the active operation and confirm the opposite action becomes available again. The repository queue remains the data-integrity backstop; this UI guard prevents competing file picker/share-sheet flows.
 - **Status:** Widget regression source is committed but unrun. Verify native share-sheet and file-picker behavior on Android and browser flows during the manual checkpoint.
 
 ### TC-227 — Prevent backup export while backup selection is pending
 
 - Open the restore file picker and leave its future unresolved.
-- Confirm the Create backup action is disabled and shows “Backup selection in progress…”. Tap the disabled state and confirm backup preparation does not begin.
+- Confirm the Create backup action is disabled and shows “Backup selection in progress…” as a live status. Tap the disabled state and confirm backup preparation does not begin.
 - Cancel the picker and confirm Create backup becomes available again; no restore is started and existing library contents are unchanged.
 - **Status:** Widget regression source is committed but unrun. Verify platform picker cancellation and state recovery on Android and web at the manual checkpoint.
 
