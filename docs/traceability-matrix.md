@@ -11,7 +11,7 @@
 | FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427 | TC-005, TC-118, TC-135 | IN PROGRESS — Unicode search source and search-scope explanation aligned; execution/platform review pending |
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
-| FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476 | TC-008, TC-122, TC-186 | IN PROGRESS — repository-owned byte snapshots and picker size-error recovery source added; platform validation pending |
+| FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476, TSK-477 | TC-008, TC-122, TC-186, TC-187 | IN PROGRESS — bounded attachment reads and retry recovery are source-covered; platform validation pending |
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185 | IN PROGRESS — source bounds batch size, fingerprint work and waiting queue; handles effective text, disposal and unusual file URIs; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423, TSK-474 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
