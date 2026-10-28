@@ -107,7 +107,16 @@ void main() {
       expect(item.matchesQuery('  '), isTrue);
     });
 
-    test('matches pre-normalized queries for reuse across items', () {
+    test('matches pre-normalized queries for reuse across items', () {    test('rejects oversized search queries before normalization', () {
+      final item = makeItem();
+      final oversizedQuery =
+          List<String>.filled(maxSearchQueryCharacters + 1, ' ').join();
+
+      expect(item.matchesQuery(oversizedQuery), isFalse);
+      expect(item.matchesQuery('flutter'), isTrue);
+    });
+
+
       final item = makeItem(content: 'Research local storage');
 
       expect(item.matchesNormalizedQuery('local storage'), isTrue);
