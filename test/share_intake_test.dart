@@ -655,6 +655,25 @@ void main() {
       );
     });
 
+    test('fingerprints unusual file URIs without throwing', () {
+      final deduplicator = ShareEventDeduplicator();
+      final shared = <SharedMediaFile>[
+        SharedMediaFile(
+          path: 'file://remote-host/shared/reference.png',
+          type: SharedMediaType.file,
+          mimeType: 'application/octet-stream',
+        ),
+      ];
+
+      expect(
+        deduplicator.shouldAccept(
+          shared,
+          now: DateTime.utc(2026, 10, 28, 19),
+        ),
+        isTrue,
+      );
+    });
+
     test('deduplicates recognized files despite conflicting raw MIME headers', () {
       final deduplicator = ShareEventDeduplicator();
       final start = DateTime.utc(2026, 10, 22, 18);
