@@ -8,8 +8,8 @@
 | FR-002 | SCR-002, SCR-004 | TSK-102, TSK-104, TSK-473, TSK-478, TSK-490, TSK-496, TSK-499, TSK-501, TSK-503 | TC-002, TC-183, TC-188, TC-201, TC-208, TC-211, TC-213, TC-215 | IN PROGRESS — URL/tag input bounds, pre-queue input snapshots, published item lookup, read-only state access and early tag-size validation are source-covered; build/test pending |
 | FR-003 | SCR-004 | TSK-102, TSK-105, TSK-424, TSK-497 | TC-003, TC-132, TC-209 | IN PROGRESS — delete failure feedback and stable published lookup during delete rollback are source-covered; rollback/platform validation pending |
 | FR-004 | SCR-001, SCR-003, SCR-004 | TSK-103, TSK-201, TSK-416, TSK-444 | TC-004, TC-121, TC-152 | IN PROGRESS — browse/filter/sort source added; tests and platform review pending |
-| FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427, TSK-479 | TC-005, TC-118, TC-135, TC-189 | IN PROGRESS — search normalizes once, bounds oversized queries and retains Unicode metadata search; execution/platform review pending |
-| FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
+| FR-005 | SCR-001, SCR-003, SCR-006 | TSK-202, TSK-414, TSK-427, TSK-479, TSK-510 | TC-005, TC-118, TC-135, TC-189, TC-222 | IN PROGRESS — search normalizes once, bounds oversized queries in both UI and model helper, and retains Unicode metadata search; execution/platform review pending |
+| FR-006 | SCR-002, SCR-004 | TSK-104, TSK-510 | TC-006, TC-222 | IN PROGRESS — URL parsing rejects over-limit helper input before normalization; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476, TSK-477, TSK-491, TSK-493 | TC-008, TC-122, TC-186, TC-187, TC-202, TC-203, TC-205 | IN PROGRESS — bounded attachment reads, retry recovery, mutation-consistent reads and thumbnail future reuse are source-covered; platform validation pending |
 | FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475, TSK-481, TSK-484, TSK-485, TSK-486 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185, TC-191, TC-194, TC-195, TC-196, TC-197 | IN PROGRESS — source bounds batch/fingerprint/queue work and aggregates/count-limits share review feedback; Android build/device test pending |
@@ -1502,4 +1502,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `SavedItem.fromMap` now checks raw string field lengths and tag count/tag lengths before normalizing fields or copying tags. This complements the strict backup and repository raw-record guards while retaining current normalization of valid-size legacy values.
 - **Regression:** TC-221 supplies oversized title/tag fields directly to the model factory and expects fixed validation errors; ordinary model round-trip and in-limit tag normalization remain part of the existing suite.
 - **Verification:** Regression source is committed but unrun. Confirm direct factory behavior and legacy import compatibility at the manual validation checkpoint.
+
+### TSK-510 — Bound direct URL and search helper input
+
+- **Requirements:** FR-005/FR-006 and NFR-003; helpers callable outside the visible form should enforce the same size limits before trimming or lowercasing raw input.
+- **Implementation:** `parseUserWebUrl` and `parseHttpUrl` now reject URL strings longer than the portable 4,096-character limit before trimming. `SavedItem.matchesQuery` rejects over-limit search queries before trimming/lowercasing; the existing UI still supplies its explanatory validation state.
+- **Regression:** TC-222 covers oversized direct URL helper calls and model search queries, and confirms ordinary URL/search behavior is unchanged.
+- **Verification:** Regression source is committed but unrun. Validate direct helper, form and Search UI behavior at the manual checkpoint.
 
