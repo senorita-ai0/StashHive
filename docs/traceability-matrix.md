@@ -12,7 +12,7 @@
 | FR-006 | SCR-002, SCR-004 | TSK-104 | TC-006 | IN PROGRESS — source added; build/test pending |
 | FR-007 | SCR-002, SCR-004 | TSK-104 | TC-007 | IN PROGRESS — source added; build/test pending |
 | FR-008 | SCR-002, SCR-004 | TSK-004, TSK-105, TSK-417, TSK-476, TSK-477 | TC-008, TC-122, TC-186, TC-187 | IN PROGRESS — bounded attachment reads and retry recovery are source-covered; platform validation pending |
-| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475, TSK-481, TSK-484, TSK-485 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185, TC-191, TC-194, TC-195 | IN PROGRESS — source bounds batch/fingerprint/queue work and aggregates omitted/invalid share feedback after queued reviews; Android build/device test pending |
+| FR-009 | SCR-002, flow FL-002 | TSK-004, TSK-204, TSK-462, TSK-465, TSK-466, TSK-467, TSK-475, TSK-481, TSK-484, TSK-485, TSK-486 | TC-009, TC-169, TC-170, TC-172, TC-173, TC-174, TC-185, TC-191, TC-194, TC-195, TC-196, TC-197 | IN PROGRESS — source bounds batch/fingerprint/queue work and aggregates/count-limits share review feedback; Android build/device test pending |
 | FR-010 | SCR-005 | TSK-203, TSK-423, TSK-474 | TC-010, TC-131, TC-184 | IN PROGRESS — collection UI reports deletion failures; rollback/test validation pending; backup waits for collection changes |
 | FR-011 | SCR-004 | TSK-203 | TC-011 | IN PROGRESS — source added; build/test pending |
 | FR-012 | SCR-006 | TSK-006, TSK-301, TSK-413, TSK-415, TSK-463, TSK-469, TSK-471, TSK-472, TSK-473, TSK-474 | TC-012, TC-117, TC-119, TC-120, TC-171, TC-178, TC-179, TC-180, TC-181, TC-182, TC-183, TC-184 | IN PROGRESS — bounded-size source, mutation-consistent snapshot queue and truthful, failure-tolerant last-prepared status and rollback-safe export concurrency added; execution and platform export pending |
@@ -1334,3 +1334,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** HomeShell records counts for unsupported, invalid/unreadable and over-limit entries. It retains at most three distinct, app-defined safe validation hints and presents a single combined message only after all currently queued share batches finish.
 - **Manual regression:** TC-195 queues multiple share batches containing unsupported/invalid entries plus an over-limit batch, checks sequential review proceeds first, then verifies one combined summary appears on the Library screen with appropriate counts and no raw provider details.
 - **Verification:** Source change is committed; TC-195 is a manual UX case. Confirm counts, timing and readability on a physical Android device at the validation checkpoint.
+
+### TSK-486 — Bound and test the aggregate share feedback message
+
+- **Requirements:** FR-009 and NFR-006; review feedback should accurately communicate omitted/error counts without flooding the UI or exposing raw provider diagnostics.
+- **Implementation:** A pure share-service summary builder formats unsupported, invalid/unreadable and omitted counts, de-duplicates hints and caps details at three distinct app-defined messages. It returns no message if there is nothing to report; HomeShell invokes it only after the waiting queue drains.
+- **Regression:** TC-196 checks combined counts and hint limits; TC-197 ensures a successful share batch does not get an empty-state warning. TC-195 remains the manual end-to-end timing/accessibility case.
+- **Verification:** Service test source is committed but unrun. Verify end-to-end summary timing and screen-reader behavior on Android at the manual validation checkpoint.
