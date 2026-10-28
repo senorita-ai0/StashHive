@@ -1,4 +1,4 @@
-/// Parsing helpers for links that may be opened outside StashTrail.
+/// Parsing helpers for links that may be opened outside StashHive.
 ///
 /// Never pass a URL from persisted or imported data directly to a platform
 /// launcher. Older local records can predate current save/restore validation.
