@@ -366,6 +366,7 @@ class _HomeShellState extends State<HomeShell> {
   final ShareEventDeduplicator _shareDeduplicator =
       ShareEventDeduplicator();
   bool _processingShareBatches = false;
+  Completer<void>? _activeShareBatchDone;
   bool _showStorageReminder = false;
 
   @override
@@ -464,6 +465,7 @@ class _HomeShellState extends State<HomeShell> {
     try {
       while (_pendingShareBatches.isNotEmpty && mounted) {
         final batch = _pendingShareBatches.removeAt(0);
+        _activeShareBatchDone = batch.done;
         try {
           await _presentSharedItem(batch.media);
         } catch (_) {
@@ -472,6 +474,9 @@ class _HomeShellState extends State<HomeShell> {
           );
         } finally {
           if (!batch.done.isCompleted) batch.done.complete();
+          if (identical(_activeShareBatchDone, batch.done)) {
+            _activeShareBatchDone = null;
+          }
         }
       }
     } finally {
@@ -534,6 +539,14 @@ class _HomeShellState extends State<HomeShell> {
   @override
   void dispose() {
     unawaited(_shareSubscription?.cancel() ?? Future<void>.value());
+    // Also release the currently active batch: it has already been removed
+    // from the waiting list, and a navigator teardown could otherwise leave
+    // the stream/initial-intent caller waiting forever for its route result.
+    final activeBatchDone = _activeShareBatchDone;
+    if (activeBatchDone != null && !activeBatchDone.isCompleted) {
+      activeBatchDone.complete();
+    }
+    _activeShareBatchDone = null;
     for (final batch in _pendingShareBatches) {
       if (!batch.done.isCompleted) batch.done.complete();
     }
