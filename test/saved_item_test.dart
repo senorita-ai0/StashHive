@@ -199,8 +199,14 @@ void main() {
           ),
         ),
       );
-      expect(makeItem().createdAtMs, 1000);
-      expect(makeItem().updatedAtMs, 2000);
+      expect(
+        makeItem().createdAt.millisecondsSinceEpoch,
+        1000,
+      );
+      expect(
+        makeItem().updatedAt.millisecondsSinceEpoch,
+        2000,
+      );
     });
 
     test('rejects out-of-range timestamps in direct model serialization', () {
