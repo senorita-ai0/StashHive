@@ -402,3 +402,9 @@ No tests, formatter, analyzer, Android build or web build were run for these inc
 - [x] A reset failure no longer discards media that was already fetched; delivery continues, with a possible replay acknowledged as a limitation if the plugin could not clear its stored intent.
 - [x] Added two service-level regression cases and documented **TC-155** / **TSK-447**.
 - [ ] Run the share-intake tests and verify app-stop/restart behavior on Android at the manual checkpoint. No tests, formatter, analyzer, or builds were run; CI remains manual-only.
+
+## Phase 3 — preserve Quick Save content across type changes (2026-10-28)
+
+- [x] Removed the unconditional clear of the shared Notes/content field when changing an unsaved draft's item type. Type-specific selected attachment bytes and metadata are still cleared to avoid attaching the previous file to another kind.
+- [x] Added widget regression **TC-156** and traceability task **TSK-448** to guard against silent loss of user-entered text.
+- [ ] Run TC-156 and verify the type-switch flow with keyboard, screen reader, and enlarged text at the manual checkpoint. No tests, formatter, analyzer, or builds were run; CI remains manual-only.
