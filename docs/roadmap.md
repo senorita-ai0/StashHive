@@ -1217,3 +1217,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Source:** The public `save()` call now bounds attachment bytes and tag metadata, then captures owned tag/attachment snapshots before the operation joins the serialized mutation queue. Later caller mutations no longer alter a queued save.
 - **Regression:** TC-213 queues an image save behind a paused write, mutates the caller's tags and bytes, and asserts the stored item matches the values submitted to `save()`.
 - **Status:** Source and regression plan committed but unrun. Verify queue-time input snapshots, failures and rollback on web and Android at the manual validation checkpoint; CI remains manual-only.
+
+### TSK-502 — Snapshot decoded restore inputs before queueing — 2026-10-28
+
+- **Requirements:** FR-013 and NFR-003.
+- **Source:** The public restore method now validates and copies the decoded backup's item/tag lists, collections, attachment metadata/map and byte buffers before enqueueing the restore. The queued operation no longer reads caller-owned mutable structures after waiting for prior repository work.
+- **Regression:** TC-214 queues a restore behind a paused save, changes the original backup lists/map/bytes, and asserts the import still matches the data captured at submission.
+- **Status:** Source and regression plan committed but unrun. Review peak memory, rollback and target-platform persistence at the manual validation checkpoint; CI remains manual-only.
