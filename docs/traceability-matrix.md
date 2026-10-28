@@ -1398,3 +1398,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-206 pauses a read, coalesces a second request, queues an attachment replacement, then verifies a later read returns replacement bytes while both earlier callers receive the original snapshot.
 - **Verification:** Regression source is committed but unrun. Validate shared-key image previews and replacement refresh on web/Android at the manual validation checkpoint.
 
+### TSK-495 — Release coalesced attachment reads after failure
+
+- **Requirements:** FR-008/FR-011 and NFR-003; a failed attachment read must not leave a cached rejected future that prevents a later retry.
+- **Implementation:** The in-flight read registry removes its entry in a finally path, only when the completing operation still owns the current entry for that key. Failed reads therefore release their entry without accidentally removing a newer read queued after a write.
+- **Regression:** TC-207 injects one read failure, retries the same key, and verifies the second read returns the original stored bytes.
+- **Verification:** Regression source is committed but unrun. Verify recovery with real storage/plugin errors on web and Android at the manual validation checkpoint.
+
