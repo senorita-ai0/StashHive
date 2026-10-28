@@ -735,3 +735,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added traceability task **TSK-496** and documented the concurrency scenario in the test plan.
 - [ ] Run TC-208 and verify lookup consistency during delayed save/delete/restore and rollback on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
+## Phase 3 — verify published item lookup during delete rollback (2026-10-28)
+
+- [x] Added repository regression **TC-209** for a delete paused after the raw item and attachment are removed but before a simulated failure is released.
+- [x] The case confirms `items.value` and `findById` keep showing the last published item during the pending delete; after failure, the original item and exact attachment bytes must be restored.
+- [x] Added traceability task **TSK-497** and updated the test plan.
+- [ ] Run TC-208/TC-209 and verify lookup consistency during delayed saves and delete rollback on web and Android at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
+
