@@ -942,7 +942,7 @@ Settings now includes a local **App text size** preference with System default, 
 ### TSK-462 — Bound Android share intake and validate before string copies — 2026-10-28
 
 - **Requirements:** FR-008/FR-009 and NFR-002/NFR-003.
-- **Source:** Share batches are capped at 100 ordered entries with a user-facing warning for omitted remainder. Fingerprint generation checks effective input and aggregate character bounds before JSON/UTF-8 allocation; oversized inputs bypass fingerprinting and reach normal validation instead. Text shares can use their message field when the provider path is empty, and raw URL/path/MIME bounds are checked before trim/case normalization.
+- **Source:** Share batches are capped at 100 ordered entries with a user-facing warning for omitted remainder. Fingerprint generation performs a length-only first pass over raw input fields and aggregate character bounds before trimming/normalization or JSON/UTF-8 allocation; oversized inputs, including aggregate whitespace-only message fields, bypass fingerprinting and reach normal validation instead. Text shares can use their message field when the provider path is empty, and raw URL/path/MIME bounds are checked before trim/case normalization.
 - **Regression:** TC-169 covers batch order/capping and over-limit fingerprint bypass; TC-170 covers message-only text shares.
 - **Status:** Source and regression documentation committed; all tests remain unrun. Validate real provider MIME/path behavior, sequential review and warning UX on Android at the manual checkpoint. CI remains manual-only by owner request.
 
