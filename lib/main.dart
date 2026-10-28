@@ -524,36 +524,19 @@ class _HomeShellState extends State<HomeShell> {
   }
 
   void _showPendingShareFeedback() {
-    final parts = <String>[];
-    if (_pendingUnsupportedShareItemCount > 0) {
-      parts.add(
-        '$_pendingUnsupportedShareItemCount unsupported item(s) were skipped',
-      );
-    }
-    if (_pendingInvalidShareItemCount > 0) {
-      parts.add(
-        '$_pendingInvalidShareItemCount item(s) could not be prepared',
-      );
-    }
-    if (_pendingOmittedShareItemCount > 0) {
-      parts.add(
-        '$_pendingOmittedShareItemCount additional item(s) were omitted '
-        'because each share batch is limited to 100 items',
-      );
-    }
-    if (parts.isEmpty || !mounted) return;
+    final message = buildShareReviewSummary(
+      unsupportedItemCount: _pendingUnsupportedShareItemCount,
+      invalidItemCount: _pendingInvalidShareItemCount,
+      omittedItemCount: _pendingOmittedShareItemCount,
+      validationHints: _pendingShareErrorHints,
+    );
+    if (message == null || !mounted) return;
 
-    final detail = _pendingShareErrorHints.isEmpty
-        ? ''
-        : ' Details: ${_pendingShareErrorHints.join(' ')}';
     _pendingUnsupportedShareItemCount = 0;
     _pendingInvalidShareItemCount = 0;
     _pendingOmittedShareItemCount = 0;
     _pendingShareErrorHints.clear();
-    _showShareMessage(
-      'Share review complete. ${parts.join('; ')}.$detail '
-      'You can add skipped items manually.',
-    );
+    _showShareMessage(message);
   }
 
   Future<void> _presentSharedItem(List<SharedMediaFile> media) async {
