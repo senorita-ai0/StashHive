@@ -970,3 +970,9 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Expanded the Python regression suite for the Android share-intent configurator: missing manifest path, missing `<application>`, malformed XML, and missing `MainActivity` without rewriting the input manifest.
 - [x] Existing coverage continues to verify all configured MIME/action pairs, mixed-MIME multi-share support, app label/launch mode, and idempotent re-runs.
 - [ ] Run `python3 -m unittest tool.test_configure_android_share_intents` at the manual validation checkpoint. No tests or builds were run for this increment; CI remains manual-only.
+
+## Phase 3 — validate share de-duplication configuration at runtime (2026-10-29)
+
+- [x] Replaced assert-only constructor constraints with runtime validation for `ShareEventDeduplicator.window` and `maxEntries`; invalid values now fail predictably in release builds instead of allowing zero-capacity eviction to fail later.
+- [x] Added regressions for zero and negative durations and cache capacities.
+- [ ] Run the share-intake suite, Python tool tests, formatting, analysis and platform builds at the manual validation checkpoint. None were run for this increment; CI remains manual-only.
