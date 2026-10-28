@@ -1542,7 +1542,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 ### TC-216 — Reject more attachment entries than saved items
 
-- Validate a directly constructed `DecodedBackup` with more than 10,000 distinct attachment entries and confirm it receives the fixed attachment-entry-count error before scanning or validating all payloads.
-- Decode a JSON backup candidate with more than 10,000 attachment keys and the same number of no-value orphan payloads; confirm decode stops at the entry-count limit before iterating attachment keys/base64 metadata.
+- Validate a directly constructed `DecodedBackup` with more attachment entries than saved items and confirm it receives the fixed count error before scanning or validating all payloads.
+- Decode a JSON backup candidate with more attachment keys than item records; confirm decode stops at the count invariant before iterating attachment keys/base64 metadata.
 - **Status:** Codec regression source is committed but unrun. Verify malformed backup limits and restore preflight at the manual validation checkpoint.
 
