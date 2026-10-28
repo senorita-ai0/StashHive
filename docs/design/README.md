@@ -1,4 +1,4 @@
-# StashTrail — UX/UI Design Pack
+# StashHive — UX/UI Design Pack
 
 **Status:** Seven core screen mockups are now defined as the visual baseline for implementation review. They are static designs, not runtime screenshots.
 
