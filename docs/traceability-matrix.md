@@ -1324,6 +1324,6 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 ### TSK-484 — Show share truncation feedback after review completes
 
 - **Requirements:** FR-009 and NFR-006; feedback about an oversized multi-item share must remain visible and useful instead of appearing beneath a Quick Save route that immediately covers it.
-- **Implementation:** A queued share batch now retains its `skippedCount`. The truncation warning is shown when the whole batch has finished its sequential review and the host returns to the home screen, rather than before the first item route opens.
+- **Implementation:** A queued share batch now retains its `skippedCount`. Omitted counts are accumulated across truncated batches and the warning is shown only after all already-queued batches finish their sequential reviews, when the host returns to the home screen rather than opening another Quick Save route.
 - **Manual regression:** TC-194 shares more than 100 items, confirms the first 100 are reviewed sequentially, and checks the omitted-count warning appears after the last supported/unsupported entry has been handled.
 - **Verification:** Source change is committed; TC-194 remains a manual UX case. Confirm source-app batch behavior on a physical Android device at the validation checkpoint.
