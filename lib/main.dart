@@ -4262,7 +4262,11 @@ class _BackupCard extends StatelessWidget {
                           ),
                         ),
                       )
-                    : Text(buttonText),
+                    : Semantics(
+                        label: buttonText,
+                        liveRegion: onPressed == null,
+                        child: Text(buttonText),
+                      ),
               ),
             ),
           ],
