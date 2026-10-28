@@ -827,7 +827,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 ## Phase 3 — bound direct URL and search helper input (2026-10-28)
 
 - [x] `parseUserWebUrl` and `parseHttpUrl` reject URL strings over the 4,096-character portable limit before trimming or parsing.
-- [x] `SavedItem.matchesQuery` rejects search queries over its existing 4,096-character limit before trimming or lowercasing; normal case-insensitive search remains unchanged.
+- [x] `SavedItem.matchesQuery` and `SavedItem.matchesNormalizedQuery` reject search queries over the existing 4,096-character limit before normalization or scanning saved fields; normal case-insensitive search remains unchanged.
 - [x] Added regression source **TC-222** and traceability task **TSK-510** for direct helper calls outside the form UI.
 - [ ] Run TC-222 with URL validation and search regressions at the manual validation checkpoint. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
