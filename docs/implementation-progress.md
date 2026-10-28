@@ -322,7 +322,7 @@ The Library's search-shaped navigation control now exposes a button role, the la
 
 ## Current validation state — 2026-10-28
 
-No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
+No tests, formatter, analyzer, Android build or web build were run for the latest source increments. GitHub Actions remains `workflow_dispatch`-only. Regression cases through TC-171 and TC-173–TC-174 are source-authored, not passed; TC-172 remains a manual lifecycle case. TC-116 benchmark measurements are pending. Phase 2 Android share/device and restore verification, plus Phase 3 visual, large-text, keyboard and assistive-technology checks remain open. Do not start Phase 4 release-readiness work until the agreed manual validation checkpoint supplies evidence and remaining source-level acceptance gaps have been reviewed.
 
 
 ## Phase 3 — accurate Search hint and traceability IDs (2026-10-23)
@@ -524,4 +524,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Events arriving at queue capacity are rejected with a recoverable message to finish current shares before sending more.
 - [x] Added unit regression source **TC-173** for queue admission at and beyond the configured capacity; traced as **TSK-466**.
 - [ ] Run TC-173 and verify queue-full feedback, FIFO draining and teardown recovery with real Android share events. No tests, formatter, analyzer or builds were run; CI remains manual-only.
+
+## Phase 2/3 — tolerate unusual file URIs during share fingerprinting (2026-10-28)
+
+- [x] Duplicate-share MIME inference now treats `file://` URI-to-path conversion as best-effort and uses the bounded raw provider path if conversion throws on the current platform.
+- [x] Added source regression **TC-174** for a file URI with a non-local authority and traced it to **TSK-467**.
+- [ ] Run TC-174 and verify provider-specific URI handling against real Android file-source apps. No tests, formatter, analyzer, web build or Android build were run; CI remains manual-only.
 
