@@ -946,3 +946,10 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-169 covers batch order/capping and over-limit fingerprint bypass; TC-170 covers message-only text shares.
 - **Status:** Source and regression documentation committed; all tests remain unrun. Validate real provider MIME/path behavior, sequential review and warning UX on Android at the manual checkpoint. CI remains manual-only by owner request.
 
+### TSK-463 — Serialize backup export with pending mutations — 2026-10-28
+
+- **Requirements:** FR-012/FR-013 and NFR-003.
+- **Source:** Backup export now enters the repository mutation queue before reading local items, attachments and collection preferences. This prevents a concurrent save from exposing older item notifier data alongside replacement attachment bytes.
+- **Regression:** TC-171 pauses an attachment edit after its item write, requests a backup, and checks the decoded export contains the matching new item metadata and new attachment bytes.
+- **Status:** Source and regression documentation committed; tests remain unrun. Validate concurrent export/edit/delete/restore behavior on browser and Android storage at the manual checkpoint. CI remains manual-only by owner request.
+
