@@ -1078,3 +1078,9 @@ Settings now includes a local **App text size** preference with System default, 
 - **Regression:** TC-191 uses a short valid path with an oversized whitespace-only message and expects an editable note draft.
 - **Status:** Source and regression documentation committed; regression remains unrun. Verify real Android provider fields at the manual checkpoint; CI remains manual-only.
 
+### TSK-482 — Recover from backup byte-stream read failures — 2026-10-28
+
+- **Requirements:** FR-013 and NFR-003/NFR-006.
+- **Source:** Backup restore's existing bounded byte-stream read and error/finally path has explicit coverage for the case where the provider returns a size successfully but fails while emitting bytes. The UI must retain the existing library, suppress raw provider details and allow a retry.
+- **Regression:** TC-192 injects a stream error, checks the library remains unchanged and then imports a valid backup after a second file-selection attempt.
+- **Status:** Regression source and roadmap entry committed but unrun. Verify actual native/web read failures at the manual checkpoint; CI remains manual-only.
