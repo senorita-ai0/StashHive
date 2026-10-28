@@ -99,6 +99,11 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function()? restoreAfterSnapshotForTesting;
 
+  /// Optional read hook for proving attachment thumbnails reuse their pending
+  /// future across harmless parent rebuilds in widget tests.
+  @visibleForTesting
+  static Future<void> Function(String key)? readAttachmentBeforeReadForTesting;
+
   /// Fault-injection seam for a theme preference write that fails after commit.
   @visibleForTesting
   static Future<void> Function()? setDarkModeAfterWriteForTesting;
@@ -655,6 +660,8 @@ class LibraryRepository {
 
   Future<Uint8List?> readAttachment(String key) =>
       _serializeOperation(() async {
+        final beforeRead = readAttachmentBeforeReadForTesting;
+        if (beforeRead != null) await beforeRead(key);
         final value = _attachmentsBox.get(key);
         if (!isValidAttachmentByteList(value)) return null;
         return Uint8List.fromList((value as List).cast<int>());
