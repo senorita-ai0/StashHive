@@ -1254,3 +1254,10 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added a native decoder guard for UTF-8 BOM bytes so the encoding signature is removed before article text is sanitized/displayed.
 - Added a deterministic injected plain-text response regression with BOM bytes and an assertion that the first character is not U+FEFF (TC-270).
 - Re-fetched the committed decoder and test source to confirm the decoder and regression each appear once. No formatter, analyzer, test, build or CI run was performed; Android/web behavior remains unverified.
+
+
+## SH-006 — Unicode-safe Reader truncation (2026-10-29)
+
+- Replaced direct substring clipping in native article body and title paths with one helper that backs off when the cutoff would leave a high surrogate without its low surrogate.
+- Added TC-271 regression source using a supplementary Unicode emoji positioned across the 60,000-code-unit body cap. The test checks that content remains bounded and no surrogate code units leak into the resulting preview.
+- Source/test file contents were re-fetched and their new helper/case each appeared once. No formatter, analyzer, tests, build or CI run was performed. Android/web behavior is still unverified.
