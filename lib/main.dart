@@ -5446,7 +5446,7 @@ class SettingsPage extends StatelessWidget {
                     onTap: () => _showInfo(
                       context,
                       'What can StashHive search?',
-                      'This first version searches titles, URLs, notes, tags and collection names stored in your local library. OCR and PDF text extraction are not enabled yet, so text found only inside an image or PDF is not searchable unless you add it to the notes.',
+                      'This version searches titles, URLs, notes, tags, collection names and your saved highlights/annotations in the local library. OCR and PDF text extraction are not enabled yet, so text found only inside an image or PDF is not searchable unless you add it to the notes or a highlight.',
                     ),
                   ),
                 ],
