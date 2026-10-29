@@ -1615,7 +1615,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 | SH-003 | SCR-001 | TSK-534 / TSK-540 | TC-247, TC-260, bulk_actions_widget_test.dart, selected_items_export_test.dart | SOURCE + WIDGET REGRESSION SOURCE IMPLEMENTED — selected-only Markdown share path has success and safe-failure coverage; execution pending |
 
-| SH-004 | SCR-001, SCR-002 | TSK-535 | TC-253, TC-254, bookmark_html_importer_test.dart, library_csv_export_test.dart, selected_items_export_test.dart | SOURCE IMPLEMENTED — manual verification pending |
+| SH-004 | SCR-001, SCR-002 | TSK-535 / TSK-541 | TC-253, TC-254, TC-261, bookmark_html_importer_test.dart, bookmark_import_widget_test.dart, library_csv_export_test.dart, selected_items_export_test.dart | SOURCE + UNIT/WIDGET REGRESSION SOURCE IMPLEMENTED — import preview/confirm/cancel covered by widget source; tests and platform verification pending |
 
 
 ### TSK-540 — Verify selected-only Markdown export flow
@@ -1625,3 +1625,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-260; `test/bulk_actions_widget_test.dart` verifies selecting/deselecting items, Markdown filename/MIME/content, excludes deselected records, and safe handling of share failure.
 - **Scope:** Metadata and user-entered text only; attachment bytes are not embedded. The existing versioned JSON backup remains the full-recovery export.
 - **Status:** Source and widget-test source committed to `main`; no formatter, analyzer, tests, builds, CI run, or device/browser check has been performed. CI remains manual-only.
+
+
+### TSK-541 — Add preview-first browser bookmark import widget coverage
+
+- **Requirements:** SH-004, FR-008, FR-010, NFR-002/NFR-003.
+- **Source:** Added a test-only bookmark file picker seam while leaving production on the native file picker. Corrected singular/plural text in import preview and summary counts.
+- **Regression:** TC-261 in `docs/test-plan.md`; `test/bookmark_import_widget_test.dart` confirms duplicate/invalid preview details, folder preservation, import-on-confirm, and no library or collection writes when the user cancels.
+- **Status:** Source and regression test source are committed to `main`; formatting, analyzer, tests, builds and real-device/browser verification have not run. CI remains manual-only.
