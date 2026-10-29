@@ -1645,3 +1645,8 @@ The lightweight reader sanitizer now strips embedded active blocks and comments 
 ## SH-006 source-integrity follow-up — 2026-10-29
 
 The Reader service was found to contain duplicate URL/sanitizer/loader declarations and a malformed leftover fragment in its stale suffix. The suffix has been removed, and source re-fetch confirms one copy of each core declaration. Sanitizer extraction now removes active/embedded markup, comments and nav/footer/aside blocks before semantic article/main search; control bytes are replaced during text normalization. Source/test increments are not validation evidence; SH-006 remains partial pending manual tests and platform checks.
+
+
+## SH-006 page-title extraction hardening — 2026-10-29
+
+The native title extractor now removes active embedded content and comments before finding the real document `<title>`, preventing fake title markup embedded in a script or comment from winning. A synthetic HTML-response test covers the case. Source is re-fetched and duplicate native helper declarations were checked, but test execution and platform behavior remain pending.
