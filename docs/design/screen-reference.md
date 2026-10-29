@@ -6,8 +6,10 @@
 
 ## Shared visual rules
 
-- Warm neutral background, white surfaces, deep navy text, indigo actions and restrained teal/amber/blue type accents.
-- Reusable spacing of 4 / 8 / 12 / 16 / 24 / 32; 12–16 radius for cards; consistent typography.
+The seven editable SVG references have been recolored to the current blue/mint palette. `docs/design/design-system.md` and `lib/ui/premium_kit.dart` define the reusable tokens and components; the SVGs remain the layout and content-hierarchy baseline.
+
+- Light neutral background, white surfaces, deep-navy text, premium blue actions (#2563EB), mint accents (#17C7A1) and restrained violet/status colors.
+- Reusable spacing of 4 / 8 / 12 / 16 / 20 / 24 / 32; 24 dp content cards, 28 dp hero panels and 17 dp controls; consistent Material 3 typography.
 - Search-first retrieval. Do not let decoration overwhelm saved content.
 - Local-first MVP: no required login, cloud sync or paid AI API.
 - A bookmark is not an offline webpage. A copied file is not the same as preview metadata.
