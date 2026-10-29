@@ -1670,3 +1670,8 @@ TC-272 extends Unicode-safe truncation coverage to the extracted title, alongsid
 ## SH-006 — bounded HTML charset prescan — 2026-10-29
 
 Native Reader parsing now falls back to an early HTML meta charset only when the response header omits charset. The prescan is capped at 1,024 bytes and recognizes both direct and legacy http-equiv/content forms. TC-273 and TC-274 are authored but unrun. Treat this as a limited compatibility improvement, not complete HTML encoding-sniffing support; manual validation remains pending.
+
+
+## SH-006 — fake meta charset filtering — TC-275 — 2026-10-29
+
+The bounded HTML charset prescan now excludes comment and script/style/noscript regions before recognizing a charset declaration. TC-275 covers fake meta tags in a comment and a script string. The source and regression are committed, but the test has not run; full charset compliance and platform validation remain pending.
