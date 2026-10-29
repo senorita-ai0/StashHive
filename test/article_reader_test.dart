@@ -169,15 +169,19 @@ void main() {
       expect(result.message, isNot(contains('diagnostic details')));
     });
 
-    test('maps an injected network timeout to a recoverable reader state', () async {
-      articleReaderTransportForTesting = (uri, addresses, timeout) =>
-          Completer<ArticleReaderTransportResponse>().future;
+    test('maps a transport timeout to a recoverable reader state', () async {
+      var transportCalled = false;
+      articleReaderTransportForTesting = (uri, addresses, timeout) {
+        transportCalled = true;
+        return Completer<ArticleReaderTransportResponse>().future;
+      };
 
       final result = await loadArticleForReader(
         'https://example.com/slow',
-        timeout: const Duration(milliseconds: 1),
+        timeout: const Duration(milliseconds: 100),
       );
 
+      expect(transportCalled, isTrue);
       expect(result.state, ArticleReaderState.timedOut);
     });
   });
