@@ -1953,7 +1953,7 @@ Network safety tests must use injected/fake transport and synthetic HTML; do not
 
 ## SH-006 reader source cases — 2026-10-29
 
-Initial regression source is in test/article_reader_test.dart:
+Initial regression source is in test/article_reader_test.dart and test/article_reader_page_test.dart:
 - Validate HTTP/HTTPS only; reject credential-bearing URLs, unsupported schemes, localhost/local suffixes and private IPv4 literals.
 - Convert hostile HTML to plain text without script, style or iframe contents; preserve Unicode and normalize whitespace.
 - Verify the reader result object exposes transient content without involving repository persistence.
