@@ -37,11 +37,21 @@ Future<LinkHealthRecord> checkLinkHealth({
     return result(LinkHealthState.blockedAddress);
   }
 
+  // Clamp caller-supplied values so this service remains a short, manual
+  // check even if another caller passes an accidental extreme timeout.
+  final requestTimeout = timeout <= Duration.zero ||
+          timeout > const Duration(seconds: 15)
+      ? const Duration(seconds: 8)
+      : timeout;
+
+  late final List<InternetAddress> publicAddresses;
   try {
-    final resolved = await InternetAddress.lookup(host).timeout(timeout);
+    final resolved =
+        await InternetAddress.lookup(host).timeout(requestTimeout);
     if (resolved.isEmpty || resolved.any((address) => !_isPublicAddress(address))) {
       return result(LinkHealthState.blockedAddress);
     }
+    publicAddresses = List<InternetAddress>.unmodifiable(resolved);
   } on TimeoutException {
     return result(LinkHealthState.timedOut);
   } on SocketException {
@@ -50,14 +60,28 @@ Future<LinkHealthRecord> checkLinkHealth({
     return result(LinkHealthState.networkError);
   }
 
+  // Pin the socket to an address from the exact DNS result that passed the
+  // public-address policy. Otherwise HttpClient could resolve the hostname
+  // a second time and a changing DNS answer could bypass the preflight check.
   final client = HttpClient()
-    ..connectionTimeout = timeout
-    ..idleTimeout = timeout
+    ..connectionTimeout = requestTimeout
+    ..idleTimeout = requestTimeout
     ..userAgent = 'StashHive-LinkCheck'
-    ..maxConnectionsPerHost = 2;
+    ..maxConnectionsPerHost = 1
+    ..findProxy = (_) => 'DIRECT'
+    ..connectionFactory = (requestedUri, proxyHost, proxyPort) {
+      if (proxyHost != null ||
+          proxyPort != null ||
+          requestedUri.host.toLowerCase() != host) {
+        return Future<ConnectionTask<Socket>>.error(
+          const SocketException('Unsupported connection route.'),
+        );
+      }
+      return Socket.startConnect(publicAddresses.first, requestedUri.port);
+    };
 
   try {
-    final response = await _sendRequest(client, uri, timeout);
+    final response = await _sendRequest(client, uri, requestTimeout);
     return result(
       linkHealthStateForStatusCode(response.statusCode),
       response.statusCode,
