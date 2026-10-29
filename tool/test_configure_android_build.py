@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from tool.configure_android_build import (
@@ -142,7 +143,14 @@ class ConfigureAndroidBuildTests(unittest.TestCase):
             "app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
         ]
         for relative in resources:
-            self.assertTrue((self.android_dir / relative).is_file(), relative)
+            resource_path = self.android_dir / relative
+            self.assertTrue(resource_path.is_file(), relative)
+            root_tag = ET.parse(resource_path).getroot().tag.rsplit("}", 1)[-1]
+            self.assertIn(
+                root_tag,
+                {"resources", "vector", "layer-list", "adaptive-icon"},
+                relative,
+            )
         self.assertIn(
             "@drawable/stashhive_launcher_foreground",
             (self.android_dir / resources[2]).read_text(encoding="utf-8"),
