@@ -1,6 +1,6 @@
 # StashHive — Dependency and License Register
 
-**Reviewed:** 28 October 2026  
+**Reviewed:** 29 October 2026  
 **Scope:** Direct packages declared in `pubspec.yaml`. This is an initial register, not a completed transitive-license, security-advisory, or legal audit.
 
 ## Direct dependencies
