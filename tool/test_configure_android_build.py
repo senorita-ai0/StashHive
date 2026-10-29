@@ -147,6 +147,17 @@ class ConfigureAndroidBuildTests(unittest.TestCase):
             "@drawable/stashhive_launcher_foreground",
             (self.android_dir / resources[2]).read_text(encoding="utf-8"),
         )
+        foreground = (self.android_dir / resources[1]).read_text(encoding="utf-8")
+        self.assertNotIn(
+            "transform=",
+            foreground,
+            "Android VectorDrawable paths should use explicit coordinates, not SVG transforms.",
+        )
+        self.assertIn(
+            'android:pathData="M54,21 L67,28.5 L67,43.5 L54,51',
+            foreground,
+            "The top hive cell should remain inside the adaptive-icon safe zone.",
+        )
 
     def test_removes_short_legacy_kotlin_plugin_alias(self):
         app_path = self.android_dir / "app" / "build.gradle.kts"
