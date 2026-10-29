@@ -4610,10 +4610,21 @@ class BrandMark extends StatelessWidget {
       height: size,
       width: size,
       decoration: BoxDecoration(
-        color: PremiumTokens.brand.withValues(alpha: .12),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [PremiumTokens.brand, PremiumTokens.mint],
+        ),
         borderRadius: BorderRadius.circular(size * 0.32),
+        boxShadow: [
+          BoxShadow(
+            color: PremiumTokens.brand.withValues(alpha: .22),
+            blurRadius: size * .35,
+            offset: Offset(0, size * .1),
+          ),
+        ],
       ),
-      child: Icon(Icons.hive_rounded, color: kBrand, size: size * 0.62),
+      child: Icon(Icons.hive_rounded, color: Colors.white, size: size * 0.62),
     );
   }
 }
