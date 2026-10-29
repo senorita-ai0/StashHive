@@ -5,6 +5,29 @@ const int maxSearchQueryCharacters = 4096;
 const int minSavedItemTimestampMs = -8640000000000000;
 const int maxSavedItemTimestampMs = 8640000000000000;
 
+enum ReadingStatus {
+  unread,
+  inProgress,
+  completed;
+
+  String get label => switch (this) {
+        ReadingStatus.unread => 'Unread',
+        ReadingStatus.inProgress => 'In progress',
+        ReadingStatus.completed => 'Completed',
+      };
+
+  static ReadingStatus fromWire(Object? value) {
+    if (value == null) return ReadingStatus.unread;
+    if (value is! String || value.length > 16) {
+      throw const FormatException('Unknown reading status.');
+    }
+    for (final status in ReadingStatus.values) {
+      if (status.name == value) return status;
+    }
+    throw const FormatException('Unknown reading status.');
+  }
+}
+
 enum ItemKind {
   link,
   note,
@@ -85,6 +108,8 @@ class SavedItem {
     this.attachmentKey,
     this.attachmentName,
     this.attachmentMimeType,
+    this.readingStatus = ReadingStatus.unread,
+    this.readingProgress = 0,
   }) : tags = List<String>.unmodifiable(tags);
 
   final String id;
@@ -100,6 +125,8 @@ class SavedItem {
   final String? attachmentKey;
   final String? attachmentName;
   final String? attachmentMimeType;
+  final ReadingStatus readingStatus;
+  final int readingProgress;
 
   bool get hasAttachment => attachmentKey != null && attachmentKey!.isNotEmpty;
 
@@ -182,6 +209,10 @@ class SavedItem {
       );
     }
 
+    if (readingProgress < 0 || readingProgress > 100) {
+      throw const FormatException('Reading progress must be between 0 and 100.');
+    }
+
     return <String, dynamic>{
       'id': id,
       'kind': kind.name,
@@ -196,6 +227,8 @@ class SavedItem {
       'attachmentKey': attachmentKey,
       'attachmentName': attachmentName,
       'attachmentMimeType': attachmentMimeType,
+      'readingStatus': readingStatus.name,
+      'readingProgress': readingProgress,
     };
   }
 
@@ -209,6 +242,8 @@ class SavedItem {
     final attachmentKeyValue = raw['attachmentKey'];
     final attachmentNameValue = raw['attachmentName'];
     final attachmentMimeTypeValue = raw['attachmentMimeType'];
+    final readingStatusValue = raw['readingStatus'];
+    final readingProgressValue = raw['readingProgress'];
 
     // This factory is public and may be called without the repository/backup
     // validators. Reject overlong strings before normalization or copying.
@@ -237,6 +272,12 @@ class SavedItem {
       throw const FormatException(
         'A saved item contains a timestamp outside the supported date range.',
       );
+    }
+
+    final readingStatus = ReadingStatus.fromWire(readingStatusValue);
+    if (readingProgressValue != null &&
+        (readingProgressValue is! int || readingProgressValue < 0 || readingProgressValue > 100)) {
+      throw const FormatException('The saved reading progress is invalid.');
     }
 
     final tagsValue = raw['tags'];
@@ -285,6 +326,8 @@ class SavedItem {
       attachmentMimeType: raw['attachmentMimeType'] is String
           ? (raw['attachmentMimeType'] as String).trim().toLowerCase()
           : null,
+      readingStatus: readingStatus,
+      readingProgress: readingProgressValue is int ? readingProgressValue : 0,
     );
   }
 
@@ -302,6 +345,8 @@ class SavedItem {
     bool clearAttachment = false,
     String? attachmentName,
     String? attachmentMimeType,
+    ReadingStatus? readingStatus,
+    int? readingProgress,
   }) {
     return SavedItem(
       id: id,
@@ -319,6 +364,8 @@ class SavedItem {
       attachmentMimeType: clearAttachment
           ? null
           : (attachmentMimeType ?? this.attachmentMimeType),
+      readingStatus: readingStatus ?? this.readingStatus,
+      readingProgress: readingProgress ?? this.readingProgress,
     );
   }
 }
