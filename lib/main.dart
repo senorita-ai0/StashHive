@@ -3913,7 +3913,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
   Future<void> _setReadingProgress(double value) async {
     final current = _item;
     if (current == null) return;
-    final progress = value.round().clamp(0, 100);
+    final progress = value.round().clamp(0, 100).toInt();
     final status = progress == 100
         ? ReadingStatus.completed
         : progress == 0
