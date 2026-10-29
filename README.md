@@ -63,7 +63,7 @@ OCR/PDF text extraction, in-app PDF rendering, cloud sync, accounts, public shar
 
 ## Run locally
 
-Use **Flutter 3.47.2** and **JDK 27** for the current Android baseline. The generated Android build is normalized to **AGP 9.4.0**, **Kotlin 2.4.10**, **Gradle 9.8.1**, compile SDK 36 and Build Tools 36.1.0. If the checkout has no platform runners, generate them once and apply the two StashHive configurators:
+Use **Flutter 3.47.2** and **JDK 27** for the current Android baseline. The generated Android build is normalized to **AGP 9.4.0**, **Kotlin 2.4.10**, **Gradle 9.8.2**, compile SDK 36 and Build Tools 36.1.0. If the checkout has no platform runners, generate them once and apply the two StashHive configurators:
 
 ```bash
 flutter create --project-name stashhive --platforms=android,web .
