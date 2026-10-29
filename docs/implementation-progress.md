@@ -1115,3 +1115,12 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - Persistence: Link status/time are stored in a bounded local preferences sidecar, not the SavedItem record or version-1 backup. Checking does not modify the saved item's update timestamp. Results for a different URL are not shown for the current item.
 - Regression source: Added service/model checks, repository persistence and URL mismatch checks, and a widget test for the action and privacy copy. Added FR-026, TC-259, and SH-009/TSK-539 traceability.
 - Verification: Formatter, analyzer, tests, manual CI, Android/web builds, and real-device/browser checks have not run for this increment. CI remains manual-only.
+
+
+## SH-003 — Selected-only Markdown export regression (2026-10-29)
+
+- Renamed the Library bulk action from **Export list** to **Export selected**, clarifying that it exports only currently selected item records.
+- Added a test-only SharePlus interception seam. Production behavior remains the native platform share sheet.
+- Added widget regressions for selected-only Markdown content, filename/MIME type, excluded deselected item data, and safe user feedback when sharing fails.
+- Updated the feature backlog, test plan, roadmap and traceability row with TC-260 / TSK-540.
+- **Not verified:** test sources are committed but no Dart formatter, analyzer, unit/widget tests, builds, manual workflow or platform checks have been run. CI remains manual-only.
