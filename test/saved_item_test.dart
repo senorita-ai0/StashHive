@@ -58,10 +58,15 @@ void main() {
     });
 
     test('annotations survive serialization, immutable copies, and search', () {
+      final quote = 'Local-first storage keeps data on-device.';
       final annotation = SavedAnnotation(
         id: 'annotation-1',
-        quote: 'Local-first storage keeps data on-device.',
+        quote: quote,
         note: 'Review this before choosing a sync design.',
+        sourceStartOffset: 7,
+        sourceEndOffset: 7 + quote.length,
+        contextBefore: 'A sentence before this quote.',
+        contextAfter: 'A sentence after this quote.',
         createdAtMs: 3000,
       );
       final original = makeItem().copyWith(annotations: [annotation]);
@@ -69,6 +74,10 @@ void main() {
 
       expect(restored.annotations, hasLength(1));
       expect(restored.annotations.single.toMap(), annotation.toMap());
+      expect(restored.annotations.single.sourceStartOffset, 7);
+      expect(restored.annotations.single.sourceEndOffset, 7 + quote.length);
+      expect(restored.annotations.single.contextBefore, 'A sentence before this quote.');
+      expect(restored.annotations.single.contextAfter, 'A sentence after this quote.');
       expect(restored.matchesQuery('LOCAL-FIRST'), isTrue);
       expect(restored.matchesQuery('sync design'), isTrue);
       expect(
@@ -80,6 +89,45 @@ void main() {
       expect(
         restored.copyWith(title: 'Updated').annotations,
         [annotation],
+      );
+    });
+
+    test('legacy annotations default reader context and offsets safely', () {
+      final restored = SavedAnnotation.fromMap(<String, Object?>{
+        'id': 'legacy-annotation',
+        'quote': 'A quote from an older backup',
+        'note': '',
+        'createdAtMs': 3000,
+      });
+
+      expect(restored.sourceStartOffset, isNull);
+      expect(restored.sourceEndOffset, isNull);
+      expect(restored.contextBefore, isEmpty);
+      expect(restored.contextAfter, isEmpty);
+    });
+
+    test('rejects inconsistent reader offsets and excessive context', () {
+      expect(
+        () => SavedAnnotation(
+          id: 'bad-offsets',
+          quote: 'Quote',
+          sourceStartOffset: 10,
+          sourceEndOffset: 12,
+          createdAtMs: 3000,
+        ).toMap(),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => SavedAnnotation(
+          id: 'large-context',
+          quote: 'Quote',
+          contextBefore: List<String>.filled(
+            maxSavedAnnotationContextCharacters + 1,
+            'x',
+          ).join(),
+          createdAtMs: 3000,
+        ).toMap(),
+        throwsA(isA<FormatException>()),
       );
     });
 
