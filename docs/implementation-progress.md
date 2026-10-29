@@ -1032,3 +1032,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - **UI:** Search adds an Advanced filters dialog, active filter chips, a Save search action, saved preset chips that reapply the complete filter/sort/query snapshot, and confirmed removal. Presets are local to the current app/browser profile and are not in backup v1.
 - **Regression source:** Added `test/search_filters_test.dart` and `test/search_filters_widget_test.dart`, and added preset-storage persistence, bounds, malformed-entry and rollback cases to `test/library_repository_test.dart`.
 - **Verification:** No formatter, analyzer, tests, workflow, web build, Android build or real-device/browser verification has run for SH-002. Source and regression cases are committed but unverified; CI remains manual-only.
+
+
+### SH-002 follow-up — Smart Searches navigation and fixture compatibility (2026-10-29)
+
+- **Smart Searches:** Organize → Collections now includes a Smart Searches section sourced from local saved presets. Selecting a preset opens Search with the entire query/filter/sort snapshot applied; when there are no manual collections yet, the saved searches remain accessible.
+- **Regression:** Extended `test/search_filters_widget_test.dart` to exercise the Organize entry point and verify the opened preset retains query, collection, favorite and sort settings. TC-248 now includes this path.
+- **Existing test-fixture correction:** Source review found accessibility and repository tests still declared `SavedItem` fixtures as `const` after the model's constructor changed to snapshot caller-owned tag lists. Updated those fixture declarations to ordinary final/non-const construction so they match the current model contract.
+- **Verification remains pending:** These changes have not been formatted, analyzed, tested or built. CI remains manual-only; do not treat source review as passing validation.
