@@ -1068,3 +1068,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - The recommended order is direct text-bearing PDF extraction first, then separately assess OCR. `pdfrx_engine` is the leading cross-platform PDF prototype candidate; Tesseract with official Urdu trained data is a mobile OCR candidate to measure, not a promise of Urdu/Nastaleeq quality.
 - No package or model was added. Runtime tests, accuracy measurements, device benchmarks, and binary/web-size deltas are not available yet; SH-005 remains gated.
 - Build/test CI remains manual-only and was not dispatched.
+
+
+## SH-007 — Persistent Library layouts (2026-10-29)
+
+- Added a Grid/List toggle to the Library header. Grid remains the default; List uses the existing saved-item tile so tags, type labels, favorites, selection mode and item-opening behavior are shared rather than reimplemented.
+- Added `LibraryRepository.libraryLayoutMode` / `setLibraryLayoutMode` using the current local preferences store. Only `grid` and `list` are accepted; malformed stored values use Grid. A post-write failure attempts best-effort rollback and the UI shows safe retry feedback.
+- Added `test/library_layout_mode_test.dart` and TC-255 for fallback, persistence, rollback and widget switching.
+- **Verification:** No tests, formatter, analyzer, workflow, web/Android build or visual accessibility review has run for this increment. This source slice is committed but unverified; CI remains manual-only.
