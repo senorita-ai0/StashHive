@@ -1154,8 +1154,45 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage> {
   String _filter = 'All';
   String _sort = 'Recently saved';
+  late String _layoutMode = widget.repository.libraryLayoutMode;
+  int _layoutRequestRevision = 0;
   final Set<String> _selectedIds = <String>{};
   bool get _selectionMode => _selectedIds.isNotEmpty;
+
+  Future<void> _setLayoutMode(String mode) async {
+    if ((mode != 'grid' && mode != 'list') || mode == _layoutMode) return;
+    final requestRevision = ++_layoutRequestRevision;
+    setState(() => _layoutMode = mode);
+    try {
+      await widget.repository.setLibraryLayoutMode(mode);
+    } catch (_) {
+      if (!mounted || requestRevision != _layoutRequestRevision) return;
+      setState(() => _layoutMode = widget.repository.libraryLayoutMode);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not save the library view preference. Please try again.'),
+        ),
+      );
+    }
+  }
+
+  Widget _buildLibraryItemTile(SavedItem item) {
+    return SavedItemTile(
+      item: item,
+      repository: widget.repository,
+      selectionMode: _selectionMode,
+      isSelected: _selectedIds.contains(item.id),
+      onSelectionChanged: () => setState(() {
+        if (!_selectedIds.add(item.id)) _selectedIds.remove(item.id);
+      }),
+      onLongPress: () => setState(() => _selectedIds.add(item.id)),
+      onTap: () => _selectionMode
+          ? setState(() {
+              if (!_selectedIds.add(item.id)) _selectedIds.remove(item.id);
+            })
+          : widget.onOpenItem(item),
+    );
+  }
 
   List<SavedItem> _applyFilters(List<SavedItem> items) {
     var result = items;
@@ -1201,6 +1238,20 @@ class _LibraryPageState extends State<LibraryPage> {
                       ),
                     ),
                     const Spacer(),
+                    IconButton(
+                      key: const ValueKey('library-layout-toggle'),
+                      tooltip: _layoutMode == 'grid'
+                          ? 'Switch to list view'
+                          : 'Switch to grid view',
+                      onPressed: () => _setLayoutMode(
+                        _layoutMode == 'grid' ? 'list' : 'grid',
+                      ),
+                      icon: Icon(
+                        _layoutMode == 'grid'
+                            ? Icons.view_list_rounded
+                            : Icons.grid_view_rounded,
+                      ),
+                    ),
                     IconButton(
                       tooltip: 'Filter and sort',
                       onPressed: () => _showSortMenu(context),
@@ -1393,8 +1444,21 @@ class _LibraryPageState extends State<LibraryPage> {
                       }
                       return LayoutBuilder(
                         builder: (context, constraints) {
+                          if (_layoutMode == 'list') {
+                            return ListView.separated(
+                              key: const ValueKey('library-list-layout'),
+                              padding: const EdgeInsets.fromLTRB(0, 2, 0, 22),
+                              itemCount: shown.length,
+                              itemBuilder: (context, index) =>
+                                  _buildLibraryItemTile(shown[index]),
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: 10),
+                            );
+                          }
+
                           final columns = constraints.maxWidth >= 690 ? 2 : 1;
                           return GridView.builder(
+                            key: const ValueKey('library-grid-layout'),
                             padding: const EdgeInsets.fromLTRB(0, 2, 0, 22),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: columns,
@@ -1407,24 +1471,8 @@ class _LibraryPageState extends State<LibraryPage> {
                               mainAxisSpacing: 10,
                             ),
                             itemCount: shown.length,
-                            itemBuilder: (context, index) {
-                              final item = shown[index];
-                              return SavedItemTile(
-                                item: item,
-                                repository: widget.repository,
-                                selectionMode: _selectionMode,
-                                isSelected: _selectedIds.contains(item.id),
-                                onSelectionChanged: () => setState(() {
-                                  if (!_selectedIds.add(item.id)) _selectedIds.remove(item.id);
-                                }),
-                                onLongPress: () => setState(() => _selectedIds.add(item.id)),
-                                onTap: () => _selectionMode
-                                    ? setState(() {
-                                        if (!_selectedIds.add(item.id)) _selectedIds.remove(item.id);
-                                      })
-                                    : widget.onOpenItem(item),
-                              );
-                            },
+                            itemBuilder: (context, index) =>
+                                _buildLibraryItemTile(shown[index]),
                           );
                         },
                       );
