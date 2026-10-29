@@ -1768,3 +1768,32 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm editing an existing link does not report that item as its own duplicate.
 - Check the detector preserves the original saved/displayed URL and performs no network request.
 - **Status:** Unit and widget regression sources are committed but unrun. Run at the owner-requested manual validation checkpoint; CI remains manual-only.
+
+
+### TC-247 — Combine advanced local Search filters
+
+- Save sample links, a note, favorites and non-favorites across multiple tags, collections, domains and known timestamps.
+- Combine free-text query, type, tag, collection, normalized domain, favorites-only and date range; only items matching every active criterion appear.
+- Verify a domain filter matches the hostname and subdomains but excludes unrelated hosts and non-link items.
+- Verify Unicode/text searching and existing sort behavior remain intact when extra filters are active.
+- Invalid/oversized domains and invalid stored filter values fail safely; no saved item or stored URL is rewritten.
+- **Status:** Unit regression source is committed but unrun. Run at the manual validation checkpoint.
+
+### TC-248 — Apply, save, reuse and remove a saved Search preset
+
+- Open Advanced filters, select a domain and Favorites only, apply and confirm the result list matches both filters.
+- Save those query/filter/type/sort settings under a named preset; confirm the preset is available after a widget rebuild.
+- Clear the current filters and reapply the saved preset; confirm the same results return.
+- Exercise Cancel and Reset filters in the dialog; cancel must not mutate active filters, and reset clears advanced filters while preserving the query, type and sort.
+- Verify invalid domain input is rejected with visible feedback; preset removal requires confirmation.
+- Confirm the UI communicates that presets are stored on this device/browser profile.
+- **Status:** Widget regression source is committed but unrun. Verify keyboard, screen reader, narrow viewport and enlarged text behavior at the manual checkpoint.
+
+### TC-249 — Preserve and validate local saved-search preferences
+
+- Save, replace using a case-insensitive matching name, retrieve and delete a preset.
+- Confirm up to 20 presets are stored; a new 21st preset is rejected without changing existing entries.
+- Confirm malformed stored entries are ignored while valid entries remain usable.
+- Inject a preference write that throws after committing and verify the previous preset list is restored best-effort.
+- Reopen the repository/profile and verify saved presets remain local to that storage profile; no preset is transmitted or added to backup v1.
+- **Status:** Repository regression source is committed but unrun. Run at the manual validation checkpoint.
