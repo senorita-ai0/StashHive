@@ -1491,7 +1491,7 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 
 ### TSK-534 — Bulk library actions (SH-003)
 
-- **Source:** Added library selection mode with select-all-visible, long-press, and checkbox selection. Added bulk favorite, move to an existing collection or no collection, add/remove tags, and confirmed delete.
-- **Safety:** Every selected-item mutation is isolated and counted; UI reports partial failure. Deletion requires a confirmation dialog. No export-selected action yet.
-- **Regression:** `test/bulk_actions_widget_test.dart` covers batch actions and delete cancellation.
+- **Source:** Added library selection mode with select-all-visible, long-press, and checkbox selection. Added bulk favorite, move to an existing collection or no collection, add/remove tags, confirmed delete, and a bounded Markdown index export (up to 2,000 items / 2 MiB). Export includes metadata and user text but not attachment bytes; JSON backup remains the full recovery format.
+- **Safety:** Every selected-item mutation is isolated and counted; UI reports partial failure. Deletion requires a confirmation dialog. Markdown index export is included; exporting attachment bytes remains the responsibility of JSON backup.
+- **Regression:** `test/bulk_actions_widget_test.dart` covers batch actions and delete cancellation; `test/selected_items_export_test.dart` covers Markdown content and bounds.
 - **Status:** Source committed to `main`; tests and platform verification pending. Do not dispatch the manual workflow unless requested.
