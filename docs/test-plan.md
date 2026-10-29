@@ -1937,3 +1937,16 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Verify the screen explains the 14-day/unfinished rule, selection mode works only on the displayed rediscovery set, and clearing the filter returns to the regular Library.
 - Verify rediscovery is computed locally; no network access, reminder permission, background task or external reading-activity tracking is involved.
 - **Status:** Unit and widget regression sources are committed but unrun. Verify at the owner-requested manual checkpoint; CI remains manual-only.
+## SH-006 reader-mode planned cases — 2026-10-29
+
+These cases are **planned, not implemented or run**. Add them to the automated suite with the reader source slice:
+
+| Test ID | Requirement / feature | Scenario | Expected result | Status |
+|---|---|---|---|---|
+| TC-264 | SH-006 / FR-006, FR-024 | User explicitly opens a valid HTTP(S) bookmark in reader mode | Reader starts only after the action; original bookmark fields and timestamps remain unchanged | PLANNED |
+| TC-265 | SH-006 / NFR-002 | Reader target resolves to loopback/private/reserved address, contains URL credentials, or redirects to a blocked destination | Request is rejected safely; no page content is persisted or logged | PLANNED |
+| TC-266 | SH-006 / NFR-005, NFR-008 | Reader response times out, exceeds byte limit, has unsupported content type, malformed HTML or hostile script markup | Bounded recoverable error or safe text-only output; no script execution, hang, or unbounded memory use | PLANNED |
+| TC-267 | SH-006 / FR-024 | Inspect library persistence and backup after reading an article | Fetched page content is not silently saved or exported; existing manual annotations still round-trip | PLANNED |
+| TC-268 | SH-006 / NFR-006 | Inspect reader states and text selection on Android and web | Loading/empty/error/unsupported states are accessible; selection/highlight support is only claimed where verified | PLANNED |
+
+Network safety tests must use injected/fake transport and synthetic HTML; do not use real private user URLs or private saved content as fixtures.
