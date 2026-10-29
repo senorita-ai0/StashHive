@@ -57,6 +57,14 @@ void main() {
       );
     });
 
+    test('neutralizes formula-like cells before spreadsheet import', () {
+      final csv = buildLibraryCsv(<SavedItem>[
+        csvItem(title: '=HYPERLINK("https://bad.example","open")', content: '+1+1'),
+      ]);
+      expect(csv, contains("'=HYPERLINK"));
+      expect(csv, contains("'+1+1"));
+    });
+
     test('does not include attachment bytes or keys', () {
       final csv = buildLibraryCsv(<SavedItem>[
         csvItem(attachmentName: 'guide.pdf', url: null, content: ''),
