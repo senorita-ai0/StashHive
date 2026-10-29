@@ -24,6 +24,8 @@ String buildSelectedItemsMarkdown(List<SavedItem> items) {
     if (item.collection != null) buffer.writeln('- Collection: ${item.collection}');
     if (item.tags.isNotEmpty) buffer.writeln('- Tags: ${item.tags.join(', ')}');
     if (item.isFavorite) buffer.writeln('- Favorite: yes');
+    buffer.writeln('- Reading status: ${item.readingStatus.label}');
+    buffer.writeln('- Reading progress: ${item.readingProgress}%');
     if (item.attachmentName != null) {
       buffer.writeln('- Attachment: ${item.attachmentName}');
     }
