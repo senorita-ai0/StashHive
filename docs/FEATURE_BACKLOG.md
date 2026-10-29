@@ -70,5 +70,6 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Add authored cases for success/sanitization, redirects, unsupported MIME, byte/display caps, private/mixed DNS answers, DNS timeouts and HTTP/transport errors.
 - [x] Use one absolute deadline across the native request path.
 - [ ] Run the test suite at the owner-approved manual validation checkpoint.
-- [ ] Expand checks for every reserved IPv4 range, content parsing edge cases, unchanged saved-item fields, and native/platform error accessibility.
+- [x] Add Item Details/repository regression source for no implicit fetch, explicit tap, unchanged bookmark fields after reader open, and selected-quote-only persistence.
+- [ ] Expand checks for every reserved IPv4 range, content parsing edge cases, backup/export non-persistence and native/platform error accessibility.
 - [ ] Complete TC-264/267/268 repository and platform assertions; SH-006 remains partial.
