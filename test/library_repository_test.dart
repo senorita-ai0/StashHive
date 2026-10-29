@@ -10,6 +10,7 @@ import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/services/backup_codec.dart';
 import 'package:stashhive/services/search_filters.dart';
+import 'package:stashhive/services/smart_tag_rules.dart';
 
 late Directory testDirectory;
 late LibraryRepository repository;
@@ -3057,6 +3058,126 @@ void main() {
     expect(repository.savedSearchPresets, hasLength(1));
     expect(repository.savedSearchPresets.single.name, 'Good filter');
     expect(repository.savedSearchPresets.single.filters.favoritesOnly, isTrue);
+  });
+
+  test('saves, updates and deletes local smart tag rules', () async {
+    await repository.saveSmartTagRule(
+      SmartTagRule.create(
+        id: 'rule-1',
+        matchText: '  design  ',
+        suggestedTag: '  Ideas ',
+      ),
+    );
+    expect(repository.smartTagRules, hasLength(1));
+    expect(repository.smartTagRules.single.matchText, 'design');
+    expect(repository.smartTagRules.single.suggestedTag, 'Ideas');
+
+    // The same match/output pair updates the rule instead of adding a duplicate.
+    await repository.saveSmartTagRule(
+      SmartTagRule.create(
+        id: 'rule-2',
+        matchText: 'DESIGN',
+        suggestedTag: 'ideas',
+      ),
+    );
+    expect(repository.smartTagRules, hasLength(1));
+    expect(repository.smartTagRules.single.id, 'rule-2');
+
+    await repository.saveSmartTagRule(
+      SmartTagRule.create(
+        id: 'rule-3',
+        matchText: 'design',
+        suggestedTag: 'Research',
+      ),
+    );
+    expect(repository.smartTagRules, hasLength(2));
+
+    await repository.deleteSmartTagRule('rule-2');
+    expect(repository.smartTagRules, hasLength(1));
+    expect(repository.smartTagRules.single.suggestedTag, 'Research');
+  });
+
+  test('limits smart tag rules and allows updating an existing rule at capacity', () async {
+    for (var index = 0; index < maxSmartTagRules; index++) {
+      await repository.saveSmartTagRule(
+        SmartTagRule.create(
+          id: 'rule-$index',
+          matchText: 'match $index',
+          suggestedTag: 'Tag $index',
+        ),
+      );
+    }
+
+    await expectLater(
+      repository.saveSmartTagRule(
+        SmartTagRule.create(
+          id: 'rule-new',
+          matchText: 'new phrase',
+          suggestedTag: 'New',
+        ),
+      ),
+      throwsFormatException,
+    );
+    await repository.saveSmartTagRule(
+      SmartTagRule.create(
+        id: 'rule-0-updated',
+        matchText: 'MATCH 0',
+        suggestedTag: 'TAG 0',
+      ),
+    );
+    expect(repository.smartTagRules, hasLength(maxSmartTagRules));
+    expect(repository.smartTagRules.first.id, 'rule-0-updated');
+  });
+
+  test('ignores malformed and duplicate local smart tag rules safely', () async {
+    final preferences = await Hive.openBox<dynamic>('stashhive_preferences_v1');
+    await preferences.put('smartTagRules', <Object?>[
+      <String, Object?>{
+        'id': 'invalid',
+        'matchText': 'design',
+      },
+      <String, Object?>{
+        'id': 'rule-1',
+        'matchText': 'Design',
+        'suggestedTag': 'Ideas',
+      },
+      <String, Object?>{
+        'id': 'rule-2',
+        'matchText': 'design',
+        'suggestedTag': 'ideas',
+      },
+      <String, Object?>{
+        'id': 'rule-3',
+        'matchText': 'research',
+        'suggestedTag': 'Reading',
+      },
+      'not-a-map',
+    ]);
+
+    expect(repository.smartTagRules, hasLength(2));
+    expect(repository.smartTagRules.first.id, 'rule-1');
+    expect(repository.smartTagRules.last.suggestedTag, 'Reading');
+  });
+
+  test('rolls back a smart-tag preference write that fails after commit', () async {
+    LibraryRepository.smartTagRulesAfterWriteForTesting = () async {
+      throw StateError('private storage diagnostic');
+    };
+    try {
+      await expectLater(
+        repository.saveSmartTagRule(
+          SmartTagRule.create(
+            id: 'rule-rollback',
+            matchText: 'rollback',
+            suggestedTag: 'Test',
+          ),
+        ),
+        throwsStateError,
+      );
+      expect(repository.smartTagRules, isEmpty);
+    } finally {
+      LibraryRepository.smartTagRulesAfterWriteForTesting = null;
+    }
   });
 
   test('rolls back a saved-search preference write that fails after commit', () async {
