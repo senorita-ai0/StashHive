@@ -1267,3 +1267,10 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 
 - Added a deterministic HTML response regression whose real `<title>` puts an emoji across the 300-code-unit cap. It asserts the extracted title contains no lone surrogate and the article body is still present.
 - Together with TC-271, source now covers both title and body boundaries. The test remains unexecuted; no formatter, analyzer, build or CI run was performed.
+
+
+## SH-006 — bounded HTML meta charset fallback (2026-10-29)
+
+- Native response parsing continues to prioritize the HTTP Content-Type charset. For HTML without a header charset it now performs a bounded 1,024-byte scan for direct meta charset and legacy http-equiv/content charset declarations before decoding.
+- Added TC-273 and TC-274 synthetic responses with an unlabelled text/html header and Windows-1252 byte 0x80; each expects a euro sign in the extracted article text.
+- Source and tests were re-fetched and their declarations occur once. These are authored regressions, not execution evidence. No formatter/analyzer/test/build/CI run was performed; other legacy encodings and standards-complete browser sniffing are not claimed.
