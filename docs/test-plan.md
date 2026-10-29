@@ -1946,7 +1946,7 @@ These cases are **planned, not implemented or run**. Add them to the automated s
 | TC-264 | SH-006 / FR-006, FR-024 | User explicitly opens a valid HTTP(S) bookmark in reader mode | Reader starts only after the action; original bookmark fields and timestamps remain unchanged | PARTIAL TEST SOURCE — repository widget regression authored, not run; platform confirmation pending |
 | TC-265 | SH-006 / NFR-002 | Reader target resolves to loopback/private/reserved address, contains URL credentials, or redirects to a blocked destination | Request is rejected safely; no page content is persisted or logged | PARTIAL TEST SOURCE — reserved IPv4 matrix and mixed DNS coverage authored; not run; platform resolution checks pending |
 | TC-266 | SH-006 / NFR-005, NFR-008 | Reader response times out, exceeds byte limit, has unsupported content type, malformed HTML or hostile script markup | Bounded recoverable error or safe text-only output; no script execution, hang, or unbounded memory use | PARTIAL TEST SOURCE — malformed unclosed script/comment, hostile HTML, byte/display caps and DNS/transport timeout source authored; not run; parsing/deadline edge cases and platform checks remain |
-| TC-267 | SH-006 / FR-024 | Inspect library persistence and backup after reading an article | Fetched page content is not silently saved or exported; existing manual annotations still round-trip | PARTIAL TEST SOURCE — reader open/selected-quote and backup-content assertions authored; Markdown/CSV export assertions and platform checks pending; not run |
+| TC-267 | SH-006 / FR-024 | Inspect library persistence, backup and text exports after reading an article | Fetched page content is not silently saved or exported; existing manual annotations still round-trip | PARTIAL TEST SOURCE — repository widget asserts quote-only persistence and full-body exclusion from JSON backup, CSV and selected Markdown; not run; platform/share checks pending |
 | TC-268 | SH-006 / NFR-006 | Inspect reader states and text selection on Android and web | Loading/empty/error/unsupported states are accessible; selection/highlight support is only claimed where verified | PARTIAL WIDGET TEST SOURCE — not run; platform accessibility/selection checks pending |
 
 The repository widget test uses a synthetic reader result and checks no implicit fetch, unchanged saved fields, quote-only persistence, and a backup that contains the saved annotation but not the complete fetched article body. Network safety tests use injected/fake transport and synthetic HTML; do not use real private user URLs or private saved content as fixtures.
@@ -1974,3 +1974,8 @@ The reader widget test source now checks that a successful save presents confirm
 - Verify the reader returns the intended Unicode punctuation, with no Latin-1 control-character substitution.
 - Retain UTF-8 as the default for missing/unknown charsets and keep latin1/iso-8859-1 as separate mappings.
 - Status: Regression source committed in test/article_reader_test.dart but not run. Execute at the owner-requested manual validation checkpoint; CI remains manual-only.
+
+
+### TC-267 update — reader content export boundary (2026-10-29)
+
+The repository widget regression source now checks three export formats after saving a user-selected quote: versioned JSON backup, library CSV and selected-items Markdown. Each must preserve the saved item's content and quote annotation without including the complete temporary fetched article body. This test source is not run; actual export/share behavior and platform checks remain pending.
