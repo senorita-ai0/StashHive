@@ -1510,3 +1510,11 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **Research:** Added [local text-extraction feasibility](research/local-text-extraction-feasibility.md). Current candidate: prototype text-bearing PDF extraction using `pdfrx_engine` first; separately evaluate local Tesseract OCR for screenshots/scanned PDFs and English/Urdu/Nastaleeq samples.
 - **Decision:** No OCR/PDF dependency has been added. Published package/platform claims are not treated as runtime proof. Web OCR must not depend on an external CDN, and Syncfusion requires a license review.
 - **Task status:** TSK-005 remains BLOCKED until sample-based accuracy, offline behavior, latency/memory, and binary/bundle size are measured. Keep FR-016 gated.
+
+
+## TSK-534 — User-selectable Library grid/list view (SH-007) — 2026-10-29
+
+- **Scope:** Add a Library header toggle for Grid and List, using the existing saved-item tile and item-selection behavior in both layouts. Grid remains the default and responsive one-/two-column behavior is preserved.
+- **Persistence:** Store only `grid` or `list` in the existing local preferences box. Malformed legacy values fall back to Grid. A failed preference write attempts to restore the previous preference and is surfaced to the user without leaking storage diagnostics.
+- **Regression:** TC-255 and `test/library_layout_mode_test.dart`.
+- **Status:** Source and regression cases committed to `main`; no formatter, analyzer, tests, web/Android builds or device checks have run. CI remains manual-only.
