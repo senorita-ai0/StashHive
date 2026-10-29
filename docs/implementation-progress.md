@@ -1274,3 +1274,10 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Native response parsing continues to prioritize the HTTP Content-Type charset. For HTML without a header charset it now performs a bounded 1,024-byte scan for direct meta charset and legacy http-equiv/content charset declarations before decoding.
 - Added TC-273 and TC-274 synthetic responses with an unlabelled text/html header and Windows-1252 byte 0x80; each expects a euro sign in the extracted article text.
 - Source and tests were re-fetched and their declarations occur once. These are authored regressions, not execution evidence. No formatter/analyzer/test/build/CI run was performed; other legacy encodings and standards-complete browser sniffing are not claimed.
+
+
+## SH-006 — filter embedded charset lookalikes (TC-275) — 2026-10-29
+
+- The HTML charset prefix scan now removes comments plus script/style/noscript blocks before matching meta tags; this prevents fake HTML-looking text embedded in those regions from influencing decoding.
+- Added TC-275 regression with the same fake Windows-1252 hint in a comment and a script string, and an invalid UTF-8 body byte to distinguish accidental selection of that hint.
+- Rebuilt the affected Reader source/test files using Git blob/tree objects after an edit attempt duplicated fragments; the repair commit contains a single decoder, title extractor, charset helper and address checker. This was source-level verification only; no tests, formatter, analyzer, build or CI were run.
