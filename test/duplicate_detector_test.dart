@@ -66,10 +66,10 @@ void main() {
       expect(normalizeUrlForDuplicateCheck(null), isNull);
       expect(normalizeUrlForDuplicateCheck(''), isNull);
       expect(normalizeUrlForDuplicateCheck('file:///tmp/notes.txt'), isNull);
+      final oversizedPath =
+          List<String>.filled(maxSavedItemUrlCharacters + 1, 'x').join();
       expect(
-        normalizeUrlForDuplicateCheck(
-          'https://example.com/${List<String>.filled(maxSavedItemUrlCharacters + 1, 'x').join()}',
-        ),
+        normalizeUrlForDuplicateCheck('https://example.com/$oversizedPath'),
         isNull,
       );
     });
