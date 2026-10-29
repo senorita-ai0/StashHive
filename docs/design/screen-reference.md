@@ -141,3 +141,8 @@ The Library search teaser acts as a navigation button; it is not itself an edita
 ### SCR-003 refinement — Search result sorting (2026-10-22)
 
 The Search Results screen exposes the same three sort options as Library: Recently saved (most recently updated first), Oldest first, and Title A–Z. Sorting affects the currently displayed results without changing saved records. The result count remains a live status for assistive technology, and its row wraps with the sort control at narrow widths. UI and regression source are added; visual and assistive-technology verification remain pending.
+
+
+## Rediscover filter addition — 2026-10-29
+
+The Library's horizontally scrollable filter row now includes **Rediscover**. It selects items created at least 14 days ago that are not marked Completed and orders them oldest first. The filtered state shows: “Saved at least 14 days ago and not marked Completed. Oldest items appear first.” Include this state in the next visual/accessibility pass; no new navigation destination or reminder permission is introduced.
