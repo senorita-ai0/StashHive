@@ -1667,3 +1667,13 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Bounded content and safe plain-text rendering | lib/services/article_reader_io.dart, lib/screens/article_reader_page.dart | sanitizer tests authored; TC-266 planned | Source implemented, verify pending |
 | No fetched-content persistence / honest browser limitation | reader service and screen | TC-267–TC-268 planned | Source reviewed; platform verification pending |
 | Selection-based quote capture with bounded context and UTF-16 offsets | lib/screens/article_reader_page.dart, lib/main.dart, lib/models/saved_item.dart | test/saved_item_test.dart covers round-trip/legacy/invalid metadata; not run | Source implemented, platform verification pending |
+
+## SH-006 deterministic transport mapping — 2026-10-29
+
+| Behavior | Implementation / seam | Regression source | State |
+|---|---|---|---|
+| DNS/private address policy | lib/services/article_reader_io.dart; articleReaderDnsResolverForTesting | test/article_reader_test.dart: private and mixed DNS answers | Authored, not run |
+| HTTP status/redirect/MIME policy | ArticleReaderTransportResponse; articleReaderTransportForTesting | synthetic redirect, error status and unsupported MIME cases | Authored, not run |
+| Response/display caps and deadline | native response reader and single absolute deadline | synthetic oversize/display-cap and DNS/transport timeout cases | Authored, not run |
+| Text-only extraction | shared sanitizeArticleMarkup and response parser | synthetic semantic article, hostile markup and Unicode cases | Authored, not run |
+| Unchanged item and no persisted article body | Item Details/repository boundary | TC-264 / TC-267 full assertions still required | Pending |
