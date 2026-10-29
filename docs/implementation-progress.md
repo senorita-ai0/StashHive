@@ -1050,3 +1050,13 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - **Export:** added a bounded Markdown index export for up to 2,000 selected records and a 2 MiB generated-text cap. It includes item metadata and user-entered text, but not attachment bytes; use the existing JSON backup for full recovery. The current move dialog selects existing collections; creating a new collection during a bulk move is not part of this slice.
 - **Regression source:** `test/bulk_actions_widget_test.dart` covers favorite/move/tag actions and cancellation of confirmed deletion. `test/selected_items_export_test.dart` covers Markdown output and export bounds.
 - **Verification:** tests, formatter, analyzer, web/Android builds, and manual UI checks have not been run. This increment is source-implemented but unverified. CI remains manual-only.
+
+
+## Feature backlog — SH-004 importers and portable exports (2026-10-29)
+
+- **Bookmark importer:** Added a bounded Netscape-format browser bookmark HTML parser and Settings → Backup & Privacy → Import browser bookmarks flow. The selected HTML file is size-checked, parsed locally, and previewed before writing. Existing links and repeated URLs within the file are skipped; only HTTP(S) URLs are accepted. Bookmark folders are mapped to collections where possible. Import failures and folder assignments that cannot be preserved are reported.
+- **CSV export:** Added a full-library CSV export for spreadsheet use, including item metadata and user-entered text. Fields use CSV quoting for commas, quotes and newlines. Attachment bytes are intentionally excluded; versioned JSON backup remains the full recovery format.
+- **Markdown export:** The SH-003 selected-item Markdown index is available for selected records, with explicit item-count and output-size limits.
+- **Safety:** No website fetching or HTML execution; no cloud services. Import is preview-first and deduplicates against the existing library.
+- **Regression source:** `test/bookmark_html_importer_test.dart`, `test/library_csv_export_test.dart`, and `test/selected_items_export_test.dart`.
+- **Verification:** Tests, formatter, analyzer, web/Android builds, and manual import/export checks have not been run. Source is committed but unverified. CI remains manual-only.
