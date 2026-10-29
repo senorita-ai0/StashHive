@@ -35,13 +35,13 @@ Traceability: FR-004, FR-005.
 
 Purpose: focused capture for a link, note, image or document. The screen must not imply a URL is downloaded for offline use.
 
-Visible hierarchy: back/cancel; content-type selector; type-specific fields; tags and collection; primary Save action; bookmark-not-offline explanation for links.
+Visible hierarchy: back/cancel; content-type selector; type-specific fields; tags with optional smart-rule suggestions; collection; primary Save action; bookmark-not-offline explanation for links.
 
-Interactions: type selection changes the input fields; validate required values and URL schemes; successful save persists locally and confirms.
+Interactions: type selection changes the input fields; validate required values and URL schemes; Suggest tags runs user-authored phrase rules locally and adds a suggestion only after the user taps its chip; successful save persists locally and confirms.
 
 Required states: validation that retains input; picker cancellation with no ghost item; unsupported/oversized file errors; share-intent review when supported.
 
-Traceability: FR-001, FR-002, FR-006–009.
+Traceability: FR-001, FR-002, FR-006–009, FR-025.
 
 ## SCR-003 — Search Results
 
