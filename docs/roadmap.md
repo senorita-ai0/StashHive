@@ -1650,3 +1650,8 @@ The Reader service was found to contain duplicate URL/sanitizer/loader declarati
 ## SH-006 page-title extraction hardening — 2026-10-29
 
 The native title extractor now removes active embedded content and comments before finding the real document `<title>`, preventing fake title markup embedded in a script or comment from winning. A synthetic HTML-response test covers the case. Source is re-fetched and duplicate native helper declarations were checked, but test execution and platform behavior remain pending.
+
+
+## SH-006 — UTF-8 BOM handling — 2026-10-29
+
+The native temporary reader now strips a leading UTF-8 BOM before rendering page text, and TC-270 regression source covers a BOM-prefixed plain-text response. This remains source-only until tests and platform behavior are verified at the owner-approved manual validation checkpoint. CI remains manual-only.
