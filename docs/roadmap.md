@@ -1463,6 +1463,6 @@ The active Phase 2/3 source queue has reached the point where the next meaningfu
 ### TSK-532 — Pin shared Flutter and Android build configuration — 2026-10-29
 
 - **Requirements:** NFR-009.
-- **Source:** StashHive now declares minimum Dart 3.13.2/Flutter 3.47.2, and the manual workflow pins Flutter 3.47.2/JDK 27. `tool/configure_android_build.py` normalizes the generated runner to AGP 9.4.0, Kotlin 2.4.10, Gradle 9.8.1, compile SDK 36, Build Tools 36.1.0 and JVM target 17, enables AGP built-in Kotlin consistently, and creates StashHive adaptive hive launcher resources.
+- **Source:** StashHive now declares minimum Dart 3.13.2/Flutter 3.47.2, and the manual workflow pins Flutter 3.47.2/JDK 27. `tool/configure_android_build.py` normalizes the generated runner to AGP 9.4.0, Kotlin 2.4.10, Gradle 9.8.2, compile SDK 36, Build Tools 36.1.0 and JVM target 17, enables AGP built-in Kotlin consistently, and creates StashHive adaptive hive launcher resources.
 - **Regression:** TC-245 covers the generated build baseline, launcher resources, idempotence and fail-clear behavior.
 - **Status:** Source and test are committed on main. Do not mark complete until the manual Python tests, analyzer, full tests, web build and Android debug APK succeed; CI remains manual-only.
