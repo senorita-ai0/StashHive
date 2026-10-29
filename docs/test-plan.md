@@ -1907,3 +1907,13 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Simulate a share-sheet failure. The UI must show safe retry guidance without exposing plugin/storage diagnostics or throwing a framework exception.
 - Confirm the selection and saved library are unchanged by a successful or failed export.
 - **Status:** Widget regression source is committed but unrun. Validate at the owner-requested manual checkpoint; CI stays manual-only.
+
+
+### TC-261 — Preview and confirm browser bookmark import
+
+- Supply a supported Netscape-format browser bookmark HTML file containing one new web URL, one normalized duplicate of it, a link already saved in the local library with a fragment/tracking variation, and a non-web scheme.
+- Confirm the import preview reports the new-link count, existing duplicate, in-file duplicate, invalid link, and discovered bookmark folder before writing anything.
+- Cancel the preview and verify both saved items and collections remain unchanged.
+- Confirm the preview and verify only the new safe link is imported, its folder becomes the intended collection, the existing item is not duplicated, and invalid links are skipped with an accurate summary.
+- Confirm the flow only parses the chosen file; it does not open, fetch, or send any bookmark URL to a network service. Check the 10 MB bound and recoverable errors for empty, malformed and unreadable input.
+- **Status:** Bookmark-import widget regression source is committed but unrun. Validate at the owner-requested manual checkpoint; CI stays manual-only.
