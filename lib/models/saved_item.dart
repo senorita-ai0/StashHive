@@ -113,7 +113,7 @@ class SavedAnnotation {
   final int createdAtMs;
 
   Map<String, dynamic> toMap() {
-    if (id.isEmpty ||
+    if (id.trim().isEmpty ||
         id.length > 128 ||
         quote.length > maxSavedAnnotationQuoteCharacters ||
         note.length > maxSavedAnnotationNoteCharacters) {
