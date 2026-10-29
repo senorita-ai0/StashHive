@@ -316,4 +316,19 @@ void main() {
       'سلام\nhello',
     );
   });
+
+  test('malformed unclosed active markup does not leak its tail into reader text', () {
+    final openScript = sanitizeArticleMarkup(
+      '<p>Readable paragraph.</p><script>secretCode()</script never-closed',
+    );
+    final openComment = sanitizeArticleMarkup(
+      '<p>Visible paragraph.</p><!-- private hidden tail',
+    );
+
+    expect(openScript, contains('Readable paragraph.'));
+    expect(openScript, isNot(contains('secretCode')));
+    expect(openScript, isNot(contains('never-closed')));
+    expect(openComment, contains('Visible paragraph.'));
+    expect(openComment, isNot(contains('private hidden tail')));
+  });
 }
