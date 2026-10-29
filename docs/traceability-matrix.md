@@ -1748,3 +1748,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Enforce article/title length caps without splitting a UTF-16 surrogate pair | `_truncateAtUnicodeBoundary` in `lib/services/article_reader_io.dart` | TC-271; `does not split a supplementary Unicode character at the text cap` in `test/article_reader_test.dart` | Source and regression authored and re-fetched; not executed; platform checks pending |
+
+
+## SH-006 title Unicode boundary traceability — TC-272 — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Cap extracted title text without splitting a UTF-16 surrogate pair | `_truncateAtUnicodeBoundary` called from `_extractTitle` in `lib/services/article_reader_io.dart` | TC-272; `does not split a supplementary Unicode character at the title cap` in `test/article_reader_test.dart` | Source and regression authored and re-fetched; not executed; platform checks pending |
