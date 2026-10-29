@@ -6188,7 +6188,11 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('$newCount new links can be imported.'),
+                  Text(
+                    newCount == 1
+                        ? '1 new link can be imported.'
+                        : '$newCount new links can be imported.',
+                  ),
                   if (duplicates > 0)
                     Text(
                       duplicates == 1
