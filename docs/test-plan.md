@@ -1752,7 +1752,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 ### TC-245 — Normalize the generated Android build baseline and launcher resources
 
 - Configure a temporary generated-style Android runner and confirm AGP/Kotlin plugin versions, Gradle wrapper URL, Gradle properties, compile SDK/build-tools and Java/Kotlin JVM targets match the documented baseline.
-- Confirm AGP built-in Kotlin is enabled and the generated app module does not apply the legacy Kotlin Android plugin.
+- Confirm AGP built-in Kotlin is enabled and the generated app module does not apply either legacy Kotlin plugin spelling (`org.jetbrains.kotlin.android` or `kotlin-android`).
 - Confirm custom StashHive launcher color/vector/legacy/adaptive resources are generated; rerun configuration and assert no files change a second time.
 - Confirm an incomplete generated runner fails with a clear error.
 - **Status:** Python regression source is committed but unrun. Run alongside TC-243 and the manual Android build; do not claim the Android toolchain works until an APK build succeeds.
