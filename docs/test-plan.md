@@ -1970,7 +1970,7 @@ The reader widget test source now checks that a successful save presents confirm
 
 ### TC-269 — Decode declared Windows-1252 reader responses
 
-- Inject a synthetic successful text/plain; charset="windows-1252" response containing bytes for the euro sign, curly quotation marks, and em dash.
+- Inject a synthetic successful text/plain; charset="windows-1252" response containing bytes for the euro sign, curly quotation marks, and em dash. Also test the cp1252 alias and a separate latin1 byte mapping.
 - Verify the reader returns the intended Unicode punctuation, with no Latin-1 control-character substitution.
 - Retain UTF-8 as the default for missing/unknown charsets and keep latin1/iso-8859-1 as separate mappings.
 - Status: Regression source committed in test/article_reader_test.dart but not run. Execute at the owner-requested manual validation checkpoint; CI remains manual-only.
