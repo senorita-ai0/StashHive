@@ -1,7 +1,141 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stashhive/services/article_reader.dart';
 
 void main() {
+  tearDown(() {
+    articleReaderDnsResolverForTesting = null;
+    articleReaderTransportForTesting = null;
+    articleReaderLoaderForTesting = null;
+  });
+
+  group('native article reader transport policy', () {
+    setUp(() {
+      articleReaderDnsResolverForTesting = (host) async => <String>['93.184.216.34'];
+    });
+
+    test('loads HTML through the injected transport and sanitizes its contents', () async {
+      Uri? requestedUri;
+      List<String>? vettedAddresses;
+      articleReaderTransportForTesting = (uri, addresses, timeout) async {
+        requestedUri = uri;
+        vettedAddresses = addresses;
+        return ArticleReaderTransportResponse(
+          statusCode: 200,
+          contentType: 'text/html; charset=utf-8',
+          body: utf8.encode(
+            '<title>Reader title</title>'
+            '<nav>Menu</nav><article><h1>Useful &amp; safe</h1>'
+            '<script>doNotRun()</script><p>Readable paragraph.</p></article>',
+          ),
+        );
+      };
+
+      final result = await loadArticleForReader(
+        'https://example.com/path?q=1',
+      );
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.title, 'Reader title');
+      expect(result.text, contains('Useful & safe'));
+      expect(result.text, contains('Readable paragraph.'));
+      expect(result.text, isNot(contains('doNotRun')));
+      expect(result.text, isNot(contains('Menu')));
+      expect(requestedUri?.path, '/path');
+      expect(requestedUri?.queryParameters['q'], '1');
+      expect(vettedAddresses, ['93.184.216.34']);
+    });
+
+    test('rejects a redirect without returning its response body', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 302,
+            contentType: 'text/html',
+            body: utf8.encode('<article>redirect body must not show</article>'),
+          );
+
+      final result = await loadArticleForReader('https://example.com/path');
+
+      expect(result.state, ArticleReaderState.networkError);
+      expect(result.text, isEmpty);
+      expect(result.message, contains('redirects'));
+    });
+
+    test('rejects non-HTML response content types', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'application/pdf',
+            body: <int>[37, 80, 68, 70],
+          );
+
+      final result = await loadArticleForReader('https://example.com/file.pdf');
+
+      expect(result.state, ArticleReaderState.unsupportedContent);
+      expect(result.text, isEmpty);
+    });
+
+    test('enforces the response byte cap even with an injected response', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/plain; charset=utf-8',
+            body: List<int>.filled(maxArticleResponseBytes + 1, 97),
+          );
+
+      final result = await loadArticleForReader('https://example.com/large');
+
+      expect(result.state, ArticleReaderState.tooLarge);
+      expect(result.text, isEmpty);
+    });
+
+    test('enforces the display text cap after sanitizing', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/plain',
+            body: utf8.encode(List<String>.filled(12000, 'safe text').join(' ')),
+          );
+
+      final result = await loadArticleForReader('https://example.com/long');
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text.length, maxArticleTextCharacters);
+    });
+
+    test('blocks private DNS answers before transport is called', () async {
+      articleReaderDnsResolverForTesting = (host) async => <String>['127.0.0.1'];
+      var transportCalled = false;
+      articleReaderTransportForTesting = (uri, addresses, timeout) async {
+        transportCalled = true;
+        return ArticleReaderTransportResponse(
+          statusCode: 200,
+          contentType: 'text/plain',
+          body: utf8.encode('should not load'),
+        );
+      };
+
+      final result = await loadArticleForReader('https://example.com/private');
+
+      expect(result.state, ArticleReaderState.blockedAddress);
+      expect(transportCalled, isFalse);
+    });
+
+    test('maps an injected network timeout to a recoverable reader state', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) =>
+          Completer<ArticleReaderTransportResponse>().future;
+
+      final result = await loadArticleForReader(
+        'https://example.com/slow',
+        timeout: const Duration(milliseconds: 1),
+      );
+
+      expect(result.state, ArticleReaderState.timedOut);
+    });
+  });
+
   group('parseArticleReaderUrl', () {
     test('accepts HTTP and HTTPS public-looking URLs', () {
       expect(
