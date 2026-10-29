@@ -63,3 +63,12 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [ ] Validate Android network behavior, redirects/DNS/private destinations, response limits and accessible error states.
 - [x] Add selection-based quote capture with bounded context and source offsets using Flutter selectable text; show context with the saved annotation.
 - [ ] Verify selection and highlight save behavior on Android and web; the saved offsets are advisory because article content can change.
+
+## SH-006 — deterministic transport hardening — 2026-10-29
+
+- [x] Add test-only injectable resolver and transport response seams while retaining OS DNS and pinned direct sockets in production.
+- [x] Add authored cases for success/sanitization, redirects, unsupported MIME, byte/display caps, private/mixed DNS answers, DNS timeouts and HTTP/transport errors.
+- [x] Use one absolute deadline across the native request path.
+- [ ] Run the test suite at the owner-approved manual validation checkpoint.
+- [ ] Expand checks for every reserved IPv4 range, content parsing edge cases, unchanged saved-item fields, and native/platform error accessibility.
+- [ ] Complete TC-264/267/268 repository and platform assertions; SH-006 remains partial.
