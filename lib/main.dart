@@ -4031,6 +4031,54 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
+  Future<bool> _saveReaderQuote(
+    String itemId,
+    String quote,
+    int startOffset,
+    int endOffset,
+    String contextBefore,
+    String contextAfter,
+  ) async {
+    final current = widget.repository.findById(itemId);
+    if (current == null) {
+      _message('This saved item is no longer available.');
+      return false;
+    }
+    if (current.annotations.length >= maxSavedAnnotationsPerItem) {
+      _message('This item already has the maximum of $maxSavedAnnotationsPerItem highlights and notes.');
+      return false;
+    }
+    final annotation = SavedAnnotation(
+      id: widget.repository.createUniqueId(),
+      quote: quote,
+      sourceStartOffset: startOffset,
+      sourceEndOffset: endOffset,
+      contextBefore: contextBefore.length > maxSavedAnnotationContextCharacters
+          ? contextBefore.substring(contextBefore.length - maxSavedAnnotationContextCharacters)
+          : contextBefore,
+      contextAfter: contextAfter.length > maxSavedAnnotationContextCharacters
+          ? contextAfter.substring(0, maxSavedAnnotationContextCharacters)
+          : contextAfter,
+      createdAtMs: DateTime.now().toUtc().millisecondsSinceEpoch,
+    );
+    final updated = current.copyWith(
+      annotations: <SavedAnnotation>[...current.annotations, annotation],
+      updatedAtMs: DateTime.now().toUtc().millisecondsSinceEpoch,
+    );
+    try {
+      await widget.repository.save(updated);
+      if (!mounted) return false;
+      setState(_reload);
+      _message('Highlight saved to this item. It may not align if the article changes.');
+      return true;
+    } catch (_) {
+      if (mounted) {
+        _message('Could not save this highlight. Please check local storage and try again.');
+      }
+      return false;
+    }
+  }
+
   Future<void> _openArticleReader(SavedItem item) async {
     final uri = item.url == null ? null : parseHttpUrl(item.url);
     if (item.kind != ItemKind.link || uri == null) {
@@ -4043,6 +4091,21 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
         builder: (_) => ArticleReaderPage(
           url: uri.toString(),
           savedTitle: item.title,
+          onSaveQuote: (
+            quote,
+            startOffset,
+            endOffset,
+            contextBefore,
+            contextAfter,
+          ) =>
+              _saveReaderQuote(
+            item.id,
+            quote,
+            startOffset,
+            endOffset,
+            contextBefore,
+            contextAfter,
+          ),
         ),
       ),
     );
