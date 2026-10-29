@@ -38,6 +38,52 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('saving a highlight exposes an accessible progress label',
+      (tester) async {
+    articleReaderLoaderForTesting = (url, timeout) async =>
+        const ArticleReaderResult(
+          state: ArticleReaderState.success,
+          title: 'Sample article',
+          text: 'A selected passage while the save operation is pending.',
+        );
+    addTearDown(() {
+      articleReaderLoaderForTesting = null;
+    });
+    final pendingSave = Completer<bool>();
+    final semanticsHandle = tester.ensureSemantics();
+    addTearDown(semanticsHandle.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ArticleReaderPage(
+          url: 'https://example.com/article',
+          savedTitle: 'Saved title',
+          onSaveQuote: (quote, start, end, before, after) =>
+              pendingSave.future,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.longPress(find.byKey(const ValueKey('article-reader-text')));
+    await tester.pumpAndSettle();
+    expect(find.text('SELECTED PASSAGE'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('save-reader-highlight')));
+    await tester.pump();
+
+    expect(find.bySemanticsLabel('Saving highlight'), findsOneWidget);
+
+    pendingSave.complete(true);
+    await tester.pumpAndSettle();
+    expect(
+      find.text(
+        'Highlight saved to this item. It may not align if the article changes.',
+      ),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('invalid URL shows a recoverable state without a request',
       (tester) async {
     await tester.pumpWidget(
