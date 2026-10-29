@@ -52,3 +52,13 @@
 ## SH-006 reader implementation gate — 2026-10-29
 
 Before source implementation, follow [the article-reader feasibility and privacy gate](research/article-reader-feasibility.md). First slice is an explicitly user-initiated temporary reader with bounded transport/parsing, safe plain-text rendering, recoverable states and tests. Do not persist fetched content or imply offline archives. Text selection/highlight anchoring is a separate follow-on slice after Android/web feasibility is proven. This is a design decision only; implementation and tests remain NOT STARTED.
+
+## SH-006 — reader source increment (2026-10-29)
+
+- [x] Add explicit Item Details reader entry point and disclose that a tap sends a request from this device.
+- [x] Add bounded native HTTP(S) fetch, public-address preflight/pinning, redirect refusal, supported content-type checks, byte/text/time limits and plain-text sanitization.
+- [x] Keep browser CORS limitations explicit and preserve external-browser opening; no proxy or content persistence.
+- [x] Author initial URL/sanitization regression tests.
+- [ ] Run the new and existing tests at the owner-approved manual validation checkpoint.
+- [ ] Validate Android network behavior, redirects/DNS/private destinations, response limits and accessible error states.
+- [ ] Implement selection-based quote/highlight capture with bounded context/offset metadata after a cross-platform selection approach is proven.
