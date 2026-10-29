@@ -235,6 +235,56 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Library reading filters show only matching saved items', (tester) async {
+    final unread = SavedItem(
+      id: 'unread-reading-filter',
+      kind: ItemKind.link,
+      title: 'Unread article',
+      content: '',
+      url: 'https://example.com/unread',
+      tags: const <String>[],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 1000,
+    );
+    final completed = SavedItem(
+      id: 'completed-reading-filter',
+      kind: ItemKind.link,
+      title: 'Completed article',
+      content: '',
+      url: 'https://example.com/completed',
+      tags: const <String>[],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 1000,
+      readingStatus: ReadingStatus.completed,
+      readingProgress: 100,
+    );
+    await repository.save(unread);
+    await repository.save(completed);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.LibraryPage(
+          repository: repository,
+          onAdd: (_) {},
+          onSearch: (_) {},
+          onOpenItem: (_) {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Unread').last);
+    await tester.tap(find.text('Unread').last);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Unread article'), findsOneWidget);
+    expect(find.text('Completed article'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'invalidates a picker result after switching away and back to its original type',
     (tester) async {
