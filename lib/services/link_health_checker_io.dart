@@ -57,20 +57,7 @@ Future<LinkHealthRecord> checkLinkHealth({
     ..maxConnectionsPerHost = 2;
 
   try {
-    final headResponse = await _sendRequest(
-      client,
-      uri,
-      'HEAD',
-      timeout,
-    );
-    var response = headResponse;
-    if (headResponse.statusCode == HttpStatus.methodNotAllowed ||
-        headResponse.statusCode == HttpStatus.notImplemented) {
-      // Some sites do not implement HEAD. Retry with GET and close the client
-      // immediately after reading response headers so the page body is not
-      // downloaded or stored.
-      response = await _sendRequest(client, uri, 'GET', timeout);
-    }
+    final response = await _sendRequest(client, uri, timeout);
     return result(
       linkHealthStateForStatusCode(response.statusCode),
       response.statusCode,
@@ -97,12 +84,9 @@ Future<LinkHealthRecord> checkLinkHealth({
 Future<HttpClientResponse> _sendRequest(
   HttpClient client,
   Uri uri,
-  String method,
   Duration timeout,
 ) async {
-  final request = method == 'HEAD'
-      ? await client.headUrl(uri).timeout(timeout)
-      : await client.getUrl(uri).timeout(timeout);
+  final request = await client.headUrl(uri).timeout(timeout);
   // Do not follow a redirect automatically: a public website could redirect
   // to a local/private address. Report the redirect instead of probing a second host.
   request.followRedirects = false;
