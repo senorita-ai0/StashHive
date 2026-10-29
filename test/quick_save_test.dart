@@ -1022,6 +1022,46 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('editing a saved item preserves its annotations', (tester) async {
+    final original = SavedItem(
+      id: 'annotated-link',
+      kind: ItemKind.link,
+      title: 'Original title',
+      content: 'Notes remain unchanged.',
+      url: 'https://example.com/article',
+      tags: const <String>['Reading'],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 2000,
+      annotations: const <SavedAnnotation>[
+        SavedAnnotation(
+          id: 'annotation-1',
+          quote: 'Keep this quote.',
+          note: 'Remember why it matters.',
+          createdAtMs: 1500,
+        ),
+      ],
+    );
+    await repository.save(original);
+
+    await openEditor(tester, original);
+    await tester.enterText(
+      find.byType(TextFormField).at(1),
+      'Updated title',
+    );
+    await tester.ensureVisible(find.text('Save changes'));
+    await tester.tap(find.text('Save changes'));
+    await tester.pumpAndSettle();
+
+    final updated = repository.findById('annotated-link')!;
+    expect(updated.title, 'Updated title');
+    expect(updated.annotations, hasLength(1));
+    expect(updated.annotations.single.quote, 'Keep this quote.');
+    expect(updated.annotations.single.note, 'Remember why it matters.');
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('normalizes uppercase URL schemes before saving', (tester) async {
     await openNewLink(tester);
     await tester.enterText(
