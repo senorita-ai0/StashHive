@@ -92,6 +92,77 @@ enum ItemKind {
   }
 }
 
+const int maxSavedAnnotationsPerItem = 50;
+const int maxSavedAnnotationQuoteCharacters = 4000;
+const int maxSavedAnnotationNoteCharacters = 4000;
+
+/// A user-captured quote and/or private note attached to one saved item.
+/// StashHive never fetches website text to create these; the user supplies it.
+@immutable
+class SavedAnnotation {
+  const SavedAnnotation({
+    required this.id,
+    this.quote = '',
+    this.note = '',
+    required this.createdAtMs,
+  });
+
+  final String id;
+  final String quote;
+  final String note;
+  final int createdAtMs;
+
+  Map<String, dynamic> toMap() {
+    if (id.isEmpty ||
+        id.length > 128 ||
+        quote.length > maxSavedAnnotationQuoteCharacters ||
+        note.length > maxSavedAnnotationNoteCharacters) {
+      throw const FormatException('A saved annotation exceeds supported limits.');
+    }
+    if (quote.trim().isEmpty && note.trim().isEmpty) {
+      throw const FormatException('A saved annotation must contain a quote or note.');
+    }
+    if (createdAtMs < minSavedItemTimestampMs ||
+        createdAtMs > maxSavedItemTimestampMs) {
+      throw const FormatException(
+        'A saved annotation has a timestamp outside the supported date range.',
+      );
+    }
+    return <String, dynamic>{
+      'id': id,
+      'quote': quote,
+      'note': note,
+      'createdAtMs': createdAtMs,
+    };
+  }
+
+  factory SavedAnnotation.fromMap(Map<dynamic, dynamic> raw) {
+    final idValue = raw['id'];
+    final quoteValue = raw['quote'];
+    final noteValue = raw['note'];
+    final createdAtValue = raw['createdAtMs'];
+
+    if (idValue is! String ||
+        quoteValue is! String ||
+        noteValue is! String ||
+        createdAtValue is! int ||
+        idValue.length > 128 ||
+        quoteValue.length > maxSavedAnnotationQuoteCharacters ||
+        noteValue.length > maxSavedAnnotationNoteCharacters) {
+      throw const FormatException('A saved annotation has invalid fields.');
+    }
+
+    final annotation = SavedAnnotation(
+      id: idValue,
+      quote: quoteValue,
+      note: noteValue,
+      createdAtMs: createdAtValue,
+    );
+    annotation.toMap();
+    return annotation;
+  }
+}
+
 @immutable
 class SavedItem {
   SavedItem({
@@ -110,7 +181,9 @@ class SavedItem {
     this.attachmentMimeType,
     this.readingStatus = ReadingStatus.unread,
     this.readingProgress = 0,
-  }) : tags = List<String>.unmodifiable(tags);
+    List<SavedAnnotation> annotations = const <SavedAnnotation>[],
+  })  : tags = List<String>.unmodifiable(tags),
+        annotations = List<SavedAnnotation>.unmodifiable(annotations);
 
   final String id;
   final ItemKind kind;
@@ -127,6 +200,7 @@ class SavedItem {
   final String? attachmentMimeType;
   final ReadingStatus readingStatus;
   final int readingProgress;
+  final List<SavedAnnotation> annotations;
 
   bool get hasAttachment => attachmentKey != null && attachmentKey!.isNotEmpty;
 
@@ -162,7 +236,13 @@ class SavedItem {
         (url?.length ?? 0) > maxSavedItemUrlCharacters ||
         (collection?.length ?? 0) > 80 ||
         tags.length > 100 ||
-        tags.any((tag) => tag.length > 100)) {
+        tags.any((tag) => tag.length > 100) ||
+        annotations.length > maxSavedAnnotationsPerItem ||
+        annotations.any(
+          (annotation) =>
+              annotation.quote.length > maxSavedAnnotationQuoteCharacters ||
+              annotation.note.length > maxSavedAnnotationNoteCharacters,
+        )) {
       return false;
     }
     if (normalizedQuery.isEmpty) return true;
@@ -172,6 +252,10 @@ class SavedItem {
       if (url != null) url!,
       if (collection != null) collection!,
       ...tags,
+      for (final annotation in annotations) ...[
+        annotation.quote,
+        annotation.note,
+      ],
     ];
     return searchable.any(
       (value) => value.toLowerCase().contains(normalizedQuery),
@@ -199,6 +283,16 @@ class SavedItem {
       throw const FormatException(
         'A saved item contains an invalid or oversized tag list.',
       );
+    }
+    if (annotations.length > maxSavedAnnotationsPerItem) {
+      throw const FormatException('A saved item has too many annotations.');
+    }
+    final annotationIds = <String>{};
+    for (final annotation in annotations) {
+      annotation.toMap();
+      if (!annotationIds.add(annotation.id)) {
+        throw const FormatException('A saved item has duplicate annotation IDs.');
+      }
     }
     if (createdAtMs < minSavedItemTimestampMs ||
         createdAtMs > maxSavedItemTimestampMs ||
@@ -229,6 +323,9 @@ class SavedItem {
       'attachmentMimeType': attachmentMimeType,
       'readingStatus': readingStatus.name,
       'readingProgress': readingProgress,
+      'annotations': annotations.map((annotation) => annotation.toMap()).toList(
+            growable: false,
+          ),
     };
   }
 
@@ -244,6 +341,7 @@ class SavedItem {
     final attachmentMimeTypeValue = raw['attachmentMimeType'];
     final readingStatusValue = raw['readingStatus'];
     final readingProgressValue = raw['readingProgress'];
+    final annotationsValue = raw['annotations'];
 
     // This factory is public and may be called without the repository/backup
     // validators. Reject overlong strings before normalization or copying.
@@ -272,6 +370,26 @@ class SavedItem {
       throw const FormatException(
         'A saved item contains a timestamp outside the supported date range.',
       );
+    }
+
+    if (raw.containsKey('annotations') &&
+        (annotationsValue is! List ||
+            annotationsValue.length > maxSavedAnnotationsPerItem)) {
+      throw const FormatException('A saved item has an invalid annotation list.');
+    }
+    final annotations = <SavedAnnotation>[];
+    final annotationIds = <String>{};
+    if (annotationsValue is List) {
+      for (final value in annotationsValue) {
+        if (value is! Map) {
+          throw const FormatException('A saved item has an invalid annotation list.');
+        }
+        final annotation = SavedAnnotation.fromMap(value);
+        if (!annotationIds.add(annotation.id)) {
+          throw const FormatException('A saved item has duplicate annotation IDs.');
+        }
+        annotations.add(annotation);
+      }
     }
 
     final readingStatus = ReadingStatus.fromWire(readingStatusValue);
@@ -328,6 +446,7 @@ class SavedItem {
           : null,
       readingStatus: readingStatus,
       readingProgress: readingProgressValue is int ? readingProgressValue : 0,
+      annotations: annotations,
     );
   }
 
@@ -347,6 +466,7 @@ class SavedItem {
     String? attachmentMimeType,
     ReadingStatus? readingStatus,
     int? readingProgress,
+    List<SavedAnnotation>? annotations,
   }) {
     return SavedItem(
       id: id,
@@ -366,6 +486,7 @@ class SavedItem {
           : (attachmentMimeType ?? this.attachmentMimeType),
       readingStatus: readingStatus ?? this.readingStatus,
       readingProgress: readingProgress ?? this.readingProgress,
+      annotations: annotations ?? this.annotations,
     );
   }
 }
