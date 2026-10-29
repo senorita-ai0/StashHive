@@ -1635,3 +1635,8 @@ Added a deterministic widget regression for the saving indicator's semantic labe
 ## SH-006 sanitizer decoding edge-case coverage — 2026-10-29
 
 Reader sanitization now handles a broader safe set of named typography/currency entities and decodes numeric references before named references, avoiding recursive entity expansion through escaped ampersands. Synthetic test source covers those cases, but execution and native/web rendering checks remain pending. SH-006 remains partial and the lightweight sanitizer is not a full HTML/readability parser.
+
+
+## SH-006 semantic extraction ordering — 2026-10-29
+
+The lightweight reader sanitizer now strips embedded active blocks and comments before searching for semantic article/main tags, preventing fake article-looking markup in script strings or comments from winning extraction. Added a regression fixture with a real article plus fake script/comment containers. Source/test only; all validation remains pending and the sanitizer is not a full HTML parser.
