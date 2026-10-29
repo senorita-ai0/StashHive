@@ -100,7 +100,7 @@ class ConfigureAndroidBuildTests(unittest.TestCase):
 
     def test_aligns_flutter_android_versions_and_sdk_settings(self):
         changed = configure_android_build(self.android_dir)
-        self.assertEqual(len(changed), 5)
+        self.assertEqual(len(changed), 10)
 
         settings = (self.android_dir / "settings.gradle.kts").read_text(encoding="utf-8")
         self.assertIn(f'id("com.android.application") version "{ANDROID_PLUGIN_VERSION}" apply false', settings)
@@ -125,10 +125,29 @@ class ConfigureAndroidBuildTests(unittest.TestCase):
         self.assertIn("sourceCompatibility = JavaVersion.VERSION_17", app)
         self.assertIn("targetCompatibility = JavaVersion.VERSION_17", app)
         self.assertIn("JvmTarget.JVM_17", app)
+        self.assertNotIn(
+            'id("org.jetbrains.kotlin.android")',
+            app,
+            "AGP built-in Kotlin must not be applied alongside the legacy Kotlin plugin.",
+        )
 
         root = (self.android_dir / "build.gradle.kts").read_text(encoding="utf-8")
         self.assertEqual(root.count("STASHHIVE_SHARED_ANDROID_SDK_CONFIGURATION"), 1)
         self.assertIn(f'buildToolsVersion = "{BUILD_TOOLS_VERSION}"', root)
+
+        resources = [
+            "app/src/main/res/values/stashhive_colors.xml",
+            "app/src/main/res/drawable/stashhive_launcher_foreground.xml",
+            "app/src/main/res/drawable/stashhive_launcher_legacy.xml",
+            "app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+            "app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
+        ]
+        for relative in resources:
+            self.assertTrue((self.android_dir / relative).is_file(), relative)
+        self.assertIn(
+            "@drawable/stashhive_launcher_foreground",
+            (self.android_dir / resources[2]).read_text(encoding="utf-8"),
+        )
 
     def test_configuration_is_idempotent(self):
         configure_android_build(self.android_dir)
