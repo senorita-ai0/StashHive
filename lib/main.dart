@@ -669,6 +669,7 @@ class HomeShell extends StatefulWidget {
 class _HomeShellState extends State<HomeShell> {
   int _selectedTab = 0;
   String _searchSeed = '';
+  SavedSearchPreset? _searchPresetSeed;
   int _searchRevision = 0;
 
   StreamSubscription<List<SharedMediaFile>>? _shareSubscription;
@@ -947,6 +948,16 @@ class _HomeShellState extends State<HomeShell> {
   void _openSearch(String query) {
     setState(() {
       _searchSeed = query;
+      _searchPresetSeed = null;
+      _searchRevision++;
+      _selectedTab = 1;
+    });
+  }
+
+  void _openSavedSearch(SavedSearchPreset preset) {
+    setState(() {
+      _searchSeed = preset.filters.query;
+      _searchPresetSeed = preset;
       _searchRevision++;
       _selectedTab = 1;
     });
@@ -983,12 +994,14 @@ class _HomeShellState extends State<HomeShell> {
         key: ValueKey<int>(_searchRevision),
         repository: widget.repository,
         initialQuery: _searchSeed,
+        initialFilters: _searchPresetSeed?.filters,
         onOpenItem: _openItem,
       ),
       CollectionsPage(
         repository: widget.repository,
         onOpenItem: _openItem,
         onAdd: _openAdd,
+        onOpenSavedSearch: _openSavedSearch,
       ),
       SettingsPage(
         repository: widget.repository,
@@ -1458,11 +1471,13 @@ class SearchPage extends StatefulWidget {
     required this.repository,
     required this.initialQuery,
     required this.onOpenItem,
+    this.initialFilters,
     super.key,
   });
 
   final LibraryRepository repository;
   final String initialQuery;
+  final SearchFilters? initialFilters;
   final ValueChanged<SavedItem> onOpenItem;
 
   @override
@@ -1472,7 +1487,8 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   late final TextEditingController _controller =
       TextEditingController(text: widget.initialQuery);
-  late SearchFilters _filters = SearchFilters(query: widget.initialQuery);
+  late SearchFilters _filters =
+      widget.initialFilters ?? SearchFilters(query: widget.initialQuery);
   late List<SavedSearchPreset> _presets = widget.repository.savedSearchPresets;
 
   @override
@@ -3826,12 +3842,14 @@ class CollectionsPage extends StatefulWidget {
     required this.repository,
     required this.onOpenItem,
     required this.onAdd,
+    this.onOpenSavedSearch,
     super.key,
   });
 
   final LibraryRepository repository;
   final ValueChanged<SavedItem> onOpenItem;
   final ValueChanged<ItemKind?> onAdd;
+  final ValueChanged<SavedSearchPreset>? onOpenSavedSearch;
 
   @override
   State<CollectionsPage> createState() => _CollectionsPageState();
@@ -3977,7 +3995,8 @@ class _CollectionsPageState extends State<CollectionsPage> {
     return ValueListenableBuilder<List<String>>(
       valueListenable: widget.repository.collections,
       builder: (context, names, _) {
-        if (names.isEmpty) {
+        final presets = widget.repository.savedSearchPresets;
+        if (names.isEmpty && presets.isEmpty) {
           return PremiumEmptyState(
             icon: Icons.folder_open_rounded,
             title: 'Make room for your ideas',
@@ -3988,27 +4007,95 @@ class _CollectionsPageState extends State<CollectionsPage> {
           );
         }
 
-        // Counts depend on saved items as well as collection names. Listen to
-        // both sources so this page refreshes after an item is saved, edited,
-        // moved, or deleted without requiring a tab change.
+        // Collection counts depend on saved items as well as collection
+        // names. The same view also surfaces local saved filters as Smart
+        // Searches so they can be launched without first opening Search.
         return ValueListenableBuilder<List<SavedItem>>(
           valueListenable: widget.repository.items,
           builder: (context, items, _) {
+            final hasSmartSearches = presets.isNotEmpty;
+            final collectionContentCount =
+                names.isEmpty ? 1 : names.length + 1;
             return ListView.separated(
               padding: const EdgeInsets.only(bottom: 24),
-              itemCount: names.length + 1,
+              itemCount:
+                  (hasSmartSearches ? 1 : 0) + collectionContentCount,
               separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
-                if (index == names.length) {
+                if (hasSmartSearches && index == 0) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'SMART SEARCHES',
+                          style: TextStyle(
+                            color: mutedTextColor(context),
+                            fontWeight: FontWeight.w800,
+                            fontSize: 10,
+                            letterSpacing: 1.1,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final preset in presets)
+                              ActionChip(
+                                avatar: const Icon(
+                                  Icons.auto_awesome_rounded,
+                                  size: 16,
+                                ),
+                                label: Text(preset.name),
+                                tooltip: 'Run saved search: ${preset.name}',
+                                onPressed: widget.onOpenSavedSearch == null
+                                    ? null
+                                    : () => widget.onOpenSavedSearch!(preset),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Saved filters run locally against your current library.',
+                          style: TextStyle(
+                            color: mutedTextColor(context),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                final collectionIndex =
+                    index - (hasSmartSearches ? 1 : 0);
+                if (names.isEmpty) {
+                  return PremiumEmptyState(
+                    icon: Icons.folder_open_rounded,
+                    title: 'No manual collections yet',
+                    message:
+                        'Create a collection to group related items. Your Smart Searches remain available above.',
+                    actionLabel: 'Create collection',
+                    onAction: () => _newCollection(),
+                  );
+                }
+                if (collectionIndex == names.length) {
                   return OutlinedButton.icon(
                     onPressed: () => _newCollection(),
                     icon: const Icon(Icons.add_rounded),
                     label: const Text('New collection'),
                   );
                 }
-                final name = names[index];
-                final count =
-                    items.where((item) => item.collection?.toLowerCase() == name.toLowerCase()).length;
+
+                final name = names[collectionIndex];
+                final count = items
+                    .where(
+                      (item) =>
+                          item.collection?.toLowerCase() == name.toLowerCase(),
+                    )
+                    .length;
                 const palette = [
                   PremiumTokens.brand,
                   Color(0xFF3673BE),
@@ -4016,13 +4103,14 @@ class _CollectionsPageState extends State<CollectionsPage> {
                   PremiumTokens.warning,
                   PremiumTokens.violet,
                 ];
-                final color = palette[index % palette.length];
+                final color = palette[collectionIndex % palette.length];
                 return Card(
                   margin: EdgeInsets.zero,
                   elevation: 0,
                   color: Theme.of(context).colorScheme.surface,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(PremiumTokens.radiusCard),
+                    borderRadius:
+                        BorderRadius.circular(PremiumTokens.radiusCard),
                     side: BorderSide(color: Theme.of(context).dividerColor),
                   ),
                   child: ListTile(
@@ -4042,29 +4130,25 @@ class _CollectionsPageState extends State<CollectionsPage> {
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                     subtitle: Text(
-                      count.toString() +
-                          (count == 1 ? ' saved item' : ' saved items'),
+                      '$count ${count == 1 ? 'item' : 'items'}',
+                      style: TextStyle(color: mutedTextColor(context)),
                     ),
                     trailing: PopupMenuButton<String>(
-                      tooltip: 'Actions for $name collection',
+                      tooltip: 'Collection actions for $name',
                       onSelected: (action) {
                         if (action == 'rename') _newCollection(oldName: name);
                         if (action == 'delete') _deleteCollection(name);
                       },
                       itemBuilder: (_) => const [
-                        PopupMenuItem(value: 'rename', child: Text('Rename')),
-                        PopupMenuItem(value: 'delete', child: Text('Delete')),
-                      ],
-                    ),
-                    onTap: () => Navigator.of(context).push<void>(
-                      MaterialPageRoute(
-                        builder: (_) => CollectionContentsPage(
-                          repository: widget.repository,
-                          collection: name,
-                          onOpenItem: widget.onOpenItem,
-                          onAdd: widget.onAdd,
+                        PopupMenuItem(
+                          value: 'rename',
+                          child: Text('Rename'),
                         ),
-                      ),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Text('Delete'),
+                        ),
+                      ],
                     ),
                   ),
                 );
