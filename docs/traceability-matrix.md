@@ -1672,8 +1672,8 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 | Behavior | Implementation / seam | Regression source | State |
 |---|---|---|---|
-| DNS/private address policy | lib/services/article_reader_io.dart; articleReaderDnsResolverForTesting | test/article_reader_test.dart: private and mixed DNS answers | Authored, not run |
+| DNS/private address policy | lib/services/article_reader_io.dart; articleReaderDnsResolverForTesting | test/article_reader_test.dart: reserved IPv4 matrix plus private and mixed DNS answers | Authored, not run |
 | HTTP status/redirect/MIME policy | ArticleReaderTransportResponse; articleReaderTransportForTesting | synthetic redirect, error status and unsupported MIME cases | Authored, not run |
 | Response/display caps and deadline | native response reader and single absolute deadline | synthetic oversize/display-cap and DNS/transport timeout cases | Authored, not run |
-| Text-only extraction | shared sanitizeArticleMarkup and response parser | synthetic semantic article, hostile markup and Unicode cases | Authored, not run |
+| Text-only extraction | shared sanitizeArticleMarkup and response parser | synthetic semantic article, hostile and malformed-unclosed markup, and Unicode cases | Authored, not run |
 | Unchanged item and no persisted article body | Item Details/repository boundary | test/article_reader_repository_test.dart covers no implicit fetch, unchanged fields after open, selected-quote-only persistence, and backup exclusion of full article body; text exports/platform checks pending | Partial test source, not run |
