@@ -113,6 +113,11 @@ Future<List<SharedMediaFile>> Function()? incomingInitialShareReaderForTesting;
 @visibleForTesting
 Future<void> Function()? resetIncomingInitialShareForTesting;
 
+/// Test hook for inspecting selected-item export payloads without opening a
+/// platform share sheet. Production leaves this unset.
+@visibleForTesting
+Future<void> Function(ShareParams params)? selectedItemsShareForTesting;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -1560,7 +1565,7 @@ class _LibraryPageState extends State<LibraryPage> {
               OutlinedButton.icon(
                 onPressed: _exportSelected,
                 icon: const Icon(Icons.ios_share_rounded),
-                label: const Text('Export list'),
+                label: const Text('Export selected'),
               ),
               FilledButton.tonalIcon(
                 onPressed: () => _runBulkAction('delete'),
@@ -1678,19 +1683,23 @@ class _LibraryPageState extends State<LibraryPage> {
     try {
       final bytes = utf8.encode(markdown);
       final name = 'stashhive-selected-${DateTime.now().toUtc().toIso8601String().substring(0, 10)}.md';
-      await SharePlus.instance.share(
-        ShareParams(
-          title: 'StashHive selected items',
-          subject: 'Selected items from StashHive',
-          files: [
-            XFile.fromData(
-              bytes,
-              mimeType: 'text/markdown',
-              name: name,
-            ),
-          ],
-        ),
+      final params = ShareParams(
+        title: 'StashHive selected items',
+        subject: 'Selected items from StashHive',
+        files: [
+          XFile.fromData(
+            bytes,
+            mimeType: 'text/markdown',
+            name: name,
+          ),
+        ],
       );
+      final testShare = selectedItemsShareForTesting;
+      if (testShare != null) {
+        await testShare(params);
+      } else {
+        await SharePlus.instance.share(params);
+      }
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
