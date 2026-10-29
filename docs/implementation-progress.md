@@ -1149,3 +1149,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - Added `lib/services/rediscovery.dart`, `test/rediscovery_test.dart` and `test/rediscovery_widget_test.dart`.
 - Updated FR-023 acceptance criteria, SH-010 backlog status, TC-263, traceability, and roadmap TSK-543.
 - **Not verified:** tests, formatter, analyzer, builds, CI and device/browser UI checks have not run. The root workflow remains manual-only.
+
+
+## Master status handoff established — 2026-10-29
+
+- Added [`docs/FEATURE_STATUS.md`](FEATURE_STATUS.md) as the durable source of truth for source implementation state, verification state, validation blockers, next work, and a copy/paste instruction for resuming in a new chat.
+- Linked the master page from README, made it a required first-read document in `AGENTS.md`, and cross-linked it from the feature backlog.
+- Feature source and current unverified state were audited from the latest inspected `main` baseline (`f861bae384e15fbe5ca12419ed010d3723ce9113`). The document explicitly distinguishes committed source/test files from verified behavior.
+- No builds, tests, formatter, analyzer, or CI workflow were run while writing this documentation increment. CI remains manual-only.
