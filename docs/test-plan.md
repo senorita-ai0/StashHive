@@ -1984,4 +1984,4 @@ The repository widget regression source now checks three export formats after sa
 ### TC-268 update — Reader accessibility semantics (2026-10-29)
 
 - A widget regression holds an injected article load pending and checks that the loading progress indicator is exposed with the semantic label “Loading article text”.
-- The Reader source now labels save progress and marks article/error titles as headings. These semantics are authored, not verified: test execution, keyboard/text-selection behavior and Android/web screen-reader checks remain pending.
+- A second widget regression delays the save callback and asserts the “Saving highlight” semantic label while saving, then resolves the callback and checks success feedback. The Reader source also marks article/error titles as headings. These semantics are authored, not verified: test execution, keyboard/text-selection behavior and Android/web screen-reader checks remain pending.
