@@ -97,8 +97,7 @@ void main() {
       expect(result.text, isEmpty);
     });
 
-    test('strips a leading UTF-8 BOM from reader text', () async =>
-        {
+    test('strips a leading UTF-8 BOM from reader text', () async {
           articleReaderTransportForTesting = (uri, addresses, timeout) async =>
               ArticleReaderTransportResponse(
                 statusCode: 200,
