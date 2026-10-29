@@ -30,10 +30,25 @@ Future<ArticleReaderResult> loadArticleForReader(
   try {
     final resolved =
         await InternetAddress.lookup(host).timeout(boundedTimeout);
-    if (resolved.isEmpty || resolved.any((address) => !_isPublicAddress(address))) {
+    // This first implementation pins requests to a vetted public IPv4
+    // address. Ignore IPv6 answers rather than letting a public dual-stack
+    // host fail merely because IPv6 is conservatively unsupported; if any
+    // IPv4 answer is private/reserved, reject the hostname as a whole.
+    if (resolved.isEmpty ||
+        resolved.any((address) =>
+            address.type == InternetAddressType.IPv4 &&
+            !_isPublicAddress(address))) {
       return const ArticleReaderResult(state: ArticleReaderState.blockedAddress);
     }
-    addresses = List<InternetAddress>.unmodifiable(resolved);
+    final publicIpv4 = resolved
+        .where((address) =>
+            address.type == InternetAddressType.IPv4 &&
+            _isPublicAddress(address))
+        .toList(growable: false);
+    if (publicIpv4.isEmpty) {
+      return const ArticleReaderResult(state: ArticleReaderState.blockedAddress);
+    }
+    addresses = List<InternetAddress>.unmodifiable(publicIpv4);
   } on TimeoutException {
     return const ArticleReaderResult(state: ArticleReaderState.timedOut);
   } catch (_) {
