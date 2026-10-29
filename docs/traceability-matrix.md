@@ -1713,3 +1713,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 |---|---|---|---|
 | Decode common text entities once while preventing recursive unescaping | `sanitizeArticleMarkup` in lib/services/article_reader.dart | TC-266; named/case-insensitive, hex numeric and escaped-ampersand assertions in test/article_reader_test.dart | Source and test authored; not run; platform rendering pending |
 | Expose save-progress semantics while a highlight callback is pending | lib/screens/article_reader_page.dart | TC-268; delayed-save case in test/article_reader_page_test.dart | Source and widget test authored; not run; screen-reader checks pending |
+
+
+## SH-006 semantic extraction traceability update — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Strip active blocks/comments before semantic article extraction so fake markup cannot shadow the real article | `sanitizeArticleMarkup` in lib/services/article_reader.dart | TC-266; `ignores fake article containers inside scripts and comments` in test/article_reader_test.dart | Source and test authored; not run; browser/native behavior pending |
