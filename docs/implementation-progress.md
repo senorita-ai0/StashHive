@@ -1226,3 +1226,10 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Expanded the lightweight reader sanitizer's common named entity set (copyright/trademark, currency, typographic quotes, bullets, and related symbols).
 - Numeric decimal/hex references are now decoded before named entities so `&amp;#169;` becomes the literal `&#169;` rather than being recursively decoded to ©. Rendering remains plain text; this is still not a complete HTML parser.
 - Added `test/article_reader_test.dart` coverage for named/case-insensitive entities, a hexadecimal numeric entity, and escaped ampersand behavior. Commit pair: abbb973 and a79b9fd. Tests, formatter, analyzer and builds remain unrun.
+
+
+## SH-006 — preprocess embedded markup before semantic extraction — 2026-10-29
+
+- Changed the sanitizer ordering so active/embedded blocks and comments are removed from the original document before it searches for `<article>` or `<main>`. Previously, a literal article-shaped string inside a script/comment could be mistaken for the main content and cause the real article text to be missed.
+- Added a synthetic test with a fake article inside a script string and another inside a comment; it expects the real article body and excludes navigation and both fake bodies.
+- Source/test commits: 9be6a98 and 8809696. During source review, an initial malformed rewrite was replaced with the complete sanitizer from the last clean committed version and the full function was fetched again. The final fetched function contains the intended preprocessing block and the original entity-decoding/normalization tail. No tests, formatter, analyzer or builds were run.
