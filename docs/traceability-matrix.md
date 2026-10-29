@@ -1663,7 +1663,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Requirement / behavior | Source | Regression evidence | Status |
 |---|---|---|---|
 | Explicit user-initiated reader access | lib/main.dart, lib/screens/article_reader_page.dart | TC-264 planned; not run | Source implemented, verify pending |
-| URL restrictions and native destination checks | lib/services/article_reader.dart, lib/services/article_reader_io.dart | test/article_reader_test.dart; TC-265 planned | Source implemented, verify pending |
+| URL restrictions, standard ports and native destination checks | lib/services/article_reader.dart, lib/services/article_reader_io.dart | test/article_reader_test.dart; TC-265 partial source, not run | Source implemented, verify pending |
 | Bounded content and safe plain-text rendering | lib/services/article_reader_io.dart, lib/screens/article_reader_page.dart | sanitizer tests authored; TC-266 planned | Source implemented, verify pending |
 | No fetched-content persistence / honest browser limitation | reader service and screen | TC-267–TC-268 planned | Source reviewed; platform verification pending |
 | Selection-based quote capture with bounded context and UTF-16 offsets | lib/screens/article_reader_page.dart, lib/main.dart, lib/models/saved_item.dart | test/saved_item_test.dart covers round-trip/legacy/invalid metadata; not run | Source implemented, platform verification pending |
