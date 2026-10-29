@@ -1846,3 +1846,15 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Inject a preference write error after commit; verify the prior preference is restored and the UI reports a safe recoverable error.
 - Check toggle tooltip/semantics, narrow width and enlarged text on Android/web; do not imply cross-device sharing of this preference.
 - **Status:** Unit/widget regression source committed but unrun. CI/builds remain manual-only.
+
+
+### TC-256 — Persist reading status and progress
+
+- Open Item Details for a saved item and switch between Unread, In progress, and Completed.
+- Confirm each status persists to the local repository; Unread resets progress to 0%, In progress sets a minimum of 1%, and Completed sets 100%.
+- Change the progress slider and confirm 0% maps to Unread, 1–99% maps to In progress, and 100% maps to Completed.
+- Serialize and restore the item through the SavedItem map/JSON backup path; confirm status and progress survive.
+- Remove the new fields from a legacy item map and confirm it defaults to Unread and 0%.
+- Reject unknown statuses and progress values outside 0–100 without changing existing records.
+- Confirm the UI states that it does not track activity on external websites.
+- **Status:** Unit/widget regression source committed but unrun. Manual-only formatter, analyzer, test suite, and platform builds remain pending.
