@@ -4040,12 +4040,8 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     String contextAfter,
   ) async {
     final current = widget.repository.findById(itemId);
-    if (current == null) {
-      _message('This saved item is no longer available.');
-      return false;
-    }
-    if (current.annotations.length >= maxSavedAnnotationsPerItem) {
-      _message('This item already has the maximum of $maxSavedAnnotationsPerItem highlights and notes.');
+    if (current == null ||
+        current.annotations.length >= maxSavedAnnotationsPerItem) {
       return false;
     }
     final annotation = SavedAnnotation(
@@ -4069,12 +4065,8 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
       await widget.repository.save(updated);
       if (!mounted) return false;
       setState(_reload);
-      _message('Highlight saved to this item. It may not align if the article changes.');
       return true;
     } catch (_) {
-      if (mounted) {
-        _message('Could not save this highlight. Please check local storage and try again.');
-      }
       return false;
     }
   }
