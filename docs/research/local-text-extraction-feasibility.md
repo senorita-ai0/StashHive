@@ -1,7 +1,7 @@
 # SH-005 — Local PDF text extraction and OCR feasibility
 
 **Date:** 2026-10-29  
-**Status:** Desk research recorded; executable/runtime proof of concept not yet run. No dependency has been added and no app-size or accuracy claim is made.
+**Status (2026-10-29):** Desk research and an isolated source-level PDF text probe are committed. The probe has not been run. No PDF/OCR dependency has been added to the production app; no runtime, app-size, memory, offline, or accuracy claim is made.
 
 ## Goal
 
@@ -63,6 +63,17 @@ For each candidate and each sample, record:
 - Do not OCR every file automatically on import. Start with an explicit user action or bounded queue after file save, with progress, cancellation, and retry.
 - Run the manual validation checkpoint before promoting this from a proof of concept to a release feature.
 
+## Isolated probe scaffold (source only; not yet executed)
+
+A separate, non-production Flutter package now lives in [`tool/pdf_text_extraction_poc`](../../tool/pdf_text_extraction_poc/README.md). It targets `pdfrx 2.10.1`, bounds local input to 15 MiB, caps processing at 250 pages and 1,000,000 extracted characters, reports text/no-text/limit/failure statuses, and includes a manual phrase-recall screen plus synthetic PDF test source.
+
+Current API references were rechecked on 29 October 2026:
+- `pdfrx 2.10.1` requires Flutter 3.47 / Dart 3.13 or later and lists Android, iOS, desktop, and Web support. These are upstream platform claims, not proof that StashHive's own builds will succeed. See [pdfrx package documentation](https://pub.dev/documentation/pdfrx/latest/).
+- `PdfDocument.openData` accepts in-memory PDF bytes and `sourceName`; `PdfDocument.isEncrypted` and `dispose()` are documented. See [PdfDocument API](https://pub.dev/documentation/pdfrx/latest/pdfrx/PdfDocument-class.html).
+- `PdfPage.loadText()` returns raw selectable text through `PdfPageRawText.fullText`. This is text-layer extraction, not OCR. See [PdfPage API](https://pub.dev/documentation/pdfrx_engine/latest/pdfrx_engine/PdfPage-class.html) and [PdfPageRawText API](https://pub.dev/documentation/pdfrx_engine/latest/pdfrx_engine/PdfPageRawText-class.html).
+
+The probe deliberately remains outside the production dependency graph and root CI workflow. The scaffold, synthetic fixture, and test code are **not yet verified**. At the manual validation checkpoint, run the isolated package's tests and platform builds, profile Android APK/web bundle size and peak memory, check offline operation, and record results for the sample protocol below. Do not integrate the dependency into StashHive unless those results meet the acceptance gates.
+
 ## Scope decision
 
-SH-005 remains **BLOCKED on runtime feasibility evidence**, not on code availability. The immediate engineering slice should be digital PDF text extraction first, then evaluate OCR. No OCR dependency or language model has been added to `pubspec.yaml` as part of this report.
+SH-005 remains **BLOCKED on runtime feasibility evidence**, not on code availability. The immediate engineering slice should be digital PDF text extraction first, then evaluate OCR. No OCR dependency or model has been added to the production `pubspec.yaml`. The isolated probe has its own `pubspec.yaml`; its package resolution and runtime behavior have not been verified.
