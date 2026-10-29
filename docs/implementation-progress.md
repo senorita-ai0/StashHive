@@ -1141,3 +1141,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - The probe is deliberately limited to selectable text from digital PDFs. A scanned PDF returning no selectable text is expected; image/scanned-PDF OCR remains a separate feasibility task.
 - Updated SH-005 backlog status, FR-016 traceability, TC-262, and roadmap TSK-542. Official pdfrx APIs/platform claims were rechecked while writing the scaffold; those claims do not substitute for StashHive runtime evidence.
 - **Not verified:** no package resolution, formatter, analyzer, tests, POC runtime, Android/web build, offline/network check, APK/web size comparison, or memory/accuracy measurement has been run. Keep SH-005 BLOCKED and CI manual-only until a validation checkpoint.
+
+
+## SH-010 — Local Rediscover filter (2026-10-29)
+
+- Added a Library **Rediscover** filter for saved items created at least 14 days ago that are not marked Completed. Results appear oldest first based on creation time, so editing notes/progress doesn't reset a saved item's age.
+- Added `lib/services/rediscovery.dart`, `test/rediscovery_test.dart` and `test/rediscovery_widget_test.dart`.
+- Updated FR-023 acceptance criteria, SH-010 backlog status, TC-263, traceability, and roadmap TSK-543.
+- **Not verified:** tests, formatter, analyzer, builds, CI and device/browser UI checks have not run. The root workflow remains manual-only.
