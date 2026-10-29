@@ -143,6 +143,51 @@ void main() {
       expect(result.text.codeUnitAt(0), isNot(0xFEFF));
     });
 
+    test('uses an early HTML meta charset when the response omits charset', () async {
+      final prefix =
+          '<html><head><meta charset="windows-1252"></head><body>'
+          '<article>Price: ';
+      const suffix = '</article></body></html>';
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/html',
+            body: <int>[
+              ...utf8.encode(prefix),
+              0x80,
+              ...utf8.encode(suffix),
+            ],
+          );
+
+      final result = await loadArticleForReader('https://example.com/meta-charset');
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text, 'Price: €');
+    });
+
+    test('reads legacy charset from an early http-equiv meta tag', () async {
+      final prefix =
+          '<html><head><meta http-equiv="Content-Type" '
+          'content="text/html; charset=windows-1252"></head><body>'
+          '<article>Price: ';
+      const suffix = '</article></body></html>';
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/html',
+            body: <int>[
+              ...utf8.encode(prefix),
+              0x80,
+              ...utf8.encode(suffix),
+            ],
+          );
+
+      final result = await loadArticleForReader('https://example.com/legacy-meta');
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text, 'Price: €');
+    });
+
     test('decodes Windows-1252 punctuation and the euro sign', () async {
       articleReaderTransportForTesting = (uri, addresses, timeout) async =>
           ArticleReaderTransportResponse(
