@@ -74,7 +74,8 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Add a synthetic matrix for private/reserved IPv4 answer ranges and malformed unclosed script/comment tails.
 - [x] Restrict native reader requests to standard HTTP/HTTPS ports (80/443); the external browser remains available for other ports.
 - [x] Keep highlight success/failure feedback on the Reader route and author widget regression source for visible save confirmation and retry after failure.
-- [ ] Expand remaining content-parsing edge cases, Markdown/CSV export non-persistence and native/platform error accessibility.
+- [x] Add reader/repository regression assertions for non-persistence of the complete temporary article body in JSON backup, CSV and selected Markdown exports.
+- [ ] Expand remaining content-parsing edge cases and native/platform error accessibility; run all reader/export regressions at the owner-approved checkpoint.
 - [ ] Complete TC-264/267/268 repository and platform assertions; SH-006 remains partial.
 
 
@@ -84,3 +85,10 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Add a deterministic synthetic-response regression for a quoted charset parameter and representative legacy punctuation.
 - [ ] Run charset and complete reader tests at the owner's manual validation checkpoint; test source has not been executed.
 - [ ] Keep SH-006 partial until native/web behavior, tests, accessibility, and platform checks have evidence.
+
+
+## SH-006 — export privacy regression coverage (2026-10-29)
+
+- [x] Extend the reader/repository regression source to assert CSV and selected-Markdown output includes the explicit saved quote but excludes the complete temporary article text.
+- [ ] Run the export/privacy regression at the manual validation checkpoint; tests remain unexecuted.
+- [ ] Verify actual share-sheet behavior and platform/accessibility behavior before closing SH-006.
