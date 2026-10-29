@@ -8,6 +8,8 @@ import 'package:stashhive/main.dart' show ItemDetailsPage;
 import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/services/article_reader.dart';
 import 'package:stashhive/services/backup_codec.dart';
+import 'package:stashhive/services/library_csv_export.dart';
+import 'package:stashhive/services/selected_items_export.dart';
 
 late Directory _testDirectory;
 late LibraryRepository _repository;
@@ -178,6 +180,15 @@ void main() {
     expect(decodedBackup.items.single.annotations, hasLength(1));
     expect(decodedBackup.items.single.annotations.single.quote, annotation.quote);
     expect(decodedBackup.items.single.content, isNot(contains(articleText)));
+
+    // CSV and Markdown intentionally export the saved quote annotation, not
+    // the temporary page body that was only displayed in the reader.
+    final csv = buildLibraryCsv(<SavedItem>[stored]);
+    final markdown = buildSelectedItemsMarkdown(<SavedItem>[stored]);
+    expect(csv, contains(annotation.quote));
+    expect(markdown, contains(annotation.quote));
+    expect(csv, isNot(contains(articleText)));
+    expect(markdown, isNot(contains(articleText)));
   });
 
 }
