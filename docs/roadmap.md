@@ -1,5 +1,7 @@
 # StashHive — Roadmap and Implementation Plan
 
+> **Current feature and chat handoff status:** [docs/FEATURE_STATUS.md](FEATURE_STATUS.md). Read it before choosing the next source slice; source-complete does not imply verified.
+
 **Status:** Premium UI refresh and shared Flutter/Android source configuration are committed; Phase 2/3 platform assurance and release validation remain pending. Blueprint approved on 2026-10-21; validation workflow is intentionally manual-only.
 
 ## Milestones
