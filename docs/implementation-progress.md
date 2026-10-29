@@ -1012,3 +1012,13 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Made the built-in Kotlin migrator remove both `org.jetbrains.kotlin.android` and `kotlin-android` from the generated app module.
 - [x] Adjusted hive mark vector coordinates for the adaptive icon safe zone; regression source rejects unsupported `transform` attributes and checks generated icon XML is well-formed.
 - [ ] All source and regression changes remain unrun. At the manual validation checkpoint, run the Python configurator suites and full workflow; confirm the actual Android APK compiles and the launcher icon renders correctly on API 25 and API 26+ before marking toolchain/branding work done.
+
+
+## Feature backlog — SH-001 duplicate-link review (2026-10-29)
+
+- **Backlog:** Added `docs/FEATURE_BACKLOG.md` with a prioritized, staged list of requested enhancements; the README links to it.
+- **Source:** Added `lib/services/duplicate_detector.dart`. Duplicate keys normalize URL scheme/host, default HTTP(S) ports, empty/root and trailing-slash paths, fragments, dot segments and common tracking parameters. Stored/displayed URLs are not rewritten, and all comparisons are local.
+- **UI:** Quick Save now shows existing matching link titles/URLs before saving a new link. The user can cancel and keep editing, or explicitly choose **Save another copy**. No link is silently discarded; item editing does not prompt for itself. This initial slice covers links only, not exact image/document bytes or backup-import collisions.
+- **Regression source:** Added `test/duplicate_detector_test.dart` for normalization and matching, plus duplicate-review cancellation/explicit-save widget cases in `test/quick_save_test.dart`.
+- **Traceability:** FR-019 / TC-019 are linked to SH-001 and TC-246 documents the new focused cases.
+- **Verification:** Tests, formatter, analyzer, manual workflow, web build, Android build and device verification have **not** been run for this increment. This is source-complete for the first link-only slice, not yet test-verified. CI remains manual-only.
