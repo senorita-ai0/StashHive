@@ -36,6 +36,32 @@ void main() {
       expect(result.text, contains('Actual article body.'));
     });
 
+    test('does not split a supplementary Unicode character at the title cap', () async {
+      final prefix = List<String>.filled(299, 'a').join();
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/html; charset=utf-8',
+            body: utf8.encode(
+              '<title>${prefix}🙂tail</title><article>Readable body</article>',
+            ),
+          );
+
+      final result = await loadArticleForReader(
+        'https://example.com/unicode-title',
+      );
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.title, prefix);
+      expect(
+        result.title!.codeUnits.any(
+          (unit) => unit >= 0xD800 && unit <= 0xDFFF,
+        ),
+        isFalse,
+      );
+      expect(result.text, contains('Readable body'));
+    });
+
     test('loads HTML through the injected transport and sanitizes its contents', () async {
       Uri? requestedUri;
       List<String>? vettedAddresses;
