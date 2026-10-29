@@ -98,12 +98,28 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
         text.substring(beforeStart, start),
         text.substring(end, afterEnd),
       );
-      if (saved && mounted) {
+      if (!mounted) return;
+      if (saved) {
         setState(() {
           _selectedQuote = null;
           _selectionStart = null;
           _selectionEnd = null;
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Highlight saved to this item. It may not align if the article changes.',
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Highlight was not saved. Check the item limit or local storage and try again.',
+            ),
+          ),
+        );
       }
     } catch (_) {
       if (mounted) {
