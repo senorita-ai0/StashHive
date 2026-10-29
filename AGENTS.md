@@ -7,14 +7,15 @@
 ## Read first
 
 1. `README.md`
-2. `docs/requirements.md`
-3. `docs/architecture.md`
-4. `docs/assumptions.md`
-5. `docs/roadmap.md`
-6. `docs/test-plan.md`
-7. `docs/traceability-matrix.md`
-8. `docs/security-privacy.md`
-9. `docs/design/screen-reference.md`
+2. `docs/FEATURE_STATUS.md` — master feature table and new-chat handoff; update it after every meaningful change.
+3. `docs/requirements.md`
+4. `docs/architecture.md`
+5. `docs/assumptions.md`
+6. `docs/roadmap.md`
+7. `docs/test-plan.md`
+8. `docs/traceability-matrix.md`
+9. `docs/security-privacy.md`
+10. `docs/design/screen-reference.md`
 
 ## Product constraints
 
@@ -35,6 +36,7 @@
 - Inspect the current tree and tests before edits; preserve unrelated work.
 - Keep model, storage, UI, backup and platform I/O boundaries explicit.
 - Keep requirement IDs, task IDs, tests and docs aligned.
+- After every meaningful feature/source/test/validation increment, update `docs/FEATURE_STATUS.md` plus the relevant backlog, implementation-progress, roadmap, test-plan and traceability entries. It is the durable source of truth for resuming work in a new chat.
 - Add tests with behavior changes. Run formatter/analyzer/tests/builds when available and report exact results.
 - Do not commit secrets, personal library backups, signing files, generated build output or machine-specific config.
 - Do not force-push or rewrite shared history. Commit changes directly to `main` as requested by the owner.
