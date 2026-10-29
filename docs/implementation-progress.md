@@ -1083,5 +1083,5 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - Added `ReadingStatus` (Unread, In progress, Completed) and bounded integer progress (0–100) to `SavedItem`. These fields participate in existing map/JSON serialization; legacy records without them default to Unread/0%.
 - Item Details now has status segments and a progress slider. Choosing Unread resets progress to 0%; In progress sets at least 1%; Completed sets 100%. Slider changes map 0% to Unread, 1–99% to In progress, and 100% to Completed.
 - Added model regression source for round-trip serialization, legacy defaults and invalid values; added a widget regression for completing an item from details.
-- Added FR-023, TC-256, traceability and roadmap notes. The revisit/rediscovery screen is still outstanding, so SH-010 is only partially implemented.
+- Added Library quick filters for Unread, In progress and Completed, plus FR-023, TC-256, traceability and roadmap notes. A dedicated ranked revisit queue is still a possible follow-up.
 - **Verification:** Tests, formatter, analyzer, web/Android builds and visual/accessibility checks have not run. CI remains manual-only.
