@@ -42,6 +42,7 @@ The visible product name is StashHive. Keep the existing `stashhive` package/sto
 | FR-020 | Support reminders for saved items. | Won't for MVP | No reminder or notification is scheduled in MVP. | Later backlog |
 | FR-021 | Keep user library private; no public feed, collaboration, or shared collections. | Won't for MVP | No content is publicly accessible or remotely synchronized. | Architecture / privacy review |
 | FR-022 | Compose advanced local search filters and save reusable named search presets. | Should | Type, text query, tag, collection, domain, favorite state, saved-date range and sort combine predictably. Up to 20 locally stored presets can be created, replaced by case-insensitive name, applied and deleted. Invalid stored presets are ignored safely. Presets remain in the current app/browser profile and are not included in backup v1. | SH-002; TC-247–TC-249 |
+| FR-023 | Track reading status and progress for saved items. | Should | Users can mark an item Unread, In progress, or Completed and set 0–100% progress from Item Details. Status/progress persist in the local library and versioned JSON backups; older records default to Unread/0%. The feature does not claim to monitor reading activity on external websites. | SH-010; TC-256 |
 
 ## Non-functional requirements
 
