@@ -1601,3 +1601,7 @@ See [article reader feasibility](research/article-reader-feasibility.md). The ne
 ## SH-006 reader progress — 2026-10-29
 
 The first source slice now includes a user-triggered reader route, bounded native fetch and plain-text display, plus a browser CORS fallback that preserves external-browser opening. The source and initial tests are committed, but no checks have been run. Selection-based quote capture is now implemented using selectable reader text, with a save action, bounded context excerpts and source offsets persisted in the existing local annotation record. Next: review/fix findings at the owner-approved manual validation checkpoint, verify selection behavior on Android and web, and improve article readability extraction if needed. SH-006 remains partial.
+
+## SH-006 transport regression progress — 2026-10-29
+
+The native reader now has test-only DNS/transport seams and a single absolute deadline. Authored regression source exercises synthetic success, sanitizer behavior, redirect status, unsupported MIME, size limits, private/mixed DNS, timeout and unsuccessful HTTP status. This is not validation evidence: all tests remain unrun and platform networking remains unverified. Next source work should fill the saved-item invariance/no-persistence assertions and tighten reserved-address coverage before owner-requested validation.
