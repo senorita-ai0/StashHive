@@ -73,5 +73,6 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Add Item Details/repository regression source for no implicit fetch, explicit tap, unchanged bookmark fields after reader open, selected-quote-only persistence, and portable backup exclusion of full fetched article text.
 - [x] Add a synthetic matrix for private/reserved IPv4 answer ranges and malformed unclosed script/comment tails.
 - [x] Restrict native reader requests to standard HTTP/HTTPS ports (80/443); the external browser remains available for other ports.
+- [x] Keep highlight success/failure feedback on the Reader route and author widget regression source for visible save confirmation and retry after failure.
 - [ ] Expand remaining content-parsing edge cases, Markdown/CSV export non-persistence and native/platform error accessibility.
 - [ ] Complete TC-264/267/268 repository and platform assertions; SH-006 remains partial.
