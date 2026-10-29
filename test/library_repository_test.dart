@@ -3097,6 +3097,24 @@ void main() {
     expect(repository.smartTagRules.single.suggestedTag, 'Research');
   });
 
+  test('smart tag rules persist across repository reopen', () async {
+    await repository.saveSmartTagRule(
+      SmartTagRule.create(
+        id: 'reopen-rule',
+        matchText: 'reference',
+        suggestedTag: 'Research',
+      ),
+    );
+
+    repository.dispose();
+    await Hive.close();
+    repository = await LibraryRepository.openInitializedForTesting();
+
+    expect(repository.smartTagRules, hasLength(1));
+    expect(repository.smartTagRules.single.id, 'reopen-rule');
+    expect(repository.smartTagRules.single.suggestedTag, 'Research');
+  });
+
   test('limits smart tag rules and allows updating an existing rule at capacity', () async {
     for (var index = 0; index < maxSmartTagRules; index++) {
       await repository.saveSmartTagRule(
