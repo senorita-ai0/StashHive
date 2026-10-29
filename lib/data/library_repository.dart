@@ -6,8 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 
 import '../models/saved_item.dart';
-import '../services/backup_codec.dart';
 import '../services/attachment_bytes.dart';
+import '../services/backup_codec.dart';
 import '../services/search_filters.dart';
 
 /// Exposes notifications and the current value without leaking the
