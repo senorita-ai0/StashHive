@@ -60,7 +60,7 @@ void main() {
           ],
         ),
       ]);
-      expect(csv.split('\\n').first, contains('highlights_and_annotations'));
+      expect(csv.split('\n').first, contains('highlights_and_annotations'));
       expect(csv, contains('A “quoted” idea'));
       expect(csv, contains('Remember, review again.'));
     });
