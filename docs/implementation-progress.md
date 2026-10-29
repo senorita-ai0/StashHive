@@ -1060,3 +1060,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - **Safety:** No website fetching or HTML execution; no cloud services. Import is preview-first and deduplicates against the existing library.
 - **Regression source:** `test/bookmark_html_importer_test.dart`, `test/library_csv_export_test.dart`, and `test/selected_items_export_test.dart`.
 - **Verification:** Tests, formatter, analyzer, web/Android builds, and manual import/export checks have not been run. Source is committed but unverified. CI remains manual-only.
+
+
+## SH-005 — Local extraction feasibility review (2026-10-29)
+
+- Added `docs/research/local-text-extraction-feasibility.md` with current package/platform research, candidate matrix, a sample-based benchmark plan, privacy/offline requirements, and clear release gates.
+- The recommended order is direct text-bearing PDF extraction first, then separately assess OCR. `pdfrx_engine` is the leading cross-platform PDF prototype candidate; Tesseract with official Urdu trained data is a mobile OCR candidate to measure, not a promise of Urdu/Nastaleeq quality.
+- No package or model was added. Runtime tests, accuracy measurements, device benchmarks, and binary/web-size deltas are not available yet; SH-005 remains gated.
+- Build/test CI remains manual-only and was not dispatched.
