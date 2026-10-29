@@ -48,7 +48,7 @@ String buildLibraryCsv(List<SavedItem> items) {
       item.annotations.map((annotation) => <String>[
         if (annotation.quote.trim().isNotEmpty) '“${annotation.quote}”',
         if (annotation.note.trim().isNotEmpty) annotation.note,
-      ].join('\\n')).join('\\n\\n'),
+      ].join('\n')).join('\n\n'),
     ];
     buffer.writeln(row.map(_csvField).join(','));
     if (buffer.length > maxLibraryCsvCharacters) {
