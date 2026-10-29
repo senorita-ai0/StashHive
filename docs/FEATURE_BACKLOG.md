@@ -76,3 +76,11 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Keep highlight success/failure feedback on the Reader route and author widget regression source for visible save confirmation and retry after failure.
 - [ ] Expand remaining content-parsing edge cases, Markdown/CSV export non-persistence and native/platform error accessibility.
 - [ ] Complete TC-264/267/268 repository and platform assertions; SH-006 remains partial.
+
+
+## SH-006 — response text-encoding refinement (2026-10-29)
+
+- [x] Decode declared Windows-1252 (windows-1252 / cp1252) punctuation and symbol bytes correctly instead of interpreting them as Latin-1 control characters.
+- [x] Add a deterministic synthetic-response regression for a quoted charset parameter and representative legacy punctuation.
+- [ ] Run charset and complete reader tests at the owner's manual validation checkpoint; test source has not been executed.
+- [ ] Keep SH-006 partial until native/web behavior, tests, accessibility, and platform checks have evidence.
