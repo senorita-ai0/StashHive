@@ -23,7 +23,7 @@ Purpose: make search immediately available and show recently saved items in one 
 
 Visible hierarchy: StashHive header; global search; All / Links / Images / Notes / Files filters; recently saved cards with type, title, source/storage state and saved time; add action; primary navigation.
 
-Interactions: search opens Search Results; result opens Item Details; add opens Quick Save; filters update the list; “See all” opens the full library.
+Interactions: search opens Search Results; result opens Item Details; add opens Quick Save; filters update the list; “See all” opens the full library. The Library header also offers a local Grid/List layout toggle; Grid is the default.
 
 Required states: first-run empty library; loading and recoverable storage error; no results; long-title wrapping; discoverable favorites/sort.
 
