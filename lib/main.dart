@@ -13,12 +13,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'data/library_repository.dart';
 import 'models/saved_item.dart';
-import 'services/bounded_bytes_reader.dart';
-import 'services/share_intake.dart';
-import 'services/search_filters.dart';
-import 'services/mime_types.dart';
 import 'services/backup_codec.dart';
+import 'services/bounded_bytes_reader.dart';
 import 'services/duplicate_detector.dart';
+import 'services/mime_types.dart';
+import 'services/search_filters.dart';
+import 'services/share_intake.dart';
 import 'services/web_url.dart';
 import 'ui/layout_metrics.dart';
 import 'ui/premium_kit.dart';
