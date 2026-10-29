@@ -3885,6 +3885,56 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     }
   }
 
+  Future<void> _setReadingStatus(ReadingStatus status) async {
+    final current = _item;
+    if (current == null) return;
+    final progress = switch (status) {
+      ReadingStatus.unread => 0,
+      ReadingStatus.inProgress =>
+        current.readingProgress == 0 ? 1 : current.readingProgress,
+      ReadingStatus.completed => 100,
+    };
+    final updated = current.copyWith(
+      readingStatus: status,
+      readingProgress: progress,
+    );
+    setState(() => _item = updated);
+    try {
+      await widget.repository.save(updated);
+      if (mounted) setState(_reload);
+    } catch (_) {
+      if (mounted) {
+        setState(_reload);
+        _message('Could not save reading progress. Please try again.');
+      }
+    }
+  }
+
+  Future<void> _setReadingProgress(double value) async {
+    final current = _item;
+    if (current == null) return;
+    final progress = value.round().clamp(0, 100);
+    final status = progress == 100
+        ? ReadingStatus.completed
+        : progress == 0
+            ? ReadingStatus.unread
+            : ReadingStatus.inProgress;
+    final updated = current.copyWith(
+      readingStatus: status,
+      readingProgress: progress,
+    );
+    setState(() => _item = updated);
+    try {
+      await widget.repository.save(updated);
+      if (mounted) setState(_reload);
+    } catch (_) {
+      if (mounted) {
+        setState(_reload);
+        _message('Could not save reading progress. Please try again.');
+      }
+    }
+  }
+
   Future<void> _delete() async {
     final item = _item;
     if (item == null) return;
@@ -4070,6 +4120,86 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                       label: Text(item.isFavorite ? 'Favorited' : 'Favorite'),
                     ),
                   ],
+                ),
+                const SizedBox(height: 24),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const DetailSectionLabel(label: 'READING PROGRESS'),
+                        const SizedBox(height: 8),
+                        Text(
+                          item.readingStatus.label,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 12),
+                        SegmentedButton<ReadingStatus>(
+                          segments: const [
+                            ButtonSegment(
+                              value: ReadingStatus.unread,
+                              label: Text('Unread'),
+                              icon: Icon(Icons.bookmark_border_rounded),
+                            ),
+                            ButtonSegment(
+                              value: ReadingStatus.inProgress,
+                              label: Text('Reading'),
+                              icon: Icon(Icons.menu_book_rounded),
+                            ),
+                            ButtonSegment(
+                              value: ReadingStatus.completed,
+                              label: Text('Done'),
+                              icon: Icon(Icons.check_circle_outline_rounded),
+                            ),
+                          ],
+                          selected: <ReadingStatus>{item.readingStatus},
+                          onSelectionChanged: (selection) {
+                            if (selection.isNotEmpty) {
+                              _setReadingStatus(selection.first);
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            const Text('Progress'),
+                            const Spacer(),
+                            Text(
+                              '${item.readingProgress}%',
+                              style: const TextStyle(fontWeight: FontWeight.w800),
+                            ),
+                          ],
+                        ),
+                        Slider(
+                          value: item.readingProgress.toDouble(),
+                          min: 0,
+                          max: 100,
+                          divisions: 20,
+                          label: '${item.readingProgress}%',
+                          onChanged: (value) {
+                            setState(() {
+                              _item = item.copyWith(
+                                readingProgress: value.round(),
+                                readingStatus: value.round() == 100
+                                    ? ReadingStatus.completed
+                                    : value.round() == 0
+                                        ? ReadingStatus.unread
+                                        : ReadingStatus.inProgress,
+                              );
+                            });
+                          },
+                          onChangeEnd: _setReadingProgress,
+                        ),
+                        Text(
+                          'Saved only in this library. This does not track activity on the linked website.',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: mutedTextColor(context),
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 if (item.url != null) ...[
                   const SizedBox(height: 24),
