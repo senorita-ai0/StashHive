@@ -77,6 +77,23 @@ void main() {
       expect(result.text, isEmpty);
     });
 
+    test('decodes Windows-1252 punctuation and the euro sign', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/plain; charset="windows-1252"',
+            body: <int>[
+              0x80, 0x20, 0x93, 0x68, 0x65, 0x6c, 0x6c, 0x6f, 0x94,
+              0x20, 0x97, 0x20, 0x31, 0x30, 0x30, 0x20, 0x80,
+            ],
+          );
+
+      final result = await loadArticleForReader('https://example.com/legacy');
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text, '€ “hello” — 100 €');
+    });
+
     test('enforces the response byte cap even with an injected response', () async {
       articleReaderTransportForTesting = (uri, addresses, timeout) async =>
           ArticleReaderTransportResponse(
