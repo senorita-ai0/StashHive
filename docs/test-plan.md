@@ -1953,9 +1953,10 @@ Network safety tests must use injected/fake transport and synthetic HTML; do not
 
 ## SH-006 reader source cases — 2026-10-29
 
-Initial regression source is in test/article_reader_test.dart and test/article_reader_page_test.dart:
+Initial regression source is in test/article_reader_test.dart, test/article_reader_page_test.dart and test/saved_item_test.dart:
 - Validate HTTP/HTTPS only; reject credential-bearing URLs, unsupported schemes, localhost/local suffixes and private IPv4/IPv6 literals.
 - Convert hostile HTML to plain text without script, style or iframe contents; preserve Unicode and normalize whitespace.
 - Verify the reader result object exposes transient content without involving repository persistence.
+- Exercise the reader selection/save callback with an injected temporary article result; verify quote offsets and context bounds without making a network request.
 
 The tests are authored but **not run**. Existing saved-item regression source now also covers round-tripping reader quote offsets/context, legacy annotation compatibility and invalid offset/context bounds. Planned TC-264–TC-268 remain required for request/redirect/DNS safety, byte/time limits, explicit-only network access, no page-content persistence and reader UI states. Add platform-specific selection coverage after the native transport can be exercised deterministically.
