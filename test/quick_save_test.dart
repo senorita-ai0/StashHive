@@ -202,6 +202,39 @@ void main() {
     await testDirectory.delete(recursive: true);
   });
 
+  testWidgets('reading status changes persist from item details', (tester) async {
+    final item = SavedItem(
+      id: 'reading-progress-link',
+      kind: ItemKind.link,
+      title: 'Article to read',
+      content: '',
+      url: 'https://example.com/article',
+      tags: const <String>[],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 2000,
+    );
+    await repository.save(item);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.ItemDetailsPage(
+          repository: repository,
+          itemId: item.id,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byType(SegmentedButton<ReadingStatus>));
+    await tester.tap(find.text('Done').last);
+    await tester.pumpAndSettle();
+
+    expect(repository.findById(item.id)?.readingStatus, ReadingStatus.completed);
+    expect(repository.findById(item.id)?.readingProgress, 100);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'invalidates a picker result after switching away and back to its original type',
     (tester) async {
