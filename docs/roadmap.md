@@ -1559,3 +1559,11 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - Persistence/UI: Item Details shows Link Health only for links, lets the user request a check, records response category/status code and time in a bounded local-preference sidecar, and does not change the saved item or its updated timestamp. Result history is not part of backup v1.
 - Regression: TC-259; test/link_health_test.dart, test/library_repository_test.dart, and the Item Details widget case in test/accessibility_widgets_test.dart.
 - Status: Source and regression cases are committed to main; formatter, analyzer, tests, Android/web builds and device/browser verification have not been run. CI stays manual-only.
+
+
+### TSK-540 — Complete selected-item Markdown export regression (SH-003) — 2026-10-29
+
+- **Source:** The Library bulk action is labelled **Export selected**. The export action uses a Markdown attachment with the `text/markdown` MIME type and only includes the explicitly selected records. The output is bounded by the Markdown export service; attachment bytes remain excluded, and the user is directed to JSON backup for full recovery.
+- **Test seam:** Added `selectedItemsShareForTesting`, used only by tests. Production still calls SharePlus to open the platform share sheet.
+- **Regression:** TC-260 in `docs/test-plan.md`; `test/bulk_actions_widget_test.dart` checks selected-only contents and safe feedback when sharing fails.
+- **Status:** Source and test source are committed; execution and platform verification remain pending. No CI workflow was dispatched.
