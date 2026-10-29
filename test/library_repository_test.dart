@@ -173,6 +173,25 @@ void main() {
     expect(repository.linkHealthHistory, isEmpty);
   });
 
+  test('deleting an item removes its derived link health record', () async {
+    await repository.save(buildLink(url: 'https://flutter.dev'));
+    await repository.saveLinkHealthRecord(
+      LinkHealthRecord(
+        itemId: 'link-1',
+        checkedUrl: 'https://flutter.dev',
+        state: LinkHealthState.healthy,
+        checkedAtMs: DateTime.now().millisecondsSinceEpoch,
+        httpStatusCode: 200,
+      ),
+    );
+    expect(repository.linkHealthHistory, contains('link-1'));
+
+    await repository.delete('link-1');
+
+    expect(repository.findById('link-1'), isNull);
+    expect(repository.linkHealthHistory, isNot(contains('link-1')));
+  });
+
   test('lookups expose the last committed item while a save is staged', () async {
     await repository.save(buildLink());
     final previous = repository.findById('link-1');
