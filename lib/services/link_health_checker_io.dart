@@ -121,27 +121,9 @@ bool _isPublicAddress(InternetAddress address) {
   }
 
   if (address.type == InternetAddressType.IPv6 && bytes.length == 16) {
-    final allZeroPrefix = bytes.take(15).every((byte) => byte == 0);
-    final unspecified = allZeroPrefix && bytes[15] == 0;
-    final loopback = allZeroPrefix && bytes[15] == 1;
-    final uniqueLocal = (bytes[0] & 0xFE) == 0xFC;
-    final linkLocal = bytes[0] == 0xFE && (bytes[1] & 0xC0) == 0x80;
-    final multicast = bytes[0] == 0xFF;
-    final documentation = bytes[0] == 0x20 &&
-        bytes[1] == 0x01 &&
-        bytes[2] == 0x0D &&
-        bytes[3] == 0xB8;
     final ipv4Mapped = bytes.take(10).every((byte) => byte == 0) &&
         bytes[10] == 0xFF &&
         bytes[11] == 0xFF;
-    if (unspecified ||
-        loopback ||
-        uniqueLocal ||
-        linkLocal ||
-        multicast ||
-        documentation) {
-      return false;
-    }
     if (ipv4Mapped) {
       return _isPublicAddress(
         InternetAddress.fromRawAddress(
@@ -149,6 +131,28 @@ bool _isPublicAddress(InternetAddress address) {
           type: InternetAddressType.IPv4,
         ),
       );
+    }
+
+    // Only global-unicast IPv6 (2000::/3) is accepted. This also excludes
+    // unspecified/loopback, ULA, link-local, site-local, multicast and
+    // IPv4-translation ranges instead of trying to enumerate each range.
+    final globalUnicast = (bytes[0] & 0xE0) == 0x20;
+    final documentation = bytes[0] == 0x20 &&
+        bytes[1] == 0x01 &&
+        bytes[2] == 0x0D &&
+        bytes[3] == 0xB8;
+    final documentationRange = bytes[0] == 0x3F &&
+        bytes[1] == 0xFF &&
+        (bytes[2] & 0xF0) == 0;
+    final specialPurpose2001 = bytes[0] == 0x20 &&
+        bytes[1] == 0x01 &&
+        bytes[2] == 0 &&
+        bytes[3] <= 1;
+    if (!globalUnicast ||
+        documentation ||
+        documentationRange ||
+        specialPurpose2001) {
+      return false;
     }
     return true;
   }
