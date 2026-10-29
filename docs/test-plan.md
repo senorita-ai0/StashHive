@@ -2018,3 +2018,10 @@ The repository widget regression source now checks three export formats after sa
 - Inject an HTML response whose script string and HTML comment each contain a fake `<title>` before a genuine title element.
 - Verify the genuine title is returned after entity decoding, fake title text is ignored, and article body text remains available.
 - **Status:** Regression source is in `test/article_reader_test.dart`; not run. Confirm native fetch parsing and browser fallback behavior at the manual validation checkpoint.
+
+
+### TC-270 — UTF-8 BOM does not leak into Reader content (2026-10-29)
+
+- Inject a successful `text/plain; charset=utf-8` response whose body begins with bytes `EF BB BF` followed by a readable sentence.
+- Verify the Reader result is successful, the text equals the sentence without a leading BOM, and the first code unit is not U+FEFF.
+- **Status:** Regression source is committed in `test/article_reader_test.dart`; not run. Execute with the full Reader suite at the owner-approved manual validation checkpoint.
