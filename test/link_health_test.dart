@@ -8,6 +8,8 @@ void main() {
       expect(linkHealthStateForStatusCode(200), LinkHealthState.healthy);
       expect(linkHealthStateForStatusCode(299), LinkHealthState.healthy);
       expect(linkHealthStateForStatusCode(301), LinkHealthState.redirect);
+      expect(linkHealthStateForStatusCode(405), LinkHealthState.methodUnsupported);
+      expect(linkHealthStateForStatusCode(501), LinkHealthState.methodUnsupported);
       expect(linkHealthStateForStatusCode(404), LinkHealthState.notFound);
       expect(linkHealthStateForStatusCode(410), LinkHealthState.gone);
       expect(linkHealthStateForStatusCode(401), LinkHealthState.restricted);
