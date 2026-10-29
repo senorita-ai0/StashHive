@@ -45,6 +45,8 @@ void main() {
       expect(markdown, contains('- Collection: Learning'));
       expect(markdown, contains('- Tags: Reading'));
       expect(markdown, contains('- Favorite: yes'));
+    expect(markdown, contains('- Reading status: In progress'));
+    expect(markdown, contains('- Reading progress: 45%'));
       expect(markdown, contains('- Attachment: guide.pdf'));
       expect(markdown, contains('Useful notes'));
       expect(markdown, isNot(contains('attachment-one')));
