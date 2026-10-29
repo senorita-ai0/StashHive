@@ -1835,3 +1835,14 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Reject libraries beyond the supported item/output limits with a readable message.
 - Verify the UI does not claim the destination saved the file when the share sheet was dismissed.
 - **Status:** Pure unit regression source committed but unrun.
+
+
+### TC-255 — Switch and persist the Library grid/list layout
+
+- Confirm a new profile defaults to Grid and that unknown stored layout values safely fall back to Grid.
+- Save at least one item; activate the layout toggle and verify List layout shows the same item, filters and selected-item actions continue to work.
+- Toggle back to Grid and confirm item visibility and sorting are unchanged.
+- Recreate the Library page and verify the stored view preference is restored from the current local app/browser profile.
+- Inject a preference write error after commit; verify the prior preference is restored and the UI reports a safe recoverable error.
+- Check toggle tooltip/semantics, narrow width and enlarged text on Android/web; do not imply cross-device sharing of this preference.
+- **Status:** Unit/widget regression source committed but unrun. CI/builds remain manual-only.
