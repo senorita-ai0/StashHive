@@ -5,7 +5,7 @@ Scale: Probability and impact are Low / Medium / High qualitative estimates. Rev
 | ID | Risk | Probability | Impact | Mitigation / next action | Trigger / status |
 |---|---|---|---|---|---|
 | RSK-001 | OCR library/model increases APK size, memory, battery use, or latency. | High | High | Keep OCR optional; test several local sample files and capture package-size delta before choosing a dependency. | Before TSK-005 decision; OPEN |
-| RSK-002 | Urdu/Nastaleeq OCR is inaccurate or unavailable offline. | High | Medium | Do not promise it; test a labelled sample set and distinguish manually entered Urdu text search from OCR. | Before any OCR requirement promotion; OPEN |
+| RSK-002 | Urdu/Nastaleeq OCR is inaccurate or unavailable offline. | High | Medium | Acknowledge that Tesseract Urdu data exists but accuracy is unproven; benchmark labelled Urdu/Nastaleeq samples separately and distinguish manually entered Urdu search from OCR. See `docs/research/local-text-extraction-feasibility.md`. | Runtime sample test required before any OCR requirement promotion; OPEN |
 | RSK-003 | Browser storage is cleared or quota limits attachments. | Medium | High | Versioned export/restore, quota/error messaging, avoid claiming durable file-system access or sync. | Web POC and release review; OPEN |
 | RSK-004 | App uninstall removes app-private files and library unless exported. | Medium | High | First-run data ownership message, backup reminder, restore tests; explain behavior. | Before release; OPEN |
 | RSK-005 | Android share intents vary by source app and MIME type. | Medium | High | Narrow allowlist, real-device proof of concept, recoverable unsupported-content handling. | TSK-004; OPEN |
