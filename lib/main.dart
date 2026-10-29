@@ -18,6 +18,7 @@ import 'services/bookmark_html_importer.dart';
 import 'services/bounded_bytes_reader.dart';
 import 'services/duplicate_detector.dart';
 import 'services/library_csv_export.dart';
+import 'services/link_health_checker.dart';
 import 'services/mime_types.dart';
 import 'services/search_filters.dart';
 import 'services/smart_tag_rules.dart';
@@ -3800,6 +3801,8 @@ class ItemDetailsPage extends StatefulWidget {
 class _ItemDetailsPageState extends State<ItemDetailsPage> {
   SavedItem? _item;
   Future<Uint8List?>? _attachmentFuture;
+  LinkHealthRecord? _linkHealthRecord;
+  bool _checkingLinkHealth = false;
 
   @override
   void initState() {
@@ -3810,9 +3813,162 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
   void _reload() {
     final current = widget.repository.findById(widget.itemId);
     _item = current;
+    _linkHealthRecord = current == null || current.kind != ItemKind.link
+        ? null
+        : widget.repository.findLinkHealthRecord(
+            current.id,
+            url: current.url,
+          );
     _attachmentFuture = current?.attachmentKey == null
         ? Future<Uint8List?>.value(null)
         : widget.repository.readAttachment(current!.attachmentKey!);
+  }
+
+  Future<void> _checkLinkHealth() async {
+    final item = _item;
+    if (_checkingLinkHealth || item == null || item.kind != ItemKind.link) {
+      return;
+    }
+    final url = item.url;
+    if (url == null || url.isEmpty) {
+      _message('This saved item does not have a website URL to check.');
+      return;
+    }
+
+    setState(() => _checkingLinkHealth = true);
+    try {
+      final result = await checkLinkHealth(itemId: item.id, url: url);
+      if (!mounted) return;
+      if (result.state == LinkHealthState.unavailableInBrowser ||
+          result.state == LinkHealthState.unsupportedPlatform) {
+        _message(result.state.explanation);
+        return;
+      }
+
+      await widget.repository.saveLinkHealthRecord(result);
+      if (!mounted) return;
+      setState(() => _linkHealthRecord = result);
+      final code = result.httpStatusCode == null
+          ? ''
+          : ' (HTTP ${result.httpStatusCode})';
+      _message('Link check: ${result.state.label}$code');
+    } catch (_) {
+      _message('Could not save this link-check result. Please try again.');
+    } finally {
+      if (mounted) setState(() => _checkingLinkHealth = false);
+    }
+  }
+
+  Widget _buildLinkHealthCard(SavedItem item) {
+    final record = _linkHealthRecord != null &&
+            _linkHealthRecord!.matchesUrl(item.url)
+        ? _linkHealthRecord
+        : null;
+    final state = record?.state;
+    final isHealthy = state == LinkHealthState.healthy;
+    final isWarning = state == LinkHealthState.notFound ||
+        state == LinkHealthState.gone ||
+        state == LinkHealthState.serverError ||
+        state == LinkHealthState.networkError ||
+        state == LinkHealthState.timedOut ||
+        state == LinkHealthState.tlsError ||
+        state == LinkHealthState.httpError;
+    final statusColor = isHealthy
+        ? const Color(0xFF218F84)
+        : isWarning
+            ? Theme.of(context).colorScheme.error
+            : Theme.of(context).colorScheme.primary;
+    final statusIcon = isHealthy
+        ? Icons.check_circle_outline_rounded
+        : isWarning
+            ? Icons.warning_amber_rounded
+            : Icons.info_outline_rounded;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const DetailSectionLabel(label: 'LINK HEALTH'),
+            const SizedBox(height: 10),
+            if (record != null) ...[
+              Semantics(
+                liveRegion: true,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(statusIcon, color: statusColor, size: 23),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            record.state.label +
+                                (record.httpStatusCode == null
+                                    ? ''
+                                    : ' · HTTP ${record.httpStatusCode}'),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  color: statusColor,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(record.state.explanation),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Last checked ${_formatDate(DateTime.fromMillisecondsSinceEpoch(record.checkedAtMs, isUtc: true).toLocal())}',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: mutedTextColor(context),
+                    ),
+              ),
+              const SizedBox(height: 12),
+            ] else
+              Text(
+                'Check the destination on demand. A timeout, access denial or server error can be temporary.',
+                style: TextStyle(color: mutedTextColor(context), height: 1.4),
+              ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton.icon(
+                key: const ValueKey('check-link-health'),
+                onPressed: _checkingLinkHealth ? null : _checkLinkHealth,
+                icon: _checkingLinkHealth
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.health_and_safety_outlined),
+                label: Text(
+                  _checkingLinkHealth ? 'Checking link…' : 'Check link',
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              kIsWeb
+                  ? 'Browser security blocks reliable status checks for many external sites. StashHive will not use a proxy or upload your saved content.'
+                  : 'Only runs when you tap Check link. The destination sees a request from this device; StashHive stores the status and time locally, not the page content.',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: mutedTextColor(context),
+                    height: 1.4,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _message(String text) {
@@ -4421,6 +4577,10 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                     ),
                   ],
                 ),
+                if (item.kind == ItemKind.link && item.url != null) ...[
+                  const SizedBox(height: 24),
+                  _buildLinkHealthCard(item),
+                ],
                 const SizedBox(height: 24),
                 Card(
                   child: Padding(
