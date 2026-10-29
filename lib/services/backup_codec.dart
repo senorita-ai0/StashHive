@@ -711,6 +711,24 @@ class BackupCodec {
         'A saved item contains invalid optional field types.',
       );
     }
+
+    if (value.containsKey('annotations')) {
+      final annotations = value['annotations'];
+      if (annotations is! List ||
+          annotations.length > maxSavedAnnotationsPerItem) {
+        throw const FormatException('A saved item has an invalid annotation list.');
+      }
+      for (final entry in annotations) {
+        if (entry is! Map) {
+          throw const FormatException('A saved item has an invalid annotation list.');
+        }
+        try {
+          SavedAnnotation.fromMap(entry);
+        } on FormatException {
+          throw const FormatException('A saved item has invalid annotation data.');
+        }
+      }
+    }
     final id = value['id'] as String;
     final title = value['title'] as String;
     final content = value['content'] as String;
