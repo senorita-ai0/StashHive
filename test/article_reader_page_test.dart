@@ -24,6 +24,51 @@ void main() {
     expect(find.text('Open in browser'), findsOneWidget);
   });
 
+  testWidgets('failed highlight save remains visible and can be retried',
+      (tester) async {
+    articleReaderLoaderForTesting = (url, timeout) async =>
+        const ArticleReaderResult(
+          state: ArticleReaderState.success,
+          title: 'Sample article',
+          text: 'A selected passage that may need another save attempt.',
+        );
+    addTearDown(() {
+      articleReaderLoaderForTesting = null;
+    });
+
+    var attempts = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ArticleReaderPage(
+          url: 'https://example.com/article',
+          savedTitle: 'Saved title',
+          onSaveQuote: (quote, start, end, before, after) async {
+            attempts++;
+            return false;
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.longPress(find.byKey(const ValueKey('article-reader-text')));
+    await tester.pumpAndSettle();
+    expect(find.text('SELECTED PASSAGE'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('save-reader-highlight')));
+    await tester.pumpAndSettle();
+
+    expect(attempts, 1);
+    expect(
+      find.text(
+        'Highlight was not saved. Check the item limit or local storage and try again.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('SELECTED PASSAGE'), findsOneWidget);
+    expect(find.byKey(const ValueKey('save-reader-highlight')), findsOneWidget);
+  });
+
   testWidgets('selected passage can be saved with bounded context and offsets',
       (tester) async {
     articleReaderLoaderForTesting = (url, timeout) async =>
