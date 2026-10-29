@@ -1495,3 +1495,11 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **Safety:** Every selected-item mutation is isolated and counted; UI reports partial failure. Deletion requires a confirmation dialog. Markdown index export is included; exporting attachment bytes remains the responsibility of JSON backup.
 - **Regression:** `test/bulk_actions_widget_test.dart` covers batch actions and delete cancellation; `test/selected_items_export_test.dart` covers Markdown content and bounds.
 - **Status:** Source committed to `main`; tests and platform verification pending. Do not dispatch the manual workflow unless requested.
+
+
+### TSK-535 — Browser bookmark import and portable exports (SH-004)
+
+- **Source:** Added bounded Netscape bookmark HTML parsing with folder-to-collection mapping, URL scheme validation, in-file deduplication, and a preview-first import flow that skips existing links. Added full-library CSV export and reused the selected-items Markdown index export.
+- **Limits:** Bookmark HTML input is capped at 10 MiB and 10,000 links; CSV output is capped by item count and generated text size. Neither CSV nor Markdown includes attachment bytes; JSON backup remains the full recovery format.
+- **Regression:** `test/bookmark_html_importer_test.dart`, `test/library_csv_export_test.dart`, and `test/selected_items_export_test.dart`.
+- **Status:** Source and test files committed to `main`; test execution and platform verification pending.
