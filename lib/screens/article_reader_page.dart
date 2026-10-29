@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../models/saved_item.dart';
 import '../services/article_reader.dart';
+import '../services/web_url.dart';
 
 typedef SaveArticleReaderSelection = Future<bool> Function(
   String quote,
@@ -116,7 +117,9 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
   }
 
   Future<void> _openExternal() async {
-    final uri = parseArticleReaderUrl(widget.url);
+    // External navigation is a separate explicit user action; it may open a
+    // local site that the in-app network reader deliberately refuses to fetch.
+    final uri = parseHttpUrl(widget.url);
     if (uri == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('This is not a valid HTTP or HTTPS URL.')),
