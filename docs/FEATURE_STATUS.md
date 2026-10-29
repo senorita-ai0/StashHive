@@ -117,7 +117,7 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - Enforced one absolute deadline across DNS resolution, request/response phases and body reading, rather than restarting the full timeout at every stage.
 - Added test/article_reader_repository_test.dart to verify no reader request occurs on details-screen load, a tap starts one request, opening a temporary preview leaves the saved record unchanged, saving a selected passage persists only the user-approved annotation, and portable backup contains the annotation but not the full fetched article. Reader success/failure feedback now appears on the visible Reader route, with widget-test source for both outcomes. TC-264–TC-268 have partial regression source, but none has been run; actual platform checks remain pending.
 - Source review caught and corrected malformed expressions in the sanitizer hardening and hostname-validation edits; both complete functions were re-fetched after repair. No tests, formatter, analyzer or builds were run. Android/web behavior is still unverified. CI remains manual-only.
-- Latest relevant commits include 94c4677 (Windows-1252 decoding), 1ed3b06 (charset alias regression), f770abb (export privacy regression), 10e1f87 (Reader semantics) and e8d0fab (Reader accessibility test source). Re-check HEAD before the next edit.
+- Latest relevant commits include 94c4677 (Windows-1252 decoding), f770abb (export privacy regression), 10e1f87 (Reader semantics), e8d0fab (loading-label test) and 7df2f18 (save-progress semantic test). Re-check HEAD before the next edit.
 
 
 ## SH-006 reader decoding polish — 2026-10-29
@@ -146,3 +146,9 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - Added semantic labels to Reader loading and save-progress indicators and marked the article title and unavailable-state title as semantic headings.
 - Added widget regression source that holds a synthetic reader response pending and checks for the accessible loading label. The test is not run; a screen-reader/device audit and remaining error-state accessibility checks are still required.
 - Commits: 10e1f87 (UI semantics) and e8d0fab (widget regression source). SH-006 remains partial; CI remains manual-only.
+
+
+## SH-006 reader save-progress accessibility regression — 2026-10-29
+
+- Added a deterministic widget regression using a deliberately pending highlight-save callback. It checks that the saving indicator exposes the semantic label “Saving highlight”, then completes the save and confirms the normal success message appears.
+- This is authored source only; the widget test has not been run. Actual TalkBack/VoiceOver/keyboard behavior remains pending. Commit: 7df2f18.
