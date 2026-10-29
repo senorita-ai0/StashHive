@@ -208,6 +208,13 @@ Future<ArticleReaderResult> loadArticleForReader(
   String url, {
   Duration timeout = defaultArticleReaderTimeout,
 }) {
+  // Keep URL validation ahead of every transport path, including test seams,
+  // so an injected transport cannot accidentally mask invalid-input behavior.
+  if (parseArticleReaderUrl(url) == null) {
+    return Future<ArticleReaderResult>.value(
+      const ArticleReaderResult(state: ArticleReaderState.invalidUrl),
+    );
+  }
   final testLoader = articleReaderLoaderForTesting;
   if (testLoader != null) return testLoader(url, timeout);
   return platform.loadArticleForReader(url, timeout: timeout);
