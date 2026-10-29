@@ -119,3 +119,10 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Decode numeric references before named references so escaped ampersands are not recursively decoded in the same pass.
 - [x] Add synthetic regression coverage for named entities, case-insensitive names, hexadecimal numeric references and single-pass escaping.
 - [ ] Execute sanitizer/reader tests and confirm rendering output on Android/web; source and test are not verified.
+
+
+## SH-006 — semantic container extraction order (2026-10-29)
+
+- [x] Remove script/style/noscript/SVG/iframe/object/template blocks and HTML comments before locating semantic article/main containers.
+- [x] Author a regression for fake article tags in script strings/comments alongside a real article and navigation content.
+- [ ] Run the sanitizer regression matrix and inspect native/web behavior at the owner-approved checkpoint. The lightweight regex sanitizer is still not a complete HTML parser.
