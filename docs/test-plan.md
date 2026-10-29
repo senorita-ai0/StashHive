@@ -1884,3 +1884,16 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Delete a rule with confirmation and confirm existing item tags remain unchanged. Verify the UI explains rules are local to the app/browser profile and not included in backup v1.
 - Confirm no network request, AI request, page scraping, or background auto-tagging is introduced.
 - **Status:** Service, repository, UI and regression test sources are committed but unrun. Formatter/analyzer/tests/builds and Android/web accessibility checks remain pending at the owner-requested manual checkpoint; CI remains manual-only.
+
+
+### TC-259 — Manually check link status without archiving content
+
+- Open Item Details for a saved link and verify a dedicated Link Health panel and a user-triggered Check link action appear. Notes, images and documents do not show this panel.
+- On Android, verify a public HTTP(S) URL is checked with a bounded request. Only response headers/status are used; page body, cookies, saved notes and attachment bytes are not sent or stored.
+- Verify 2xx is reported as a successful response; 3xx is identified as a redirect and is not followed; 404, 410, 401/403, other 4xx, 5xx, timeout, TLS and network failures have distinct, non-overstated messaging.
+- Verify loopback, private, link-local, reserved and local-only destinations are blocked before a request. Redirects are not followed, so a public URL cannot automatically redirect the checker to a private address.
+- Verify check results and timestamps persist locally, are bounded, are ignored when malformed, and are not added to backup v1. Checking must not update the saved item's title, URL, reading metadata or updatedAtMs.
+- Change the item's URL and verify an earlier URL's result is not shown as the status of the new URL. Simulate a preference-write failure and confirm safe feedback.
+- On web, verify the UI explains that browser security prevents reliable cross-origin status inspection; it must not imply that the destination was checked or use a proxy. On unsupported platforms, show the limitation.
+- Confirm no background polling, analytics, scraping, page archive, or network call occurs before the user presses Check link.
+- Status: Unit, repository and widget regression source is committed but unrun. Run at the owner's manual validation checkpoint; CI remains manual-only.
