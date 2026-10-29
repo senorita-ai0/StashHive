@@ -198,3 +198,8 @@ The native article reader honors declared Windows-1252 (windows-1252 and cp1252)
 ### Native Reader title extraction
 
 The native Reader extracts the document title only after removing active embedded blocks and HTML comments from the source, then sanitizes the title to plain text and caps it at 300 characters. This avoids selecting a title-looking fragment embedded in a script string/comment; the regex-based implementation is still a lightweight fallback, not a standards-complete HTML parser. Regression source exists but remains unrun until the manual validation checkpoint.
+
+
+### Native Reader bounded HTML charset prescan — 2026-10-29
+
+Character decoding prefers the server's Content-Type charset. When an HTML response lacks that parameter, the native reader inspects at most the first 1,024 response bytes for a direct meta charset or the legacy http-equiv/content declaration. This is a targeted compatibility fallback; it does not implement the complete HTML encoding sniffing algorithm, and tests/platform behavior remain unverified until the manual checkpoint.
