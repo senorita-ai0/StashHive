@@ -201,3 +201,10 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 
 - Added a second Unicode-boundary regression for the 300-code-unit extracted-title cap. It places an emoji across the title limit and asserts the title does not contain a dangling surrogate while the article body remains readable.
 - Test source committed as `0374c24`; the test has not been run. TC-271 covers the body cap and TC-272 covers the title cap. No formatter, analyzer, test, build or CI run was performed; SH-006 remains partial pending manual validation.
+
+
+## SH-006 bounded HTML meta charset fallback — 2026-10-29
+
+- Native Reader now uses an HTTP Content-Type charset when one is declared; when HTML has no HTTP charset, it scans only the first 1,024 bytes for a meta charset declaration and the legacy http-equiv/content charset form. This improves decoding of some older pages without scanning the entire body for encoding hints.
+- Added regression source for direct meta charset and legacy http-equiv charset declarations using a Windows-1252 euro byte. Cases are TC-273 and TC-274; they have not been run.
+- Commits: source 41f7e1b; regression cases ac7a62b. No formatter, analyzer, tests, builds or CI were run. Charset detection remains deliberately limited, not standards-complete; SH-006 stays partial pending manual validation.
