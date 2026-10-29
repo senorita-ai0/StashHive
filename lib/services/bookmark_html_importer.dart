@@ -116,6 +116,7 @@ BookmarkHtmlImportResult parseBookmarkHtml(String source) {
     if (uri == null ||
         (uri.scheme.toLowerCase() != 'http' && uri.scheme.toLowerCase() != 'https') ||
         uri.host.isEmpty ||
+        uri.userInfo.isNotEmpty ||
         uri.toString().length > maxSavedItemUrlCharacters) {
       invalidCount++;
       continue;
