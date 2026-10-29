@@ -1111,7 +1111,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 ## SH-009 — Link health and status record (2026-10-29)
 
 - UI: Added a Link Health panel to Item Details for saved links, with a manual Check link action, status-specific guidance, optional HTTP code and last-checked timestamp.
-- Checker: Native IO sends a bounded request only after the user taps. It checks public HTTP(S) destinations, blocks local/private/reserved addresses, does not follow redirects, retries a GET only when HEAD is not implemented, and never stores response content. Browser and fallback implementations explain why direct status inspection is unavailable there.
+- Checker: Native IO sends a bounded request only after the user taps. It checks public HTTP(S) destinations, blocks local/private/reserved addresses, does not follow redirects, treats 405/501 as an unsupported check method rather than retrying with GET, and never fetches/stores page content. Browser and fallback implementations explain why direct status inspection is unavailable there.
 - Persistence: Link status/time are stored in a bounded local preferences sidecar, not the SavedItem record or version-1 backup. Checking does not modify the saved item's update timestamp. Results for a different URL are not shown for the current item.
 - Regression source: Added service/model checks, repository persistence and URL mismatch checks, and a widget test for the action and privacy copy. Added FR-026, TC-259, and SH-009/TSK-539 traceability.
 - Verification: Formatter, analyzer, tests, manual CI, Android/web builds, and real-device/browser checks have not run for this increment. CI remains manual-only.
