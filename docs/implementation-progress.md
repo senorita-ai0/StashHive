@@ -1066,7 +1066,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 
 - Added `docs/research/local-text-extraction-feasibility.md` with current package/platform research, candidate matrix, a sample-based benchmark plan, privacy/offline requirements, and clear release gates.
 - The recommended order is direct text-bearing PDF extraction first, then separately assess OCR. `pdfrx_engine` is the leading cross-platform PDF prototype candidate; Tesseract with official Urdu trained data is a mobile OCR candidate to measure, not a promise of Urdu/Nastaleeq quality.
-- No package or model was added. Runtime tests, accuracy measurements, device benchmarks, and binary/web-size deltas are not available yet; SH-005 remains gated.
+- No PDF/OCR dependency or model was added to the production app. A separate `tool/pdf_text_extraction_poc` package has since been scaffolded around `pdfrx 2.10.1`; package resolution, runtime tests, accuracy measurements, device benchmarks, and binary/web-size deltas remain unavailable, so SH-005 stays gated.
 - Build/test CI remains manual-only and was not dispatched.
 
 
@@ -1133,3 +1133,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - Added `test/bookmark_import_widget_test.dart` for a mixed bookmark file with a new URL, an existing duplicate, an in-file tracking/fragment duplicate, a rejected non-web scheme, and a folder assignment. The second case confirms cancellation leaves both items and collections unchanged.
 - Updated SH-004 status, traceability and TC-261 acceptance steps.
 - **Not verified:** no formatter, analyzer, Dart tests, CI workflow, web/Android build or browser/device check has been run. The workflow remains manual-only.
+
+
+## SH-005 — isolated digital PDF extraction probe scaffold (2026-10-29)
+
+- Added `tool/pdf_text_extraction_poc` with its own `pubspec.yaml`, local in-memory extraction service, manual phrase-recall screen, synthetic PDF fixtures/tests and run/benchmark protocol. `pdfrx` is not a production dependency; the root app's `pubspec.yaml` is unchanged.
+- The probe is deliberately limited to selectable text from digital PDFs. A scanned PDF returning no selectable text is expected; image/scanned-PDF OCR remains a separate feasibility task.
+- Updated SH-005 backlog status, FR-016 traceability, TC-262, and roadmap TSK-542. Official pdfrx APIs/platform claims were rechecked while writing the scaffold; those claims do not substitute for StashHive runtime evidence.
+- **Not verified:** no package resolution, formatter, analyzer, tests, POC runtime, Android/web build, offline/network check, APK/web size comparison, or memory/accuracy measurement has been run. Keep SH-005 BLOCKED and CI manual-only until a validation checkpoint.
