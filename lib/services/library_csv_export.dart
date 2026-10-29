@@ -54,7 +54,7 @@ String buildLibraryCsv(List<SavedItem> items) {
 String _csvField(String value) {
   // Spreadsheet programs may interpret leading formula markers as executable
   // formulas. Prefix those cells with an apostrophe before CSV quoting.
-  final safeValue = RegExp(r'^[=+\\-@\\t\\r]').hasMatch(value) ? "'$value" : value;
+  final safeValue = RegExp(r'^[=+\-@\t\r]').hasMatch(value) ? "'$value" : value;
   final escaped = safeValue.replaceAll('"', '""');
   if (escaped.contains(',') ||
       escaped.contains('"') ||
