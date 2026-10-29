@@ -1778,6 +1778,42 @@ void main() {
     expect(find.text('Delete item'), findsOneWidget);
   });
 
+  testWidgets('Item Details shows manual link health controls and privacy guidance', (tester) async {
+    await repository.save(
+      SavedItem(
+        id: 'link-health-details',
+        kind: ItemKind.link,
+        title: 'Link health test',
+        content: '',
+        url: 'https://example.com/health',
+        tags: const <String>[],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1,
+        updatedAtMs: 2,
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: app.ItemDetailsPage(
+          repository: repository,
+          itemId: 'link-health-details',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('LINK HEALTH'), findsOneWidget);
+    expect(find.byKey(const ValueKey('check-link-health')), findsOneWidget);
+    expect(find.text('Check link'), findsOneWidget);
+    expect(
+      find.textContaining('Only runs when you tap Check link'),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Library search teaser exposes and handles semantic activation', (tester) async {
     final semantics = tester.ensureSemantics();
     addTearDown(semantics.dispose);
