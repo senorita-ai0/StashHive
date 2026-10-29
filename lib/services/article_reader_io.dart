@@ -168,9 +168,10 @@ ArticleReaderResult _parseResponse(ArticleReaderTransportResponse response) {
       message: 'This website did not return HTML or plain text.',
     );
   }
-  final charset = _charsetFromContentType(response.contentType);
-  final decoded = _decodeText(response.body, charset);
   final html = mime == 'text/html';
+  final charset = _charsetFromContentType(response.contentType) ??
+      (html ? _charsetFromHtmlMeta(response.body) : null);
+  final decoded = _decodeText(response.body, charset);
   final title = html ? _extractTitle(decoded) : null;
   final text = sanitizeArticleMarkup(decoded, isHtml: html);
   if (text.trim().isEmpty) {
@@ -212,6 +213,30 @@ String? _charsetFromContentType(String contentType) {
   return match?.group(1);
 }
 
+String? _charsetFromHtmlMeta(List<int> bytes) {
+  // The HTML encoding prescan is deliberately bounded to the first 1024
+  // bytes. Latin-1 preserves the ASCII markup even when the document body
+  // uses a legacy encoding that UTF-8 would decode incorrectly.
+  final scanLength = bytes.length < 1024 ? bytes.length : 1024;
+  final prefix = latin1.decode(bytes.sublist(0, scanLength), allowInvalid: true);
+  final metaTags = RegExp(
+    r'<meta\b[^>]{0,1024}>',
+    caseSensitive: false,
+  ).allMatches(prefix);
+
+  for (final match in metaTags) {
+    final tag = match[0]!;
+    // This catches both the direct charset attribute and the legacy
+    // http-equiv content attribute, while not matching data-charset.
+    final charset = RegExp(
+      r'(?:^|[\s;])charset\s*=\s*["\x27]?([^;\s"\x27/>]+)',
+      caseSensitive: false,
+    ).firstMatch(tag);
+    final value = charset?.group(1)?.trim();
+    if (value != null && value.isNotEmpty) return value;
+  }
+  return null;
+}
 Duration _remaining(DateTime deadline) {
   final remaining = deadline.difference(DateTime.now());
   if (remaining <= Duration.zero) {
