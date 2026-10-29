@@ -3219,6 +3219,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
                 : null,
         readingStatus: existing?.readingStatus ?? ReadingStatus.unread,
         readingProgress: existing?.readingProgress ?? 0,
+        annotations: existing?.annotations ?? const <SavedAnnotation>[],
       );
       if (existing == null && item.kind == ItemKind.link) {
         final shouldSave = await _confirmDuplicateLinkSave(item);
