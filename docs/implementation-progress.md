@@ -1233,3 +1233,10 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Changed the sanitizer ordering so active/embedded blocks and comments are removed from the original document before it searches for `<article>` or `<main>`. Previously, a literal article-shaped string inside a script/comment could be mistaken for the main content and cause the real article text to be missed.
 - Added a synthetic test with a fake article inside a script string and another inside a comment; it expects the real article body and excludes navigation and both fake bodies.
 - Source/test commits: 9be6a98 and 8809696. During source review, an initial malformed rewrite was replaced with the complete sanitizer from the last clean committed version and the full function was fetched again. The final fetched function contains the intended preprocessing block and the original entity-decoding/normalization tail. No tests, formatter, analyzer or builds were run.
+
+
+## SH-006 — source integrity and sanitizer extraction hardening — 2026-10-29
+
+- Source review uncovered duplicate copies of the reader sanitizer/URL-loader tail plus a malformed residual fragment in `lib/services/article_reader.dart`. Removed the entire stale suffix, keeping the first complete service definitions, then fetched the committed file and verified the validator, private-address helper, sanitizer and loader each appear once and the malformed fragment is absent.
+- Updated the single sanitizer to strip scripts/embedded content, nav/footer/aside containers and comments before semantic article/main selection. The same cleanup handles unclosed container tails conservatively, so fake `<article>` tags inside those regions cannot win extraction. Added replacement of non-printing control characters before whitespace normalization.
+- Regression source extends the fake article fixture to include navigation and adds a plain-text control-character case while preserving the Urdu text assertion. Commits: b818cad (source repair + sanitizer) and 4501f50 (test source). No test, formatter, analyzer or build was run; CI remains manual-only.
