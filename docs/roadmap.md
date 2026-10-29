@@ -1610,3 +1610,8 @@ The native reader now has test-only DNS/transport seams and a single absolute de
 ## SH-006 reader charset refinement — 2026-10-29
 
 Native response parsing now treats declared Windows-1252 (windows-1252/cp1252) as distinct from ISO-8859-1/Latin-1, preserving common euro, quotation-mark and dash characters in legacy pages. A synthetic response regression was added for a quoted charset parameter. This is source implementation and authored test source only; do not count it as verified until the owner's manual validation checkpoint. SH-006 remains partial.
+
+
+## SH-006 export privacy coverage — 2026-10-29
+
+Reader/repository regression source now checks the JSON backup, CSV export and selected-Markdown export after saving a quote: the user-selected annotation is retained, but the complete temporary article text is not. This improves regression coverage only; no test was executed, and actual platform/share behavior remains pending. SH-006 remains partial.
