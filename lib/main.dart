@@ -3217,6 +3217,8 @@ class _QuickSavePageState extends State<QuickSavePage> {
             : preservesExistingAttachment
                 ? existing?.attachmentMimeType
                 : null,
+        readingStatus: existing?.readingStatus ?? ReadingStatus.unread,
+        readingProgress: existing?.readingProgress ?? 0,
       );
       if (existing == null && item.kind == ItemKind.link) {
         final shouldSave = await _confirmDuplicateLinkSave(item);
