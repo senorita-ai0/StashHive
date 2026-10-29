@@ -162,3 +162,10 @@ Before source implementation, follow [the article-reader feasibility and privacy
 
 - [x] Add a regression case placing a supplementary Unicode character across the 300-code-unit title cap.
 - [ ] Execute TC-271, TC-272 and the full Reader regression suite at the owner-approved manual validation checkpoint.
+
+
+## SH-006 — bounded HTML meta charset fallback (2026-10-29)
+
+- [x] Use the response-header charset first; if absent for HTML, inspect at most the first 1,024 bytes for a direct meta charset or legacy http-equiv/content declaration.
+- [x] Add TC-273 and TC-274 regression source for a Windows-1252 euro byte decoded via both HTML declaration forms.
+- [ ] Run the Reader charset and complete regression suites at the owner-approved manual validation checkpoint; tests remain unexecuted.
