@@ -61,4 +61,5 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Author initial URL/sanitization regression tests.
 - [ ] Run the new and existing tests at the owner-approved manual validation checkpoint.
 - [ ] Validate Android network behavior, redirects/DNS/private destinations, response limits and accessible error states.
-- [ ] Implement selection-based quote/highlight capture with bounded context/offset metadata after a cross-platform selection approach is proven.
+- [x] Add selection-based quote capture with bounded context and source offsets using Flutter selectable text; show context with the saved annotation.
+- [ ] Verify selection and highlight save behavior on Android and web; the saved offsets are advisory because article content can change.
