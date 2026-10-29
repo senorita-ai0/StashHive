@@ -6,6 +6,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/main.dart' as app;
 import 'package:stashhive/models/saved_item.dart';
+import 'package:stashhive/services/search_filters.dart';
 
 late Directory testDirectory;
 late LibraryRepository repository;
@@ -143,4 +144,50 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('Organize shows Smart Searches and opens the chosen preset', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1000, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await repository.saveSearchPreset(
+      SavedSearchPreset.create(
+        name: 'Learning favorites',
+        filters: const SearchFilters(
+          query: 'research',
+          collection: 'Learning',
+          favoritesOnly: true,
+          sortOrder: 'Title A–Z',
+        ),
+      ),
+    );
+
+    SavedSearchPreset? openedPreset;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: app.CollectionsPage(
+            repository: repository,
+            onOpenItem: (_) {},
+            onAdd: (_) {},
+            onOpenSavedSearch: (preset) => openedPreset = preset,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('SMART SEARCHES'), findsOneWidget);
+    expect(find.text('Learning favorites'), findsOneWidget);
+    await tester.tap(find.widgetWithText(ActionChip, 'Learning favorites'));
+    await tester.pumpAndSettle();
+
+    expect(openedPreset?.name, 'Learning favorites');
+    expect(openedPreset?.filters.query, 'research');
+    expect(openedPreset?.filters.collection, 'Learning');
+    expect(openedPreset?.filters.favoritesOnly, isTrue);
+    expect(openedPreset?.filters.sortOrder, 'Title A–Z');
+    expect(tester.takeException(), isNull);
+  });
+
 }
