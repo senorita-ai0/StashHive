@@ -54,6 +54,7 @@ OCR/PDF text extraction, in-app PDF rendering, cloud sync, accounts, public shar
 - [Premium Screen Reference — all seven screens](docs/design/screen-reference.md)
 - [Design pack](docs/design/README.md)
 - [Technical sources](docs/research/official-sources.md)
+- [Local PDF/OCR feasibility](docs/research/local-text-extraction-feasibility.md)
 - [Competitor hypotheses](docs/research/competitor-gap-hypotheses.md)
 - [Prioritized feature backlog](docs/FEATURE_BACKLOG.md)
 - [Cost and monetization](docs/cost-and-monetization.md)
