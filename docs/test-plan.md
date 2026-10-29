@@ -2039,3 +2039,16 @@ The repository widget regression source now checks three export formats after sa
 - Inject an HTML response whose document title places a supplementary character (for example, an emoji) across the 300-code-unit extracted-title limit and whose article body contains readable text.
 - Verify the title contains no lone high/low surrogate and the article body remains available in the successful Reader result.
 - **Status:** Regression source is committed in `test/article_reader_test.dart`; not run. Execute TC-271, TC-272 and the complete Reader test suite at the owner-approved manual validation checkpoint.
+
+
+### TC-273 — Direct HTML meta charset fallback (2026-10-29)
+
+- Inject an HTML response with Content-Type text/html (no charset), an early meta charset declaration for windows-1252, and byte 0x80 inside the article body.
+- Verify native Reader decodes that byte as the euro sign and returns the expected readable article text.
+- **Status:** Regression source is committed in test/article_reader_test.dart; not run. Execute with TC-274 and the full Reader suite at the owner-approved manual validation checkpoint.
+
+### TC-274 — Legacy http-equiv HTML charset fallback (2026-10-29)
+
+- Inject an HTML response with Content-Type text/html (no charset), an early meta http-equiv Content-Type declaration specifying windows-1252, and byte 0x80 inside the article body.
+- Verify the legacy declaration is recognized and the article contains the euro sign rather than a Latin-1 control character.
+- **Status:** Regression source is committed in test/article_reader_test.dart; not run. Complete charset detection, native fetch and browser fallback remain pending validation.
