@@ -17,6 +17,7 @@ import 'services/backup_codec.dart';
 import 'services/bookmark_html_importer.dart';
 import 'services/bounded_bytes_reader.dart';
 import 'services/duplicate_detector.dart';
+import 'services/library_csv_export.dart';
 import 'services/mime_types.dart';
 import 'services/search_filters.dart';
 import 'services/selected_items_export.dart';
@@ -4919,6 +4920,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
   bool _choosingBackup = false;
   bool _restoring = false;
   bool _importingBookmarks = false;
+  bool _exportingCsv = false;
 
   void _message(String message) {
     if (!mounted) return;
@@ -4940,7 +4942,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
   }
 
   Future<void> _export() async {
-    if (_exporting || _choosingBackup || _restoring || _importingBookmarks) return;
+    if (_exporting || _choosingBackup || _restoring || _importingBookmarks || _exportingCsv) return;
     setState(() => _exporting = true);
     try {
       final unrepresentedAssignments =
@@ -5043,7 +5045,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
   }
 
   Future<void> _importBookmarks() async {
-    if (_exporting || _choosingBackup || _restoring || _importingBookmarks) return;
+    if (_exporting || _choosingBackup || _restoring || _importingBookmarks || _exportingCsv) return;
     setState(() => _importingBookmarks = true);
     try {
       final file = await FilePicker.pickFile(
@@ -5210,8 +5212,44 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
     }
   }
 
+  Future<void> _exportCsv() async {
+    if (_exporting || _choosingBackup || _restoring || _importingBookmarks || _exportingCsv) return;
+    setState(() => _exportingCsv = true);
+    try {
+      final csv = buildLibraryCsv(widget.repository.items.value);
+      final bytes = utf8.encode(csv);
+      final name = 'stashhive-library-${DateTime.now().toUtc().toIso8601String().substring(0, 10)}.csv';
+      final result = await SharePlus.instance.share(
+        ShareParams(
+          title: 'StashHive library CSV',
+          subject: 'StashHive saved library export',
+          files: [
+            XFile.fromData(
+              bytes,
+              mimeType: 'text/csv',
+              name: name,
+            ),
+          ],
+        ),
+      );
+      if (mounted) {
+        _message(
+          result.status == ShareResultStatus.dismissed
+              ? 'The share sheet was dismissed. No destination was confirmed.'
+              : 'CSV share action completed. Check the destination to confirm the file was saved.',
+        );
+      }
+    } on FormatException catch (error) {
+      _message('Could not export CSV. ${error.message}');
+    } catch (_) {
+      _message('Could not export CSV. Check available storage and try again.');
+    } finally {
+      if (mounted) setState(() => _exportingCsv = false);
+    }
+  }
+
   Future<void> _restore() async {
-    if (_exporting || _choosingBackup || _restoring) return;
+    if (_exporting || _choosingBackup || _restoring || _importingBookmarks || _exportingCsv) return;
     setState(() => _choosingBackup = true);
     try {
       final testPicker = backupFilePickerForTesting;
@@ -5490,6 +5528,15 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                     ),
                   ),
                   const SizedBox(height: 18),
+                  _BackupCard(
+                    icon: Icons.table_view_outlined,
+                    title: 'Export library as CSV',
+                    subtitle: 'Export searchable metadata and saved text for use in spreadsheet apps. Attachment bytes are not included.',
+                    buttonText: _exportingCsv ? 'Exporting…' : 'Export CSV',
+                    loading: _exportingCsv,
+                    onPressed: (_exporting || _choosingBackup || _restoring || _importingBookmarks) ? null : _exportCsv,
+                  ),
+                  const SizedBox(height: 12),
                   _BackupCard(
                     icon: Icons.bookmarks_outlined,
                     title: 'Import browser bookmarks',
