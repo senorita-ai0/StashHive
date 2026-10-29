@@ -1705,3 +1705,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Expose Reader loading/save progress and article/error headings to assistive technology | lib/screens/article_reader_page.dart | TC-268; test/article_reader_page_test.dart | Source plus loading-label and delayed save-progress assertions authored; not run; platform accessibility verification pending |
+
+
+## SH-006 entity-decoding traceability update — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Decode common text entities once while preventing recursive unescaping | `sanitizeArticleMarkup` in lib/services/article_reader.dart | TC-266; named/case-insensitive, hex numeric and escaped-ampersand assertions in test/article_reader_test.dart | Source and test authored; not run; platform rendering pending |
+| Expose save-progress semantics while a highlight callback is pending | lib/screens/article_reader_page.dart | TC-268; delayed-save case in test/article_reader_page_test.dart | Source and widget test authored; not run; screen-reader checks pending |
