@@ -13,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'data/library_repository.dart';
 import 'models/saved_item.dart';
+import 'screens/article_reader_page.dart';
 import 'services/backup_codec.dart';
 import 'services/bookmark_html_importer.dart';
 import 'services/bounded_bytes_reader.dart';
@@ -4030,6 +4031,23 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 
+  Future<void> _openArticleReader(SavedItem item) async {
+    final uri = item.url == null ? null : parseHttpUrl(item.url);
+    if (item.kind != ItemKind.link || uri == null) {
+      _message('This item does not have a valid HTTP or HTTPS link.');
+      return;
+    }
+    // The route initiates the fetch after this explicit user action only.
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => ArticleReaderPage(
+          url: uri.toString(),
+          savedTitle: item.title,
+        ),
+      ),
+    );
+  }
+
   Future<void> _openOrShare() async {
     final item = _item;
     if (item == null) return;
@@ -4614,6 +4632,13 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                               ? 'View image'
                               : 'Open / share file'),
                     ),
+                    if (item.kind == ItemKind.link && item.url != null)
+                      OutlinedButton.icon(
+                        key: const ValueKey('open-article-reader'),
+                        onPressed: () => _openArticleReader(item),
+                        icon: const Icon(Icons.chrome_reader_mode_outlined),
+                        label: const Text('Read in StashHive'),
+                      ),
                     OutlinedButton.icon(
                       onPressed: _edit,
                       icon: const Icon(Icons.edit_outlined),
@@ -4632,7 +4657,17 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                   ],
                 ),
                 if (item.kind == ItemKind.link && item.url != null) ...[
-                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      'Read in StashHive fetches a temporary preview only after you tap it. The website sees a request from this device; the page text is not saved to your library.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: mutedTextColor(context),
+                            height: 1.4,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
                   _buildLinkHealthCard(item),
                 ],
                 const SizedBox(height: 24),
