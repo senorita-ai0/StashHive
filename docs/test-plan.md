@@ -1855,6 +1855,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Change the progress slider and confirm 0% maps to Unread, 1–99% maps to In progress, and 100% maps to Completed.
 - Return to Library and use the Unread, In progress and Completed quick filters; each must show only items with the matching status.
 - Serialize and restore the item through the SavedItem map/JSON backup path; confirm status and progress survive.
+- Confirm full-library CSV and selected-item Markdown exports include the reading status and progress values.
 - Remove the new fields from a legacy item map and confirm it defaults to Unread and 0%.
 - Reject unknown statuses and progress values outside 0–100 without changing existing records.
 - Confirm the UI states that it does not track activity on external websites.
