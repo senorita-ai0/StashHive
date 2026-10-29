@@ -1997,3 +1997,10 @@ The repository widget regression source now checks three export formats after sa
 
 - The Reader widget suite now includes a delayed-save test that asserts the “Saving highlight” semantic progress label, resolves the pending save, and checks the visible success message.
 - **Status:** Authored only; not run. Loading semantics, save semantics, heading semantics and actual assistive-technology behavior remain unverified.
+
+
+### TC-266 update — semantic extraction after embedded-content removal (2026-10-29)
+
+- Feed the sanitizer a script string and an HTML comment that each contain a literal `<article>` tag, followed by navigation markup and a real article container.
+- Verify the real article's readable text is retained, while fake script/comment text and navigation are absent.
+- **Status:** Regression source added to `test/article_reader_test.dart`; not run. The lightweight regex sanitizer still requires broader malformed/complex HTML review and Android/web verification.
