@@ -24,6 +24,8 @@ void main() {
         'http://localhost/',
         'http://service.local/',
         'http://router.internal/',
+        'http://127.0.0.1/',
+        'http://192.168.1.20/',
         'not a URL',
         '',
       ]) {
@@ -42,3 +44,26 @@ void main() {
     expect(result.text, 'Temporary page text');
   });
 }
+
+  test('sanitizes hostile HTML to readable plain text', () {
+    final text = sanitizeArticleMarkup(
+      '<h1>News &amp; updates</h1>'
+      '<script>stealCookies()</script>'
+      '<style>.hidden{display:none}</style>'
+      '<p>Useful &lt;safe&gt; text</p>'
+      '<iframe src="https://evil.example">frame secret</iframe>',
+    );
+
+    expect(text, contains('News & updates'));
+    expect(text, contains('Useful <safe> text'));
+    expect(text, isNot(contains('stealCookies')));
+    expect(text, isNot(contains('frame secret')));
+    expect(text, isNot(contains('<script')));
+  });
+
+  test('plain text normalization preserves Unicode', () {
+    expect(
+      sanitizeArticleMarkup('  سلام  \\r\\n  hello  ', isHtml: false),
+      'سلام\\nhello',
+    );
+  });
