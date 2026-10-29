@@ -1151,6 +1151,8 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage> {
   String _filter = 'All';
   String _sort = 'Recently saved';
+  final Set<String> _selectedIds = <String>{};
+  bool get _selectionMode => _selectedIds.isNotEmpty;
 
   List<SavedItem> _applyFilters(List<SavedItem> items) {
     var result = items;
@@ -1324,6 +1326,11 @@ class _LibraryPageState extends State<LibraryPage> {
                     ],
                   ),
                 ),
+                if (_selectionMode)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 8),
+                    child: _buildBulkActions(context),
+                  ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
@@ -1334,6 +1341,19 @@ class _LibraryPageState extends State<LibraryPage> {
                           ),
                     ),
                     const Spacer(),
+                    IconButton(
+                      tooltip: _selectionMode ? 'Cancel selection' : 'Select items',
+                      onPressed: () => setState(() {
+                        if (_selectionMode) {
+                          _selectedIds.clear();
+                        } else {
+                          _selectedIds.addAll(
+                            _applyFilters(widget.repository.items.value).map((item) => item.id),
+                          );
+                        }
+                      }),
+                      icon: Icon(_selectionMode ? Icons.close_rounded : Icons.checklist_rounded),
+                    ),
                     PopupMenuButton<String>(
                       tooltip: 'Sort library',
                       initialValue: _sort,
@@ -1384,11 +1404,24 @@ class _LibraryPageState extends State<LibraryPage> {
                               mainAxisSpacing: 10,
                             ),
                             itemCount: shown.length,
-                            itemBuilder: (context, index) => SavedItemTile(
-                              item: shown[index],
-                              repository: widget.repository,
-                              onTap: () => widget.onOpenItem(shown[index]),
-                            ),
+                            itemBuilder: (context, index) {
+                              final item = shown[index];
+                              return SavedItemTile(
+                                item: item,
+                                repository: widget.repository,
+                                selectionMode: _selectionMode,
+                                isSelected: _selectedIds.contains(item.id),
+                                onSelectionChanged: () => setState(() {
+                                  if (!_selectedIds.add(item.id)) _selectedIds.remove(item.id);
+                                }),
+                                onLongPress: () => setState(() => _selectedIds.add(item.id)),
+                                onTap: () => _selectionMode
+                                    ? setState(() {
+                                        if (!_selectedIds.add(item.id)) _selectedIds.remove(item.id);
+                                      })
+                                    : widget.onOpenItem(item),
+                              );
+                            },
                           );
                         },
                       );
@@ -1399,6 +1432,247 @@ class _LibraryPageState extends State<LibraryPage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+
+  Widget _buildBulkActions(BuildContext context) {
+    final selectedCount = _selectedIds.length;
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer.withValues(alpha: .55),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '$selectedCount selected',
+                  style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+                ),
+              ),
+              TextButton(
+                onPressed: () => setState(() => _selectedIds.clear()),
+                child: const Text('Clear'),
+              ),
+            ],
+          ),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              OutlinedButton.icon(
+                onPressed: () => _runBulkAction('favorite'),
+                icon: const Icon(Icons.star_outline_rounded),
+                label: const Text('Favorite'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () => _chooseBulkCollection(),
+                icon: const Icon(Icons.folder_open_rounded),
+                label: const Text('Move'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () => _editBulkTags(remove: false),
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('Add tags'),
+              ),
+              OutlinedButton.icon(
+                onPressed: () => _editBulkTags(remove: true),
+                icon: const Icon(Icons.remove_rounded),
+                label: const Text('Remove tags'),
+              ),
+              FilledButton.tonalIcon(
+                onPressed: () => _runBulkAction('delete'),
+                icon: const Icon(Icons.delete_outline_rounded),
+                label: const Text('Delete'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _chooseBulkCollection() async {
+    final collections = widget.repository.collections.value;
+    const noCollection = '__stashhive_no_collection__';
+    String selected = noCollection;
+    final choice = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Move selected items'),
+          content: DropdownButtonFormField<String>(
+            value: selected,
+            isExpanded: true,
+            decoration: const InputDecoration(labelText: 'Destination collection'),
+            items: [
+              const DropdownMenuItem(
+                value: noCollection,
+                child: Text('No collection'),
+              ),
+              for (final name in collections)
+                DropdownMenuItem(value: name, child: Text(name)),
+            ],
+            onChanged: (value) {
+              if (value != null) setDialogState(() => selected = value);
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, selected),
+              child: const Text('Move items'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (choice == null || !mounted) return;
+    await _runBulkAction('move', collection: choice == noCollection ? null : choice);
+  }
+
+  Future<void> _editBulkTags({required bool remove}) async {
+    final controller = TextEditingController();
+    final tags = await showDialog<List<String>>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(remove ? 'Remove tags from selected items' : 'Add tags to selected items'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          maxLength: 1000,
+          decoration: const InputDecoration(
+            labelText: 'Tags, separated by commas',
+            hintText: 'Reading, Research, To review',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final seen = <String>{};
+              final parsed = <String>[];
+              for (final raw in controller.text.split(',')) {
+                final tag = raw.trim();
+                if (tag.isNotEmpty && tag.length <= 100 && seen.add(tag.toLowerCase())) {
+                  parsed.add(tag);
+                }
+              }
+              if (parsed.isEmpty) return;
+              Navigator.pop(dialogContext, parsed);
+            },
+            child: Text(remove ? 'Remove tags' : 'Add tags'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (tags == null || !mounted) return;
+    await _runBulkAction(remove ? 'removeTags' : 'addTags', tags: tags);
+  }
+
+  Future<void> _runBulkAction(
+    String action, {
+    String? collection,
+    List<String> tags = const <String>[],
+  }) async {
+    final selected = widget.repository.items.value
+        .where((item) => _selectedIds.contains(item.id))
+        .toList(growable: false);
+    if (selected.isEmpty) return;
+
+    if (action == 'delete') {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          icon: const Icon(Icons.delete_outline_rounded),
+          title: Text('Delete ${selected.length} items?'),
+          content: const Text(
+            'This permanently removes the selected items from this library. '
+            'Create a backup first if you may need them later.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('Delete selected'),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true || !mounted) return;
+    }
+
+    var succeeded = 0;
+    var failed = 0;
+    final now = DateTime.now().toUtc().millisecondsSinceEpoch;
+    for (final item in selected) {
+      try {
+        switch (action) {
+          case 'favorite':
+            await widget.repository.save(item.copyWith(
+              isFavorite: true,
+              updatedAtMs: now,
+            ));
+          case 'move':
+            await widget.repository.save(item.copyWith(
+              collection: collection,
+              clearCollection: collection == null,
+              updatedAtMs: now,
+            ));
+          case 'addTags':
+            final merged = <String>[...item.tags];
+            final known = item.tags.map((tag) => tag.toLowerCase()).toSet();
+            for (final tag in tags) {
+              if (known.add(tag.toLowerCase())) merged.add(tag);
+            }
+            await widget.repository.save(item.copyWith(
+              tags: merged,
+              updatedAtMs: now,
+            ));
+          case 'removeTags':
+            final removing = tags.map((tag) => tag.toLowerCase()).toSet();
+            await widget.repository.save(item.copyWith(
+              tags: item.tags.where((tag) => !removing.contains(tag.toLowerCase())).toList(),
+              updatedAtMs: now,
+            ));
+          case 'delete':
+            await widget.repository.delete(item.id);
+        }
+        succeeded++;
+      } catch (_) {
+        failed++;
+      }
+    }
+
+    if (!mounted) return;
+    setState(() => _selectedIds.clear());
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          failed == 0
+              ? '$succeeded ${succeeded == 1 ? 'item' : 'items'} updated.'
+              : '$succeeded succeeded; $failed failed. Failed items were kept where the operation did not complete.',
+        ),
+        duration: const Duration(seconds: 4),
       ),
     );
   }
@@ -2203,12 +2477,20 @@ class SavedItemTile extends StatelessWidget {
     required this.item,
     required this.repository,
     required this.onTap,
+    this.selectionMode = false,
+    this.isSelected = false,
+    this.onSelectionChanged,
+    this.onLongPress,
     super.key,
   });
 
   final SavedItem item;
   final LibraryRepository repository;
   final VoidCallback onTap;
+  final bool selectionMode;
+  final bool isSelected;
+  final VoidCallback? onSelectionChanged;
+  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -2224,11 +2506,21 @@ class SavedItemTile extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              _ItemThumbnail(item: item, repository: repository, size: 72),
+              if (selectionMode)
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Checkbox(
+                    value: isSelected,
+                    onChanged: (_) => onSelectionChanged?.call(),
+                  ),
+                )
+              else
+                _ItemThumbnail(item: item, repository: repository, size: 72),
               const SizedBox(width: 13),
               Expanded(
                 child: Column(
@@ -2303,7 +2595,8 @@ class SavedItemTile extends StatelessWidget {
                   ],
                 ),
               ),
-              PopupMenuButton<String>(
+              if (!selectionMode)
+                PopupMenuButton<String>(
                 tooltip: 'Actions for ${item.title}',
                 icon: Icon(Icons.more_horiz_rounded, color: mutedTextColor(context)),
                 onSelected: (action) async {
