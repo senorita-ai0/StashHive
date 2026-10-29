@@ -22,7 +22,7 @@
 
 - No `pubspec.lock` is committed on `main` as of this review. The exact resolved versions and transitive dependency graph therefore have not been established in this register.
 - The app's package constraints and the licenses shown above were checked against Pub.dev package metadata on 28 October 2026. License summaries are a starting point; they do not replace reviewing each license/NOTICE file in the resolved distribution.
-- The manual workflow is pinned to Flutter 3.47.2 and JDK 27. Android configuration targets AGP 9.4.0, Kotlin 2.4.10, Gradle 9.8.1, compile SDK 36, Build Tools 36.1.0, and Java/Kotlin bytecode target 17. See `docs/android-build-baseline.md`. This source-level configuration has not yet been validated by an Android build.
+- The manual workflow is pinned to Flutter 3.47.2 and JDK 27. Android configuration targets AGP 9.4.0, Kotlin 2.4.10, Gradle 9.8.2, compile SDK 36, Build Tools 36.1.0, and Java/Kotlin bytecode target 17. See `docs/android-build-baseline.md`. This source-level configuration has not yet been validated by an Android build.
 - No dependency update or package upgrade was made as part of this register. In particular, keep `file_picker` at its current major constraint until the Android runner compatibility question is tested.
 - The dependency audit is **OPEN**: resolve and commit a lockfile at the agreed manual checkpoint, record `flutter pub deps` output, inspect transitive/platform package licenses and notices, check current security advisories, and review whether any notices must be shipped with release artifacts.
 - The project has no selected repository license yet. Do not infer that the app itself is licensed for redistribution merely because its dependencies have permissive licenses.
