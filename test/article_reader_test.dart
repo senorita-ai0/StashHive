@@ -357,6 +357,13 @@ void main() {
     );
   });
 
+  test('replaces non-printing control characters without damaging Unicode', () {
+    expect(
+      sanitizeArticleMarkup('hello\u0000world\u0001\u007F سلام', isHtml: false),
+      'hello world سلام',
+    );
+  });
+
   test('decodes common named entities without recursively unescaping text', () {
     final text = sanitizeArticleMarkup(
       'A &copy; &REG; &trade; &euro; &lsquo;hello&rsquo; '
@@ -374,13 +381,14 @@ void main() {
     final text = sanitizeArticleMarkup(
       '<script>const template = "<article>fake script article</article>";</script>'
       '<!-- <article>fake commented article</article> -->'
-      '<nav>Navigation</nav>'
+      '<nav><article>fake navigation article</article>Navigation</nav>'
       '<article><p>The actual article body.</p></article>',
     );
 
     expect(text, contains('The actual article body.'));
     expect(text, isNot(contains('fake script article')));
     expect(text, isNot(contains('fake commented article')));
+    expect(text, isNot(contains('fake navigation article')));
     expect(text, isNot(contains('Navigation')));
   });
 
