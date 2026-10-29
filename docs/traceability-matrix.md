@@ -1677,3 +1677,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Response/display caps and deadline | native response reader and single absolute deadline | synthetic oversize/display-cap and DNS/transport timeout cases | Authored, not run |
 | Text-only extraction | shared sanitizeArticleMarkup and response parser | synthetic semantic article, hostile and malformed-unclosed markup, and Unicode cases | Authored, not run |
 | Unchanged item and no persisted article body | Item Details/repository boundary | test/article_reader_repository_test.dart covers no implicit fetch, unchanged fields after open, selected-quote-only persistence, and backup exclusion of full article body; text exports/platform checks pending | Partial test source, not run |
+
+## SH-006 visible feedback traceability — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Highlight success confirmed on visible Reader route | lib/screens/article_reader_page.dart | test/article_reader_repository_test.dart | Authored, not run |
+| Failed highlight save stays recoverable and keeps the selection for retry | lib/screens/article_reader_page.dart | test/article_reader_page_test.dart | Authored, not run |
