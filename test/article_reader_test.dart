@@ -357,6 +357,19 @@ void main() {
     );
   });
 
+  test('decodes common named entities without recursively unescaping text', () {
+    final text = sanitizeArticleMarkup(
+      'A &copy; &REG; &trade; &euro; &lsquo;hello&rsquo; '
+      '&ldquo;world&rdquo; &bull; &amp;#169; &amp;lt;tag&amp;gt; &#x1F642;',
+      isHtml: false,
+    );
+
+    expect(
+      text,
+      'A © ® ™ € ‘hello’ “world” • &#169; &lt;tag&gt; 🙂',
+    );
+  });
+
   test('malformed unclosed active markup does not leak its tail into reader text', () {
     final openScript = sanitizeArticleMarkup(
       '<p>Readable paragraph.</p><script>secretCode()</script never-closed',
