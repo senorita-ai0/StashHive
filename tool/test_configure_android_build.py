@@ -148,6 +148,22 @@ class ConfigureAndroidBuildTests(unittest.TestCase):
             (self.android_dir / resources[2]).read_text(encoding="utf-8"),
         )
 
+    def test_removes_short_legacy_kotlin_plugin_alias(self):
+        app_path = self.android_dir / "app" / "build.gradle.kts"
+        app_text = app_path.read_text(encoding="utf-8")
+        app_text = app_text.replace(
+            'id("org.jetbrains.kotlin.android")',
+            'id("kotlin-android")',
+        )
+        app_path.write_text(app_text, encoding="utf-8")
+
+        configure_android_build(self.android_dir)
+
+        configured = app_path.read_text(encoding="utf-8")
+        self.assertNotIn('id("org.jetbrains.kotlin.android")', configured)
+        self.assertNotIn('id("kotlin-android")', configured)
+        self.assertIn("JvmTarget.JVM_17", configured)
+
     def test_configuration_is_idempotent(self):
         configure_android_build(self.android_dir)
         self.assertEqual(configure_android_build(self.android_dir), [])
