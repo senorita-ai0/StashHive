@@ -1165,3 +1165,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [ ] Add injectable transport/parser and tests for URL safety, private/reserved targets, redirects, timeouts, byte/content-type limits, hostile HTML, and unchanged saved-item metadata.
 - [ ] Prototype text selection and highlight context/offset behavior separately on Android and web.
 - No source code was changed and no tests, formatter, analyzer or builds were run in this increment.
+
+## SH-006 — first reader source slice — 2026-10-29
+
+- Added article_reader.dart plus native, browser and fallback implementations. Native requests are initiated only by the reader route, do not follow redirects, pin the connection to a validated DNS result, enforce a 1 MiB response cap and 60,000-character display cap, and accept HTML/plain text only.
+- Added plain-text sanitization that strips active embedded blocks and decodes a conservative entity set. Reader content is transient and is never written to the repository.
+- Added article_reader_page.dart and a **Read in StashHive** action in Item Details. Loading, unavailable, invalid/private URL, unsupported content, size-limit, timeout and network-error states have recoverable UI; opening the external browser remains available.
+- Added test/article_reader_test.dart covering URL validation, private IPv4 literals, hostile markup and Unicode text normalization.
+- This is source-only. No formatter, analyzer, test suite, Android build or web build was run. The reader's native transport and browser limitations remain unverified on actual platforms. Selection-based highlights are still outstanding.
