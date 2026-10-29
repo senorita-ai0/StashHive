@@ -123,11 +123,11 @@ List<SmartTagSuggestion> suggestSmartTags({
         match.length > maxSmartTagMatchCharacters ||
         tagKey.isEmpty ||
         tagKey.length > 100 ||
-        existing.contains(tagKey) ||
-        !emitted.add(tagKey)) {
+        existing.contains(tagKey)) {
       continue;
     }
     if (!searchableText.any((field) => field.contains(match))) continue;
+    if (!emitted.add(tagKey)) continue;
     suggestions.add(
       SmartTagSuggestion(
         tag: rule.suggestedTag,
