@@ -64,7 +64,7 @@ void main() {
           annotations: <SavedAnnotation>[
             SavedAnnotation(
               id: 'annotation-1',
-              quote: 'A copied passage\\ncontinues here.',
+              quote: 'A copied passage\ncontinues here.',
               note: 'Review this claim later.',
               createdAtMs: 2000,
             ),
