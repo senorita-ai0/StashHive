@@ -1487,3 +1487,11 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **UI:** Search exposes Advanced filters, active-filter chips, Save search, reusable preset chips, explicit clear/reset behavior and confirmation before deleting a preset. Organize → Collections also exposes local presets under **Smart Searches**; selecting one opens Search with the full saved filter/query/sort snapshot. Presets are local to the current Android app/browser profile and are not part of backup v1. Domain filtering does not fetch pages.
 - **Regression:** TC-247 filter logic, TC-248 widget flow, TC-249 repository/preset storage. Test sources: `test/search_filters_test.dart`, `test/search_filters_widget_test.dart`, and `test/library_repository_test.dart`.
 - **Status:** Source and test cases are committed on `main`; formatter, analyzer, unit/widget tests, web/Android builds and manual device/browser checks have not run. CI remains manual-only.
+
+
+### TSK-534 — Bulk library actions (SH-003)
+
+- **Source:** Added library selection mode with select-all-visible, long-press, and checkbox selection. Added bulk favorite, move to an existing collection or no collection, add/remove tags, and confirmed delete.
+- **Safety:** Every selected-item mutation is isolated and counted; UI reports partial failure. Deletion requires a confirmation dialog. No export-selected action yet.
+- **Regression:** `test/bulk_actions_widget_test.dart` covers batch actions and delete cancellation.
+- **Status:** Source committed to `main`; tests and platform verification pending. Do not dispatch the manual workflow unless requested.
