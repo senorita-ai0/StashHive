@@ -2011,3 +2011,10 @@ The repository widget regression source now checks three export formats after sa
 - Include a navigation container containing a fake `<article>` before a real article; verify the real article is selected and navigation text is absent.
 - Feed plain text containing NUL/control characters alongside Urdu/ordinary Unicode; verify non-printing controls become spacing and useful text remains intact.
 - **Status:** Synthetic regression source is committed in `test/article_reader_test.dart`; not run. Verify complex malformed markup and Android/web rendering at the manual validation checkpoint.
+
+
+### TC-266 update — document title extraction boundary (2026-10-29)
+
+- Inject an HTML response whose script string and HTML comment each contain a fake `<title>` before a genuine title element.
+- Verify the genuine title is returned after entity decoding, fake title text is ignored, and article body text remains available.
+- **Status:** Regression source is in `test/article_reader_test.dart`; not run. Confirm native fetch parsing and browser fallback behavior at the manual validation checkpoint.
