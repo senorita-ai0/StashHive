@@ -95,4 +95,11 @@ Normal file selection, save, item/collection deletion and backup operation error
 - The Android manifest is generated during the manual workflow rather than checked into the repository. The custom configurator adds share intent filters and the app label/launch mode; it does not add permission declarations. The generated manifest and resolved plugin permission footprint still require review from an actual build.
 - No remote OCR, account system, analytics or cloud-sync service is implemented in this MVP source.
 
+### Manual link health checks
+
+- Status checks require a direct user action and contact the destination from the user's own device; the destination may see the user's network address.
+- The checker does not send notes, tags, attachment bytes, cookies or account credentials, and does not read/store page bodies. Link results are bounded, local-only preference metadata and are excluded from backup v1.
+- Native checks reject private/local/reserved resolved addresses and do not follow redirects. Browser builds report that reliable external status inspection is limited by browser security; no remote proxy is used.
+- A timeout, access restriction, server error or redirect is not treated as proof of permanent link failure. This feature does not run in the background.
+
 **Remaining verification before this review can close:** inspect the generated merged Android manifest and resolved dependency permissions; capture browser/Android network behavior; perform real-device file/share, TalkBack and browser screen-reader checks; rerun the source/tests and manual platform builds at the owner's checkpoint. The review remains open until those checks have evidence.
