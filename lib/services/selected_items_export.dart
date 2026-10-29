@@ -33,6 +33,25 @@ String buildSelectedItemsMarkdown(List<SavedItem> items) {
       buffer.writeln();
       buffer.writeln(item.content.trim());
     }
+    if (item.annotations.isNotEmpty) {
+      buffer.writeln();
+      buffer.writeln('### Highlights & annotations');
+      for (final annotation in item.annotations) {
+        if (annotation.quote.trim().isNotEmpty) {
+          buffer.writeln();
+          for (final line in annotation.quote.split('\\n')) {
+            buffer.writeln('> $line');
+          }
+        }
+        if (annotation.note.trim().isNotEmpty) {
+          buffer.writeln();
+          buffer.writeln('**Note:**');
+          for (final line in annotation.note.split('\\n')) {
+            buffer.writeln('> $line');
+          }
+        }
+      }
+    }
     buffer.writeln();
     if (buffer.length > maxSelectedMarkdownExportCharacters) {
       throw const FormatException(
