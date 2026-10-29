@@ -237,17 +237,16 @@ def configure_android_build(android_dir: str | Path) -> list[str]:
         app_build,
         "app compileSdk",
     )
-    app_build = _replace_one(
-        r"^(\s*buildToolsVersion\s*=\s*)[^\n]+$",
-        rf'\g<1>"{BUILD_TOOLS_VERSION}"',
-        app_build,
-        "app buildToolsVersion",
-    ) if re.search(r"(?m)^\s*buildToolsVersion\s*=", app_build) else re.sub(
-        r"(?m)^(\s*compileSdk\s*=\s*36\s*)$",
-        rf'\1\n    buildToolsVersion = "{BUILD_TOOLS_VERSION}"',
-        app_build,
-        count=1,
-    )
+    # The shared root configuration sets Build Tools for app and library
+    # projects. Preserve the reference projects' module-level Gradle structure;
+    # only normalize buildToolsVersion here if a local template already sets it.
+    if re.search(r"(?m)^\s*buildToolsVersion\s*=", app_build):
+        app_build = _replace_one(
+            r"^(\s*buildToolsVersion\s*=\s*)[^\n]+$",
+            rf'\g<1>"{BUILD_TOOLS_VERSION}"',
+            app_build,
+            "app buildToolsVersion",
+        )
 
     app_build = re.sub(
         r"(?m)^(\s*(?:sourceCompatibility|targetCompatibility)\s*=\s*)JavaVersion\.VERSION_\d+\s*$",
