@@ -83,7 +83,7 @@ class ConfigureAndroidShareIntentsTests(unittest.TestCase):
         self.assertEqual(len(activity.findall("intent-filter")), len(FILTERS))
         application = ET.parse(self.path).getroot().find("application")
         self.assertEqual(application.get(ANDROID + "label"), "StashHive")
-        self.assertEqual(application.get(ANDROID + "icon"), "@mipmap/ic_launcher")
+        self.assertEqual(application.get(ANDROID + "icon"), "@drawable/stashhive_launcher_legacy")
         self.assertEqual(application.get(ANDROID + "roundIcon"), "@mipmap/ic_launcher_round")
 
     def test_fails_clearly_when_main_activity_is_missing_without_rewriting_file(self):
