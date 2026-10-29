@@ -4863,6 +4863,16 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  if (annotation.contextBefore.isNotEmpty) ...[
+                                    Text(
+                                      '…${annotation.contextBefore}',
+                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                            color: mutedTextColor(context),
+                                            height: 1.35,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                  ],
                                   if (annotation.quote.trim().isNotEmpty) ...[
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -4894,6 +4904,16 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                           ),
                                         ),
                                       ],
+                                    ),
+                                  ],
+                                  if (annotation.contextAfter.isNotEmpty) ...[
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      '${annotation.contextAfter}…',
+                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                            color: mutedTextColor(context),
+                                            height: 1.35,
+                                          ),
                                     ),
                                   ],
                                   if (annotation.note.trim().isNotEmpty) ...[
