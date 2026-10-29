@@ -182,10 +182,26 @@ ArticleReaderResult _parseResponse(ArticleReaderTransportResponse response) {
   return ArticleReaderResult(
     state: ArticleReaderState.success,
     title: title,
-    text: text.length > maxArticleTextCharacters
-        ? text.substring(0, maxArticleTextCharacters)
-        : text,
+    text: _truncateAtUnicodeBoundary(text, maxArticleTextCharacters),
   );
+}
+
+String _truncateAtUnicodeBoundary(String value, int maxLength) {
+  if (value.length <= maxLength) return value;
+  var end = maxLength;
+  if (end > 0 && end < value.length) {
+    final previous = value.codeUnitAt(end - 1);
+    final next = value.codeUnitAt(end);
+    // Dart strings are UTF-16 indexed. Do not leave an isolated high
+    // surrogate when the display limit falls between an emoji's code units.
+    if (previous >= 0xD800 &&
+        previous <= 0xDBFF &&
+        next >= 0xDC00 &&
+        next <= 0xDFFF) {
+      end -= 1;
+    }
+  }
+  return value.substring(0, end);
 }
 
 String? _charsetFromContentType(String contentType) {
@@ -307,9 +323,7 @@ String? _extractTitle(String html) {
   ).firstMatch(titleSource);
   if (match == null) return null;
   final title = sanitizeArticleMarkup(match.group(1)!, isHtml: true).trim();
-  return title.isEmpty
-      ? null
-      : (title.length > 300 ? title.substring(0, 300) : title);
+  return title.isEmpty ? null : _truncateAtUnicodeBoundary(title, 300);
 }
 
 bool _isPublicAddress(InternetAddress address) {
