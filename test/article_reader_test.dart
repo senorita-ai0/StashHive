@@ -187,6 +187,19 @@ void main() {
   });
 
   group('parseArticleReaderUrl', () {
+    test('invalid URLs are rejected before even an injected loader runs', () async {
+      var loaderCalled = false;
+      articleReaderLoaderForTesting = (url, timeout) async {
+        loaderCalled = true;
+        return const ArticleReaderResult(state: ArticleReaderState.success);
+      };
+
+      final result = await loadArticleForReader('javascript:alert(1)');
+
+      expect(result.state, ArticleReaderState.invalidUrl);
+      expect(loaderCalled, isFalse);
+    });
+
     test('accepts HTTP and HTTPS public-looking URLs', () {
       expect(
         parseArticleReaderUrl('https://example.com/article')?.scheme,
