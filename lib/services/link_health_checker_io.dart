@@ -102,8 +102,8 @@ Future<HttpClientResponse> _sendRequest(
   final request = method == 'HEAD'
       ? await client.headUrl(uri).timeout(timeout)
       : await client.getUrl(uri).timeout(timeout);
-  request.followRedirects = true;
-  request.maxRedirects = 5;
+  // Do not follow a redirect automatically: a public website could redirect
+  // to a local/private address. Report the redirect instead of probing a second host.
   request.headers.set(HttpHeaders.acceptHeader, '*/*');
   request.headers.set(HttpHeaders.cacheControlHeader, 'no-cache');
   return request.close().timeout(timeout);
@@ -125,7 +125,9 @@ bool _isPublicAddress(InternetAddress address) {
         (a == 192 && b == 168) ||
         (a == 192 && b == 0) ||
         (a == 192 && b == 2) ||
-        (a == 198 && (b == 18 || b == 19 || b == 51)) ||
+        (a == 198 && (b == 18 || b == 19)) ||
+        (a == 198 && b == 51 && c == 100) ||
+        (a == 192 && b == 88 && c == 99) ||
         (a == 203 && b == 0 && c == 113)) {
       return false;
     }
