@@ -1727,3 +1727,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Keep one coherent reader URL/sanitizer/loader definition; strip active/comment/navigation markup before semantic extraction and normalize non-printing controls | lib/services/article_reader.dart | TC-266; `test/article_reader_test.dart` fake-container and control-character cases | Source integrity reviewed by re-fetch; regression source authored but not run; platform checks pending |
+
+
+## SH-006 document-title extraction traceability — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Exclude title-shaped text inside scripts/comments when extracting document title | `_extractTitle` in `lib/services/article_reader_io.dart` | TC-266; `extracts a real title instead of title-looking script or comment text` in `test/article_reader_test.dart` | Source and test authored; not run; native/browser verification pending |
