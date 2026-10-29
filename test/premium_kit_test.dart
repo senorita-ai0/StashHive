@@ -67,6 +67,53 @@ void main() {
       expect(find.byIcon(Icons.hive_rounded), findsOneWidget);
     });
 
+    testWidgets('grouped premium settings tiles forward user actions',
+        (tester) async {
+      var tilePressed = false;
+      var nextSwitchValue = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ListView(
+              children: [
+                PremiumSection(
+                  title: 'YOUR DATA',
+                  children: [
+                    PremiumTile(
+                      icon: Icons.backup_outlined,
+                      title: 'Backup & privacy',
+                      subtitle: 'Export and restore',
+                      onTap: () => tilePressed = true,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                PremiumSection(
+                  title: 'PREFERENCES',
+                  children: [
+                    PremiumSwitchTile(
+                      icon: Icons.dark_mode_outlined,
+                      title: 'Dark appearance',
+                      value: false,
+                      onChanged: (value) => nextSwitchValue = value,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Backup & privacy'));
+      expect(tilePressed, isTrue);
+
+      await tester.tap(find.text('Dark appearance'));
+      expect(nextSwitchValue, isTrue);
+    });
+
     testWidgets('premium empty state keeps a clear action visible',
         (tester) async {
       var actionPressed = false;
