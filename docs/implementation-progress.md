@@ -995,3 +995,13 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [ ] Do not treat the code as validated yet: recent tests, formatting, static analysis, Python tool tests, web build and Android APK build have not been run.
 - [ ] At the manual checkpoint, run the repository's `workflow_dispatch` workflow; triage any failures, then verify Android share-in on-device, browser persistence, backup/restore recovery, accessibility behavior and visual alignment with the seven screen references.
 - [ ] Keep OCR/PDF extraction deferred pending its separate feasibility study. Release readiness remains blocked on the above evidence.
+
+## Phase 3 — FinMate/Stockly-inspired premium UI and build baseline (2026-10-29)
+
+- [x] Imported the shared `PremiumTokens`/component kit used identically by FinMate and Stockly into `lib/ui/premium_kit.dart`.
+- [x] Applied the blue/mint/violet premium palette and Material 3 hierarchy, rounded surfaces, shared page headers, premium empty state, settings hero/icon chips, enhanced hive mark and selected navigation glyphs in StashHive.
+- [x] Refreshed the seven editable core-screen SVGs and core-flow board to the new palette, updated the web favicon/manifest, and documented the shared design system.
+- [x] Declared Dart 3.13.2 / Flutter 3.47.2 minimums and pinned the manual workflow to Flutter 3.47.2 and Temurin JDK 27. The generated Android baseline is normalized to AGP 9.4.0, Kotlin 2.4.10, Gradle 9.8.1, compile SDK 36, Build Tools 36.1.0 and JVM 17.
+- [x] Added generated custom Android adaptive hive icon resources and corrected the AGP built-in Kotlin setup so the app module does not apply the legacy Kotlin Android plugin.
+- [x] Added TC-244 widget/token coverage and TC-245 configurator regression source; updated the roadmap and traceability matrix.
+- [ ] No tests, formatter, analyzer, CI run or platform build has been run for this increment. At the manual checkpoint, run the configurator/Python tests and TC-244 with the full suite, then verify the Android APK, browser build, and visual reference match before declaring the enhancement complete.
