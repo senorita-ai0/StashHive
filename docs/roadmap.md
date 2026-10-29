@@ -1597,3 +1597,7 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 ## SH-006 next source slice — design gate recorded 2026-10-29
 
 See [article reader feasibility](research/article-reader-feasibility.md). The next implementation step is a user-initiated, bounded temporary reader with testable network/parser boundaries and clear error states. Selection-based highlights follow only after the reader rendering approach is proven on Android and web. This work does not change the manual-only CI policy or unblock SH-005 OCR.
+
+## SH-006 reader progress — 2026-10-29
+
+The first source slice now includes a user-triggered reader route, bounded native fetch and plain-text display, plus a browser CORS fallback that preserves external-browser opening. The source and initial tests are committed, but no checks have been run. Next: review/fix findings from the first manual test checkpoint when authorized, then prototype text selection and quote anchoring separately on Android and web. SH-006 remains partial.
