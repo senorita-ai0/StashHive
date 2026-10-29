@@ -1639,7 +1639,7 @@ void main() {
     );
 
     final importedBytes = Uint8List.fromList([5, 9, 2, 6]);
-    const incomingImage = SavedItem(
+    final incomingImage = SavedItem(
       id: 'restore-backup-race-incoming',
       kind: ItemKind.image,
       title: 'Staged image',
@@ -1784,7 +1784,7 @@ void main() {
     await repository.save(buildLink(id: 'existing-1', collection: 'Existing'));
 
     final importedBytes = Uint8List.fromList([8, 7, 6, 5, 4]);
-    const incomingImage = SavedItem(
+    final incomingImage = SavedItem(
       id: 'incoming-image-1',
       kind: ItemKind.image,
       title: 'Imported image',
@@ -1841,7 +1841,7 @@ void main() {
     await repository.save(buildLink(id: 'existing-before-rollback-failure'));
 
     final importedBytes = Uint8List.fromList([3, 1, 4, 1, 5]);
-    const incomingImage = SavedItem(
+    final incomingImage = SavedItem(
       id: 'incoming-image-rollback-failure',
       kind: ItemKind.image,
       title: 'Imported image retained after rollback failure',
