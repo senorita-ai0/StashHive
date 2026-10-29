@@ -1742,7 +1742,8 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 ### TC-244 — Match shared premium UI tokens and core components
 
-- Assert that `PremiumTokens` uses the documented brand blue, mint, violet, 24 dp card radius and 17 dp control radius.
+- Assert that `PremiumTokens` uses the documented brand blue, dark-mode blue, mint, violet, 24 dp card radius and 17 dp control radius.
+- Assert that StashHive's light/dark themes use the shared primary colors, light canvas/dark canvas and rounded card shapes.
 - Pump `PremiumPageHeader` and confirm its title/subtitle render; pump `PremiumIconChip` with the configured size and expected icon.
 - Pump `PremiumEmptyState`, confirm the explanatory copy and action are available, and verify its action callback fires.
 - **Status:** Regression source is committed but unrun. Run at the manual validation checkpoint, then compare Library, Search, Collections, Item Details, Quick Save, Backup & Privacy and Settings on Android/web against the refreshed SVG references.
