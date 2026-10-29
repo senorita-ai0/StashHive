@@ -370,6 +370,20 @@ void main() {
     );
   });
 
+  test('ignores fake article containers inside scripts and comments', () {
+    final text = sanitizeArticleMarkup(
+      '<script>const template = "<article>fake script article</article>";</script>'
+      '<!-- <article>fake commented article</article> -->'
+      '<nav>Navigation</nav>'
+      '<article><p>The actual article body.</p></article>',
+    );
+
+    expect(text, contains('The actual article body.'));
+    expect(text, isNot(contains('fake script article')));
+    expect(text, isNot(contains('fake commented article')));
+    expect(text, isNot(contains('Navigation')));
+  });
+
   test('malformed unclosed active markup does not leak its tail into reader text', () {
     final openScript = sanitizeArticleMarkup(
       '<p>Readable paragraph.</p><script>secretCode()</script never-closed',
