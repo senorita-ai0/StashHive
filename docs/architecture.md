@@ -62,6 +62,7 @@ flowchart TD
 | `extractedText` | Optional derived text | Only after local extractor succeeds; can be cleared/rebuilt. |
 | `extractionStatus` | notRequested / available / unsupported / failed | Never treat failure as empty successful extraction. |
 | `contentHash` | Optional checksum | For integrity/duplicate suggestion, not tracking. |
+| `annotations` | Up to 50 `SavedAnnotation` records per item | User-entered quote and/or note, stable ID and timestamp; size-limited, searchable, local-only. Older records default to an empty list. |
 | `schemaVersion` | Backup-level initially | Plan DB migration separately if needed. |
 
 ### Tag and Collection
@@ -77,6 +78,7 @@ flowchart TD
 3. Ask the user to confirm/edit title, notes, tags, and collection as applicable.
 4. Store local metadata; no webpage is downloaded by default.
 5. If the user later opens it, launch the external browser. Network errors belong to the external browser or are explained clearly.
+6. Users may manually paste a quote/excerpt and personal note into the item's Highlights & Annotations section. StashHive stores that supplied text locally; it does not scrape the page or imply that the linked article is readable offline.
 
 ### Save an image/document
 
