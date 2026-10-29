@@ -1615,3 +1615,8 @@ Native response parsing now treats declared Windows-1252 (windows-1252/cp1252) a
 ## SH-006 export privacy coverage — 2026-10-29
 
 Reader/repository regression source now checks the JSON backup, CSV export and selected-Markdown export after saving a quote: the user-selected annotation is retained, but the complete temporary article text is not. This improves regression coverage only; no test was executed, and actual platform/share behavior remains pending. SH-006 remains partial.
+
+
+## SH-006 charset alias regression — 2026-10-29
+
+TC-269 source now includes both the quoted windows-1252 label, the cp1252 alias, and a Latin-1 distinction assertion. These authored cases do not count as execution evidence. Continue to keep SH-006 partial until the manual validation checkpoint and platform checks are recorded.
