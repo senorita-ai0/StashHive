@@ -1798,3 +1798,22 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Inject a preference write that throws after committing and verify the previous preset list is restored best-effort.
 - Reopen the repository/profile and verify saved presets remain local to that storage profile; no preset is transmitted or added to backup v1.
 - **Status:** Repository regression source is committed but unrun. Run at the manual validation checkpoint.
+
+
+### TC-251 — Bulk library actions and safe partial failure
+
+- Seed multiple saved items and enter selection mode using Select items; confirm all currently visible items are selected.
+- Favorite selected items and verify the repository reflects the change for each item.
+- Move selected items to an existing collection and to No collection; verify every successful mutation persists.
+- Add tags with mixed casing and existing tags; confirm duplicates are not added. Remove tags and confirm matching is case-insensitive.
+- Trigger bulk delete, cancel, and verify no items were removed; confirm deletion separately and verify selected records are removed.
+- Where the test harness supports it, induce one item mutation failure; verify the UI reports success/failure counts and does not claim total success.
+- **Status:** Widget regression source committed but unrun.
+
+### TC-252 — Selected Markdown export bounds and contents
+
+- Verify exported Markdown includes titles, type, URL, collection, tags, favorite state, attachment names and user-entered text when present.
+- Verify line breaks in titles do not create malformed extra headings.
+- Verify attachment bytes are not included and the UI directs users to JSON backup for full recovery.
+- Verify empty selections, more than 2,000 items, and generated text above 2 MiB are rejected with user-readable feedback.
+- **Status:** Pure unit regression source committed but unrun. Formatter, analyzer and platform builds remain pending manual validation.
