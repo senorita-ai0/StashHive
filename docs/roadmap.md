@@ -1549,3 +1549,13 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **Privacy/portability:** No AI API, network call, automatic page scrape, or silent tag mutation. Rules are preferences, not saved library records, and are excluded from JSON backup v1. Android and web maintain separate local rule lists.
 - **Regression:** TC-258 and `test/smart_tag_rules_test.dart`, `test/smart_tag_rules_widget_test.dart`, repository tests, plus Quick Save review-before-add widget test.
 - **Status:** Source and regression cases are committed on `main`; tests, formatter, analyzer, builds and accessibility checks remain unrun. Do not trigger manual CI without the owner's request.
+
+
+### TSK-539 — Local, user-triggered link health checks (SH-009) — 2026-10-29
+
+- Requirements: FR-026; NFR-002–004.
+- Service: Added a platform-aware link checker. On Android/native IO it issues a bounded HEAD request, retrying with GET only when HEAD is not implemented; the body is not read or stored. It validates HTTP(S) URLs and public-address DNS results, blocks loopback/private/local/reserved destinations, uses timeouts, and does not follow redirects.
+- Web behavior: A browser build explains that browser security prevents reliable status inspection for many cross-origin sites. It does not pretend a check succeeded, use a proxy, or upload saved library data.
+- Persistence/UI: Item Details shows Link Health only for links, lets the user request a check, records response category/status code and time in a bounded local-preference sidecar, and does not change the saved item or its updated timestamp. Result history is not part of backup v1.
+- Regression: TC-259; test/link_health_test.dart, test/library_repository_test.dart, and the Item Details widget case in test/accessibility_widgets_test.dart.
+- Status: Source and regression cases are committed to main; formatter, analyzer, tests, Android/web builds and device/browser verification have not been run. CI stays manual-only.
