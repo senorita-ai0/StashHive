@@ -28,36 +28,75 @@ Future<ArticleReaderResult> loadArticleForReader(
 
   late final List<InternetAddress> addresses;
   try {
-    final resolved =
-        await InternetAddress.lookup(host).timeout(boundedTimeout);
-    // This first implementation pins requests to a vetted public IPv4
-    // address. Ignore IPv6 answers rather than letting a public dual-stack
-    // host fail merely because IPv6 is conservatively unsupported; if any
-    // IPv4 answer is private/reserved, reject the hostname as a whole.
-    if (resolved.isEmpty ||
-        resolved.any((address) =>
-            address.type == InternetAddressType.IPv4 &&
-            !_isPublicAddress(address))) {
+    final resolver = articleReaderDnsResolverForTesting;
+    final resolved = resolver == null
+        ? (await InternetAddress.lookup(host).timeout(boundedTimeout))
+            .map((address) => address.address)
+            .toList(growable: false)
+        : await resolver(host).timeout(boundedTimeout);
+    if (resolved.isEmpty) {
+      return const ArticleReaderResult(state: ArticleReaderState.networkError);
+    }
+
+    final parsedAddresses = <InternetAddress>[];
+    for (final value in resolved) {
+      final address = InternetAddress.tryParse(value);
+      if (address == null) {
+        return const ArticleReaderResult(state: ArticleReaderState.networkError);
+      }
+      // Any resolved private/reserved IPv4 answer blocks the hostname. IPv6
+      // is conservatively ignored; only vetted IPv4 addresses are connected.
+      if (address.type == InternetAddressType.IPv4) {
+        if (!_isPublicAddress(address)) {
+          return const ArticleReaderResult(
+            state: ArticleReaderState.blockedAddress,
+          );
+        }
+        parsedAddresses.add(address);
+      }
+    }
+    if (parsedAddresses.isEmpty) {
       return const ArticleReaderResult(state: ArticleReaderState.blockedAddress);
     }
-    final publicIpv4 = resolved
-        .where((address) =>
-            address.type == InternetAddressType.IPv4 &&
-            _isPublicAddress(address))
-        .toList(growable: false);
-    if (publicIpv4.isEmpty) {
-      return const ArticleReaderResult(state: ArticleReaderState.blockedAddress);
-    }
-    addresses = List<InternetAddress>.unmodifiable(publicIpv4);
+    addresses = List<InternetAddress>.unmodifiable(parsedAddresses);
   } on TimeoutException {
     return const ArticleReaderResult(state: ArticleReaderState.timedOut);
   } catch (_) {
     return const ArticleReaderResult(state: ArticleReaderState.networkError);
   }
 
+  try {
+    final testTransport = articleReaderTransportForTesting;
+    final response = testTransport == null
+        ? await _fetchNativeResponse(uri, host, addresses, boundedTimeout)
+        : await testTransport(
+            uri,
+            addresses.map((address) => address.address).toList(growable: false),
+            boundedTimeout,
+          ).timeout(boundedTimeout);
+    return _parseResponse(response);
+  } on _ArticleResponseTooLarge {
+    return const ArticleReaderResult(state: ArticleReaderState.tooLarge);
+  } on TimeoutException {
+    return const ArticleReaderResult(state: ArticleReaderState.timedOut);
+  } on SocketException {
+    return const ArticleReaderResult(state: ArticleReaderState.networkError);
+  } on HttpException {
+    return const ArticleReaderResult(state: ArticleReaderState.networkError);
+  } catch (_) {
+    return const ArticleReaderResult(state: ArticleReaderState.networkError);
+  }
+}
+
+Future<ArticleReaderTransportResponse> _fetchNativeResponse(
+  Uri uri,
+  String host,
+  List<InternetAddress> addresses,
+  Duration timeout,
+) async {
   final client = HttpClient()
-    ..connectionTimeout = boundedTimeout
-    ..idleTimeout = boundedTimeout
+    ..connectionTimeout = timeout
+    ..idleTimeout = timeout
     ..userAgent = 'StashHive-Reader'
     ..maxConnectionsPerHost = 1
     ..findProxy = (_) => 'DIRECT'
@@ -78,72 +117,82 @@ Future<ArticleReaderResult> loadArticleForReader(
     };
 
   try {
-    final request = await client.getUrl(uri).timeout(boundedTimeout);
+    final request = await client.getUrl(uri).timeout(timeout);
+    // Never automatically follow a redirect: it could target a local/private
+    // service or a different host that was never checked.
     request.followRedirects = false;
     request.maxRedirects = 0;
     request.headers
       ..set(HttpHeaders.acceptHeader, 'text/html, text/plain;q=0.9')
       ..set(HttpHeaders.acceptEncodingHeader, 'identity')
       ..set(HttpHeaders.cacheControlHeader, 'no-cache');
-    final response = await request.close().timeout(boundedTimeout);
-
-    if (response.isRedirect) {
-      return const ArticleReaderResult(
-        state: ArticleReaderState.networkError,
-        message:
-            'This page redirects to another address. Open it in your browser instead.',
-      );
+    final response = await request.close().timeout(timeout);
+    if (response.contentLength > maxArticleResponseBytes) {
+      throw const _ArticleResponseTooLarge();
     }
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      return const ArticleReaderResult(
-        state: ArticleReaderState.networkError,
-        message: 'The website did not provide a readable page.',
-      );
-    }
-    final contentType = response.headers.contentType;
-    final mime = contentType?.mimeType.toLowerCase() ?? '';
-    if (mime != 'text/html' && mime != 'text/plain') {
-      return const ArticleReaderResult(
-        state: ArticleReaderState.unsupportedContent,
-        message: 'This website did not return HTML or plain text.',
-      );
-    }
-    final declaredLength = response.contentLength;
-    if (declaredLength > maxArticleResponseBytes) {
-      return const ArticleReaderResult(state: ArticleReaderState.tooLarge);
-    }
-
-    final body = await _readBoundedResponse(response, boundedTimeout);
-    final decoded = _decodeText(body, contentType?.charset);
-    final html = mime == 'text/html';
-    final title = html ? _extractTitle(decoded) : null;
-    final text = sanitizeArticleMarkup(decoded, isHtml: html);
-    if (text.trim().isEmpty) {
-      return const ArticleReaderResult(
-        state: ArticleReaderState.unsupportedContent,
-        message: 'No readable text was found on this page.',
-      );
-    }
-    return ArticleReaderResult(
-      state: ArticleReaderState.success,
-      title: title,
-      text: text.length > maxArticleTextCharacters
-          ? text.substring(0, maxArticleTextCharacters)
-          : text,
+    final body = await _readBoundedResponse(response, timeout);
+    return ArticleReaderTransportResponse(
+      statusCode: response.statusCode,
+      contentType: response.headers.value(HttpHeaders.contentTypeHeader) ?? '',
+      body: body,
     );
-  } on _ArticleResponseTooLarge {
-    return const ArticleReaderResult(state: ArticleReaderState.tooLarge);
-  } on TimeoutException {
-    return const ArticleReaderResult(state: ArticleReaderState.timedOut);
-  } on SocketException {
-    return const ArticleReaderResult(state: ArticleReaderState.networkError);
-  } on HttpException {
-    return const ArticleReaderResult(state: ArticleReaderState.networkError);
-  } catch (_) {
-    return const ArticleReaderResult(state: ArticleReaderState.networkError);
   } finally {
     client.close(force: true);
   }
+}
+
+ArticleReaderResult _parseResponse(ArticleReaderTransportResponse response) {
+  if (response.statusCode >= 300 && response.statusCode < 400) {
+    return const ArticleReaderResult(
+      state: ArticleReaderState.networkError,
+      message:
+          'This page redirects to another address. Open it in your browser instead.',
+    );
+  }
+  if (response.statusCode < 200 || response.statusCode >= 300) {
+    return const ArticleReaderResult(
+      state: ArticleReaderState.networkError,
+      message: 'The website did not provide a readable page.',
+    );
+  }
+  if (response.body.length > maxArticleResponseBytes) {
+    return const ArticleReaderResult(state: ArticleReaderState.tooLarge);
+  }
+
+  final contentTypeParts = response.contentType.split(';');
+  final mime = contentTypeParts.first.trim().toLowerCase();
+  if (mime != 'text/html' && mime != 'text/plain') {
+    return const ArticleReaderResult(
+      state: ArticleReaderState.unsupportedContent,
+      message: 'This website did not return HTML or plain text.',
+    );
+  }
+  final charset = _charsetFromContentType(response.contentType);
+  final decoded = _decodeText(response.body, charset);
+  final html = mime == 'text/html';
+  final title = html ? _extractTitle(decoded) : null;
+  final text = sanitizeArticleMarkup(decoded, isHtml: html);
+  if (text.trim().isEmpty) {
+    return const ArticleReaderResult(
+      state: ArticleReaderState.unsupportedContent,
+      message: 'No readable text was found on this page.',
+    );
+  }
+  return ArticleReaderResult(
+    state: ArticleReaderState.success,
+    title: title,
+    text: text.length > maxArticleTextCharacters
+        ? text.substring(0, maxArticleTextCharacters)
+        : text,
+  );
+}
+
+String? _charsetFromContentType(String contentType) {
+  final match = RegExp(
+    r'(?:^|;)\s*charset\s*=\s*["\x27]?([^;\s"\x27]+)',
+    caseSensitive: false,
+  ).firstMatch(contentType);
+  return match?.group(1);
 }
 
 class _ArticleResponseTooLarge implements Exception {
@@ -167,7 +216,10 @@ Future<Uint8List> _readBoundedResponse(
 }
 
 String _decodeText(Uint8List bytes, String? charset) {
-  if (charset != null && charset.toLowerCase() == 'latin1') {
+  if (charset != null &&
+      (charset.toLowerCase() == 'latin1' ||
+          charset.toLowerCase() == 'iso-8859-1' ||
+          charset.toLowerCase() == 'windows-1252')) {
     return latin1.decode(bytes, allowInvalid: true);
   }
   return utf8.decode(bytes, allowMalformed: true);
@@ -200,12 +252,6 @@ bool _isPublicAddress(InternetAddress address) {
       return false;
     }
     return true;
-  }
-  if (address.type == InternetAddressType.IPv6 && bytes.length == 16) {
-    // Conservatively exclude IPv6 for this first reader slice. This avoids
-    // incomplete special-purpose-range classification; external browser
-    // opening remains available to the user.
-    return false;
   }
   return false;
 }
