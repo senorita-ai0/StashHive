@@ -41,7 +41,7 @@ class ConfigureAndroidShareIntentsTests(unittest.TestCase):
         application = root.find("application")
         self.assertEqual(application.get(ANDROID + "label"), "StashHive")
         self.assertEqual(application.get(ANDROID + "icon"), "@mipmap/ic_launcher")
-        self.assertEqual(application.get(ANDROID + "roundIcon"), "@mipmap/ic_launcher_round")
+        self.assertEqual(application.get(ANDROID + "roundIcon"), "@mipmap/ic_launcher")
         self.assertEqual(activity.get(ANDROID + "launchMode"), "singleTask")
         filters = activity.findall("intent-filter")
         self.assertEqual(len(filters), len(FILTERS))
