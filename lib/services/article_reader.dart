@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import 'article_reader_stub.dart'
@@ -44,11 +42,11 @@ class ArticleReaderTransportResponse {
     required this.statusCode,
     required this.contentType,
     required List<int> body,
-  }) : body = Uint8List.fromList(body);
+  }) : body = List<int>.unmodifiable(body);
 
   final int statusCode;
   final String contentType;
-  final Uint8List body;
+  final List<int> body;
 }
 
 typedef ArticleReaderDnsResolver = Future<List<String>> Function(String host);
