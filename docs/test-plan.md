@@ -2032,3 +2032,10 @@ The repository widget regression source now checks three export formats after sa
 - Inject a successful UTF-8 plain-text response whose content places a supplementary character (for example, an emoji) across the 60,000-code-unit Reader display limit.
 - Verify the response stays within the configured limit, the cutoff does not leave a lone surrogate, and all retained text before the boundary remains intact.
 - **Status:** Regression source is committed in `test/article_reader_test.dart`; not run. Execute with the complete Reader test suite at the owner-approved manual validation checkpoint.
+
+
+### TC-272 — Extracted title cap preserves Unicode boundaries (2026-10-29)
+
+- Inject an HTML response whose document title places a supplementary character (for example, an emoji) across the 300-code-unit extracted-title limit and whose article body contains readable text.
+- Verify the title contains no lone high/low surrogate and the article body remains available in the successful Reader result.
+- **Status:** Regression source is committed in `test/article_reader_test.dart`; not run. Execute TC-271, TC-272 and the complete Reader test suite at the owner-approved manual validation checkpoint.
