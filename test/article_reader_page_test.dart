@@ -1,9 +1,43 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stashhive/screens/article_reader_page.dart';
 import 'package:stashhive/services/article_reader.dart';
 
 void main() {
+  testWidgets('loading reader exposes an accessible progress label',
+      (tester) async {
+    final pending = Completer<ArticleReaderResult>();
+    articleReaderLoaderForTesting = (url, timeout) => pending.future;
+    addTearDown(() {
+      articleReaderLoaderForTesting = null;
+    });
+    final semanticsHandle = tester.ensureSemantics();
+    addTearDown(semanticsHandle.dispose);
+
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ArticleReaderPage(
+          url: 'https://example.com/article',
+          savedTitle: 'Saved title',
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.bySemanticsLabel('Loading article text'), findsOneWidget);
+
+    pending.complete(
+      const ArticleReaderResult(
+        state: ArticleReaderState.success,
+        title: 'Loaded article',
+        text: 'Synthetic article text',
+      ),
+    );
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('invalid URL shows a recoverable state without a request',
       (tester) async {
     await tester.pumpWidget(
