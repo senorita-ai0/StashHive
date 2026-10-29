@@ -98,17 +98,8 @@ Future<ArticleReaderResult> loadArticleForReader(
       return const ArticleReaderResult(state: ArticleReaderState.tooLarge);
     }
 
-    final bytes = BytesBuilder(copy: false);
-    var total = 0;
-    await for (final chunk in response.timeout(boundedTimeout)) {
-      total += chunk.length;
-      if (total > maxArticleResponseBytes) {
-        client.close(force: true);
-        return const ArticleReaderResult(state: ArticleReaderState.tooLarge);
-      }
-      bytes.add(chunk);
-    }
-    final decoded = _decodeText(bytes.takeBytes(), contentType?.charset);
+    final body = await _readBoundedResponse(response, boundedTimeout);
+    final decoded = _decodeText(body, contentType?.charset);
     final html = mime == 'text/html';
     final title = html ? _extractTitle(decoded) : null;
     final text = _plainText(decoded, isHtml: html);
@@ -125,6 +116,8 @@ Future<ArticleReaderResult> loadArticleForReader(
           ? text.substring(0, maxArticleTextCharacters)
           : text,
     );
+  } on _ArticleResponseTooLarge {
+    return const ArticleReaderResult(state: ArticleReaderState.tooLarge);
   } on TimeoutException {
     return const ArticleReaderResult(state: ArticleReaderState.timedOut);
   } on SocketException {
@@ -136,6 +129,26 @@ Future<ArticleReaderResult> loadArticleForReader(
   } finally {
     client.close(force: true);
   }
+}
+
+class _ArticleResponseTooLarge implements Exception {
+  const _ArticleResponseTooLarge();
+}
+
+Future<Uint8List> _readBoundedResponse(
+  HttpClientResponse response,
+  Duration timeout,
+) async {
+  final bytes = BytesBuilder(copy: false);
+  await response.fold<int>(0, (total, chunk) {
+    final nextTotal = total + chunk.length;
+    if (nextTotal > maxArticleResponseBytes) {
+      throw const _ArticleResponseTooLarge();
+    }
+    bytes.add(chunk);
+    return nextTotal;
+  }).timeout(timeout);
+  return bytes.takeBytes();
 }
 
 String _decodeText(Uint8List bytes, String? charset) {
