@@ -183,6 +183,33 @@ void main() {
       expect(result.text.length, maxArticleTextCharacters);
     });
 
+    test('does not split a supplementary Unicode character at the text cap', () async {
+      final prefix = List<String>.filled(
+        maxArticleTextCharacters - 1,
+        'a',
+      ).join();
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/plain; charset=utf-8',
+            body: utf8.encode('${prefix}🙂tail'),
+          );
+
+      final result = await loadArticleForReader(
+        'https://example.com/unicode-boundary',
+      );
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text.length, maxArticleTextCharacters - 1);
+      expect(result.text, prefix);
+      expect(
+        result.text.codeUnits.any(
+          (unit) => unit >= 0xD800 && unit <= 0xDFFF,
+        ),
+        isFalse,
+      );
+    });
+
     test('blocks private DNS answers before transport is called', () async {
       articleReaderDnsResolverForTesting = (host) async => <String>['127.0.0.1'];
       var transportCalled = false;
