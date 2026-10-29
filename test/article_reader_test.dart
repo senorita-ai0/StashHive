@@ -94,6 +94,27 @@ void main() {
       expect(result.text, '€ “hello” — 100 €');
     });
 
+    test('supports the cp1252 alias without changing Latin-1 decoding', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: uri.path == '/cp1252'
+                ? 'text/plain; charset=cp1252'
+                : 'text/plain; charset=latin1',
+            body: <int>[0x80],
+          );
+
+      final windows = await loadArticleForReader(
+        'https://example.com/cp1252',
+      );
+      final latin = await loadArticleForReader(
+        'https://example.com/latin1',
+      );
+
+      expect(windows.text, '€');
+      expect(latin.text.codeUnitAt(0), 0x80);
+    });
+
     test('enforces the response byte cap even with an injected response', () async {
       articleReaderTransportForTesting = (uri, addresses, timeout) async =>
           ArticleReaderTransportResponse(
