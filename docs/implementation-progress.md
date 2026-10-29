@@ -1168,7 +1168,7 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 
 ## SH-006 — first reader source slice — 2026-10-29
 
-- Added article_reader.dart plus native, browser and fallback implementations. Native requests are initiated only by the reader route, do not follow redirects, pin the connection to a validated DNS result, enforce a 1 MiB response cap and 60,000-character display cap, and accept HTML/plain text only.
+- Added article_reader.dart plus native, browser and fallback implementations. Native requests are initiated only by the reader route, do not follow redirects, pin the connection to a validated DNS result, enforce a 1 MiB response cap, 60,000-character display cap and total response deadline, and accept HTML/plain text only. IPv6 native destinations are conservatively blocked in this initial slice.
 - Added plain-text sanitization that strips active embedded blocks and decodes a conservative entity set. Reader content is transient and is never written to the repository.
 - Added article_reader_page.dart and a **Read in StashHive** action in Item Details. Loading, unavailable, invalid/private URL, unsupported content, size-limit, timeout and network-error states have recoverable UI; opening the external browser remains available.
 - Added test/article_reader_test.dart covering URL validation, private IPv4 literals, hostile markup and Unicode text normalization, plus test/article_reader_page_test.dart for the invalid-URL UI state.
