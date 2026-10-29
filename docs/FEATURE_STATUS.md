@@ -188,3 +188,10 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - Native reader decoding now recognizes a leading UTF-8 byte-order mark (EF BB BF) and removes it before rendering the temporary article/plain-text preview; the signature no longer appears as the first visible character.
 - Added TC-270 regression source using an injected plain-text response with a leading UTF-8 BOM. This source change is committed, but the test has not been run.
 - Commits: source `7c38b51`; regression source `5a78361`. SH-006 remains partial; no formatter, analyzer, tests, builds or CI were run. Android/web behavior and the full reader suite remain pending.
+
+
+## SH-006 Unicode-safe Reader truncation — 2026-10-29
+
+- Native Reader now truncates displayed article text and extracted titles at a UTF-16 boundary that will not leave a dangling surrogate when the cap falls between the two code units of an emoji or other supplementary Unicode character.
+- Added TC-271 regression source with a supplementary character placed exactly across the 60,000-code-unit display limit; the case asserts the character is not split and no surrogate code units leak into the resulting text.
+- Commits: source `3bf987e`; regression source `2588cc0`. This is source/test authoring only: no formatter, analyzer, tests, builds or CI were run. SH-006 remains partial pending test execution and Android/web verification.
