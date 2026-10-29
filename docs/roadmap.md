@@ -1594,3 +1594,6 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **Regression:** TC-263, `test/rediscovery_test.dart`, and `test/rediscovery_widget_test.dart`.
 - **Privacy/scope:** Derived from local saved-item fields only. No remote requests, notifications, reminder permissions, or new storage schema.
 - **Status:** Source and test source committed to `main`; tests, formatting, analyzer, Android/web builds and UI/device verification remain pending.
+## SH-006 next source slice — design gate recorded 2026-10-29
+
+See [article reader feasibility](research/article-reader-feasibility.md). The next implementation step is a user-initiated, bounded temporary reader with testable network/parser boundaries and clear error states. Selection-based highlights follow only after the reader rendering approach is proven on Android and web. This work does not change the manual-only CI policy or unblock SH-005 OCR.
