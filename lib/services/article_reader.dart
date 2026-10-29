@@ -129,20 +129,239 @@ bool _isPrivateIpv4Literal(String host) {
 String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
   var text = source;
   if (isHtml) {
+    // Remove active/embedded blocks and comments before semantic extraction.
+    // Otherwise a literal "<article>" inside a script string or HTML comment
+    // could be mistaken for the real article and hide the page's real text.
+    var sourceWithoutActiveContent = source.replaceAll(
+      RegExp(
+        r'<(script|style|noscript|svg|iframe|object|template)\\b[^>]*>[\\s\\S]*?</\\1\\s*>',
+        caseSensitive: false,
+      ),
+      ' ',
+    );
+    sourceWithoutActiveContent = sourceWithoutActiveContent.replaceAll(
+      RegExp(
+        r'<(script|style|noscript|svg|iframe|object|template)\\b[^>]*>[\\s\\S]*
+    text = text.replaceAll(
+      RegExp(
+        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside)\b[^>]*>[\s\S]*?</\1\s*>',
+        caseSensitive: false,
+      ),
+      ' ',
+    );
+    text = text.replaceAll(
+      RegExp(
+        r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*$',
+        caseSensitive: false,
+      ),
+      ' ',
+    );
+    text = text.replaceAll(RegExp(r'<!--[\s\S]*?-->'), ' ');
+    text = text.replaceAll(RegExp(r'<!--[\s\S]*$'), ' ');
+    text = text.replaceAll(
+      RegExp(
+        r'<br\s*/?>|</(p|div|article|section|h[1-6]|li|tr)\s*>',
+        caseSensitive: false,
+      ),
+      '\n',
+    );
+    text = text.replaceAll(RegExp(r'<[^>]{0,2048}>'), ' ');
+  }
+
+  // Decode numeric references before named references so an escaped
+  // ampersand such as &amp;#169; is only decoded one layer, not recursively.
+  text = text.replaceAllMapped(RegExp(r'&#(\d{1,7});'), (match) {
+    final code = int.tryParse(match.group(1)!);
+    if (code == null ||
+        code < 1 ||
+        code > 0x10FFFF ||
+        (code >= 0xD800 && code <= 0xDFFF)) {
+      return ' ';
+    }
+    return String.fromCharCode(code);
+  });
+  text = text.replaceAllMapped(
+    RegExp(r'&#x([0-9a-f]{1,6});', caseSensitive: false),
+    (match) {
+      final code = int.tryParse(match.group(1)!, radix: 16);
+      if (code == null ||
+          code < 1 ||
+          code > 0x10FFFF ||
+          (code >= 0xD800 && code <= 0xDFFF)) {
+        return ' ';
+      }
+      return String.fromCharCode(code);
+    },
+  );
+
+  const entities = <String, String>{
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&apos;': "'",
+    '&nbsp;': ' ',
+    '&mdash;': '—',
+    '&ndash;': '–',
+    '&hellip;': '…',
+    '&copy;': '©',
+    '&reg;': '®',
+    '&trade;': '™',
+    '&euro;': '€',
+    '&lsquo;': '‘',
+    '&rsquo;': '’',
+    '&ldquo;': '“',
+    '&rdquo;': '”',
+    '&bull;': '•',
+    '&middot;': '·',
+    '&deg;': '°',
+    '&laquo;': '«',
+    '&raquo;': '»',
+    '&times;': '×',
+    '&divide;': '÷',
+    '&plusmn;': '±',
+    '&cent;': '¢',
+    '&pound;': '£',
+    '&yen;': '¥',
+    '&sect;': '§',
+    '&para;': '¶',
+  };
+  text = text.replaceAllMapped(
+    RegExp(
+      r'&(?:amp|lt|gt|quot|apos|nbsp|mdash|ndash|hellip|copy|reg|trade|euro|lsquo|rsquo|ldquo|rdquo|bull|middot|deg|laquo|raquo|times|divide|plusmn|cent|pound|yen|sect|para);',
+      caseSensitive: false,
+    ),
+    (match) => entities[match[0]!.toLowerCase()] ?? match[0]!,
+  );
+  text = text.replaceAll('\r', '\n').replaceAll(RegExp(r'[\t\f\v ]+'), ' ');
+  text = text
+      .replaceAll(RegExp(r' *\n *'), '\n')
+      .replaceAll(RegExp(r'\n{3,}'), '\n\n');
+  return text.trim();
+}
+
+,
+        caseSensitive: false,
+      ),
+      ' ',
+    );
+    sourceWithoutActiveContent = sourceWithoutActiveContent
+        .replaceAll(RegExp(r'<!--[\\s\\S]*?-->'), ' ')
+        .replaceAll(RegExp(r'<!--[\\s\\S]*
+    text = text.replaceAll(
+      RegExp(
+        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside)\b[^>]*>[\s\S]*?</\1\s*>',
+        caseSensitive: false,
+      ),
+      ' ',
+    );
+    text = text.replaceAll(
+      RegExp(
+        r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*$',
+        caseSensitive: false,
+      ),
+      ' ',
+    );
+    text = text.replaceAll(RegExp(r'<!--[\s\S]*?-->'), ' ');
+    text = text.replaceAll(RegExp(r'<!--[\s\S]*$'), ' ');
+    text = text.replaceAll(
+      RegExp(
+        r'<br\s*/?>|</(p|div|article|section|h[1-6]|li|tr)\s*>',
+        caseSensitive: false,
+      ),
+      '\n',
+    );
+    text = text.replaceAll(RegExp(r'<[^>]{0,2048}>'), ' ');
+  }
+
+  // Decode numeric references before named references so an escaped
+  // ampersand such as &amp;#169; is only decoded one layer, not recursively.
+  text = text.replaceAllMapped(RegExp(r'&#(\d{1,7});'), (match) {
+    final code = int.tryParse(match.group(1)!);
+    if (code == null ||
+        code < 1 ||
+        code > 0x10FFFF ||
+        (code >= 0xD800 && code <= 0xDFFF)) {
+      return ' ';
+    }
+    return String.fromCharCode(code);
+  });
+  text = text.replaceAllMapped(
+    RegExp(r'&#x([0-9a-f]{1,6});', caseSensitive: false),
+    (match) {
+      final code = int.tryParse(match.group(1)!, radix: 16);
+      if (code == null ||
+          code < 1 ||
+          code > 0x10FFFF ||
+          (code >= 0xD800 && code <= 0xDFFF)) {
+        return ' ';
+      }
+      return String.fromCharCode(code);
+    },
+  );
+
+  const entities = <String, String>{
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&apos;': "'",
+    '&nbsp;': ' ',
+    '&mdash;': '—',
+    '&ndash;': '–',
+    '&hellip;': '…',
+    '&copy;': '©',
+    '&reg;': '®',
+    '&trade;': '™',
+    '&euro;': '€',
+    '&lsquo;': '‘',
+    '&rsquo;': '’',
+    '&ldquo;': '“',
+    '&rdquo;': '”',
+    '&bull;': '•',
+    '&middot;': '·',
+    '&deg;': '°',
+    '&laquo;': '«',
+    '&raquo;': '»',
+    '&times;': '×',
+    '&divide;': '÷',
+    '&plusmn;': '±',
+    '&cent;': '¢',
+    '&pound;': '£',
+    '&yen;': '¥',
+    '&sect;': '§',
+    '&para;': '¶',
+  };
+  text = text.replaceAllMapped(
+    RegExp(
+      r'&(?:amp|lt|gt|quot|apos|nbsp|mdash|ndash|hellip|copy|reg|trade|euro|lsquo|rsquo|ldquo|rdquo|bull|middot|deg|laquo|raquo|times|divide|plusmn|cent|pound|yen|sect|para);',
+      caseSensitive: false,
+    ),
+    (match) => entities[match[0]!.toLowerCase()] ?? match[0]!,
+  );
+  text = text.replaceAll('\r', '\n').replaceAll(RegExp(r'[\t\f\v ]+'), ' ');
+  text = text
+      .replaceAll(RegExp(r' *\n *'), '\n')
+      .replaceAll(RegExp(r'\n{3,}'), '\n\n');
+  return text.trim();
+}
+
+), ' ');
+
     // Prefer semantic article/main containers when available. This is a
     // lightweight fallback, not a full readability engine.
     final article = RegExp(
-      r'<article\b[^>]*>([\s\S]*?)</article\s*>',
+      r'<article\\b[^>]*>([\\s\\S]*?)</article\\s*>',
       caseSensitive: false,
-    ).firstMatch(source);
+    ).firstMatch(sourceWithoutActiveContent);
     final main = RegExp(
-      r'<main\b[^>]*>([\s\S]*?)</main\s*>',
+      r'<main\\b[^>]*>([\\s\\S]*?)</main\\s*>',
       caseSensitive: false,
-    ).firstMatch(source);
-    text = article?.group(1) ?? main?.group(1) ?? source;
+    ).firstMatch(sourceWithoutActiveContent);
+    text = article?.group(1) ?? main?.group(1) ?? sourceWithoutActiveContent;
 
-    // Remove paired active/embedded blocks first, then fail closed for an
-    // unclosed active block by discarding the remaining source tail.
+    // Remove remaining navigation chrome and fail closed for any unclosed
+    // active block that somehow remains after preprocessing.
     text = text.replaceAll(
       RegExp(
         r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside)\b[^>]*>[\s\S]*?</\1\s*>',
