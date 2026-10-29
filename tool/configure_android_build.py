@@ -19,6 +19,72 @@ COMPILE_SDK = 36
 BUILD_TOOLS_VERSION = "36.1.0"
 JAVA_TARGET = 17
 
+LAUNCHER_RESOURCES = {
+    "app/src/main/res/values/stashhive_colors.xml": """<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="stashhive_launcher_background">#2563EB</color>
+</resources>
+""",
+    "app/src/main/res/drawable/stashhive_launcher_foreground.xml": """<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineJoin="round"
+        android:pathData="M54,17 L67,24.5 L67,39.5 L54,47 L41,39.5 L41,24.5 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineJoin="round"
+        android:pathData="M37,38 L50,45.5 L50,60.5 L37,68 L24,60.5 L24,45.5 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineJoin="round"
+        android:pathData="M71,38 L84,45.5 L84,60.5 L71,68 L58,60.5 L58,45.5 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineJoin="round"
+        android:pathData="M54,59 L67,66.5 L67,81.5 L54,89 L41,81.5 L41,66.5 Z" />
+    <path
+        android:fillColor="#17C7A1"
+        android:pathData="M54,43 L62,47.5 L62,56.5 L54,61 L46,56.5 L46,47.5 Z" />
+</vector>
+""",
+    "app/src/main/res/drawable/stashhive_launcher_legacy.xml": """<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="24dp" />
+            <solid android:color="@color/stashhive_launcher_background" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/stashhive_launcher_foreground" />
+</layer-list>
+""",
+    "app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml": """<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/stashhive_launcher_background" />
+    <foreground android:drawable="@drawable/stashhive_launcher_foreground" />
+</adaptive-icon>
+""",
+    "app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml": """<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/stashhive_launcher_background" />
+    <foreground android:drawable="@drawable/stashhive_launcher_foreground" />
+</adaptive-icon>
+""",
+}
+
 GRADLE_PROPERTIES = {
     "org.gradle.jvmargs": (
         "-Xmx4G -XX:+HeapDumpOnOutOfMemoryError -XX:MaxMetaspaceSize=1G "
@@ -91,8 +157,9 @@ def _set_property(text: str, key: str, value: str) -> str:
 
 
 def _write_if_changed(path: Path, content: str) -> bool:
-    if path.read_text(encoding="utf-8") == content:
+    if path.is_file() and path.read_text(encoding="utf-8") == content:
         return False
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content, encoding="utf-8", newline="\n")
     return True
 
@@ -210,6 +277,14 @@ def configure_android_build(android_dir: str | Path) -> list[str]:
         root_build = root_build.rstrip() + "\n\n" + SDK_CONFIGURATION_BLOCK.lstrip() + "\n"
     if _write_if_changed(root_build_path, root_build):
         changed.append(str(root_build_path.relative_to(root)))
+
+    # Custom branded icon resources replace Flutter's generated starter mark.
+    # The adaptive resources cover Android 8+; the legacy vector layer-list is
+    # referenced by the manifest as the fallback on older supported Android.
+    for relative_path, resource_content in LAUNCHER_RESOURCES.items():
+        resource_path = root / relative_path
+        if _write_if_changed(resource_path, resource_content):
+            changed.append(relative_path)
 
     return changed
 
