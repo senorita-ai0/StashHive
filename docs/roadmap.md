@@ -1620,3 +1620,8 @@ Reader/repository regression source now checks the JSON backup, CSV export and s
 ## SH-006 charset alias regression — 2026-10-29
 
 TC-269 source now includes both the quoted windows-1252 label, the cp1252 alias, and a Latin-1 distinction assertion. These authored cases do not count as execution evidence. Continue to keep SH-006 partial until the manual validation checkpoint and platform checks are recorded.
+
+
+## SH-006 Reader accessibility refinement — 2026-10-29
+
+Reader now provides explicit semantic labels for loading and save-progress indicators and heading semantics for article/error titles. A widget test source checks that the loading label is exposed while a synthetic response is pending. This does not replace Android/web screen-reader review; the test is unrun and SH-006 remains partial.
