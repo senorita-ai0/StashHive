@@ -1213,3 +1213,9 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Labelled the reader loading and save-progress indicators for assistive technologies and exposed the main article/error title as headings.
 - Added a deterministic widget regression using a pending fake response to assert the loading indicator's semantic label. Commits: 10e1f87 and e8d0fab.
 - This is source-only: no test, formatter, analyzer or build was run. Screen-reader/device validation remains pending.
+
+
+## SH-006 — saving-progress semantic regression — 2026-10-29
+
+- Added a widget test with a pending save completer so the Reader remains in the saving state long enough to assert that the spinner exposes the semantic label “Saving highlight”. The test then completes the save and checks the visible success feedback.
+- Commit: 7df2f18. No tests, formatter, analyzer or builds were run; CI remains manual-only.
