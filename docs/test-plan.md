@@ -1958,4 +1958,4 @@ Initial regression source is in test/article_reader_test.dart and test/article_r
 - Convert hostile HTML to plain text without script, style or iframe contents; preserve Unicode and normalize whitespace.
 - Verify the reader result object exposes transient content without involving repository persistence.
 
-The tests are authored but **not run**. Planned TC-264–TC-268 remain required for request/redirect/DNS safety, byte/time limits, explicit-only network access, no page-content persistence and reader UI states. Add platform-specific coverage after the native transport can be exercised deterministically.
+The tests are authored but **not run**. Existing saved-item regression source now also covers round-tripping reader quote offsets/context, legacy annotation compatibility and invalid offset/context bounds. Planned TC-264–TC-268 remain required for request/redirect/DNS safety, byte/time limits, explicit-only network access, no page-content persistence and reader UI states. Add platform-specific selection coverage after the native transport can be exercised deterministically.
