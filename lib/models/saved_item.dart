@@ -98,8 +98,9 @@ const int maxSavedAnnotationNoteCharacters = 4000;
 const int maxSavedAnnotationContextCharacters = 200;
 const int maxSavedAnnotationSourceOffset = 60000;
 
-/// A user-captured quote and/or private note attached to one saved item.
-/// StashHive never fetches website text to create these; the user supplies it.
+/// A user-approved quote and/or private note attached to one saved item.
+/// A reader excerpt is stored only after the user selects it and taps Save
+/// highlight; pages are never silently scraped for annotations.
 @immutable
 class SavedAnnotation {
   const SavedAnnotation({
