@@ -8,6 +8,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import '../models/saved_item.dart';
 import '../services/backup_codec.dart';
 import '../services/attachment_bytes.dart';
+import '../services/search_filters.dart';
 
 /// Exposes notifications and the current value without leaking the
 /// underlying mutable ValueNotifier to UI consumers.
@@ -180,6 +181,97 @@ class LibraryRepository {
   /// Whether the one-time local-storage safety reminder has been dismissed.
   bool get hasSeenStorageReminder =>
       _preferencesBox.get('storageReminderSeen') == true;
+
+  /// Saved search presets are kept only in this local app/browser profile.
+  /// Malformed legacy entries are ignored and never copied into a new write.
+  List<SavedSearchPreset> get savedSearchPresets {
+    final raw = _preferencesBox.get('savedSearchPresets');
+    if (raw is! List) return const <SavedSearchPreset>[];
+    final result = <SavedSearchPreset>[];
+    final seenNames = <String>{};
+    // Keep reads bounded even if the preference record is corrupt or older
+    // code wrote an unexpectedly large list.
+    for (final entry in raw.take(_maxSavedSearchPresets)) {
+      if (entry is! Map) continue;
+      try {
+        final preset = SavedSearchPreset.fromMap(entry);
+        if (!seenNames.add(preset.name.toLowerCase())) continue;
+        result.add(preset);
+      } on FormatException {
+        // A damaged preset should not prevent Search or the rest of the app
+        // from opening; it is omitted and can be replaced by a valid save.
+      }
+    }
+    return List<SavedSearchPreset>.unmodifiable(result);
+  }
+
+  static const int _maxSavedSearchPresets = 20;
+
+  /// Fault-injection seam for a preset preference write that fails after commit.
+  @visibleForTesting
+  static Future<void> Function()? savedSearchPresetsAfterWriteForTesting;
+
+  Future<void> saveSearchPreset(SavedSearchPreset preset) =>
+      _serializeOperation(() => _saveSearchPreset(preset));
+
+  Future<void> _saveSearchPreset(SavedSearchPreset preset) async {
+    final validated = SavedSearchPreset.create(
+      name: preset.name,
+      filters: preset.filters,
+    );
+    final updated = List<SavedSearchPreset>.from(savedSearchPresets);
+    final duplicateIndex = updated.indexWhere(
+      (entry) => entry.name.toLowerCase() == validated.name.toLowerCase(),
+    );
+    if (duplicateIndex >= 0) {
+      updated[duplicateIndex] = validated;
+    } else {
+      if (updated.length >= _maxSavedSearchPresets) {
+        throw const FormatException(
+          'StashHive supports up to 20 saved search filters.',
+        );
+      }
+      updated.add(validated);
+    }
+    await _writeSearchPresets(updated);
+  }
+
+  Future<void> deleteSearchPreset(String name) =>
+      _serializeOperation(() => _deleteSearchPreset(name));
+
+  Future<void> _deleteSearchPreset(String name) async {
+    final cleaned = name.trim();
+    final updated = savedSearchPresets
+        .where((entry) => entry.name.toLowerCase() != cleaned.toLowerCase())
+        .toList(growable: false);
+    if (updated.length == savedSearchPresets.length) return;
+    await _writeSearchPresets(updated);
+  }
+
+  Future<void> _writeSearchPresets(List<SavedSearchPreset> presets) async {
+    const key = 'savedSearchPresets';
+    final hadValue = _preferencesBox.containsKey(key);
+    final previousValue = _preferencesBox.get(key);
+    final nextValue = presets.map((preset) => preset.toMap()).toList();
+    try {
+      await _preferencesBox.put(key, nextValue);
+      final afterWrite = savedSearchPresetsAfterWriteForTesting;
+      if (afterWrite != null) await afterWrite();
+    } catch (_) {
+      // A Hive write can commit and then report an error. Restore the previous
+      // preference where possible without masking the original failure.
+      try {
+        if (hadValue) {
+          await _preferencesBox.put(key, previousValue);
+        } else {
+          await _preferencesBox.delete(key);
+        }
+      } catch (_) {
+        // Preserve the original storage failure.
+      }
+      rethrow;
+    }
+  }
 
   /// Most recent time a portable backup JSON was successfully generated.
   ///
