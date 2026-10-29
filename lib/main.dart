@@ -6190,13 +6190,29 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                 children: [
                   Text('$newCount new links can be imported.'),
                   if (duplicates > 0)
-                    Text('$duplicates links already exist and will be skipped.'),
+                    Text(
+                      duplicates == 1
+                          ? '1 link already exists and will be skipped.'
+                          : '$duplicates links already exist and will be skipped.',
+                    ),
                   if (parsed.duplicateCount > 0)
-                    Text('${parsed.duplicateCount} repeated links inside the file were removed from the preview.'),
+                    Text(
+                      parsed.duplicateCount == 1
+                          ? '1 repeated link inside the file was removed from the preview.'
+                          : '${parsed.duplicateCount} repeated links inside the file were removed from the preview.',
+                    ),
                   if (parsed.invalidCount > 0)
-                    Text('${parsed.invalidCount} invalid or non-web links will be skipped.'),
+                    Text(
+                      parsed.invalidCount == 1
+                          ? '1 invalid or non-web link will be skipped.'
+                          : '${parsed.invalidCount} invalid or non-web links will be skipped.',
+                    ),
                   if (parsed.collections.isNotEmpty)
-                    Text('${parsed.collections.length} bookmark folders were found.'),
+                    Text(
+                      parsed.collections.length == 1
+                          ? '1 bookmark folder was found.'
+                          : '${parsed.collections.length} bookmark folders were found.',
+                    ),
                   const SizedBox(height: 12),
                   for (final entry in parsed.entries.take(6))
                     ListTile(
@@ -6288,9 +6304,20 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
 
       final summary = <String>['Imported $imported ${imported == 1 ? 'link' : 'links'}.'];
       if (duplicates > 0 || parsed.duplicateCount > 0) {
-        summary.add('Skipped ${duplicates + parsed.duplicateCount} duplicates.');
+        final skippedDuplicates = duplicates + parsed.duplicateCount;
+        summary.add(
+          skippedDuplicates == 1
+              ? 'Skipped 1 duplicate.'
+              : 'Skipped $skippedDuplicates duplicates.',
+        );
       }
-      if (parsed.invalidCount > 0) summary.add('Skipped ${parsed.invalidCount} invalid links.');
+      if (parsed.invalidCount > 0) {
+        summary.add(
+          parsed.invalidCount == 1
+              ? 'Skipped 1 invalid link.'
+              : 'Skipped ${parsed.invalidCount} invalid links.',
+        );
+      }
       if (failed > 0) summary.add('$failed could not be imported.');
       if (unassignedFolders > 0 || collectionLimitReached) {
         summary.add('Some folder assignments could not be preserved because the collection limit or storage prevented creating them.');
