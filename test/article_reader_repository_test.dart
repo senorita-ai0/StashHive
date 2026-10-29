@@ -63,6 +63,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     final saved = _linkItem();
+    await _repository.addCollection('Reading');
     await _repository.save(saved);
     final before = _repository.findById(saved.id)!.toMap();
 
@@ -117,6 +118,7 @@ void main() {
     final saved = _linkItem();
     const articleText =
         'The river flows through the quiet green valley, carrying stories from the old town.';
+    await _repository.addCollection('Reading');
     await _repository.save(saved);
 
     articleReaderLoaderForTesting = (url, timeout) async =>
