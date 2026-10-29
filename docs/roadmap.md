@@ -1456,7 +1456,7 @@ The active Phase 2/3 source queue has reached the point where the next meaningfu
 ### TSK-531 — Apply shared premium UI language to StashHive — 2026-10-29
 
 - **Requirements:** FR-004, FR-018 and NFR-006.
-- **Source:** Added the shared FinMate/Stockly `PremiumTokens` and reusable components, then applied their blue/mint palette, rounded Material 3 theme, premium page headers, empty state, settings hero/icon chips and stronger selected navigation icons to StashHive. Refreshed all seven editable screen references and the mobile-flow board to the current palette, while keeping StashHive-specific screens and behavior.
+- **Source:** Added the shared FinMate/Stockly `PremiumTokens` and reusable components, then applied their blue/mint palette, rounded Material 3 theme, premium page headers, unified Library/Search/Collections/Tags empty states, grouped Settings sections, settings hero/icon chips and stronger selected navigation icons to StashHive. Refreshed all seven editable screen references and the mobile-flow board to the current palette, while keeping StashHive-specific screens and behavior.
 - **Regression:** TC-244 covers the documented tokens, page header, icon chip and empty-state action.
 - **Status:** Source and test are committed on main; no formatter, analyzer, widget tests or visual platform checks have run. Validate with all seven references during the manual checkpoint.
 
