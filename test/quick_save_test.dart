@@ -896,6 +896,45 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('editing an existing link does not prompt about itself', (tester) async {
+    final original = SavedItem(
+      id: 'existing-link',
+      kind: ItemKind.link,
+      title: 'Existing article',
+      content: '',
+      url: 'https://example.com/article',
+      tags: const <String>[],
+      collection: null,
+      isFavorite: false,
+      createdAtMs: 1000,
+      updatedAtMs: 1000,
+    );
+    await repository.save(original);
+    await repository.save(
+      SavedItem(
+        id: 'another-link',
+        kind: ItemKind.link,
+        title: 'Another saved copy',
+        content: '',
+        url: 'https://example.com/article?utm_source=old',
+        tags: const <String>[],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 1000,
+      ),
+    );
+
+    await openEditor(tester, original);
+    await tester.ensureVisible(find.text('Save changes'));
+    await tester.tap(find.text('Save changes'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('This link is already saved'), findsNothing);
+    expect(repository.items.value, hasLength(2));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('normalizes uppercase URL schemes before saving', (tester) async {
     await openNewLink(tester);
     await tester.enterText(
