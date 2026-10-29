@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'data/library_repository.dart';
 import 'models/saved_item.dart';
 import 'services/backup_codec.dart';
+import 'services/bookmark_html_importer.dart';
 import 'services/bounded_bytes_reader.dart';
 import 'services/duplicate_detector.dart';
 import 'services/mime_types.dart';
@@ -4917,6 +4918,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
   bool _exporting = false;
   bool _choosingBackup = false;
   bool _restoring = false;
+  bool _importingBookmarks = false;
 
   void _message(String message) {
     if (!mounted) return;
@@ -4938,7 +4940,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
   }
 
   Future<void> _export() async {
-    if (_exporting || _choosingBackup || _restoring) return;
+    if (_exporting || _choosingBackup || _restoring || _importingBookmarks) return;
     setState(() => _exporting = true);
     try {
       final unrepresentedAssignments =
@@ -5037,6 +5039,174 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
       );
     } finally {
       if (mounted) setState(() => _exporting = false);
+    }
+  }
+
+  Future<void> _importBookmarks() async {
+    if (_exporting || _choosingBackup || _restoring || _importingBookmarks) return;
+    setState(() => _importingBookmarks = true);
+    try {
+      final file = await FilePicker.pickFile(
+        type: FileType.custom,
+        allowedExtensions: const ['html', 'htm'],
+      );
+      if (!mounted || file == null) return;
+
+      final length = await file.length();
+      if (!mounted) return;
+      if (length <= 0) {
+        _message('The selected bookmark file is empty or unreadable.');
+        return;
+      }
+      if (length > maxBookmarkHtmlBytes) {
+        _message('Bookmark files must be 10 MB or smaller.');
+        return;
+      }
+      final bytes = await readBoundedByteStream(
+        file.readAsByteStream(),
+        maxBytes: maxBookmarkHtmlBytes,
+        limitMessage: 'Bookmark files must be 10 MB or smaller.',
+      );
+      if (!mounted) return;
+
+      final source = utf8.decode(bytes, allowMalformed: false);
+      final parsed = parseBookmarkHtml(source);
+      final existingKeys = widget.repository.items.value
+          .where((item) => item.kind == ItemKind.link)
+          .map((item) => normalizeUrlForDuplicateCheck(item.url))
+          .whereType<String>()
+          .toSet();
+      final duplicates = parsed.entries.where((entry) {
+        final key = normalizeUrlForDuplicateCheck(entry.url);
+        return key != null && existingKeys.contains(key);
+      }).length;
+      final newCount = parsed.entries.length - duplicates;
+
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Preview bookmark import'),
+          content: SizedBox(
+            width: 460,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('$newCount new links can be imported.'),
+                  if (duplicates > 0)
+                    Text('$duplicates links already exist and will be skipped.'),
+                  if (parsed.duplicateCount > 0)
+                    Text('${parsed.duplicateCount} repeated links inside the file were removed from the preview.'),
+                  if (parsed.invalidCount > 0)
+                    Text('${parsed.invalidCount} invalid or non-web links will be skipped.'),
+                  if (parsed.collections.isNotEmpty)
+                    Text('${parsed.collections.length} bookmark folders were found.'),
+                  const SizedBox(height: 12),
+                  for (final entry in parsed.entries.take(6))
+                    ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.bookmark_border_rounded),
+                      title: Text(entry.title, maxLines: 2, overflow: TextOverflow.ellipsis),
+                      subtitle: Text(
+                        entry.url,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  if (parsed.entries.length > 6)
+                    Text('And ${parsed.entries.length - 6} more links.'),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: newCount > 0 ? () => Navigator.pop(dialogContext, true) : null,
+              child: const Text('Import new links'),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true || !mounted) return;
+
+      final now = DateTime.now().toUtc().millisecondsSinceEpoch;
+      final knownCollections = widget.repository.collections.value
+          .map((name) => name.toLowerCase())
+          .toSet();
+      final assignableCollections = <String>{...knownCollections};
+      var collectionLimitReached = false;
+      for (final name in parsed.collections) {
+        if (assignableCollections.contains(name.toLowerCase())) continue;
+        if (widget.repository.collections.value.length >= BackupCodec.maxCollections) {
+          collectionLimitReached = true;
+          continue;
+        }
+        try {
+          await widget.repository.addCollection(name);
+          assignableCollections.add(name.toLowerCase());
+        } catch (_) {
+          collectionLimitReached = true;
+        }
+      }
+
+      var imported = 0;
+      var failed = 0;
+      var unassignedFolders = 0;
+      var index = 0;
+      for (final entry in parsed.entries) {
+        final key = normalizeUrlForDuplicateCheck(entry.url);
+        if (key == null || existingKeys.contains(key)) {
+          continue;
+        }
+        final collection = entry.collection != null &&
+                assignableCollections.contains(entry.collection!.toLowerCase())
+            ? entry.collection
+            : null;
+        if (entry.collection != null && collection == null) unassignedFolders++;
+        final item = SavedItem(
+          id: importedBookmarkId(entry.url, index, now),
+          kind: ItemKind.link,
+          title: entry.title,
+          content: '',
+          url: entry.url,
+          tags: const <String>[],
+          collection: collection,
+          isFavorite: false,
+          createdAtMs: now,
+          updatedAtMs: now,
+        );
+        index++;
+        try {
+          await widget.repository.save(item);
+          existingKeys.add(key);
+          imported++;
+        } catch (_) {
+          failed++;
+        }
+      }
+
+      final summary = <String>['Imported $imported ${imported == 1 ? 'link' : 'links'}.'];
+      if (duplicates > 0 || parsed.duplicateCount > 0) {
+        summary.add('Skipped ${duplicates + parsed.duplicateCount} duplicates.');
+      }
+      if (parsed.invalidCount > 0) summary.add('Skipped ${parsed.invalidCount} invalid links.');
+      if (failed > 0) summary.add('$failed could not be imported.');
+      if (unassignedFolders > 0 || collectionLimitReached) {
+        summary.add('Some folder assignments could not be preserved because the collection limit or storage prevented creating them.');
+      }
+      _message(summary.join(' '));
+    } on FormatException catch (error) {
+      _message('Could not read that bookmark file. ${error.message}');
+    } catch (_) {
+      _message('Could not import bookmarks. Check the file and local storage, then try again.');
+    } finally {
+      if (mounted) setState(() => _importingBookmarks = false);
     }
   }
 
@@ -5318,6 +5488,15 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                           ? null
                           : _export,
                     ),
+                  ),
+                  const SizedBox(height: 18),
+                  _BackupCard(
+                    icon: Icons.bookmarks_outlined,
+                    title: 'Import browser bookmarks',
+                    subtitle: 'Import links from a Chrome, Firefox, Edge or other browser HTML bookmark export. Existing links are skipped.',
+                    buttonText: _importingBookmarks ? 'Importing…' : 'Choose HTML file',
+                    loading: _importingBookmarks,
+                    onPressed: (_exporting || _choosingBackup || _restoring) ? null : _importBookmarks,
                   ),
                   const SizedBox(height: 24),
                   Text('Restore', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
