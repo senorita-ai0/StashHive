@@ -1503,3 +1503,10 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **Limits:** Bookmark HTML input is capped at 10 MiB and 10,000 links; CSV output is capped by item count and generated text size. Neither CSV nor Markdown includes attachment bytes; JSON backup remains the full recovery format.
 - **Regression:** `test/bookmark_html_importer_test.dart`, `test/library_csv_export_test.dart`, and `test/selected_items_export_test.dart`.
 - **Status:** Source and test files committed to `main`; test execution and platform verification pending.
+
+
+## SH-005 — local PDF extraction and OCR feasibility (2026-10-29)
+
+- **Research:** Added [local text-extraction feasibility](research/local-text-extraction-feasibility.md). Current candidate: prototype text-bearing PDF extraction using `pdfrx_engine` first; separately evaluate local Tesseract OCR for screenshots/scanned PDFs and English/Urdu/Nastaleeq samples.
+- **Decision:** No OCR/PDF dependency has been added. Published package/platform claims are not treated as runtime proof. Web OCR must not depend on an external CDN, and Syncfusion requires a license review.
+- **Task status:** TSK-005 remains BLOCKED until sample-based accuracy, offline behavior, latency/memory, and binary/bundle size are measured. Keep FR-016 gated.
