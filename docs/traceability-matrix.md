@@ -1610,3 +1610,5 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Verification:** Regression source is committed but unrun. Validate the model and repository timestamp paths together at the manual checkpoint.
 
 | SH-003 | SCR-001 | TSK-534 | TC-247, bulk_actions_widget_test.dart | PARTIAL SOURCE IMPLEMENTED — export-selected remains open; tests and platform verification pending |
+
+| SH-004 | SCR-001, SCR-002 | TSK-535 | TC-253, TC-254, bookmark_html_importer_test.dart, library_csv_export_test.dart, selected_items_export_test.dart | SOURCE IMPLEMENTED — manual verification pending |
