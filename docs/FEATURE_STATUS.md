@@ -208,3 +208,10 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - Native Reader now uses an HTTP Content-Type charset when one is declared; when HTML has no HTTP charset, it scans only the first 1,024 bytes for a meta charset declaration and the legacy http-equiv/content charset form. This improves decoding of some older pages without scanning the entire body for encoding hints.
 - Added regression source for direct meta charset and legacy http-equiv charset declarations using a Windows-1252 euro byte. Cases are TC-273 and TC-274; they have not been run.
 - Commits: source 41f7e1b; regression cases ac7a62b. No formatter, analyzer, tests, builds or CI were run. Charset detection remains deliberately limited, not standards-complete; SH-006 stays partial pending manual validation.
+
+
+## SH-006 embedded charset declaration filtering — TC-275 (2026-10-29)
+
+- Hardened the bounded HTML charset prescan so comments and script/style/noscript blocks are removed from the scanned prefix before locating meta charset declarations. This prevents a fake tag embedded in untrusted content from overriding text decoding.
+- Added TC-275 regression source containing fake Windows-1252 meta tags inside both an HTML comment and script text, with an invalid UTF-8 byte in the article body to make false detection visible.
+- Source and test were committed together in df4b3c4 using a clean single-copy Reader file after an earlier attempted update duplicated source fragments. Re-fetched file verification is pending in this turn. No tests, formatter, analyzer, build or CI were run; SH-006 remains partial.
