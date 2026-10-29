@@ -100,7 +100,7 @@ class ConfigureAndroidBuildTests(unittest.TestCase):
 
     def test_aligns_flutter_android_versions_and_sdk_settings(self):
         changed = configure_android_build(self.android_dir)
-        self.assertEqual(len(changed), 9)
+        self.assertEqual(len(changed), 10)
 
         settings = (self.android_dir / "settings.gradle.kts").read_text(encoding="utf-8")
         self.assertIn(f'id("com.android.application") version "{ANDROID_PLUGIN_VERSION}" apply false', settings)
@@ -140,6 +140,7 @@ class ConfigureAndroidBuildTests(unittest.TestCase):
             "app/src/main/res/drawable/stashhive_launcher_foreground.xml",
             "app/src/main/res/drawable/stashhive_launcher_legacy.xml",
             "app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+            "app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
         ]
         for relative in resources:
             self.assertTrue((self.android_dir / relative).is_file(), relative)
