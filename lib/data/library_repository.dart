@@ -9,6 +9,7 @@ import '../models/saved_item.dart';
 import '../services/attachment_bytes.dart';
 import '../services/backup_codec.dart';
 import '../services/search_filters.dart';
+import '../services/smart_tag_rules.dart';
 
 /// Exposes notifications and the current value without leaking the
 /// underlying mutable ValueNotifier to UI consumers.
@@ -277,6 +278,95 @@ class LibraryRepository {
         }
       } catch (_) {
         // Preserve the original storage failure.
+      }
+      rethrow;
+    }
+  }
+
+  /// Local user-authored tagging rules. Malformed entries are ignored so
+  /// corrupt optional preferences never prevent the library from opening.
+  List<SmartTagRule> get smartTagRules {
+    final raw = _preferencesBox.get('smartTagRules');
+    if (raw is! List) return const <SmartTagRule>[];
+    final result = <SmartTagRule>[];
+    final seenIds = <String>{};
+    final seenPairs = <String>{};
+    for (final entry in raw.take(maxSmartTagRules)) {
+      if (entry is! Map) continue;
+      try {
+        final rule = SmartTagRule.fromMap(entry);
+        final pairKey =
+            '${rule.matchText.toLowerCase()}\\u0000${rule.suggestedTag.toLowerCase()}';
+        if (!seenIds.add(rule.id) || !seenPairs.add(pairKey)) continue;
+        result.add(rule);
+      } on FormatException {
+        // Invalid optional rules are omitted; users can add a valid replacement.
+      }
+    }
+    return List<SmartTagRule>.unmodifiable(result);
+  }
+
+  /// Fault-injection seam for a smart-tag preference write that fails late.
+  @visibleForTesting
+  static Future<void> Function()? smartTagRulesAfterWriteForTesting;
+
+  Future<void> saveSmartTagRule(SmartTagRule rule) =>
+      _serializeOperation(() => _saveSmartTagRule(rule));
+
+  Future<void> _saveSmartTagRule(SmartTagRule rule) async {
+    final validated = SmartTagRule.create(
+      id: rule.id,
+      matchText: rule.matchText,
+      suggestedTag: rule.suggestedTag,
+    );
+    final updated = List<SmartTagRule>.from(smartTagRules);
+    final duplicateIndex = updated.indexWhere((entry) =>
+        entry.id == validated.id ||
+        (entry.matchText.toLowerCase() == validated.matchText.toLowerCase() &&
+            entry.suggestedTag.toLowerCase() ==
+                validated.suggestedTag.toLowerCase()));
+    if (duplicateIndex >= 0) {
+      updated[duplicateIndex] = validated;
+    } else {
+      if (updated.length >= maxSmartTagRules) {
+        throw const FormatException(
+          'StashHive supports up to $maxSmartTagRules smart-tag rules.',
+        );
+      }
+      updated.add(validated);
+    }
+    await _writeSmartTagRules(updated);
+  }
+
+  Future<void> deleteSmartTagRule(String id) =>
+      _serializeOperation(() => _deleteSmartTagRule(id));
+
+  Future<void> _deleteSmartTagRule(String id) async {
+    final updated = smartTagRules
+        .where((rule) => rule.id != id)
+        .toList(growable: false);
+    if (updated.length == smartTagRules.length) return;
+    await _writeSmartTagRules(updated);
+  }
+
+  Future<void> _writeSmartTagRules(List<SmartTagRule> rules) async {
+    const key = 'smartTagRules';
+    final hadValue = _preferencesBox.containsKey(key);
+    final previousValue = _preferencesBox.get(key);
+    final nextValue = rules.map((rule) => rule.toMap()).toList();
+    try {
+      await _preferencesBox.put(key, nextValue);
+      final afterWrite = smartTagRulesAfterWriteForTesting;
+      if (afterWrite != null) await afterWrite();
+    } catch (_) {
+      try {
+        if (hadValue) {
+          await _preferencesBox.put(key, previousValue);
+        } else {
+          await _preferencesBox.delete(key);
+        }
+      } catch (_) {
+        // Keep the original error.
       }
       rethrow;
     }
