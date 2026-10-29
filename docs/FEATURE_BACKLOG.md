@@ -135,3 +135,10 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Replace non-printing control bytes during plain-text normalization without altering Urdu/other ordinary Unicode text.
 - [x] Add synthetic cases for fake article tags inside script/comment/navigation content and control-character cleanup.
 - [ ] Run the reader regression suite and current Flutter checks at the owner's manual validation checkpoint; no tests have been run for these changes.
+
+
+## SH-006 — embedded page-title safety (2026-10-29)
+
+- [x] Strip script/style/embedded blocks and comments before extracting a page title.
+- [x] Add a synthetic regression for fake `<title>` elements inside a script string and HTML comment, plus a real entity-encoded document title.
+- [ ] Execute title/reader tests and verify native and browser behavior at the owner's manual validation checkpoint; source/test remain unverified.
