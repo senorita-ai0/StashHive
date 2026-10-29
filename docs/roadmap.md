@@ -1584,3 +1584,11 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **Regression:** TC-262 with synthetic in-memory PDF tests for selectable text, textless PDFs, empty/oversized input and malformed bytes.
 - **Architecture:** Production `pubspec.yaml` remains unchanged. The isolated package is outside the root manual workflow.
 - **Status:** Scaffold is committed, but package resolution, tests, Android/Web runtime, offline behavior, native/web bundle-size delta, memory and sample accuracy are unverified. SH-005/FR-016 remains BLOCKED until the measurements meet the feasibility report gates.
+
+
+### TSK-543 — Add a local Rediscover queue to Library (SH-010) — 2026-10-29
+
+- **Source:** Added the **Rediscover** filter. It surfaces saved items created 14 or more days ago unless they are marked Completed, sorted by oldest creation time first. The filter works with the existing Library list/grid and selection behavior and shows its rule in the UI.
+- **Regression:** TC-263, `test/rediscovery_test.dart`, and `test/rediscovery_widget_test.dart`.
+- **Privacy/scope:** Derived from local saved-item fields only. No remote requests, notifications, reminder permissions, or new storage schema.
+- **Status:** Source and test source committed to `main`; tests, formatting, analyzer, Android/web builds and UI/device verification remain pending.
