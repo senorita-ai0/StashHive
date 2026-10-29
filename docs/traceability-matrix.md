@@ -1665,7 +1665,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Explicit user-initiated reader access | lib/main.dart, lib/screens/article_reader_page.dart | TC-264 planned; not run | Source implemented, verify pending |
 | URL restrictions, standard ports and native destination checks | lib/services/article_reader.dart, lib/services/article_reader_io.dart | test/article_reader_test.dart; TC-265 partial source, not run | Source implemented, verify pending |
 | Bounded content and safe plain-text rendering | lib/services/article_reader_io.dart, lib/screens/article_reader_page.dart | sanitizer tests authored; TC-266 planned | Source implemented, verify pending |
-| No fetched-content persistence / honest browser limitation | reader service and screen | TC-267–TC-268 planned | Source reviewed; platform verification pending |
+| No fetched-content persistence / honest browser limitation | reader service and screen | TC-267–TC-268; test/article_reader_repository_test.dart | Source assertions cover JSON backup, CSV and selected-Markdown full-body exclusion; not run, platform verification pending |
 | Selection-based quote capture with bounded context and UTF-16 offsets | lib/screens/article_reader_page.dart, lib/main.dart, lib/models/saved_item.dart | test/saved_item_test.dart covers round-trip/legacy/invalid metadata; not run | Source implemented, platform verification pending |
 
 ## SH-006 deterministic transport mapping — 2026-10-29
@@ -1691,3 +1691,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Decode explicit Windows-1252 charset without misrendering euro/punctuation bytes | lib/services/article_reader_io.dart (_decodeText) | TC-269; synthetic quoted charset response in test/article_reader_test.dart | Source + test authored; not run |
+
+
+## SH-006 export-boundary regression update — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Preserve selected quote annotation but never add the complete temporary article body to backup, CSV or selected Markdown | Existing repository/export codecs | test/article_reader_repository_test.dart; TC-267 | Source assertions authored; not run; platform/share checks pending |
