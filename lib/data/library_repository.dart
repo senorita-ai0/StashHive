@@ -295,8 +295,10 @@ class LibraryRepository {
       if (entry is! Map) continue;
       try {
         final rule = SmartTagRule.fromMap(entry);
-        final pairKey =
-            '${rule.matchText.toLowerCase()}\\u0000${rule.suggestedTag.toLowerCase()}';
+        final pairKey = jsonEncode(<String>[
+          rule.matchText.toLowerCase(),
+          rule.suggestedTag.toLowerCase(),
+        ]);
         if (!seenIds.add(rule.id) || !seenPairs.add(pairKey)) continue;
         result.add(rule);
       } on FormatException {
@@ -320,20 +322,32 @@ class LibraryRepository {
       suggestedTag: rule.suggestedTag,
     );
     final updated = List<SmartTagRule>.from(smartTagRules);
-    final duplicateIndex = updated.indexWhere((entry) =>
-        entry.id == validated.id ||
-        (entry.matchText.toLowerCase() == validated.matchText.toLowerCase() &&
-            entry.suggestedTag.toLowerCase() ==
-                validated.suggestedTag.toLowerCase()));
-    if (duplicateIndex >= 0) {
-      updated[duplicateIndex] = validated;
-    } else {
+    final duplicateIndexes = <int>[];
+    for (var index = 0; index < updated.length; index++) {
+      final entry = updated[index];
+      final samePair =
+          entry.matchText.toLowerCase() == validated.matchText.toLowerCase() &&
+              entry.suggestedTag.toLowerCase() ==
+                  validated.suggestedTag.toLowerCase();
+      if (entry.id == validated.id || samePair) {
+        duplicateIndexes.add(index);
+      }
+    }
+    if (duplicateIndexes.isEmpty) {
       if (updated.length >= maxSmartTagRules) {
         throw const FormatException(
           'StashHive supports up to $maxSmartTagRules smart-tag rules.',
         );
       }
       updated.add(validated);
+    } else {
+      // Keep the first matching position and remove any accidental ID/pair
+      // collision overlap so persisted rules remain unique by both dimensions.
+      final firstIndex = duplicateIndexes.first;
+      updated[firstIndex] = validated;
+      for (final index in duplicateIndexes.skip(1).toList().reversed) {
+        updated.removeAt(index);
+      }
     }
     await _writeSmartTagRules(updated);
   }
