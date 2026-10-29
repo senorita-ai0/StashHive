@@ -99,7 +99,7 @@ Normal file selection, save, item/collection deletion and backup operation error
 
 - Status checks require a direct user action and contact the destination from the user's own device; the destination may see the user's network address.
 - The checker does not send notes, tags, attachment bytes, cookies or account credentials, and does not read/store page bodies. Link results are bounded, local-only preference metadata and are excluded from backup v1.
-- Native checks reject private/local/reserved resolved addresses and do not follow redirects. Browser builds report that reliable external status inspection is limited by browser security; no remote proxy is used.
+- Native checks reject private/local/reserved resolved addresses, pin the connection to the prevalidated DNS address to reduce DNS-rebinding exposure, force a direct connection, and do not follow redirects. They issue HEAD only and report method refusal rather than falling back to GET. Browser builds report that reliable external status inspection is limited by browser security; no remote proxy is used.
 - A timeout, access restriction, server error or redirect is not treated as proof of permanent link failure. This feature does not run in the background.
 
 **Remaining verification before this review can close:** inspect the generated merged Android manifest and resolved dependency permissions; capture browser/Android network behavior; perform real-device file/share, TalkBack and browser screen-reader checks; rerun the source/tests and manual platform builds at the owner's checkpoint. The review remains open until those checks have evidence.
