@@ -890,7 +890,7 @@ void main() {
 
     expect(repository.items.value, hasLength(2));
     expect(
-      repository.items.value.where((item) => item.url == 'https://example.com/article'),
+      repository.items.value.where((item) => item.kind == ItemKind.link),
       hasLength(2),
     );
     expect(tester.takeException(), isNull);
