@@ -1698,3 +1698,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Preserve selected quote annotation but never add the complete temporary article body to backup, CSV or selected Markdown | Existing repository/export codecs | test/article_reader_repository_test.dart; TC-267 | Source assertions authored; not run; platform/share checks pending |
+
+
+## SH-006 accessibility source update — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Expose Reader loading/save progress and article/error headings to assistive technology | lib/screens/article_reader_page.dart | TC-268; test/article_reader_page_test.dart | Source and loading-label assertion authored; test and platform accessibility verification pending |
