@@ -10,6 +10,7 @@ import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/main.dart' as app;
 import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/services/share_intake.dart';
+import 'package:stashhive/services/smart_tag_rules.dart';
 
 late Directory testDirectory;
 late LibraryRepository repository;
@@ -1059,6 +1060,45 @@ void main() {
     expect(updated.annotations, hasLength(1));
     expect(updated.annotations.single.quote, 'Keep this quote.');
     expect(updated.annotations.single.note, 'Remember why it matters.');
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('shows smart tag suggestions and adds them only when tapped', (tester) async {
+    await repository.saveSmartTagRule(
+      SmartTagRule.create(
+        id: 'smart-rule-design',
+        matchText: 'design',
+        suggestedTag: 'Design',
+      ),
+    );
+
+    await openNewLink(tester);
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'https://example.com/design-system',
+    );
+    await tester.enterText(
+      find.byType(TextFormField).at(1),
+      'Design system overview',
+    );
+
+    await tester.tap(find.byKey(const ValueKey('suggest-smart-tags')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('suggested-tag-smart-rule-design')), findsOneWidget);
+    expect(
+      tester.widget<TextFormField>(find.byType(TextFormField).at(3)).controller!.text,
+      '',
+      reason: 'Suggestions must never be applied automatically.',
+    );
+
+    await tester.tap(find.byKey(const ValueKey('suggested-tag-smart-rule-design')));
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<TextFormField>(find.byType(TextFormField).at(3)).controller!.text,
+      'Design',
+    );
+    expect(repository.items.value, isEmpty);
     expect(tester.takeException(), isNull);
   });
 
