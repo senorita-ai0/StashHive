@@ -10,6 +10,7 @@ import '../services/attachment_bytes.dart';
 import '../services/backup_codec.dart';
 import '../services/search_filters.dart';
 import '../services/smart_tag_rules.dart';
+import '../models/link_health_record.dart';
 
 /// Exposes notifications and the current value without leaking the
 /// underlying mutable ValueNotifier to UI consumers.
@@ -381,6 +382,93 @@ class LibraryRepository {
         }
       } catch (_) {
         // Keep the original error.
+      }
+      rethrow;
+    }
+  }
+
+  /// Latest manually triggered link checks. These records belong to the local
+  /// app/browser profile and are intentionally excluded from version-1 backups.
+  /// Invalid or stale raw entries are ignored, and reads inspect at most the
+  /// most recent bounded record list.
+  Map<String, LinkHealthRecord> get linkHealthHistory {
+    final raw = _preferencesBox.get('linkHealthRecords');
+    if (raw is! List) return const <String, LinkHealthRecord>{};
+    final result = <String, LinkHealthRecord>{};
+    for (final entry in raw.take(maxLinkHealthHistoryRecords)) {
+      if (entry is! Map) continue;
+      try {
+        final record = LinkHealthRecord.fromMap(entry);
+        if (result.containsKey(record.itemId)) continue;
+        result[record.itemId] = record;
+      } on FormatException {
+        // A malformed optional status record must not affect saved items.
+      }
+    }
+    return Map<String, LinkHealthRecord>.unmodifiable(result);
+  }
+
+  /// Returns a result only when it belongs to the exact URL currently saved.
+  /// Editing a link therefore never shows an old status as if it checked the
+  /// new destination.
+  LinkHealthRecord? findLinkHealthRecord(String itemId, {String? url}) {
+    final record = linkHealthHistory[itemId];
+    if (record == null) return null;
+    if (url != null && !record.matchesUrl(url)) return null;
+    return record;
+  }
+
+  /// Persists a result produced by an explicit check. It neither rewrites the
+  /// SavedItem nor changes its updatedAt timestamp.
+  Future<void> saveLinkHealthRecord(LinkHealthRecord record) =>
+      _serializeOperation(() => _saveLinkHealthRecord(record));
+
+  Future<void> _saveLinkHealthRecord(LinkHealthRecord record) async {
+    final validated = LinkHealthRecord.fromMap(record.toMap());
+    final item = findById(validated.itemId);
+    if (item == null ||
+        item.kind != ItemKind.link ||
+        item.url != validated.checkedUrl) {
+      throw const FormatException(
+        'The saved link changed before its check result could be stored.',
+      );
+    }
+
+    final next = linkHealthHistory.values
+        .where((entry) => entry.itemId != validated.itemId)
+        .toList()
+      ..add(validated);
+    next.sort((a, b) => b.checkedAtMs.compareTo(a.checkedAtMs));
+    if (next.length > maxLinkHealthHistoryRecords) {
+      next.removeRange(maxLinkHealthHistoryRecords, next.length);
+    }
+    await _writeLinkHealthRecords(next);
+  }
+
+  @visibleForTesting
+  static Future<void> Function()? linkHealthRecordsAfterWriteForTesting;
+
+  Future<void> _writeLinkHealthRecords(
+    List<LinkHealthRecord> records,
+  ) async {
+    const key = 'linkHealthRecords';
+    final hadValue = _preferencesBox.containsKey(key);
+    final previousValue = _preferencesBox.get(key);
+    final nextValue = records.map((record) => record.toMap()).toList();
+    try {
+      await _preferencesBox.put(key, nextValue);
+      final afterWrite = linkHealthRecordsAfterWriteForTesting;
+      if (afterWrite != null) await afterWrite();
+    } catch (_) {
+      // Restore a previous sidecar if storage reported a late write failure.
+      try {
+        if (hadValue) {
+          await _preferencesBox.put(key, previousValue);
+        } else {
+          await _preferencesBox.delete(key);
+        }
+      } catch (_) {
+        // Keep the original storage failure.
       }
       rethrow;
     }
