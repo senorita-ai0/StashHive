@@ -27,6 +27,7 @@ String buildLibraryCsv(List<SavedItem> items) {
     'created_at_ms',
     'updated_at_ms',
     'attachment_name',
+    'highlights_and_annotations',
   ].map(_csvField).join(','));
 
   for (final item in items) {
@@ -44,6 +45,10 @@ String buildLibraryCsv(List<SavedItem> items) {
       item.createdAtMs.toString(),
       item.updatedAtMs.toString(),
       item.attachmentName ?? '',
+      item.annotations.map((annotation) => <String>[
+        if (annotation.quote.trim().isNotEmpty) '“${annotation.quote}”',
+        if (annotation.note.trim().isNotEmpty) annotation.note,
+      ].join('\\n')).join('\\n\\n'),
     ];
     buffer.writeln(row.map(_csvField).join(','));
     if (buffer.length > maxLibraryCsvCharacters) {
