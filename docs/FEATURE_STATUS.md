@@ -117,7 +117,7 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - Enforced one absolute deadline across DNS resolution, request/response phases and body reading, rather than restarting the full timeout at every stage.
 - Added test/article_reader_repository_test.dart to verify no reader request occurs on details-screen load, a tap starts one request, opening a temporary preview leaves the saved record unchanged, saving a selected passage persists only the user-approved annotation, and portable backup contains the annotation but not the full fetched article. Reader success/failure feedback now appears on the visible Reader route, with widget-test source for both outcomes. TC-264–TC-268 have partial regression source, but none has been run; actual platform checks remain pending.
 - Source review caught and corrected malformed expressions in the sanitizer hardening and hostname-validation edits; both complete functions were re-fetched after repair. No tests, formatter, analyzer or builds were run. Android/web behavior is still unverified. CI remains manual-only.
-- Latest relevant commits include 9be6a98 (preprocess active markup before article extraction), 8809696 (fake semantic-container regression), abbb973 (single-pass/common entity decoding), and 7df2f18 (save-progress accessibility regression). Re-check HEAD before the next edit.
+- Latest relevant commits include b818cad (remove duplicate reader source and harden extraction), 4501f50 (navigation/control-character regressions), abbb973 (single-pass/common entity decoding), and 7df2f18 (save-progress accessibility regression). Re-check HEAD before the next edit.
 
 
 ## SH-006 reader decoding polish — 2026-10-29
@@ -167,3 +167,10 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - Active/embedded blocks and HTML comments are now removed before looking for an `<article>` or `<main>` container. This avoids a literal fake article tag inside a script string or comment being selected instead of the page's real article content.
 - Added a synthetic regression combining a script-string `<article>`, a commented `<article>`, navigation chrome and a real article. The test is authored but has not been run.
 - The sanitizer remains a lightweight text extractor, not a standards-complete HTML parser or Readability implementation. Commits: 9be6a98 (source) and 8809696 (test source). No tests, formatter, analyzer or builds were run; CI remains manual-only.
+
+
+## SH-006 source integrity and extraction hardening — 2026-10-29
+
+- Removed a stale duplicated tail from `lib/services/article_reader.dart` that repeated the URL validator, sanitizer and loader and left malformed text after the first loader definition. Re-fetched the committed file and confirmed one declaration each for `parseArticleReaderUrl`, `_isPrivateIpv4Literal`, `sanitizeArticleMarkup`, and `loadArticleForReader`, with no leftover malformed fragment.
+- Sanitizer preprocessing now removes active/embedded markup, navigation/footer/aside containers and comments before searching for article/main, preventing fake article tags inside those regions from shadowing real content. It also replaces non-printing control bytes with spaces while retaining Unicode and normalizing line breaks.
+- Regression source now includes script/comment/navigation fake-article markup and non-printing text-control characters. These tests are authored but unrun. Commits: b818cad and 4501f50. SH-006 remains partial; formatter, analyzer, tests, builds and platform verification are pending; CI remains manual-only.
