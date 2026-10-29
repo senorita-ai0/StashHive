@@ -47,18 +47,17 @@ class SmartTagRule {
   }
 
   Map<String, Object?> toMap() {
-    return SmartTagRule.create(
+    final validated = SmartTagRule.create(
       id: id,
       matchText: matchText,
       suggestedTag: suggestedTag,
-    )._toValidatedMap();
+    );
+    return <String, Object?>{
+      'id': validated.id,
+      'matchText': validated.matchText,
+      'suggestedTag': validated.suggestedTag,
+    };
   }
-
-  Map<String, Object?> _toValidatedMap() => <String, Object?>{
-        'id': id,
-        'matchText': matchText,
-        'suggestedTag': suggestedTag,
-      };
 
   factory SmartTagRule.fromMap(Map<dynamic, dynamic> raw) {
     final id = raw['id'];
