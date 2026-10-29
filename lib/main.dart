@@ -5713,7 +5713,7 @@ class _SmartTagRulesPageState extends State<SmartTagRulesPage> {
                 PremiumPageHeader(
                   title: 'Organize with your own rules',
                   subtitle:
-                      'Create simple rules that suggest tags when a phrase appears in a title, URL or notes.',
+                      'Create simple rules that suggest tags when a phrase appears in a title, URL or notes. Rules stay in this app/browser profile and are not included in JSON backups.',
                 ),
                 const SizedBox(height: 12),
                 Text(
