@@ -190,7 +190,7 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
                 if (!result.isSuccess) {
                   final message = switch (result.state) {
                     ArticleReaderState.invalidUrl =>
-                      'This saved URL is not supported by the reader. Use HTTP or HTTPS on standard ports (80 or 443).',
+                      'The reader supports only credential-free HTTP/HTTPS links on standard ports (80/443).',
                     ArticleReaderState.blockedAddress =>
                       'This address is local or reserved, so StashHive will not request it.',
                     ArticleReaderState.unsupportedContent =>
