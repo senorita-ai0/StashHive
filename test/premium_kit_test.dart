@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:stashhive/main.dart' as app;
 import 'package:stashhive/ui/premium_kit.dart';
 
 void main() {
@@ -13,6 +14,18 @@ void main() {
       expect(PremiumTokens.radiusControl, 17);
       expect(PremiumTokens.pagePadding.left, 20);
       expect(PremiumTokens.pagePadding.right, 20);
+    });
+
+    test('light and dark app themes use the shared brand tokens', () {
+      final light = app.buildLightTheme();
+      final dark = app.buildDarkTheme();
+
+      expect(light.colorScheme.primary, PremiumTokens.brand);
+      expect(dark.colorScheme.primary, PremiumTokens.brandDark);
+      expect(light.scaffoldBackgroundColor, const Color(0xFFF6F8FC));
+      expect(dark.scaffoldBackgroundColor, const Color(0xFF07111F));
+      expect(light.cardTheme.shape, isA<RoundedRectangleBorder>());
+      expect(dark.cardTheme.shape, isA<RoundedRectangleBorder>());
     });
 
     testWidgets('page header presents the title and supporting description',
