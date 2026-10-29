@@ -1,6 +1,6 @@
 # SH-006 — User-initiated article reader design gate
 
-**Status:** Design decision recorded; implementation not started and no tests run.  
+**Status:** Initial reader and selection-source implementation committed; tests and platform behavior remain unverified.  
 **Date:** 2026-10-29
 
 ## Scope for the next implementation slice
@@ -20,7 +20,7 @@ Build an optional, explicit **Open in StashHive reader** action for saved HTTP(S
 
 ### Selection/highlight decision
 
-Do not promise native text selection and highlight anchoring until the rendering approach is proven on Android and web. For the first slice, reuse the existing manual quote/note annotation model. Then prototype selection from the sanitized reader text and store a bounded quote plus surrounding context/offset metadata, tied to the saved item ID. Since page content changes, show saved quotes as personal excerpts and do not claim a highlight will always re-anchor exactly.
+Selection-based quote capture is now prototyped in source using selectable sanitized reader text and an explicit Save highlight action. It stores the quote, bounded surrounding context and UTF-16 offsets in the existing annotation record. Do not promise stable re-anchoring until selection behavior is verified on Android and web. Since page content changes, show saved quotes as personal excerpts and do not claim a highlight will always re-anchor exactly.
 
 ### Implementation sequence
 
