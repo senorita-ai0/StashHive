@@ -3952,6 +3952,187 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     }
   }
 
+  Future<void> _addAnnotation() async {
+    final current = _item;
+    if (current == null) return;
+    if (current.annotations.length >= maxSavedAnnotationsPerItem) {
+      _message('This item already has the maximum of $maxSavedAnnotationsPerItem highlights and notes.');
+      return;
+    }
+
+    final quoteController = TextEditingController();
+    final noteController = TextEditingController();
+    String? validationError;
+    SavedAnnotation? annotation;
+
+    try {
+      annotation = await showDialog<SavedAnnotation>(
+        context: context,
+        builder: (dialogContext) => StatefulBuilder(
+          builder: (context, setDialogState) => AlertDialog(
+            title: const Text('Save a highlight or note'),
+            content: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Paste a quote or excerpt you want to remember, then add your own note if useful. Website text is not fetched automatically.',
+                      style: TextStyle(
+                        color: mutedTextColor(context),
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      key: const ValueKey('annotation-quote'),
+                      controller: quoteController,
+                      minLines: 2,
+                      maxLines: 5,
+                      maxLength: maxSavedAnnotationQuoteCharacters,
+                      decoration: const InputDecoration(
+                        labelText: 'Quote or excerpt (optional)',
+                        hintText: 'Paste the passage you want to keep',
+                        alignLabelWithHint: true,
+                        counterText: '',
+                      ),
+                      onChanged: (_) {
+                        if (validationError != null) {
+                          setDialogState(() => validationError = null);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      key: const ValueKey('annotation-note'),
+                      controller: noteController,
+                      minLines: 2,
+                      maxLines: 4,
+                      maxLength: maxSavedAnnotationNoteCharacters,
+                      decoration: const InputDecoration(
+                        labelText: 'Your note (optional)',
+                        hintText: 'Why is this useful?',
+                        alignLabelWithHint: true,
+                        counterText: '',
+                      ),
+                      onChanged: (_) {
+                        if (validationError != null) {
+                          setDialogState(() => validationError = null);
+                        }
+                      },
+                    ),
+                    if (validationError != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        validationError!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+              FilledButton.icon(
+                onPressed: () {
+                  final quote = quoteController.text.trim();
+                  final note = noteController.text.trim();
+                  if (quote.isEmpty && note.isEmpty) {
+                    setDialogState(
+                      () => validationError = 'Enter a quote or a personal note.',
+                    );
+                    return;
+                  }
+                  Navigator.of(dialogContext).pop(
+                    SavedAnnotation(
+                      id: widget.repository.createUniqueId(),
+                      quote: quote,
+                      note: note,
+                      createdAtMs:
+                          DateTime.now().toUtc().millisecondsSinceEpoch,
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.bookmark_add_outlined),
+                label: const Text('Save annotation'),
+              ),
+            ],
+          ),
+        ),
+      );
+    } finally {
+      quoteController.dispose();
+      noteController.dispose();
+    }
+
+    if (annotation == null || !mounted) return;
+    final updated = current.copyWith(
+      annotations: <SavedAnnotation>[...current.annotations, annotation],
+      updatedAtMs: DateTime.now().toUtc().millisecondsSinceEpoch,
+    );
+    setState(() => _item = updated);
+    try {
+      await widget.repository.save(updated);
+      if (mounted) setState(_reload);
+    } catch (_) {
+      if (mounted) {
+        setState(_reload);
+        _message('Could not save this highlight or note. Please try again.');
+      }
+    }
+  }
+
+  Future<void> _deleteAnnotation(SavedAnnotation annotation) async {
+    final current = _item;
+    if (current == null) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete annotation?'),
+        content: const Text('This removes the saved quote and note from this item.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFFC74A5B),
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    final updated = current.copyWith(
+      annotations: current.annotations
+          .where((saved) => saved.id != annotation.id)
+          .toList(growable: false),
+      updatedAtMs: DateTime.now().toUtc().millisecondsSinceEpoch,
+    );
+    setState(() => _item = updated);
+    try {
+      await widget.repository.save(updated);
+      if (mounted) setState(_reload);
+    } catch (_) {
+      if (mounted) {
+        setState(_reload);
+        _message('Could not delete this annotation. Please try again.');
+      }
+    }
+  }
+
   Future<void> _delete() async {
     final item = _item;
     if (item == null) return;
@@ -4214,6 +4395,134 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                 color: mutedTextColor(context),
                               ),
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Expanded(
+                              child: DetailSectionLabel(
+                                label: 'HIGHLIGHTS & ANNOTATIONS',
+                              ),
+                            ),
+                            OutlinedButton.icon(
+                              key: const ValueKey('add-annotation'),
+                              onPressed: _addAnnotation,
+                              icon: const Icon(Icons.add_rounded),
+                              label: const Text('Add'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          item.annotations.isEmpty
+                              ? 'Keep a quote or a personal note alongside this item. You add the text yourself; StashHive does not scrape the linked page.'
+                              : '${item.annotations.length} of $maxSavedAnnotationsPerItem saved. Quotes and notes are kept in this local library.',
+                          style: TextStyle(
+                            color: mutedTextColor(context),
+                            height: 1.4,
+                          ),
+                        ),
+                        if (item.annotations.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          for (final annotation in item.annotations)
+                            Container(
+                              key: ValueKey('annotation-${annotation.id}'),
+                              width: double.infinity,
+                              margin: const EdgeInsets.only(bottom: 10),
+                              padding: const EdgeInsets.fromLTRB(13, 12, 8, 8),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surface,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: Theme.of(context).dividerColor,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (annotation.quote.trim().isNotEmpty) ...[
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 3,
+                                          constraints: const BoxConstraints(
+                                            minHeight: 24,
+                                          ),
+                                          margin: const EdgeInsets.only(
+                                            top: 2,
+                                            right: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFB87A22),
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: SelectableText(
+                                            '“${annotation.quote}”',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.copyWith(
+                                                  fontStyle: FontStyle.italic,
+                                                  height: 1.45,
+                                                ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                  if (annotation.note.trim().isNotEmpty) ...[
+                                    if (annotation.quote.trim().isNotEmpty)
+                                      const SizedBox(height: 10),
+                                    Text(
+                                      annotation.note,
+                                      style: const TextStyle(height: 1.45),
+                                    ),
+                                  ],
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          'Saved ${_formatDate(DateTime.fromMillisecondsSinceEpoch(annotation.createdAtMs, isUtc: true).toLocal())}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(
+                                                color: mutedTextColor(context),
+                                              ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        key: ValueKey(
+                                          'delete-annotation-${annotation.id}',
+                                        ),
+                                        tooltip: 'Delete annotation',
+                                        onPressed: () =>
+                                            _deleteAnnotation(annotation),
+                                        visualDensity: VisualDensity.compact,
+                                        icon: const Icon(
+                                          Icons.delete_outline_rounded,
+                                          color: Color(0xFFC74A5B),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
                       ],
                     ),
                   ),
