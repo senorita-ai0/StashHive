@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import '../models/link_health_record.dart';
 
@@ -104,6 +105,7 @@ Future<HttpClientResponse> _sendRequest(
       : await client.getUrl(uri).timeout(timeout);
   // Do not follow a redirect automatically: a public website could redirect
   // to a local/private address. Report the redirect instead of probing a second host.
+  request.followRedirects = false;
   request.headers.set(HttpHeaders.acceptHeader, '*/*');
   request.headers.set(HttpHeaders.cacheControlHeader, 'no-cache');
   return request.close().timeout(timeout);
@@ -123,8 +125,8 @@ bool _isPublicAddress(InternetAddress address) {
         (a == 169 && b == 254) ||
         (a == 172 && b >= 16 && b <= 31) ||
         (a == 192 && b == 168) ||
-        (a == 192 && b == 0) ||
-        (a == 192 && b == 2) ||
+        (a == 192 && b == 0 && c == 0) ||
+        (a == 192 && b == 0 && c == 2) ||
         (a == 198 && (b == 18 || b == 19)) ||
         (a == 198 && b == 51 && c == 100) ||
         (a == 192 && b == 88 && c == 99) ||
@@ -158,7 +160,10 @@ bool _isPublicAddress(InternetAddress address) {
     }
     if (ipv4Mapped) {
       return _isPublicAddress(
-        InternetAddress.fromRawAddress(bytes.sublist(12), type: InternetAddressType.IPv4),
+        InternetAddress.fromRawAddress(
+          Uint8List.fromList(bytes.sublist(12)),
+          type: InternetAddressType.IPv4,
+        ),
       );
     }
     return true;
