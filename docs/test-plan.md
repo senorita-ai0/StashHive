@@ -1962,3 +1962,7 @@ Initial regression source is in test/article_reader_test.dart, test/article_read
 - Exercise the reader selection/save callback with an injected temporary article result; verify quote offsets and context bounds without making a network request.
 
 The tests are authored but **not run**. Existing saved-item regression source now also covers round-tripping reader quote offsets/context, legacy annotation compatibility and invalid offset/context bounds. Planned TC-264–TC-268 remain required for request/redirect/DNS safety, byte/time limits, explicit-only network access, no page-content persistence and reader UI states. Add platform-specific selection coverage after the native transport can be exercised deterministically.
+
+### SH-006 visible highlight feedback case — 2026-10-29
+
+The reader widget test source now checks that a successful save presents confirmation on the Reader route and that a failed save shows recoverable feedback while leaving the selected passage available for a retry. This case is authored only and has not been run; Android/web selection and assistive-technology behavior remain pending.
