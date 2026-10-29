@@ -1539,3 +1539,13 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **Regression:** TC-257 plus `test/annotations_widget_test.dart`, `test/saved_item_test.dart`, `test/backup_codec_test.dart`, `test/library_csv_export_test.dart` and `test/selected_items_export_test.dart`.
 - **Scope boundary:** Does not fetch/scrape linked pages and does not yet implement an in-app article reader or selecting text in a rendered page.
 - **Status:** Source and regression tests committed to `main`; tests, formatter, analyzer, web/Android builds and accessibility review have not run. Keep the manual workflow untouched unless the owner requests validation.
+
+
+### TSK-538 — Local smart tag rules (SH-008) — 2026-10-29
+
+- **Requirements:** FR-025; NFR-001–003 and NFR-005.
+- **Source:** Added a pure local phrase-to-tag suggestion engine; case-insensitive matching uses the current title, URL and notes. Rules are length-limited, stored in the local preferences box, bounded to 50, safely ignores malformed persisted records, and rolls back reported late writes.
+- **UI:** Settings → Organization manages rules. Quick Save has a Suggest tags action and review chips with explanations. The user explicitly taps each suggestion to add the tag.
+- **Privacy/portability:** No AI API, network call, automatic page scrape, or silent tag mutation. Rules are preferences, not saved library records, and are excluded from JSON backup v1. Android and web maintain separate local rule lists.
+- **Regression:** TC-258 and `test/smart_tag_rules_test.dart`, `test/smart_tag_rules_widget_test.dart`, repository tests, plus Quick Save review-before-add widget test.
+- **Status:** Source and regression cases are committed on `main`; tests, formatter, analyzer, builds and accessibility checks remain unrun. Do not trigger manual CI without the owner's request.
