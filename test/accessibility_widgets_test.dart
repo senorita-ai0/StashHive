@@ -499,7 +499,7 @@ void main() {
   testWidgets(
     'recovers from a backup size lookup failure and allows a retry',
     (tester) async {
-      const item = SavedItem(
+      final item = SavedItem(
         id: 'backup-retry-source',
         kind: ItemKind.link,
         title: 'Backup retry source',
@@ -574,7 +574,7 @@ void main() {
   testWidgets(
     'recovers from a backup byte-stream failure and allows a retry',
     (tester) async {
-      const item = SavedItem(
+      final item = SavedItem(
         id: 'backup-stream-retry-source',
         kind: ItemKind.link,
         title: 'Backup stream retry source',
@@ -652,7 +652,7 @@ void main() {
     (tester) async {
       final semantics = tester.ensureSemantics();
       addTearDown(semantics.dispose);
-      const item = SavedItem(
+      final item = SavedItem(
         id: 'restore-navigation-guard-source',
         kind: ItemKind.link,
         title: 'Restore navigation guard source',
@@ -777,7 +777,7 @@ void main() {
   testWidgets(
     'releases the restore navigation guard after a failed restore',
     (tester) async {
-      const item = SavedItem(
+      final item = SavedItem(
         id: 'restore-navigation-failure-source',
         kind: ItemKind.link,
         title: 'Existing item to preserve',
@@ -1051,7 +1051,7 @@ void main() {
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
     await repository.save(
-      const SavedItem(
+      SavedItem(
         id: 'small-screen-long-title',
         kind: ItemKind.link,
         title: 'A deliberately long saved title for small screens',
@@ -1243,7 +1243,7 @@ void main() {
       },
     );
     await repository.save(
-      const SavedItem(
+      SavedItem(
         id: 'valid-before-backup',
         kind: ItemKind.link,
         title: 'Readable entry',
@@ -1298,7 +1298,7 @@ void main() {
       },
     );
     await repository.save(
-      const SavedItem(
+      SavedItem(
         id: 'valid-after-corruption',
         kind: ItemKind.link,
         title: 'Valid saved link',
@@ -1387,7 +1387,7 @@ void main() {
       unsafeLegacyItem.toMap(),
     );
     await repository.save(
-      const SavedItem(
+      SavedItem(
         id: 'valid-next-to-unexportable',
         kind: ItemKind.link,
         title: 'Valid entry',
@@ -1558,7 +1558,7 @@ void main() {
     expect(node.hasAction(SemanticsAction.tap), isTrue);
     expect(node.getSemanticsData().hint, 'Select a file, up to 15 megabytes');
 
-    const existingImage = SavedItem(
+    final existingImage = SavedItem(
       id: 'existing-picker-image',
       kind: ItemKind.image,
       title: 'Existing image',
@@ -1660,7 +1660,7 @@ void main() {
   testWidgets('Collection row actions have contextual tooltips', (tester) async {
     await repository.addCollection('Learning');
     await repository.save(
-      const SavedItem(
+      SavedItem(
         id: 'collection-tooltip-link',
         kind: ItemKind.link,
         title: 'Saved for learning',
@@ -1698,7 +1698,7 @@ void main() {
   testWidgets('Collection deletion failure shows recovery feedback', (tester) async {
     await repository.addCollection('Learning');
     await repository.save(
-      const SavedItem(
+      SavedItem(
         id: 'collection-delete-failure',
         kind: ItemKind.link,
         title: 'Keep this item assigned',
@@ -1747,7 +1747,7 @@ void main() {
 
   testWidgets('Item Details overflow menu has an accessible name', (tester) async {
     await repository.save(
-      const SavedItem(
+      SavedItem(
         id: 'details-menu-link',
         kind: ItemKind.link,
         title: 'Details action link',
@@ -1806,7 +1806,7 @@ void main() {
   testWidgets('Search result count is exposed as a live status', (tester) async {
     final semantics = tester.ensureSemantics();
     addTearDown(semantics.dispose);
-    const item = SavedItem(
+    final item = SavedItem(
       id: 'searchable-link',
       kind: ItemKind.link,
       title: 'Accessible Flutter guide',
@@ -1851,7 +1851,7 @@ void main() {
   });
 
   testWidgets('Saved-item action menu is contextual and runs its commands', (tester) async {
-    const item = SavedItem(
+    final item = SavedItem(
       id: 'actions-link',
       kind: ItemKind.link,
       title: 'Accessible Flutter guide',
@@ -1899,7 +1899,7 @@ void main() {
   });
 
   testWidgets('Favorite update failure shows safe storage guidance', (tester) async {
-    const item = SavedItem(
+    final item = SavedItem(
       id: 'favorite-write-failure',
       kind: ItemKind.link,
       title: 'Favorite write test',
@@ -1952,7 +1952,7 @@ void main() {
   testWidgets(
     'Item Details favorite update failure shows safe storage guidance',
     (tester) async {
-      const item = SavedItem(
+      final item = SavedItem(
         id: 'details-favorite-write-failure',
         kind: ItemKind.link,
         title: 'Details favorite test',
@@ -2008,7 +2008,7 @@ void main() {
   testWidgets(
     'Item Details shows loading while attachment bytes await a save commit',
     (tester) async {
-      const item = SavedItem(
+      final item = SavedItem(
         id: 'details-attachment-read-commit',
         kind: ItemKind.image,
         title: 'Image being replaced',
@@ -2079,7 +2079,7 @@ void main() {
   testWidgets(
     'image thumbnails reuse their attachment read across parent rebuilds',
     (tester) async {
-      const image = SavedItem(
+      final image = SavedItem(
         id: 'thumbnail-read-cache',
         kind: ItemKind.image,
         title: 'Thumbnail cache test',
@@ -2132,7 +2132,7 @@ void main() {
   );
 
   testWidgets('Item Details labels native attachment storage accurately', (tester) async {
-    const item = SavedItem(
+    final item = SavedItem(
       id: 'attachment-storage-label',
       kind: ItemKind.image,
       title: 'Storage location sample',
@@ -2182,7 +2182,7 @@ void main() {
 
   testWidgets('Item deletion failure keeps details open and reports an error', (tester) async {
     final bytes = Uint8List.fromList([1, 3, 3, 7]);
-    const item = SavedItem(
+    final item = SavedItem(
       id: 'image-delete-failure',
       kind: ItemKind.image,
       title: 'Keep this image',
@@ -2233,7 +2233,7 @@ void main() {
   testWidgets('favorite state is exposed with a meaningful semantic label', (tester) async {
     final semantics = tester.ensureSemantics();
     addTearDown(semantics.dispose);
-    const item = SavedItem(
+    final item = SavedItem(
       id: 'favorite-link',
       kind: ItemKind.link,
       title: 'Accessible Flutter guide',
@@ -2265,7 +2265,7 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(390, 1000));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
-    const items = <SavedItem>[
+    final items = <SavedItem>[
       SavedItem(
         id: 'search-sort-cedar',
         kind: ItemKind.link,
@@ -2389,7 +2389,7 @@ void main() {
 
 
   testWidgets('rejects oversized search input before scanning saved items', (tester) async {
-    const item = SavedItem(
+    final item = SavedItem(
       id: 'oversized-search-query-target',
       kind: ItemKind.note,
       title: 'Searchable target',
@@ -2431,7 +2431,7 @@ void main() {
     tester,
   ) async {
     await repository.save(
-      const SavedItem(
+      SavedItem(
         id: 'search-filter-note',
         kind: ItemKind.note,
         title: 'Keep planning',
@@ -2498,7 +2498,7 @@ void main() {
   testWidgets(
     'retries an image preview after a transient attachment read failure',
     (tester) async {
-      const item = SavedItem(
+      final item = SavedItem(
         id: 'details-image-preview-retry',
         kind: ItemKind.image,
         title: 'Preview retry sample',
@@ -2568,7 +2568,7 @@ void main() {
     'Item Details reports attachment read failure without leaking storage details',
     (tester) async {
       final bytes = Uint8List.fromList([1, 2, 3, 4]);
-      const item = SavedItem(
+      final item = SavedItem(
         id: 'details-attachment-read-failure',
         kind: ItemKind.document,
         title: 'Read failure document',
