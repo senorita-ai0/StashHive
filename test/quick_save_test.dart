@@ -1092,6 +1092,9 @@ void main() {
       reason: 'Suggestions must never be applied automatically.',
     );
 
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('suggested-tag-smart-rule-design')),
+    );
     await tester.tap(find.byKey(const ValueKey('suggested-tag-smart-rule-design')));
     await tester.pumpAndSettle();
     expect(
