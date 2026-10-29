@@ -1518,3 +1518,13 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **Persistence:** Store only `grid` or `list` in the existing local preferences box. Malformed legacy values fall back to Grid. A failed preference write attempts to restore the previous preference and is surfaced to the user without leaking storage diagnostics.
 - **Regression:** TC-255 and `test/library_layout_mode_test.dart`.
 - **Status:** Source and regression cases committed to `main`; no formatter, analyzer, tests, web/Android builds or device checks have run. CI remains manual-only.
+
+
+### TSK-536 — Reading status and progress (SH-010 partial slice)
+
+- **Requirements:** FR-023; SH-010.
+- **Model:** Saved items now serialize `readingStatus` (Unread/In progress/Completed) and integer `readingProgress` (0–100). Older item maps that lack these keys default to Unread/0%; invalid status/progress values are rejected.
+- **UI:** Item Details exposes status selection and a 0–100% progress slider. Status selection coordinates progress; moving the slider updates the status. Changes persist through the existing local repository and JSON backup item serialization.
+- **Privacy:** This is a user-managed reading tracker only; it does not monitor external-site activity, and no network calls or background reminders were added.
+- **Regression:** `test/saved_item_test.dart` covers serialization, legacy defaults and invalid values; `test/quick_save_test.dart` covers saving Completed from Item Details. TC-256 documents the broader acceptance check.
+- **Status:** Source/test changes committed to `main`; tests, formatter, analyzer, web/Android builds and UI/accessibility checks have not run. The rediscovery/revisit view remains outstanding. CI remains manual-only.
