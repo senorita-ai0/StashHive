@@ -1181,3 +1181,9 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - Changed timeout accounting to a single deadline spanning DNS lookup, request setup, response headers and response body. Content type/status handling and hard response/display caps are now straightforward to exercise with synthetic responses.
 - Added cases for success/sanitization, redirects, unsupported MIME, response cap, displayed text cap, private and mixed DNS, a reserved IPv4 address matrix, DNS timeout and unsuccessful HTTP statuses. Added malformed unclosed script/comment tests so remaining active markup tails are discarded rather than shown as article prose. Added test/article_reader_repository_test.dart for no fetch before the explicit action, exactly one reader load after tap, unchanged saved record after opening a preview, selected-quote-only persistence, and backup round-trip of only the saved quote annotation (not the full reader text). All tests remain unrun.
 - Source review caught and corrected malformed expressions during the malformed-HTML sanitizer and hostname-validation updates; the complete affected functions were re-fetched after repair. No formatter, analyzer, tests, Android build or web build were run. CI remains manual-only.
+
+## SH-006 — reader save feedback polish — 2026-10-29
+
+- Moved highlight success/failure snackbars to the Reader screen itself. The Item Details persistence callback now returns a result without showing feedback behind the pushed route.
+- Added widget regression source that checks failure feedback remains visible and the selected passage stays available for another save attempt.
+- Test source is committed but not executed. No formatting, analyzer, unit/widget tests, Android build or web build were run. CI remains manual-only.
