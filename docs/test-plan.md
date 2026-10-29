@@ -1979,3 +1979,9 @@ The reader widget test source now checks that a successful save presents confirm
 ### TC-267 update — reader content export boundary (2026-10-29)
 
 The repository widget regression source now checks three export formats after saving a user-selected quote: versioned JSON backup, library CSV and selected-items Markdown. Each must preserve the saved item's content and quote annotation without including the complete temporary fetched article body. This test source is not run; actual export/share behavior and platform checks remain pending.
+
+
+### TC-268 update — Reader accessibility semantics (2026-10-29)
+
+- A widget regression holds an injected article load pending and checks that the loading progress indicator is exposed with the semantic label “Loading article text”.
+- The Reader source now labels save progress and marks article/error titles as headings. These semantics are authored, not verified: test execution, keyboard/text-selection behavior and Android/web screen-reader checks remain pending.
