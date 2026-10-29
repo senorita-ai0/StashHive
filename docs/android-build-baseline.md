@@ -20,7 +20,7 @@
 | AGP built-in Kotlin | enabled via `android.builtInKotlin=true` |
 | Legacy AGP DSL compatibility | `android.newDsl=false` |
 
-JDK runtime and application bytecode targets are intentionally different: Gradle runs on JDK 27, while StashHive and its Kotlin sources target JVM 17. The app module does not apply `org.jetbrains.kotlin.android` when AGP built-in Kotlin is enabled; the version declaration is retained in `settings.gradle.kts` to match the reference projects' plugin-management convention.
+JDK runtime and application bytecode targets are intentionally different: Gradle runs on JDK 27, while StashHive and its Kotlin sources target JVM 17. The app module does not apply either `org.jetbrains.kotlin.android` or the `kotlin-android` alias when AGP built-in Kotlin is enabled; the version declaration is retained in `settings.gradle.kts` to match the reference projects' plugin-management convention. The configurator handles both spellings used by generated Flutter templates.
 
 Gradle uses 9.8.2 rather than FinMate/Stockly's 9.8.0 wrapper. The [Gradle 9.8.2 release notes](https://docs.gradle.org/9.8.2/release-notes.html) recommend this patch; it includes the three high-rated vulnerability fixes from 9.8.1, fixes an additional Gradle 9.8 warning, and supports JDK 27. The [AGP 9.4.0 compatibility table](https://developer.android.com/build/releases/agp-9-4-0-release-notes) lists Gradle 9.6.0 as the minimum and JDK 17 as the minimum; the selected wrapper/JDK exceed those minimums.
 
