@@ -109,3 +109,12 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - **Now source-implemented:** selection-based quote capture stores the selected text, bounded surrounding context and offsets in the existing annotation record; Item Details shows the context to help identify excerpts. **Still incomplete:** platform verification, robust article extraction/readability quality and final regression evidence. Native fetch behavior, security edge cases, web UX, analyzer, formatter, unit/widget tests, Android build and web build remain unverified. Do not mark SH-006 complete.
 - CI remains manual-only; no workflow, build, formatter, analyzer or test command was run for this source increment.
 - Latest source increments include 3f2e1fb (select and save reader passages), 7bcb082 (persist quote offsets/context), and cda6eee (preserve external-browser opening when reader blocks a target). Re-check HEAD before the next edit.
+
+## SH-006 deterministic transport regression increment — 2026-10-29
+
+- Refactored the native reader into a testable DNS/transport boundary without changing production networking: production still uses OS DNS, vetted/pinned public IPv4 sockets and direct HTTP; test-only hooks can supply DNS answers and synthetic responses.
+- The synthetic native response policy now has regression source for a sanitized HTML success path, redirect responses, unsupported MIME, oversize response, display-text truncation, private DNS, mixed public/private DNS, DNS timeout, HTTP error response and transport timeout.
+- Enforced one absolute deadline across DNS resolution, request/response phases and body reading, rather than restarting the full timeout at every stage.
+- TC-265 and TC-266 now have partial regression source; TC-264, TC-267 and TC-268 still need their full repository/platform assertions.
+- No tests, formatter, analyzer or builds were run. These test additions and the total-deadline change are source-reviewed only; Android/web behavior is still unverified. CI remains manual-only.
+- Latest source commits include b3cf2b9 (injectable native response boundary), 64368d5 (single overall request deadline), and ebde331 (private/mixed DNS and HTTP error regressions); documentation updates follow separately.
