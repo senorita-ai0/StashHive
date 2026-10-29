@@ -4,7 +4,7 @@
 
 StashHive is a personal digital library for saving links, notes, screenshots, images, PDFs and documents and finding them later from one local library.
 
-> **Current status: Phase 2/3 source work is in progress; verification is intentionally deferred.** Before Phase 2, dependency resolution, formatting, analysis, unit tests and the web release build passed in GitHub Actions. The Android debug build later failed because the generated Android runner could not resolve the FilePickerPlugin class referenced by GeneratedPluginRegistrant.java. The file_picker dependency was moved to 12.3.0 as a candidate fix for the known 11.x/AGP 9 issue; it is not verified until the manual build. CI is manual-only, and no post-Phase 2/3 build or test has been run.
+> **Current status: premium UI and Android toolchain alignment are committed to source; verification remains intentionally deferred to the manual checkpoint.** Before Phase 2, dependency resolution, formatting, analysis, unit tests and the web release build passed in GitHub Actions. The Android debug build later failed because the generated Android runner could not resolve the FilePickerPlugin class referenced by GeneratedPluginRegistrant.java. The file_picker dependency was moved to 12.3.0 as a candidate fix for the known 11.x/AGP 9 issue; it is not verified until the manual build. CI is manual-only, and no post-Phase 2/3 build or test has been run.
 
 ## Product principles
 
@@ -18,6 +18,8 @@ StashHive is a personal digital library for saving links, notes, screenshots, im
 ## Product identity and compatibility
 
 The current user-facing brand is **StashHive**. The Dart package name (`stashhive`), Hive store keys (`stashhive_*_v1`) and version-1 JSON backup marker (`StashHive`) are retained. Import compatibility for older StashTrail backups is preserved.
+
+The visual system now uses the shared premium component kit from FinMate and Stockly, adapted to StashHive's own library flows and hive branding. This includes the blue/mint palette, Material 3 typography, rounded cards and controls, common page headers, hero panels and empty states.
 
 ## Proposed platforms
 
@@ -60,18 +62,16 @@ OCR/PDF text extraction, in-app PDF rendering, cloud sync, accounts, public shar
 
 ## Run locally
 
-Install the stable Flutter SDK and Android tooling. If the checkout has no platform runners, generate them once:
+Use **Flutter 3.47.2** and **JDK 27** for the current Android baseline. The generated Android build is normalized to **AGP 9.4.0**, **Kotlin 2.4.10**, **Gradle 9.8.1**, compile SDK 36 and Build Tools 36.1.0. If the checkout has no platform runners, generate them once and apply the two StashHive configurators:
 
 ```bash
 flutter create --project-name stashhive --platforms=android,web .
+python3 tool/configure_android_build.py
+python3 tool/configure_android_share_intents.py
 flutter pub get
-dart format lib test
-flutter analyze --no-fatal-infos
-flutter test
-flutter run -d chrome
 ```
 
-For Android, attach an emulator/device and run `flutter run -d android`. The Android share filters are applied by `python3 tool/configure_android_share_intents.py` after a runner is generated. The validation workflow is manual-only; dispatch it from GitHub Actions at a deliberate build checkpoint.
+For normal local development, run `flutter run -d chrome` or attach an emulator/device and run `flutter run -d android`. The formatting, analyzer, tests and builds are deliberately not run by source updates; the GitHub Actions workflow remains manual-only. Review [the Android build baseline](docs/android-build-baseline.md) before intentionally running the final validation checkpoint.
 
 **Data warning:** Android app-private data can disappear on uninstall; browser data can disappear when site data is cleared. Save backups somewhere you control. The Android and browser libraries do not sync.
 
@@ -87,7 +87,7 @@ flutter pub get
 flutter run -d android
 ```
 
-The configurator is idempotent, sets the generated Android launcher label to StashHive, and registers the supported link/text/image/document share types. Incoming batches are reviewed sequentially in Quick Save, one draft at a time; each supported item must be explicitly saved or canceled, and unsupported items are skipped with feedback. StashHive does not silently save external content. To run verification, open **Actions → Manual Flutter validation → Run workflow**. Pushes to `main` do not start CI.
+The Android build configurator aligns the generated Gradle/JDK/Flutter toolchain and writes the blue-and-mint adaptive hive launcher assets. The share configurator is idempotent, sets the StashHive label/icon references and registers supported link/text/image/document share types. Incoming batches are reviewed sequentially in Quick Save, one draft at a time; each supported item must be explicitly saved or canceled, and unsupported items are skipped with feedback. StashHive does not silently save external content. To run verification, open **Actions → Manual Flutter validation → Run workflow**. Pushes to `main` do not start CI.
 
 ## License
 
