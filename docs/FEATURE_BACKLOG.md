@@ -169,3 +169,10 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Use the response-header charset first; if absent for HTML, inspect at most the first 1,024 bytes for a direct meta charset or legacy http-equiv/content declaration.
 - [x] Add TC-273 and TC-274 regression source for a Windows-1252 euro byte decoded via both HTML declaration forms.
 - [ ] Run the Reader charset and complete regression suites at the owner-approved manual validation checkpoint; tests remain unexecuted.
+
+
+## SH-006 — ignore embedded fake charset declarations — TC-275 (2026-10-29)
+
+- [x] Remove HTML comments and script/style/noscript blocks from the bounded meta charset scan before extracting encoding hints.
+- [x] Add TC-275 regression source with fake charset tags in comment/script content.
+- [ ] Run TC-273–TC-275 and the complete Reader regression suite at the owner-approved manual validation checkpoint; tests remain unexecuted.
