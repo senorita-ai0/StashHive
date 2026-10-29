@@ -227,7 +227,7 @@ def configure_android_build(android_dir: str | Path) -> list[str]:
     # Kotlin plugin declared in settings for compatibility but do not apply it
     # to the app module when android.builtInKotlin=true.
     app_build = re.sub(
-        r"(?m)^\\s*id\\([\"']org\\.jetbrains\\.kotlin\\.android[\"']\\)\\s*\\n",
+        r"(?m)^\s*id\([\"']org\.jetbrains\.kotlin\.android[\"']\)\s*\n",
         "",
         app_build,
     )
