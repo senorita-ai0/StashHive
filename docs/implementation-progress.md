@@ -1247,3 +1247,10 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Updated native `_extractTitle` to strip script/style/noscript/SVG/iframe/object/template blocks and comments before looking for the document title. Sanitization still decodes supported entities to plain text and caps titles at 300 characters.
 - Added an injected HTML response test with a fake title in a script string, another in a comment, and the real `Actual &amp; useful title`; it checks that the actual title and article body are retained.
 - Source review found a malformed duplicate residual tail after the first title-extractor write; rebuilt the IO file using the verified prefix and a single complete title function plus the single existing public-address helper. Re-fetched and confirmed one definition each for the native loader, fetcher, parser, charset parser, decoder, title extractor and public-address helper. Commits: a774ec0 and 627717f. No tests/formatter/analyzer/builds were run; CI remains manual-only.
+
+
+## SH-006 — UTF-8 BOM reader decoding (2026-10-29)
+
+- Added a native decoder guard for UTF-8 BOM bytes so the encoding signature is removed before article text is sanitized/displayed.
+- Added a deterministic injected plain-text response regression with BOM bytes and an assertion that the first character is not U+FEFF (TC-270).
+- Re-fetched the committed decoder and test source to confirm the decoder and regression each appear once. No formatter, analyzer, test, build or CI run was performed; Android/web behavior remains unverified.
