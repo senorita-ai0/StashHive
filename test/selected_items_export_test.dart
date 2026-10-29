@@ -10,6 +10,8 @@ SavedItem makeExportItem({
   List<String> tags = const <String>['Reading'],
   String? collection = 'Learning',
   bool favorite = true,
+  ReadingStatus readingStatus = ReadingStatus.unread,
+  int readingProgress = 0,
   String? attachmentName,
 }) =>
     SavedItem(
@@ -21,6 +23,8 @@ SavedItem makeExportItem({
       tags: tags,
       collection: collection,
       isFavorite: favorite,
+      readingStatus: readingStatus,
+      readingProgress: readingProgress,
       createdAtMs: 1000,
       updatedAtMs: 1000,
       attachmentKey: attachmentName == null ? null : 'attachment-$id',
@@ -34,6 +38,8 @@ void main() {
       final markdown = buildSelectedItemsMarkdown(<SavedItem>[
         makeExportItem(
           title: 'A title\ncontinued',
+          readingStatus: ReadingStatus.inProgress,
+          readingProgress: 45,
           attachmentName: 'guide.pdf',
           url: null,
         ),
@@ -45,8 +51,8 @@ void main() {
       expect(markdown, contains('- Collection: Learning'));
       expect(markdown, contains('- Tags: Reading'));
       expect(markdown, contains('- Favorite: yes'));
-    expect(markdown, contains('- Reading status: In progress'));
-    expect(markdown, contains('- Reading progress: 45%'));
+      expect(markdown, contains('- Reading status: In progress'));
+      expect(markdown, contains('- Reading progress: 45%'));
       expect(markdown, contains('- Attachment: guide.pdf'));
       expect(markdown, contains('Useful notes'));
       expect(markdown, isNot(contains('attachment-one')));
