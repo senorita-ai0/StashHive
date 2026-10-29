@@ -20,6 +20,7 @@ import 'services/duplicate_detector.dart';
 import 'services/library_csv_export.dart';
 import 'services/mime_types.dart';
 import 'services/search_filters.dart';
+import 'services/smart_tag_rules.dart';
 import 'services/selected_items_export.dart';
 import 'services/share_intake.dart';
 import 'services/web_url.dart';
@@ -2916,6 +2917,7 @@ class _QuickSavePageState extends State<QuickSavePage> {
   bool _pickingAttachment = false;
   bool _allowSaveCompletionPop = false;
   int _attachmentSelectionRevision = 0;
+  List<SmartTagSuggestion> _tagSuggestions = const <SmartTagSuggestion>[];
 
   @override
   void initState() {
@@ -3037,6 +3039,64 @@ class _QuickSavePageState extends State<QuickSavePage> {
       if (tag.isNotEmpty && seen.add(tag.toLowerCase())) result.add(tag);
     }
     return result;
+  }
+
+  void _suggestTagsFromCurrentDraft() {
+    if (_saving || _pickingAttachment) return;
+    if (_tagsController.text.length > maxQuickSaveTagsInputCharacters) {
+      _showMessage(
+        'Tag input must be $maxQuickSaveTagsInputCharacters characters or shorter.',
+      );
+      return;
+    }
+    final suggestions = suggestSmartTags(
+      title: _titleController.text,
+      url: _urlController.text,
+      content: _contentController.text,
+      existingTags: _parseTags(),
+      rules: widget.repository.smartTagRules,
+    );
+    setState(() => _tagSuggestions = suggestions);
+    if (suggestions.isEmpty) {
+      _showMessage(
+        'No smart tag rules matched this draft. You can create rules in Settings.',
+      );
+    }
+  }
+
+  void _addSuggestedTag(SmartTagSuggestion suggestion) {
+    if (_saving || _pickingAttachment) return;
+    if (_tagsController.text.length > maxQuickSaveTagsInputCharacters) {
+      _showMessage(
+        'Tag input must be $maxQuickSaveTagsInputCharacters characters or shorter.',
+      );
+      return;
+    }
+    final tags = _parseTags();
+    if (tags.any((tag) => tag.toLowerCase() == suggestion.tag.toLowerCase())) {
+      setState(() {
+        _tagSuggestions = _tagSuggestions
+            .where((entry) => entry.tag.toLowerCase() != suggestion.tag.toLowerCase())
+            .toList(growable: false);
+      });
+      return;
+    }
+    if (tags.length >= 100) {
+      _showMessage('Use 100 tags or fewer for each saved item.');
+      return;
+    }
+    final nextTags = <String>[...tags, suggestion.tag];
+    final nextValue = nextTags.join(', ');
+    if (nextValue.length > maxQuickSaveTagsInputCharacters) {
+      _showMessage('Adding this tag would make the tag field too long.');
+      return;
+    }
+    _tagsController.text = nextValue;
+    setState(() {
+      _tagSuggestions = _tagSuggestions
+          .where((entry) => entry.tag.toLowerCase() != suggestion.tag.toLowerCase())
+          .toList(growable: false);
+    });
   }
 
   Future<bool> _confirmDuplicateLinkSave(SavedItem candidate) async {
@@ -3412,6 +3472,47 @@ class _QuickSavePageState extends State<QuickSavePage> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: OutlinedButton.icon(
+                        key: const ValueKey('suggest-smart-tags'),
+                        onPressed: (_saving || _pickingAttachment)
+                            ? null
+                            : _suggestTagsFromCurrentDraft,
+                        icon: const Icon(Icons.auto_awesome_rounded),
+                        label: const Text('Suggest tags'),
+                      ),
+                    ),
+                    if (_tagSuggestions.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        'Suggestions from your local rules. Tap a tag to add it.',
+                        style: TextStyle(
+                          color: mutedTextColor(context),
+                          fontSize: 12,
+                          height: 1.35,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final suggestion in _tagSuggestions)
+                            ActionChip(
+                              key: ValueKey('suggested-tag-${suggestion.ruleId}'),
+                              avatar: const Icon(Icons.add_rounded, size: 16),
+                              label: Text(suggestion.tag),
+                              tooltip:
+                                  'Suggested because the draft contains "${suggestion.matchText}".',
+                              onPressed: (_saving || _pickingAttachment)
+                                  ? null
+                                  : () => _addSuggestedTag(suggestion),
+                            ),
+                        ],
+                      ),
+                    ],
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String?>(
                       initialValue: _collection,
@@ -5309,6 +5410,23 @@ class SettingsPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               PremiumSection(
+                title: 'ORGANIZATION',
+                children: [
+                  SettingsRow(
+                    icon: Icons.auto_awesome_rounded,
+                    title: 'Smart tag rules',
+                    subtitle: 'Create local rules that suggest tags before saving',
+                    color: PremiumTokens.brand,
+                    onTap: () => Navigator.of(context).push<void>(
+                      MaterialPageRoute<void>(
+                        builder: (_) => SmartTagRulesPage(repository: repository),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              PremiumSection(
                 title: 'YOUR DATA',
                 children: [
                   SettingsRow(
@@ -5372,6 +5490,297 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class SmartTagRulesPage extends StatefulWidget {
+  const SmartTagRulesPage({required this.repository, super.key});
+
+  final LibraryRepository repository;
+
+  @override
+  State<SmartTagRulesPage> createState() => _SmartTagRulesPageState();
+}
+
+class _SmartTagRulesPageState extends State<SmartTagRulesPage> {
+  late List<SmartTagRule> _rules = widget.repository.smartTagRules;
+  bool _savingRule = false;
+
+  void _message(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  Future<void> _addRule() async {
+    if (_savingRule) return;
+    if (_rules.length >= maxSmartTagRules) {
+      _message('StashHive supports up to $maxSmartTagRules smart-tag rules.');
+      return;
+    }
+
+    final matchController = TextEditingController();
+    final tagController = TextEditingController();
+    String? validationError;
+    SmartTagRule? rule;
+
+    try {
+      rule = await showDialog<SmartTagRule>(
+        context: context,
+        builder: (dialogContext) => StatefulBuilder(
+          builder: (context, setDialogState) => AlertDialog(
+            title: const Text('Create smart tag rule'),
+            content: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'When title, URL or notes contain a phrase, offer a tag for you to review in Quick Save. Rules run locally and never add tags automatically.',
+                      style: TextStyle(
+                        color: mutedTextColor(context),
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      key: const ValueKey('smart-tag-match-text'),
+                      controller: matchController,
+                      maxLength: maxSmartTagMatchCharacters,
+                      decoration: const InputDecoration(
+                        labelText: 'Text to look for',
+                        hintText: 'design',
+                        helperText: 'Matches are case-insensitive.',
+                        counterText: '',
+                      ),
+                      onChanged: (_) {
+                        if (validationError != null) {
+                          setDialogState(() => validationError = null);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      key: const ValueKey('smart-tag-suggested-tag'),
+                      controller: tagController,
+                      maxLength: 100,
+                      decoration: const InputDecoration(
+                        labelText: 'Tag to suggest',
+                        hintText: 'Design',
+                        counterText: '',
+                      ),
+                      onChanged: (_) {
+                        if (validationError != null) {
+                          setDialogState(() => validationError = null);
+                        }
+                      },
+                    ),
+                    if (validationError != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        validationError!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+              FilledButton.icon(
+                onPressed: () {
+                  try {
+                    final created = SmartTagRule.create(
+                      id: widget.repository.createUniqueId(),
+                      matchText: matchController.text,
+                      suggestedTag: tagController.text,
+                    );
+                    Navigator.of(dialogContext).pop(created);
+                  } on FormatException catch (error) {
+                    setDialogState(() => validationError = error.message);
+                  }
+                },
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('Save rule'),
+              ),
+            ],
+          ),
+        ),
+      );
+    } finally {
+      matchController.dispose();
+      tagController.dispose();
+    }
+
+    if (rule == null || !mounted) return;
+    setState(() => _savingRule = true);
+    try {
+      await widget.repository.saveSmartTagRule(rule);
+      if (mounted) {
+        setState(() => _rules = widget.repository.smartTagRules);
+        _message('Smart tag rule saved.');
+      }
+    } catch (error) {
+      if (mounted) {
+        _message(
+          _messageForOperationError(
+            error,
+            fallback: 'Could not save the smart tag rule. Please try again.',
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _savingRule = false);
+    }
+  }
+
+  Future<void> _deleteRule(SmartTagRule rule) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete smart tag rule?'),
+        content: Text(
+          'The rule for "${rule.matchText}" suggesting "${rule.suggestedTag}" will be removed. Existing tags on saved items will stay unchanged.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFFC74A5B),
+            ),
+            child: const Text('Delete rule'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _savingRule = true);
+    try {
+      await widget.repository.deleteSmartTagRule(rule.id);
+      if (mounted) setState(() => _rules = widget.repository.smartTagRules);
+    } catch (error) {
+      if (mounted) {
+        _message(
+          _messageForOperationError(
+            error,
+            fallback: 'Could not delete the smart tag rule. Please try again.',
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _savingRule = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Smart tag rules'),
+        actions: [
+          IconButton(
+            key: const ValueKey('add-smart-tag-rule'),
+            tooltip: 'Add smart tag rule',
+            onPressed: _savingRule || _rules.length >= maxSmartTagRules
+                ? null
+                : _addRule,
+            icon: const Icon(Icons.add_rounded),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 820),
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+              children: [
+                PremiumPageHeader(
+                  title: 'Organize with your own rules',
+                  subtitle:
+                      'Create simple rules that suggest tags when a phrase appears in a title, URL or notes.',
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  '${_rules.length} of $maxSmartTagRules rules used. Suggestions are always optional and are never applied automatically.',
+                  style: TextStyle(
+                    color: mutedTextColor(context),
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                if (_rules.isEmpty)
+                  PremiumEmptyState(
+                    icon: Icons.auto_awesome_rounded,
+                    title: 'No smart rules yet',
+                    message:
+                        'Start with a phrase like “design” and the tag you want StashHive to suggest.',
+                    actionLabel: 'Create first rule',
+                    onAction: _savingRule || _rules.length >= maxSmartTagRules
+                        ? null
+                        : _addRule,
+                  )
+                else
+                  for (final rule in _rules)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Card(
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
+                          leading: const SettingIcon(icon: Icons.auto_awesome_rounded),
+                          title: Text('Suggest “${rule.suggestedTag}”'),
+                          subtitle: Text(
+                            'When title, URL or notes contain “${rule.matchText}”',
+                            style: TextStyle(color: mutedTextColor(context)),
+                          ),
+                          trailing: IconButton(
+                            tooltip: 'Delete rule for ${rule.matchText}',
+                            onPressed: _savingRule ? null : () => _deleteRule(rule),
+                            icon: const Icon(
+                              Icons.delete_outline_rounded,
+                              color: Color(0xFFC74A5B),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                if (_rules.length >= maxSmartTagRules)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      'You have reached the $maxSmartTagRules-rule limit. Delete a rule before adding another.',
+                      style: TextStyle(color: mutedTextColor(context)),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      floatingActionButton: _rules.isNotEmpty
+          ? FloatingActionButton.extended(
+              onPressed: _savingRule || _rules.length >= maxSmartTagRules
+                  ? null
+                  : _addRule,
+              icon: const Icon(Icons.add_rounded),
+              label: const Text('Add rule'),
+            )
+          : null,
     );
   }
 }
