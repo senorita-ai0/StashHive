@@ -1608,3 +1608,5 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Implementation:** `SavedItem.createdAt` and `updatedAt` now route through a shared timestamp-range guard before constructing a local `DateTime`, using the same fixed `FormatException` as model parsing and serialization.
 - **Regression:** TC-237 accesses the date getters on directly constructed models whose created/updated timestamps exceed the supported bounds, and retains an in-range control.
 - **Verification:** Regression source is committed but unrun. Validate the model and repository timestamp paths together at the manual checkpoint.
+
+| SH-003 | SCR-001 | TSK-534 | TC-247, bulk_actions_widget_test.dart | PARTIAL SOURCE IMPLEMENTED — export-selected remains open; tests and platform verification pending |
