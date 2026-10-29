@@ -185,7 +185,9 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          CircularProgressIndicator(),
+                          CircularProgressIndicator(
+                            semanticsLabel: 'Loading article text',
+                          ),
                           SizedBox(height: 16),
                           Text('Loading this page only because you asked to read it…'),
                         ],
@@ -260,11 +262,14 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
                       ),
                     ),
                     const SizedBox(height: 22),
-                    Text(
-                      (result.title?.trim().isNotEmpty ?? false)
-                          ? result.title!
-                          : widget.savedTitle,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                    Semantics(
+                      header: true,
+                      child: Text(
+                        (result.title?.trim().isNotEmpty ?? false)
+                            ? result.title!
+                            : widget.savedTitle,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     SelectableText(
@@ -315,7 +320,10 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
                                       ? const SizedBox(
                                           width: 16,
                                           height: 16,
-                                          child: CircularProgressIndicator(strokeWidth: 2),
+                                          child: CircularProgressIndicator(
+                                            semanticsLabel: 'Saving highlight',
+                                            strokeWidth: 2,
+                                          ),
                                         )
                                       : const Icon(Icons.bookmark_add_outlined),
                                   label: Text(_savingQuote ? 'Saving…' : 'Save highlight'),
@@ -377,7 +385,14 @@ class _ReaderMessage extends StatelessWidget {
             children: [
               Icon(icon, size: 46, color: Theme.of(context).colorScheme.primary),
               const SizedBox(height: 16),
-              Text(title, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
+              Semantics(
+                header: true,
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
               const SizedBox(height: 10),
               Text(message, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.5)),
               const SizedBox(height: 20),
