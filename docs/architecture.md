@@ -193,3 +193,8 @@ The user-facing product brand is StashHive. Keep the existing `stashhive` Dart p
 ### Reader response character encoding
 
 The native article reader honors declared Windows-1252 (windows-1252 and cp1252) with an explicit mapping for its special 0x80–0x9F byte range. It keeps Latin-1/ISO-8859-1 separate and otherwise falls back to UTF-8 with malformed sequences replaced. Encoding regressions are source-authored and remain unverified until the manual validation checkpoint; this is not a promise of complete charset detection or full Readability support.
+
+
+### Native Reader title extraction
+
+The native Reader extracts the document title only after removing active embedded blocks and HTML comments from the source, then sanitizes the title to plain text and caps it at 300 characters. This avoids selecting a title-looking fragment embedded in a script string/comment; the regex-based implementation is still a lightweight fallback, not a standards-complete HTML parser. Regression source exists but remains unrun until the manual validation checkpoint.
