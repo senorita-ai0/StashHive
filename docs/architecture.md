@@ -203,3 +203,8 @@ The native Reader extracts the document title only after removing active embedde
 ### Native Reader bounded HTML charset prescan — 2026-10-29
 
 Character decoding prefers the server's Content-Type charset. When an HTML response lacks that parameter, the native reader inspects at most the first 1,024 response bytes for a direct meta charset or the legacy http-equiv/content declaration. This is a targeted compatibility fallback; it does not implement the complete HTML encoding sniffing algorithm, and tests/platform behavior remain unverified until the manual checkpoint.
+
+
+### Native Reader rejects embedded meta charset lookalikes — 2026-10-29
+
+Before extracting a charset from the bounded HTML prefix, native parsing strips HTML comments and script/style/noscript blocks. This is a small defensive filter: apparent meta tags inside embedded content must not influence text decoding. TC-275 covers the behavior; tests and platform verification remain pending.
