@@ -1690,7 +1690,7 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
-| Decode explicit Windows-1252 charset without misrendering euro/punctuation bytes | lib/services/article_reader_io.dart (_decodeText) | TC-269; synthetic quoted charset response in test/article_reader_test.dart | Source + test authored; not run |
+| Decode explicit Windows-1252 / cp1252 without misrendering euro/punctuation bytes and keep Latin-1 distinct | lib/services/article_reader_io.dart (_decodeText) | TC-269; synthetic quoted charset response in test/article_reader_test.dart | Source + test authored; not run |
 
 
 ## SH-006 export-boundary regression update — 2026-10-29
