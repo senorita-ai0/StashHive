@@ -15,6 +15,7 @@ import 'data/library_repository.dart';
 import 'models/saved_item.dart';
 import 'services/bounded_bytes_reader.dart';
 import 'services/share_intake.dart';
+import 'services/search_filters.dart';
 import 'services/mime_types.dart';
 import 'services/backup_codec.dart';
 import 'services/duplicate_detector.dart';
@@ -1471,8 +1472,8 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   late final TextEditingController _controller =
       TextEditingController(text: widget.initialQuery);
-  String _filter = 'All';
-  String _sort = 'Recently saved';
+  late SearchFilters _filters = SearchFilters(query: widget.initialQuery);
+  late List<SavedSearchPreset> _presets = widget.repository.savedSearchPresets;
 
   @override
   void dispose() {
@@ -1480,26 +1481,339 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
-  List<SavedItem> _search(List<SavedItem> items) {
-    final rawQuery = _controller.text;
-    // Avoid trimming/lowercasing a very large query or scanning every item
-    // when the input exceeds the supported search length.
-    if (rawQuery.length > maxSearchQueryCharacters) {
-      return const <SavedItem>[];
-    }
-    final normalizedQuery = rawQuery.trim().toLowerCase();
-    final results = items.where((item) {
-      final kindMatch = _filter == 'All' || item.kind.pluralLabel == _filter;
-      return kindMatch && item.matchesNormalizedQuery(normalizedQuery);
-    }).toList();
+  int get _activeAdvancedFilterCount => <bool>[
+        _filters.tag != null,
+        _filters.collection != null,
+        _filters.domain.isNotEmpty,
+        _filters.favoritesOnly,
+        _filters.dateRange != SavedSearchDateRange.anyTime,
+      ].where((isActive) => isActive).length;
 
-    final sortMode = switch (_sort) {
-      'Title A–Z' => SavedItemSort.titleAZ,
-      'Oldest first' => SavedItemSort.oldestFirst,
-      _ => SavedItemSort.recentlySaved,
-    };
-    results.sort((a, b) => compareSavedItemsForSort(a, b, sortMode));
-    return results;
+  List<String> _tagOptions() {
+    final byNormalizedName = <String, String>{};
+    for (final item in widget.repository.items.value) {
+      for (final tag in item.tags) {
+        byNormalizedName.putIfAbsent(tag.toLowerCase(), () => tag);
+        if (byNormalizedName.length >= 200) break;
+      }
+      if (byNormalizedName.length >= 200) break;
+    }
+    final result = byNormalizedName.values.toList()
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    final selected = _filters.tag;
+    if (selected != null &&
+        !result.any((value) => value.toLowerCase() == selected.toLowerCase())) {
+      result.insert(0, selected);
+    }
+    return result;
+  }
+
+  List<SavedItem> _search(List<SavedItem> items) =>
+      filterSavedItems(items, _filters);
+
+  void _clearAllFilters() {
+    _controller.clear();
+    setState(() => _filters = const SearchFilters());
+  }
+
+  Future<void> _showAdvancedFilters() async {
+    final currentItems = widget.repository.items.value;
+    final tagOptions = _tagOptions();
+    final collectionOptions = widget.repository.collections.value.toList();
+    var selectedTag = _filters.tag ?? '';
+    var selectedCollection = _filters.collection ?? '';
+    var favoritesOnly = _filters.favoritesOnly;
+    var dateRange = _filters.dateRange;
+    var domainError = false;
+    final domainController = TextEditingController(text: _filters.domain);
+
+    if (selectedCollection.isNotEmpty &&
+        !collectionOptions.any(
+          (name) => name.toLowerCase() == selectedCollection.toLowerCase(),
+        )) {
+      collectionOptions.insert(0, selectedCollection);
+    }
+
+    try {
+      final applied = await showDialog<SearchFilters>(
+        context: context,
+        builder: (dialogContext) => StatefulBuilder(
+          builder: (context, setDialogState) => AlertDialog(
+            title: const Text('Advanced filters'),
+            content: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DropdownButtonFormField<String>(
+                      initialValue: selectedTag,
+                      isExpanded: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Tag',
+                        prefixIcon: Icon(Icons.sell_outlined),
+                      ),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: '',
+                          child: Text('Any tag'),
+                        ),
+                        for (final tag in tagOptions)
+                          DropdownMenuItem<String>(
+                            value: tag,
+                            child: Text(tag, overflow: TextOverflow.ellipsis),
+                          ),
+                      ],
+                      onChanged: (value) => setDialogState(
+                        () => selectedTag = value ?? '',
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    DropdownButtonFormField<String>(
+                      initialValue: selectedCollection,
+                      isExpanded: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Collection',
+                        prefixIcon: Icon(Icons.folder_outlined),
+                      ),
+                      items: [
+                        const DropdownMenuItem<String>(
+                          value: '',
+                          child: Text('Any collection'),
+                        ),
+                        for (final collection in collectionOptions)
+                          DropdownMenuItem<String>(
+                            value: collection,
+                            child: Text(
+                              collection,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                      ],
+                      onChanged: (value) => setDialogState(
+                        () => selectedCollection = value ?? '',
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    TextField(
+                      controller: domainController,
+                      keyboardType: TextInputType.url,
+                      autocorrect: false,
+                      decoration: InputDecoration(
+                        labelText: 'Website domain',
+                        hintText: 'example.com',
+                        prefixIcon: const Icon(Icons.language_rounded),
+                        errorText: domainError
+                            ? 'Enter a valid website domain or HTTP(S) URL.'
+                            : null,
+                      ),
+                      onChanged: (_) {
+                        if (domainError) {
+                          setDialogState(() => domainError = false);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Matches that domain and its subdomains. For example, example.com also matches blog.example.com.',
+                      style: TextStyle(
+                        color: mutedTextColor(context),
+                        fontSize: 12,
+                        height: 1.35,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<SavedSearchDateRange>(
+                      initialValue: dateRange,
+                      isExpanded: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Date saved',
+                        prefixIcon: Icon(Icons.calendar_today_outlined),
+                      ),
+                      items: [
+                        for (final range in SavedSearchDateRange.values)
+                          DropdownMenuItem<SavedSearchDateRange>(
+                            value: range,
+                            child: Text(range.label),
+                          ),
+                      ],
+                      onChanged: (value) => setDialogState(
+                        () => dateRange = value ?? SavedSearchDateRange.anyTime,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    CheckboxListTile(
+                      contentPadding: EdgeInsets.zero,
+                      value: favoritesOnly,
+                      onChanged: (value) => setDialogState(
+                        () => favoritesOnly = value ?? false,
+                      ),
+                      title: const Text('Favorites only'),
+                      subtitle: const Text('Show only items you starred.'),
+                      controlAffinity: ListTileControlAffinity.leading,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(
+                  SearchFilters(
+                    query: _controller.text,
+                    kindLabel: _filters.kindLabel,
+                    sortOrder: _filters.sortOrder,
+                  ),
+                ),
+                child: const Text('Reset filters'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  final normalizedDomain =
+                      normalizeDomainFilter(domainController.text);
+                  if (normalizedDomain == null) {
+                    setDialogState(() => domainError = true);
+                    return;
+                  }
+                  Navigator.of(dialogContext).pop(
+                    SearchFilters(
+                      query: _controller.text,
+                      kindLabel: _filters.kindLabel,
+                      tag: selectedTag.isEmpty ? null : selectedTag,
+                      collection: selectedCollection.isEmpty
+                          ? null
+                          : selectedCollection,
+                      domain: normalizedDomain,
+                      favoritesOnly: favoritesOnly,
+                      dateRange: dateRange,
+                      sortOrder: _filters.sortOrder,
+                    ),
+                  );
+                },
+                child: const Text('Apply filters'),
+              ),
+            ],
+          ),
+        ),
+      );
+      if (applied != null && mounted) setState(() => _filters = applied);
+    } finally {
+      domainController.dispose();
+    }
+  }
+
+  Future<void> _saveCurrentPreset() async {
+    final nameController = TextEditingController();
+    try {
+      final name = await showDialog<String>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Save search filter'),
+          content: TextField(
+            controller: nameController,
+            autofocus: true,
+            maxLength: SavedSearchPreset.maxNameCharacters,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: const InputDecoration(
+              labelText: 'Preset name',
+              hintText: 'For example, Favorite reading',
+            ),
+            onSubmitted: (value) =>
+                Navigator.of(dialogContext).pop(value.trim()),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () =>
+                  Navigator.of(dialogContext).pop(nameController.text.trim()),
+              child: const Text('Save filter'),
+            ),
+          ],
+        ),
+      );
+      if (name == null || !mounted) return;
+      final cleaned = name.trim();
+      if (cleaned.isEmpty ||
+          cleaned.length > SavedSearchPreset.maxNameCharacters) {
+        _showMessage('Enter a preset name between 1 and 40 characters.');
+        return;
+      }
+      try {
+        await widget.repository.saveSearchPreset(
+          SavedSearchPreset.create(name: cleaned, filters: _filters),
+        );
+        if (!mounted) return;
+        setState(() => _presets = widget.repository.savedSearchPresets);
+        _showMessage('Search filter saved on this device.');
+      } catch (error) {
+        _showMessage(
+          _messageForOperationError(
+            error,
+            fallback: 'Could not save this search filter. Please try again.',
+          ),
+        );
+      }
+    } finally {
+      nameController.dispose();
+    }
+  }
+
+  Future<void> _deletePreset(SavedSearchPreset preset) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Remove saved search?'),
+        content: Text('“${preset.name}” will be removed from your saved filters.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Keep filter'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Remove filter'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    try {
+      await widget.repository.deleteSearchPreset(preset.name);
+      if (mounted) {
+        setState(() => _presets = widget.repository.savedSearchPresets);
+      }
+    } catch (error) {
+      _showMessage(
+        _messageForOperationError(
+          error,
+          fallback: 'Could not remove this search filter. Please try again.',
+        ),
+      );
+    }
+  }
+
+  void _applyPreset(SavedSearchPreset preset) {
+    final query = preset.filters.query;
+    setState(() {
+      _controller.value = TextEditingValue(
+        text: query,
+        selection: TextSelection.collapsed(offset: query.length),
+      );
+      _filters = preset.filters;
+    });
+  }
+
+  void _showMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -1521,7 +1835,9 @@ class _SearchPageState extends State<SearchPage> {
                 TextField(
                   controller: _controller,
                   autofocus: widget.initialQuery.isNotEmpty,
-                  onChanged: (_) => setState(() {}),
+                  onChanged: (value) {
+                    setState(() => _filters = _filters.copyWith(query: value));
+                  },
                   decoration: InputDecoration(
                     hintText: 'Search titles, URLs, notes, tags and collections',
                     prefixIcon: const Icon(Icons.search_rounded),
@@ -1531,7 +1847,9 @@ class _SearchPageState extends State<SearchPage> {
                             tooltip: 'Clear search',
                             onPressed: () {
                               _controller.clear();
-                              setState(() {});
+                              setState(
+                                () => _filters = _filters.copyWith(query: ''),
+                              );
                             },
                             icon: const Icon(Icons.close_rounded),
                           ),
@@ -1547,25 +1865,96 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                   ),
                 ],
-                const SizedBox(height: 14),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    OutlinedButton.icon(
+                      key: const ValueKey('advanced-search-filters'),
+                      onPressed: _showAdvancedFilters,
+                      icon: const Icon(Icons.tune_rounded),
+                      label: Text(
+                        _activeAdvancedFilterCount == 0
+                            ? 'Filters'
+                            : 'Filters ($_activeAdvancedFilterCount)',
+                      ),
+                    ),
+                    TextButton.icon(
+                      key: const ValueKey('save-search-preset'),
+                      onPressed: _saveCurrentPreset,
+                      icon: const Icon(Icons.bookmark_add_outlined),
+                      label: const Text('Save search'),
+                    ),
+                    if (_filters.hasAnyFilter)
+                      TextButton(
+                        onPressed: _clearAllFilters,
+                        child: const Text('Clear all'),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 4),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      for (final label in const ['All', 'Links', 'Images', 'Notes', 'Files'])
+                      for (final label in supportedSearchKinds)
                         Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: ChoiceChip(
                             label: Text(label),
-                            selected: _filter == label,
-                            onSelected: (_) => setState(() => _filter = label),
+                            selected: _filters.kindLabel == label,
+                            onSelected: (_) => setState(
+                              () => _filters = _filters.copyWith(kindLabel: label),
+                            ),
                             showCheckmark: false,
                           ),
                         ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                if (_presets.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'SAVED SEARCHES',
+                      style: TextStyle(
+                        color: mutedTextColor(context),
+                        fontWeight: FontWeight.w800,
+                        fontSize: 10,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (final preset in _presets)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: InputChip(
+                              avatar: const Icon(
+                                Icons.bookmark_rounded,
+                                size: 17,
+                              ),
+                              label: Text(preset.name),
+                              tooltip: 'Apply saved search: ${preset.name}',
+                              onPressed: () => _applyPreset(preset),
+                              onDeleted: () => _deletePreset(preset),
+                              deleteButtonTooltipMessage:
+                                  'Remove saved search: ${preset.name}',
+                              showCheckmark: false,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 12),
                 Expanded(
                   child: ValueListenableBuilder<List<SavedItem>>(
                     valueListenable: widget.repository.items,
@@ -1599,9 +1988,11 @@ class _SearchPageState extends State<SearchPage> {
                               ),
                               PopupMenuButton<String>(
                                 tooltip: 'Sort search results',
-                                initialValue: _sort,
-                                onSelected: (value) =>
-                                    setState(() => _sort = value),
+                                initialValue: _filters.sortOrder,
+                                onSelected: (value) => setState(
+                                  () => _filters =
+                                      _filters.copyWith(sortOrder: value),
+                                ),
                                 itemBuilder: (_) => const [
                                   PopupMenuItem(
                                     value: 'Recently saved',
@@ -1625,7 +2016,7 @@ class _SearchPageState extends State<SearchPage> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        _sort,
+                                        _filters.sortOrder,
                                         style: const TextStyle(
                                           fontSize: 12,
                                           color: kBrand,
@@ -1642,40 +2033,79 @@ class _SearchPageState extends State<SearchPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10),
+                          if (_filters.hasAdvancedFilters) ...[
+                            const SizedBox(height: 4),
+                            Wrap(
+                              spacing: 6,
+                              runSpacing: 4,
+                              children: [
+                                if (_filters.tag != null)
+                                  Chip(
+                                    visualDensity: VisualDensity.compact,
+                                    label: Text('Tag: ${_filters.tag}'),
+                                  ),
+                                if (_filters.collection != null)
+                                  Chip(
+                                    visualDensity: VisualDensity.compact,
+                                    label: Text('Collection: ${_filters.collection}'),
+                                  ),
+                                if (_filters.domain.isNotEmpty)
+                                  Chip(
+                                    visualDensity: VisualDensity.compact,
+                                    label: Text('Domain: ${_filters.domain}'),
+                                  ),
+                                if (_filters.favoritesOnly)
+                                  const Chip(
+                                    visualDensity: VisualDensity.compact,
+                                    label: Text('Favorites'),
+                                  ),
+                                if (_filters.dateRange !=
+                                    SavedSearchDateRange.anyTime)
+                                  Chip(
+                                    visualDensity: VisualDensity.compact,
+                                    label: Text(_filters.dateRange.label),
+                                  ),
+                              ],
+                            ),
+                          ],
+                          const SizedBox(height: 6),
                           Expanded(
                             child: results.isEmpty
                                 ? EmptySearchState(
                                     hasQuery: _controller.text.length >
                                             maxSearchQueryCharacters ||
                                         _controller.text.trim().isNotEmpty,
-                                    hasFilter: _filter != 'All',
+                                    hasFilter: _filters.hasAnyFilter,
                                     hasLibraryItems: items.isNotEmpty,
-                                    onClear: () {
-                                      _controller.clear();
-                                      setState(() => _filter = 'All');
-                                    },
+                                    onClear: _clearAllFilters,
                                   )
                                 : LayoutBuilder(
                                     builder: (context, constraints) {
-                                      final columns = constraints.maxWidth >= 690 ? 2 : 1;
+                                      final columns =
+                                          constraints.maxWidth >= 690 ? 2 : 1;
                                       return GridView.builder(
-                                        padding: const EdgeInsets.only(bottom: 20),
-                                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 20),
+                                        gridDelegate:
+                                            SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: columns,
-                                          mainAxisExtent: savedItemCardExtentForTextScale(
+                                          mainAxisExtent:
+                                              savedItemCardExtentForTextScale(
                                             savedItemTextScaleFactor(
-                                              MediaQuery.textScalerOf(context).scale(14.0),
+                                              MediaQuery.textScalerOf(context)
+                                                  .scale(14.0),
                                             ),
                                           ),
                                           crossAxisSpacing: 12,
                                           mainAxisSpacing: 10,
                                         ),
                                         itemCount: results.length,
-                                        itemBuilder: (context, index) => SavedItemTile(
+                                        itemBuilder: (context, index) =>
+                                            SavedItemTile(
                                           item: results[index],
                                           repository: widget.repository,
-                                          onTap: () => widget.onOpenItem(results[index]),
+                                          onTap: () => widget
+                                              .onOpenItem(results[index]),
                                         ),
                                       );
                                     },
