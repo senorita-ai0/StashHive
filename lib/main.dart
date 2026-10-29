@@ -17,6 +17,7 @@ import 'services/bounded_bytes_reader.dart';
 import 'services/share_intake.dart';
 import 'services/mime_types.dart';
 import 'services/backup_codec.dart';
+import 'services/duplicate_detector.dart';
 import 'services/web_url.dart';
 import 'ui/layout_metrics.dart';
 import 'ui/premium_kit.dart';
@@ -2168,6 +2169,70 @@ class _QuickSavePageState extends State<QuickSavePage> {
     return result;
   }
 
+  Future<bool> _confirmDuplicateLinkSave(SavedItem candidate) async {
+    final duplicates = findDuplicateLinks(candidate, widget.repository.items.value);
+    if (duplicates.isEmpty) return true;
+    if (!mounted) return false;
+
+    final visibleDuplicates = duplicates.take(3).toList(growable: false);
+    final shouldSave = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        icon: const Icon(Icons.copy_all_rounded),
+        title: const Text('This link is already saved'),
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 460),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'StashHive found ${duplicates.length} saved '
+                '${duplicates.length == 1 ? 'link' : 'links'} with the same destination. '
+                'Do you want to save another copy?',
+              ),
+              const SizedBox(height: 10),
+              for (final duplicate in visibleDuplicates)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  leading: const Icon(Icons.link_rounded),
+                  title: Text(
+                    duplicate.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text(
+                    duplicate.url ?? '',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              if (duplicates.length > visibleDuplicates.length)
+                Text(
+                  'And ${duplicates.length - visibleDuplicates.length} more matching '
+                  '${duplicates.length - visibleDuplicates.length == 1 ? 'item' : 'items'}.',
+                  style: TextStyle(color: mutedTextColor(context)),
+                ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Cancel save'),
+          ),
+          FilledButton.icon(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            icon: const Icon(Icons.save_alt_rounded),
+            label: const Text('Save another copy'),
+          ),
+        ],
+      ),
+    );
+    return shouldSave ?? false;
+  }
+
   Future<void> _save() async {
     if (_saving || _pickingAttachment) return;
     if (!_formKey.currentState!.validate()) return;
@@ -2283,6 +2348,13 @@ class _QuickSavePageState extends State<QuickSavePage> {
                 ? existing?.attachmentMimeType
                 : null,
       );
+      if (existing == null && item.kind == ItemKind.link) {
+        final shouldSave = await _confirmDuplicateLinkSave(item);
+        if (!shouldSave) {
+          if (mounted) setState(() => _saving = false);
+          return;
+        }
+      }
       await widget.repository.save(item, attachmentBytes: _selectedBytes);
       if (mounted) {
         // Re-enable route popping only after the successful save has completed,
