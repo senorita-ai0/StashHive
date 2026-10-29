@@ -43,7 +43,7 @@ flowchart TD
 
 ### Optional link health checks
 
-Link status is a user-triggered, direct request from the native device, not an online service or background crawler. The native checker validates the HTTP(S) URL, resolves and blocks local/private/reserved addresses, uses a short timeout, does not follow redirects, and uses response headers/status only. The browser implementation explains its cross-origin limitation rather than proxying requests. Status/time are bounded local preference metadata, not part of the saved-item record or version-1 backup; checking must not update the saved item's content or timestamp.
+Link status is a user-triggered, direct request from the native device, not an online service or background crawler. The native checker validates the HTTP(S) URL, resolves and blocks local/private/reserved addresses, pins the socket to the validated DNS result to reduce DNS-rebinding exposure, uses a bounded timeout, forces a direct connection, does not follow redirects, and uses response headers/status only. HEAD is the only request method; sites that reject it are reported as unsupported rather than fetched with GET. The browser implementation explains its cross-origin limitation rather than proxying requests. Status/time are bounded local preference metadata, not part of the saved-item record or version-1 backup; checking must not update the saved item's content or timestamp.
 
 ## Data model (draft)
 
