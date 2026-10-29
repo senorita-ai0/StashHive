@@ -1860,3 +1860,15 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Reject unknown statuses and progress values outside 0–100 without changing existing records.
 - Confirm the UI states that it does not track activity on external websites.
 - **Status:** Unit/widget regression source committed but unrun. Manual-only formatter, analyzer, test suite, and platform builds remain pending.
+
+
+### TC-257 — Save, find, export, restore and delete item annotations
+
+- Add a quote, a personal note, and a combined quote/note to saved items. Reject an empty entry, more than 50 annotations, duplicate annotation IDs, over-limit text, and out-of-range timestamps.
+- Confirm annotation lists are immutable and survive SavedItem map/JSON round-trips. An older saved-item map without the annotations field defaults to an empty list.
+- Search for unique words from a saved quote and note and confirm the owning item is discoverable.
+- Open Item Details, add an annotation, confirm it appears in the list, delete it with confirmation, and verify the local record updates.
+- Export and restore through the versioned JSON backup; verify quote/note content persists. Confirm CSV and selected-item Markdown exports contain annotation text and correctly preserve multiline content.
+- Edit the base saved item and confirm existing annotations are preserved.
+- Confirm UI copy says the user supplies the text; saving a URL does not fetch page content or create an offline website archive.
+- **Status:** Model, backup, export and widget regression source is committed but unrun. Formatter/analyzer/tests and Android/web verification remain pending at the manual checkpoint; CI remains manual-only.
