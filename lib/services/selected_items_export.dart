@@ -39,14 +39,14 @@ String buildSelectedItemsMarkdown(List<SavedItem> items) {
       for (final annotation in item.annotations) {
         if (annotation.quote.trim().isNotEmpty) {
           buffer.writeln();
-          for (final line in annotation.quote.split('\\n')) {
+          for (final line in annotation.quote.split('\n')) {
             buffer.writeln('> $line');
           }
         }
         if (annotation.note.trim().isNotEmpty) {
           buffer.writeln();
           buffer.writeln('**Note:**');
-          for (final line in annotation.note.split('\\n')) {
+          for (final line in annotation.note.split('\n')) {
             buffer.writeln('> $line');
           }
         }
