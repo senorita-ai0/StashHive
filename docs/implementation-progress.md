@@ -1040,3 +1040,13 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - **Regression:** Extended `test/search_filters_widget_test.dart` to exercise the Organize entry point and verify the opened preset retains query, collection, favorite and sort settings. TC-248 now includes this path.
 - **Existing test-fixture correction:** Source review found accessibility and repository tests still declared `SavedItem` fixtures as `const` after the model's constructor changed to snapshot caller-owned tag lists. Updated those fixture declarations to ordinary final/non-const construction so they match the current model contract.
 - **Verification remains pending:** These changes have not been formatted, analyzed, tested or built. CI remains manual-only; do not treat source review as passing validation.
+
+
+## Feature backlog — SH-003 bulk library actions (2026-10-29)
+
+- **UI:** Library now supports select-all-visible, long-press selection, per-item selection checkboxes, and a selected-count action panel.
+- **Actions implemented in source:** set selected items as favorites, move them to an existing collection or no collection, add comma-separated tags, remove tags, and delete only after confirmation.
+- **Failure handling:** each item mutation is attempted independently; the UI reports success/failure counts rather than claiming the whole batch succeeded. Failed items are not intentionally removed by the selection flow.
+- **Remaining in SH-003:** export selected items is not implemented yet. The current move dialog selects existing collections; creating a new collection during a bulk move is not part of this slice.
+- **Regression source:** `test/bulk_actions_widget_test.dart` covers favorite/move/tag actions and cancellation of confirmed deletion.
+- **Verification:** tests, formatter, analyzer, web/Android builds, and manual UI checks have not been run. This increment is source-implemented but unverified. CI remains manual-only.
