@@ -1657,3 +1657,13 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 |---|---|---|---|
 | User-initiated temporary article reader | SCR-004; FR-006, FR-011, FR-024; NFR-002, NFR-005, NFR-008 | TC-264–TC-268 | Design gate documented in `docs/research/article-reader-feasibility.md`; source NOT STARTED; tests planned and unrun |
 | Selection-based quote/highlight anchoring | SCR-004; FR-024; NFR-006 | Add tests after Android/web rendering feasibility is established | NOT STARTED; no reliable cross-platform selection behavior claimed |
+
+## SH-006 implementation mapping — 2026-10-29
+
+| Requirement / behavior | Source | Regression evidence | Status |
+|---|---|---|---|
+| Explicit user-initiated reader access | lib/main.dart, lib/screens/article_reader_page.dart | TC-264 planned; not run | Source implemented, verify pending |
+| URL restrictions and native destination checks | lib/services/article_reader.dart, lib/services/article_reader_io.dart | test/article_reader_test.dart; TC-265 planned | Source implemented, verify pending |
+| Bounded content and safe plain-text rendering | lib/services/article_reader_io.dart, lib/screens/article_reader_page.dart | sanitizer tests authored; TC-266 planned | Source implemented, verify pending |
+| No fetched-content persistence / honest browser limitation | reader service and screen | TC-267–TC-268 planned | Source reviewed; platform verification pending |
+| Selection-based highlights with quote context/offset | Not implemented | Additional tests not yet authored | Not started |
