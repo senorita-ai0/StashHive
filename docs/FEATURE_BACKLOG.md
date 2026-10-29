@@ -142,3 +142,10 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Strip script/style/embedded blocks and comments before extracting a page title.
 - [x] Add a synthetic regression for fake `<title>` elements inside a script string and HTML comment, plus a real entity-encoded document title.
 - [ ] Execute title/reader tests and verify native and browser behavior at the owner's manual validation checkpoint; source/test remain unverified.
+
+
+## SH-006 — UTF-8 BOM handling (2026-10-29)
+
+- [x] Strip the leading UTF-8 byte-order mark from native decoded response text.
+- [x] Add TC-270 source coverage verifying the BOM is absent from the first visible character.
+- [ ] Run the reader regression suite at the owner-approved manual validation checkpoint; source and test have not been executed.
