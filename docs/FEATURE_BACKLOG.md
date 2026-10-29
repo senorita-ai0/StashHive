@@ -49,3 +49,6 @@
 - Error, empty, loading, cancellation, and accessibility states are covered where applicable.
 - Documentation states what is and is not implemented.
 - Tests/builds are run only at the owner's requested manual validation checkpoint; otherwise explicitly report them as unverified.
+## SH-006 reader implementation gate — 2026-10-29
+
+Before source implementation, follow [the article-reader feasibility and privacy gate](research/article-reader-feasibility.md). First slice is an explicitly user-initiated temporary reader with bounded transport/parsing, safe plain-text rendering, recoverable states and tests. Do not persist fetched content or imply offline archives. Text selection/highlight anchoring is a separate follow-on slice after Android/web feasibility is proven. This is a design decision only; implementation and tests remain NOT STARTED.
