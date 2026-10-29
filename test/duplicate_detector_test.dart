@@ -61,7 +61,7 @@ void main() {
       expect(normalizeUrlForDuplicateCheck('file:///tmp/notes.txt'), isNull);
       expect(
         normalizeUrlForDuplicateCheck(
-          'https://example.com/${'x' * (maxSavedItemUrlCharacters + 1)}',
+          'https://example.com/${List<String>.filled(maxSavedItemUrlCharacters + 1, 'x').join()}',
         ),
         isNull,
       );
