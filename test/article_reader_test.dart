@@ -16,6 +16,26 @@ void main() {
       articleReaderDnsResolverForTesting = (host) async => <String>['93.184.216.34'];
     });
 
+    test('extracts a real title instead of title-looking script or comment text', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/html; charset=utf-8',
+            body: utf8.encode(
+              '<script>const template = "<title>Fake script title</title>";</script>'
+              '<!-- <title>Fake comment title</title> -->'
+              '<title>Actual &amp; useful title</title>'
+              '<article><p>Actual article body.</p></article>',
+            ),
+          );
+
+      final result = await loadArticleForReader('https://example.com/title');
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.title, 'Actual & useful title');
+      expect(result.text, contains('Actual article body.'));
+    });
+
     test('loads HTML through the injected transport and sanitizes its contents', () async {
       Uri? requestedUri;
       List<String>? vettedAddresses;
