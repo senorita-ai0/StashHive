@@ -18,6 +18,7 @@ import 'services/bounded_bytes_reader.dart';
 import 'services/duplicate_detector.dart';
 import 'services/mime_types.dart';
 import 'services/search_filters.dart';
+import 'services/selected_items_export.dart';
 import 'services/share_intake.dart';
 import 'services/web_url.dart';
 import 'ui/layout_metrics.dart';
@@ -1596,41 +1597,19 @@ class _LibraryPageState extends State<LibraryPage> {
         .where((item) => _selectedIds.contains(item.id))
         .toList(growable: false);
     if (selected.isEmpty) return;
-    if (selected.length > 2000) {
+    late final String markdown;
+    try {
+      markdown = buildSelectedItemsMarkdown(selected);
+    } on FormatException catch (error) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Export up to 2,000 selected items at a time.')),
+        SnackBar(content: Text(error.message)),
       );
       return;
     }
 
-    final buffer = StringBuffer('# StashHive selected items\n\n');
-    for (final item in selected) {
-      buffer.writeln('## ${item.title.replaceAll('\n', ' ')}');
-      buffer.writeln('- Type: ${item.kind.label}');
-      if (item.url != null) buffer.writeln('- URL: ${item.url}');
-      if (item.collection != null) buffer.writeln('- Collection: ${item.collection}');
-      if (item.tags.isNotEmpty) buffer.writeln('- Tags: ${item.tags.join(', ')}');
-      if (item.isFavorite) buffer.writeln('- Favorite: yes');
-      if (item.attachmentName != null) {
-        buffer.writeln('- Attachment: ${item.attachmentName}');
-      }
-      if (item.content.trim().isNotEmpty) {
-        buffer.writeln();
-        buffer.writeln(item.content.trim());
-      }
-      buffer.writeln();
-      if (buffer.length > 2 * 1024 * 1024) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('This selection is too large to export as one list. Select fewer items.'),
-          ),
-        );
-        return;
-      }
-    }
-
     try {
-      final bytes = utf8.encode(buffer.toString());
+      final bytes = utf8.encode(markdown);
       final name = 'stashhive-selected-${DateTime.now().toUtc().toIso8601String().substring(0, 10)}.md';
       await SharePlus.instance.share(
         ShareParams(
