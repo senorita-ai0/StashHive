@@ -1605,3 +1605,8 @@ The first source slice now includes a user-triggered reader route, bounded nativ
 ## SH-006 transport regression progress — 2026-10-29
 
 The native reader now has test-only DNS/transport seams and a single absolute deadline. Authored regression source exercises synthetic success, sanitizer behavior, redirect status, unsupported MIME, size limits, private/mixed DNS, timeout and unsuccessful HTTP status. This is not validation evidence: all tests remain unrun and platform networking remains unverified. Added a repository/Item Details widget regression source for explicit-only fetch, unchanged bookmark fields after opening the reader, and selected-quote-only persistence. Next source work should add backup/export non-persistence assertions and tighten reserved-address coverage before owner-requested validation.
+
+
+## SH-006 reader charset refinement — 2026-10-29
+
+Native response parsing now treats declared Windows-1252 (windows-1252/cp1252) as distinct from ISO-8859-1/Latin-1, preserving common euro, quotation-mark and dash characters in legacy pages. A synthetic response regression was added for a quoted charset parameter. This is source implementation and authored test source only; do not count it as verified until the owner's manual validation checkpoint. SH-006 remains partial.
