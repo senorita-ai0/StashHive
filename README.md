@@ -58,6 +58,7 @@ OCR/PDF text extraction, in-app PDF rendering, cloud sync, accounts, public shar
 - [Isolated PDF text extraction probe (not production)](tool/pdf_text_extraction_poc/README.md)
 - [Competitor hypotheses](docs/research/competitor-gap-hypotheses.md)
 - [Master feature status & chat handoff](docs/FEATURE_STATUS.md)
+- [Master feature status & chat handoff](docs/FEATURE_STATUS.md)
 - [Prioritized feature backlog](docs/FEATURE_BACKLOG.md)
 - [Cost and monetization](docs/cost-and-monetization.md)
 - [AI workflow](docs/AI_WORKFLOW.md)
