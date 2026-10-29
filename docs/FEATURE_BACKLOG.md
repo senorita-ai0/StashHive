@@ -105,3 +105,9 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Add explicit semantic labels for loading and save progress and heading semantics for the article and error-state titles.
 - [x] Author a widget regression for the loading progress label using a pending synthetic response.
 - [ ] Execute the widget regression and inspect selection, navigation, errors and saving with Android/web assistive technology; source labels alone do not establish accessibility completion.
+
+
+## SH-006 — save-progress accessibility regression (2026-10-29)
+
+- [x] Author a delayed-save widget test for the “Saving highlight” semantic label and eventual success feedback.
+- [ ] Run both Reader accessibility widget cases and perform Android/web assistive-technology checks; all remain unverified.
