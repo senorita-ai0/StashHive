@@ -1943,13 +1943,15 @@ These cases are **planned, not implemented or run**. Add them to the automated s
 
 | Test ID | Requirement / feature | Scenario | Expected result | Status |
 |---|---|---|---|---|
-| TC-264 | SH-006 / FR-006, FR-024 | User explicitly opens a valid HTTP(S) bookmark in reader mode | Reader starts only after the action; original bookmark fields and timestamps remain unchanged | PLANNED |
-| TC-265 | SH-006 / NFR-002 | Reader target resolves to loopback/private/reserved address, contains URL credentials, or redirects to a blocked destination | Request is rejected safely; no page content is persisted or logged | PLANNED |
-| TC-266 | SH-006 / NFR-005, NFR-008 | Reader response times out, exceeds byte limit, has unsupported content type, malformed HTML or hostile script markup | Bounded recoverable error or safe text-only output; no script execution, hang, or unbounded memory use | PLANNED |
-| TC-267 | SH-006 / FR-024 | Inspect library persistence and backup after reading an article | Fetched page content is not silently saved or exported; existing manual annotations still round-trip | PLANNED |
-| TC-268 | SH-006 / NFR-006 | Inspect reader states and text selection on Android and web | Loading/empty/error/unsupported states are accessible; selection/highlight support is only claimed where verified | PLANNED |
+| TC-264 | SH-006 / FR-006, FR-024 | User explicitly opens a valid HTTP(S) bookmark in reader mode | Reader starts only after the action; original bookmark fields and timestamps remain unchanged | PLANNED — Item Details launch/unchanged-record coverage still needed |
+| TC-265 | SH-006 / NFR-002 | Reader target resolves to loopback/private/reserved address, contains URL credentials, or redirects to a blocked destination | Request is rejected safely; no page content is persisted or logged | PARTIAL TEST SOURCE — not run; broaden reserved-range coverage |
+| TC-266 | SH-006 / NFR-005, NFR-008 | Reader response times out, exceeds byte limit, has unsupported content type, malformed HTML or hostile script markup | Bounded recoverable error or safe text-only output; no script execution, hang, or unbounded memory use | PARTIAL TEST SOURCE — not run; malformed-input and full deadline assertions remain to be expanded |
+| TC-267 | SH-006 / FR-024 | Inspect library persistence and backup after reading an article | Fetched page content is not silently saved or exported; existing manual annotations still round-trip | PLANNED — manual annotation compatibility source exists, full repository isolation assertion needed |
+| TC-268 | SH-006 / NFR-006 | Inspect reader states and text selection on Android and web | Loading/empty/error/unsupported states are accessible; selection/highlight support is only claimed where verified | PARTIAL WIDGET TEST SOURCE — not run; platform accessibility/selection checks pending |
 
 Network safety tests must use injected/fake transport and synthetic HTML; do not use real private user URLs or private saved content as fixtures.
+
+The native service now exposes `articleReaderDnsResolverForTesting` and `articleReaderTransportForTesting` seams. `test/article_reader_test.dart` uses these for synthetic successful HTML/plain text, redirect/error status, unsupported MIME, byte/display limits, private or mixed DNS answers, and DNS/transport timeouts. These are authored source only and have not been executed.
 
 ## SH-006 reader source cases — 2026-10-29
 
