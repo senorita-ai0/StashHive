@@ -92,3 +92,9 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Extend the reader/repository regression source to assert CSV and selected-Markdown output includes the explicit saved quote but excludes the complete temporary article text.
 - [ ] Run the export/privacy regression at the manual validation checkpoint; tests remain unexecuted.
 - [ ] Verify actual share-sheet behavior and platform/accessibility behavior before closing SH-006.
+
+
+## SH-006 — legacy charset alias regression (2026-10-29)
+
+- [x] Add source coverage for the cp1252 alias and ensure the Latin-1 decoder remains separate from Windows-1252 mapping.
+- [ ] Execute TC-269 and the full reader test set at the owner-approved manual validation checkpoint.
