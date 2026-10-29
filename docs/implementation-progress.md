@@ -1261,3 +1261,9 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Replaced direct substring clipping in native article body and title paths with one helper that backs off when the cutoff would leave a high surrogate without its low surrogate.
 - Added TC-271 regression source using a supplementary Unicode emoji positioned across the 60,000-code-unit body cap. The test checks that content remains bounded and no surrogate code units leak into the resulting preview.
 - Source/test file contents were re-fetched and their new helper/case each appeared once. No formatter, analyzer, tests, build or CI run was performed. Android/web behavior is still unverified.
+
+
+## SH-006 — title-cap Unicode regression — TC-272 (2026-10-29)
+
+- Added a deterministic HTML response regression whose real `<title>` puts an emoji across the 300-code-unit cap. It asserts the extracted title contains no lone surrogate and the article body is still present.
+- Together with TC-271, source now covers both title and body boundaries. The test remains unexecuted; no formatter, analyzer, build or CI run was performed.
