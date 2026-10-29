@@ -1478,3 +1478,12 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **Source:** Added a local URL normalization/detection service and a Quick Save confirmation dialog for new links whose normalized destination already exists. The dialog lists matching entries and lets the user cancel or explicitly save another copy; no record is automatically deleted or suppressed. Original URLs remain unchanged. Attachment-byte hashes and duplicate detection during backup import remain future slices.
 - **Regression:** TC-246 plus unit/widget source in `test/duplicate_detector_test.dart` and `test/quick_save_test.dart`.
 - **Status:** Source and regression cases are committed on `main`; formatter, analyzer, tests, web/Android builds, and real-device/browser checks have not run. Do not dispatch the manual workflow unless the owner requests validation.
+
+
+### TSK-534 — Advanced local Search filters and saved presets (SH-002)
+
+- **Requirements:** FR-004, FR-005 and FR-022.
+- **Source:** Added `SearchFilters` and `filterSavedItems` for combined local query, type, tag, collection, domain/subdomain, favorites-only, saved-date range and sort. Added local Hive preference storage for up to 20 validated named presets, including replacement by case-insensitive name, deletion, malformed-entry recovery and best-effort rollback on a failed preference write.
+- **UI:** Search now exposes Advanced filters, active-filter chips, Save search, reusable preset chips, explicit clear/reset behavior and confirmation before deleting a preset. Presets are local to the current Android app/browser profile and are not part of backup v1. Domain filtering does not fetch pages.
+- **Regression:** TC-247 filter logic, TC-248 widget flow, TC-249 repository/preset storage. Test sources: `test/search_filters_test.dart`, `test/search_filters_widget_test.dart`, and `test/library_repository_test.dart`.
+- **Status:** Source and test cases are committed on `main`; formatter, analyzer, unit/widget tests, web/Android builds and manual device/browser checks have not run. CI remains manual-only.
