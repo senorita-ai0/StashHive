@@ -54,6 +54,48 @@ SavedItem sampleLink() => SavedItem(
 
 void main() {
   group('BackupCodec', () {
+    test('round-trips user annotations in the versioned JSON backup', () {
+      final source = sampleLink().copyWith(
+        annotations: <SavedAnnotation>[
+          SavedAnnotation(
+            id: 'annotation-1',
+            quote: 'Keep private data local.',
+            note: 'A product principle to revisit.',
+            createdAtMs: 3000,
+          ),
+        ],
+      );
+      final encoded = BackupCodec.encode(
+        items: [source],
+        attachmentBytes: const <String, Uint8List>{},
+        collections: const <String>['Learning'],
+      );
+
+      final decoded = BackupCodec.decode(encoded);
+      expect(decoded.items.single.annotations, hasLength(1));
+      expect(decoded.items.single.annotations.single.quote, 'Keep private data local.');
+      expect(decoded.items.single.annotations.single.note, 'A product principle to revisit.');
+    });
+
+    test('rejects malformed annotation shapes in decoded backup data', () {
+      final encoded = BackupCodec.encode(
+        items: [sampleLink()],
+        attachmentBytes: const <String, Uint8List>{},
+        collections: const <String>['Learning'],
+      );
+      final payload = jsonDecode(encoded) as Map<String, dynamic>;
+      final items = payload['items'] as List<dynamic>;
+      (items.single as Map<String, dynamic>)['annotations'] = <Object?>['not a map'];
+
+      expect(
+        () {
+          final decoded = BackupCodec.decode(jsonEncode(payload));
+          BackupCodec.validateDecodedBackup(decoded);
+        },
+        throwsFormatException,
+      );
+    });
+
     test('counts UTF-8 bytes without allocating an encoded buffer', () {
       for (final value in <String>[
         'plain ASCII',
