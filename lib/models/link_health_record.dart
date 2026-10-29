@@ -39,7 +39,7 @@ enum LinkHealthState {
         LinkHealthState.healthy =>
           'The destination responded successfully when checked.',
         LinkHealthState.redirect =>
-          'The destination returned a redirect response. It may still be usable.',
+          'The server returned a redirect. This check does not follow it; open the link in your browser to inspect the destination.',
         LinkHealthState.notFound =>
           'The destination returned 404. The page may have moved or been removed.',
         LinkHealthState.gone =>
