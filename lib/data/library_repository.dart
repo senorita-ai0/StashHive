@@ -165,7 +165,16 @@ class LibraryRepository {
   @visibleForTesting
   static Future<void> Function()? backupPreparedAtAfterWriteForTesting;
 
+  /// Fault-injection seam for a Library view preference write that fails late.
+  @visibleForTesting
+  static Future<void> Function()? setLibraryLayoutModeAfterWriteForTesting;
+
   bool get darkMode => _preferencesBox.get('darkMode') == true;
+
+  /// Local Library presentation preference. Unknown values fall back to grid
+  /// so a corrupt preference never prevents the library from opening.
+  String get libraryLayoutMode =>
+      _preferencesBox.get('libraryLayoutMode') == 'list' ? 'list' : 'grid';
 
   /// Extra app text scaling layered on top of platform accessibility scaling.
   /// Invalid legacy preference values fall back to the system default.
@@ -933,6 +942,39 @@ class LibraryRepository {
         }
       } catch (_) {
         // Preserve the original error.
+      }
+      rethrow;
+    }
+  }
+
+  /// Stores the Library layout choice only in this app/browser profile.
+  Future<void> setLibraryLayoutMode(String value) =>
+      _serializeOperation(() => _setLibraryLayoutMode(value));
+
+  Future<void> _setLibraryLayoutMode(String value) async {
+    if (value != 'grid' && value != 'list') {
+      throw const FormatException('Choose grid or list layout.');
+    }
+
+    const key = 'libraryLayoutMode';
+    final hadValue = _preferencesBox.containsKey(key);
+    final previousValue = _preferencesBox.get(key);
+    try {
+      await _preferencesBox.put(key, value);
+      final afterWrite = setLibraryLayoutModeAfterWriteForTesting;
+      if (afterWrite != null) await afterWrite();
+    } catch (_) {
+      // A Hive write can commit and then report an error. Restore the old
+      // preference best-effort so a transient error does not persist a choice
+      // that the UI reverted.
+      try {
+        if (hadValue) {
+          await _preferencesBox.put(key, previousValue);
+        } else {
+          await _preferencesBox.delete(key);
+        }
+      } catch (_) {
+        // Preserve the original failure.
       }
       rethrow;
     }
