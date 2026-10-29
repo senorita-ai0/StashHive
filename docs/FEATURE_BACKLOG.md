@@ -71,5 +71,6 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Use one absolute deadline across the native request path.
 - [ ] Run the test suite at the owner-approved manual validation checkpoint.
 - [x] Add Item Details/repository regression source for no implicit fetch, explicit tap, unchanged bookmark fields after reader open, selected-quote-only persistence, and portable backup exclusion of full fetched article text.
-- [ ] Expand checks for every reserved IPv4 range, content parsing edge cases, backup/export non-persistence and native/platform error accessibility.
+- [x] Add a synthetic matrix for private/reserved IPv4 answer ranges and malformed unclosed script/comment tails.
+- [ ] Expand remaining content-parsing edge cases, Markdown/CSV export non-persistence and native/platform error accessibility.
 - [ ] Complete TC-264/267/268 repository and platform assertions; SH-006 remains partial.
