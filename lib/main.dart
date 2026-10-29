@@ -118,6 +118,11 @@ Future<void> Function()? resetIncomingInitialShareForTesting;
 @visibleForTesting
 Future<void> Function(ShareParams params)? selectedItemsShareForTesting;
 
+/// Test hook for supplying bookmark HTML without invoking a native file picker.
+/// Production leaves this unset and uses FilePicker.
+@visibleForTesting
+Future<PlatformFile?> Function()? bookmarkFilePickerForTesting;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -6133,10 +6138,13 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
     if (_exporting || _choosingBackup || _restoring || _importingBookmarks || _exportingCsv) return;
     setState(() => _importingBookmarks = true);
     try {
-      final file = await FilePicker.pickFile(
-        type: FileType.custom,
-        allowedExtensions: const ['html', 'htm'],
-      );
+      final testPicker = bookmarkFilePickerForTesting;
+      final file = testPicker != null
+          ? await testPicker()
+          : await FilePicker.pickFile(
+              type: FileType.custom,
+              allowedExtensions: const ['html', 'htm'],
+            );
       if (!mounted || file == null) return;
 
       final length = await file.length();
