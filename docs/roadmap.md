@@ -1660,3 +1660,8 @@ The native temporary reader now strips a leading UTF-8 BOM before rendering page
 ## SH-006 — Unicode-safe Reader truncation — 2026-10-29
 
 The native Reader now avoids cutting article text or extracted titles in the middle of a supplementary Unicode character. TC-271 covers an emoji placed across the display limit. This remains source-only pending the owner-approved validation checkpoint; CI remains manual-only.
+
+
+## SH-006 — title Unicode boundary regression — TC-272 — 2026-10-29
+
+TC-272 extends Unicode-safe truncation coverage to the extracted title, alongside TC-271 for article body text. Both are source-only regressions and must be run with the full Reader suite at the owner-approved manual validation checkpoint.
