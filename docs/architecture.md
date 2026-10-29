@@ -82,7 +82,7 @@ Link status is a user-triggered, direct request from the native device, not an o
 3. Ask the user to confirm/edit title, notes, tags, and collection as applicable.
 4. Store local metadata; no webpage is downloaded by default.
 5. If the user later opens it, launch the external browser. Network errors belong to the external browser or are explained clearly.
-6. Users may manually paste a quote/excerpt and personal note into the item's Highlights & Annotations section. StashHive stores that supplied text locally; it does not scrape the page or imply that the linked article is readable offline.
+6. Users may manually paste a quote/excerpt and personal note into the item's Highlights & Annotations section, or explicitly open the temporary reader, select a passage and tap Save highlight. Only the user-selected quote plus bounded surrounding context/offsets are stored locally; fetched page text and HTML remain transient and are not included in backups. StashHive does not scrape pages automatically or imply that the linked article is readable offline.
 
 ### Save an image/document
 
