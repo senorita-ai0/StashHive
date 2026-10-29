@@ -67,7 +67,8 @@ void main() {
       final original = makeItem().copyWith(annotations: [annotation]);
       final restored = SavedItem.fromMap(original.toMap());
 
-      expect(restored.annotations, [annotation]);
+      expect(restored.annotations, hasLength(1));
+      expect(restored.annotations.single.toMap(), annotation.toMap());
       expect(restored.matchesQuery('LOCAL-FIRST'), isTrue);
       expect(restored.matchesQuery('sync design'), isTrue);
       expect(
