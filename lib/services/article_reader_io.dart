@@ -225,6 +225,15 @@ Future<Uint8List> _readBoundedResponse(
 }
 
 String _decodeText(List<int> bytes, String? charset) {
+  // A leading UTF-8 BOM is an encoding signature, not article content. Strip
+  // it before the declared-charset fallback so it never leaks into titles or
+  // the first visible character of a plain-text preview.
+  if (bytes.length >= 3 &&
+      bytes[0] == 0xEF &&
+      bytes[1] == 0xBB &&
+      bytes[2] == 0xBF) {
+    return utf8.decode(bytes.sublist(3), allowMalformed: true);
+  }
   final normalizedCharset = charset?.trim().toLowerCase();
   if (normalizedCharset == 'windows-1252' ||
       normalizedCharset == 'cp1252') {
