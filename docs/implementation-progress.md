@@ -1173,3 +1173,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - Added article_reader_page.dart and a **Read in StashHive** action in Item Details. Loading, unavailable, invalid/private URL, unsupported content, size-limit, timeout and network-error states have recoverable UI; opening the external browser remains available.
 - Added test/article_reader_test.dart covering URL validation, private IPv4 literals, hostile markup and Unicode text normalization, plus test/article_reader_page_test.dart for the invalid-URL UI state and selected-passage save flow, using an injectable reader result so the widget test does not make a network request.
 - This is source-only. No formatter, analyzer, test suite, Android build or web build was run. The reader's native transport and browser limitations remain unverified on actual platforms. Selection-based quote capture is now source-implemented: selected text is saved only after an explicit Save highlight action, with bounded surrounding context and UTF-16 offsets. Platform behavior and regression tests remain unverified.
+
+## SH-006 — deterministic transport hardening — 2026-10-29
+
+- Split native request execution from response policy parsing. ArticleReaderTransportResponse represents status, content type and bounded bytes; test-only resolver/transport seams let unit tests exercise policy without internet access.
+- Production keeps the default OS resolver and connects directly to a validated public IPv4 result. Any private/reserved IPv4 answer in the DNS result blocks the host; IPv6 destination answers are conservatively ignored, and literal IPv6 URLs are rejected by URL validation.
+- Changed timeout accounting to a single deadline spanning DNS lookup, request setup, response headers and response body. Content type/status handling and hard response/display caps are now straightforward to exercise with synthetic responses.
+- Added cases for success/sanitization, redirects, unsupported MIME, response cap, displayed text cap, private and mixed DNS, DNS timeout and unsuccessful HTTP statuses. All tests remain unrun.
+- No formatter, analyzer, tests, Android build or web build were run. CI remains manual-only.
