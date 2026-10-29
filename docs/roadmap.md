@@ -1630,3 +1630,8 @@ Reader now provides explicit semantic labels for loading and save-progress indic
 ## SH-006 save-progress accessibility coverage — 2026-10-29
 
 Added a deterministic widget regression for the saving indicator's semantic label and the eventual success message after a delayed callback resolves. Test source only; no execution or screen-reader verification has occurred. Keep SH-006 partial pending the manual validation checkpoint.
+
+
+## SH-006 sanitizer decoding edge-case coverage — 2026-10-29
+
+Reader sanitization now handles a broader safe set of named typography/currency entities and decodes numeric references before named references, avoiding recursive entity expansion through escaped ampersands. Synthetic test source covers those cases, but execution and native/web rendering checks remain pending. SH-006 remains partial and the lightweight sanitizer is not a full HTML/readability parser.
