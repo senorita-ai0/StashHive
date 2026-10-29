@@ -6,7 +6,6 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/main.dart' as app;
 import 'package:stashhive/models/saved_item.dart';
-import 'package:stashhive/services/search_filters.dart';
 
 late Directory testDirectory;
 late LibraryRepository repository;
