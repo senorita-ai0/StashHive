@@ -1198,6 +1198,18 @@ class _LibraryPageState extends State<LibraryPage> {
     var result = items;
     if (_filter == 'Favorites') {
       result = result.where((item) => item.isFavorite).toList();
+    } else if (_filter == 'Unread') {
+      result = result
+          .where((item) => item.readingStatus == ReadingStatus.unread)
+          .toList();
+    } else if (_filter == 'In progress') {
+      result = result
+          .where((item) => item.readingStatus == ReadingStatus.inProgress)
+          .toList();
+    } else if (_filter == 'Completed') {
+      result = result
+          .where((item) => item.readingStatus == ReadingStatus.completed)
+          .toList();
     } else if (_filter != 'All') {
       result = result.where((item) => item.kind.pluralLabel == _filter).toList();
     }
@@ -1367,6 +1379,9 @@ class _LibraryPageState extends State<LibraryPage> {
                         'Notes',
                         'Files',
                         'Favorites',
+                        'Unread',
+                        'In progress',
+                        'Completed',
                       ])
                         Padding(
                           padding: const EdgeInsets.only(right: 7),
