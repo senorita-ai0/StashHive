@@ -117,7 +117,7 @@ Future<ArticleReaderResult> loadArticleForReader(
     final decoded = _decodeText(body, contentType?.charset);
     final html = mime == 'text/html';
     final title = html ? _extractTitle(decoded) : null;
-    final text = _plainText(decoded, isHtml: html);
+    final text = sanitizeArticleMarkup(decoded, isHtml: html);
     if (text.trim().isEmpty) {
       return const ArticleReaderResult(
         state: ArticleReaderState.unsupportedContent,
