@@ -57,6 +57,50 @@ void main() {
       expect(restored.createdAtMs, original.createdAtMs);
     });
 
+    test('reading progress survives serialization and copyWith', () {
+      final original = makeItem().copyWith(
+        readingStatus: ReadingStatus.inProgress,
+        readingProgress: 45,
+      );
+      final restored = SavedItem.fromMap(original.toMap());
+
+      expect(restored.readingStatus, ReadingStatus.inProgress);
+      expect(restored.readingProgress, 45);
+      expect(
+        restored.copyWith(readingStatus: ReadingStatus.completed).readingProgress,
+        45,
+        reason: 'The model keeps explicit progress independent of a status edit; UI actions coordinate both fields.',
+      );
+    });
+
+    test('older records default to unread with zero progress', () {
+      final legacy = makeItem().toMap()
+        ..remove('readingStatus')
+        ..remove('readingProgress');
+      final restored = SavedItem.fromMap(legacy);
+
+      expect(restored.readingStatus, ReadingStatus.unread);
+      expect(restored.readingProgress, 0);
+    });
+
+    test('rejects invalid reading status and out-of-range progress', () {
+      final invalidStatus = makeItem().toMap()..['readingStatus'] = 'unknown';
+      final invalidProgress = makeItem().toMap()..['readingProgress'] = 101;
+
+      expect(
+        () => SavedItem.fromMap(invalidStatus),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => SavedItem.fromMap(invalidProgress),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => makeItem().copyWith(readingProgress: -1).toMap(),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
     test('does not echo oversized or unknown item kinds in errors', () {
       final oversizedKind = List<String>.filled(100000, 'x').join();
 
