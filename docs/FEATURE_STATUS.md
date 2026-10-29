@@ -117,7 +117,7 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - Enforced one absolute deadline across DNS resolution, request/response phases and body reading, rather than restarting the full timeout at every stage.
 - Added test/article_reader_repository_test.dart to verify no reader request occurs on details-screen load, a tap starts one request, opening a temporary preview leaves the saved record unchanged, saving a selected passage persists only the user-approved annotation, and portable backup contains the annotation but not the full fetched article. Reader success/failure feedback now appears on the visible Reader route, with widget-test source for both outcomes. TC-264–TC-268 have partial regression source, but none has been run; actual platform checks remain pending.
 - Source review caught and corrected malformed expressions in the sanitizer hardening and hostname-validation edits; both complete functions were re-fetched after repair. No tests, formatter, analyzer or builds were run. Android/web behavior is still unverified. CI remains manual-only.
-- Latest relevant commits include abbb973 (single-pass/common HTML entity decoding), a79b9fd (entity regression), 7df2f18 (save-progress accessibility regression), and f770abb (export privacy regression). Re-check HEAD before the next edit.
+- Latest relevant commits include 9be6a98 (preprocess active markup before article extraction), 8809696 (fake semantic-container regression), abbb973 (single-pass/common entity decoding), and 7df2f18 (save-progress accessibility regression). Re-check HEAD before the next edit.
 
 
 ## SH-006 reader decoding polish — 2026-10-29
@@ -160,3 +160,10 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - Reordered decoding so numeric references are handled before named references. This prevents escaped text such as `&amp;#169;` from being recursively unescaped during a single sanitizer pass; untrusted output remains plain text.
 - Added a regression for common named entities, uppercase entity names, a numeric hexadecimal reference and non-recursive escaped-ampersand cases. Test source is authored but unrun. Commits: abbb973 and a79b9fd.
 - Also added a delayed-save accessibility test (7df2f18). No tests, formatter, analyzer or builds were run; SH-006 remains partial and CI manual-only.
+
+
+## SH-006 semantic extraction hardening — 2026-10-29
+
+- Active/embedded blocks and HTML comments are now removed before looking for an `<article>` or `<main>` container. This avoids a literal fake article tag inside a script string or comment being selected instead of the page's real article content.
+- Added a synthetic regression combining a script-string `<article>`, a commented `<article>`, navigation chrome and a real article. The test is authored but has not been run.
+- The sanitizer remains a lightweight text extractor, not a standards-complete HTML parser or Readability implementation. Commits: 9be6a98 (source) and 8809696 (test source). No tests, formatter, analyzer or builds were run; CI remains manual-only.
