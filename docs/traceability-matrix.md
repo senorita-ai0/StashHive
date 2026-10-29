@@ -1704,4 +1704,4 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
-| Expose Reader loading/save progress and article/error headings to assistive technology | lib/screens/article_reader_page.dart | TC-268; test/article_reader_page_test.dart | Source and loading-label assertion authored; test and platform accessibility verification pending |
+| Expose Reader loading/save progress and article/error headings to assistive technology | lib/screens/article_reader_page.dart | TC-268; test/article_reader_page_test.dart | Source plus loading-label and delayed save-progress assertions authored; not run; platform accessibility verification pending |
