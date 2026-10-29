@@ -1076,3 +1076,12 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - Added `LibraryRepository.libraryLayoutMode` / `setLibraryLayoutMode` using the current local preferences store. Only `grid` and `list` are accepted; malformed stored values use Grid. A post-write failure attempts best-effort rollback and the UI shows safe retry feedback.
 - Added `test/library_layout_mode_test.dart` and TC-255 for fallback, persistence, rollback and widget switching.
 - **Verification:** No tests, formatter, analyzer, workflow, web/Android build or visual accessibility review has run for this increment. This source slice is committed but unverified; CI remains manual-only.
+
+
+## SH-010 — Reading status and progress (2026-10-29)
+
+- Added `ReadingStatus` (Unread, In progress, Completed) and bounded integer progress (0–100) to `SavedItem`. These fields participate in existing map/JSON serialization; legacy records without them default to Unread/0%.
+- Item Details now has status segments and a progress slider. Choosing Unread resets progress to 0%; In progress sets at least 1%; Completed sets 100%. Slider changes map 0% to Unread, 1–99% to In progress, and 100% to Completed.
+- Added model regression source for round-trip serialization, legacy defaults and invalid values; added a widget regression for completing an item from details.
+- Added FR-023, TC-256, traceability and roadmap notes. The revisit/rediscovery screen is still outstanding, so SH-010 is only partially implemented.
+- **Verification:** Tests, formatter, analyzer, web/Android builds and visual/accessibility checks have not run. CI remains manual-only.
