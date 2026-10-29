@@ -46,6 +46,8 @@ The visible product name is StashHive. Keep the existing `stashhive` package/sto
 | FR-024 | Save user-entered quotes/highlights and personal annotations on a saved item. | Should | Each item supports up to 50 bounded annotations; an entry must contain a quote, a note, or both. Entries persist locally, can be deleted, are searchable, and survive versioned JSON backup/restore and metadata exports. Legacy records default to no annotations. StashHive does not automatically fetch or scrape website content to create an annotation. | SH-006; TC-257 |
 | FR-025 | Offer user-authored smart tag rules during local capture. | Should | Up to 50 bounded rules match a case-insensitive phrase in the current item's title, URL or notes. Quick Save shows unique suggestions excluding tags already present; tags are only added after a user taps a suggestion. Rules persist in the current app/browser profile, invalid stored rules are ignored safely, and rules are not included in JSON backup v1 or synchronized across platforms. No AI/network service is required. | SH-008; TC-258 |
 
+| FR-026 | Check a saved link's response status on explicit request. | Could | On a user tap, Android sends a bounded HTTP(S) request to a public destination and stores only the result/status code and check time in local preferences. Do not download/store page content, follow redirects, check private/local addresses, alter the item timestamp, or run checks in the background. Browser and unsupported-platform limitations are explained honestly. Transient errors are not presented as proof that a link is permanently broken. | SH-009; TC-259 |
+
 ## Non-functional requirements
 
 | ID | Requirement | Priority | Acceptance criteria / verification |
