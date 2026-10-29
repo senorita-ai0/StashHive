@@ -1651,3 +1651,9 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-263; `test/rediscovery_test.dart` covers the cutoff, completion exclusion, edit-time independence and ordering; `test/rediscovery_widget_test.dart` covers the visible filter.
 - **Privacy/scope:** Local-only; no reminder, background task, permission, sync or external-site activity monitoring was added.
 - **Status:** Source and regression source committed to `main`; tests, formatter, analyzer, builds and platform checks remain pending. CI remains manual-only.
+## SH-006 reader-mode traceability addition — 2026-10-29
+
+| Feature slice | Design / requirements | Planned tests | Implementation status |
+|---|---|---|---|
+| User-initiated temporary article reader | SCR-004; FR-006, FR-011, FR-024; NFR-002, NFR-005, NFR-008 | TC-264–TC-268 | Design gate documented in `docs/research/article-reader-feasibility.md`; source NOT STARTED; tests planned and unrun |
+| Selection-based quote/highlight anchoring | SCR-004; FR-024; NFR-006 | Add tests after Android/web rendering feasibility is established | NOT STARTED; no reliable cross-platform selection behavior claimed |
