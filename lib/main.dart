@@ -3831,124 +3831,119 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              const DetailSectionLabel(label: 'PREFERENCES'),
-              const SizedBox(height: 8),
-              Card(
-                elevation: 0,
-                margin: EdgeInsets.zero,
-                child: SwitchListTile(
-                  secondary: const SettingIcon(icon: Icons.dark_mode_outlined),
-                  title: const Text('Dark appearance'),
-                  subtitle: const Text('Use a darker surface throughout the app'),
-                  value: darkMode,
-                  onChanged: onDarkModeChanged,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Card(
-                elevation: 0,
-                margin: EdgeInsets.zero,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Text size',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        'Adds larger text on top of your device or browser text settings.',
-                        style: TextStyle(color: mutedTextColor(context)),
-                      ),
-                      const SizedBox(height: 12),
-                      DropdownButtonFormField<double>(
-                        // FormField keeps its internal selection across parent
-                        // rebuilds. Recreate it when an optimistic choice is
-                        // rolled back so the visible option follows persisted state.
-                        key: ValueKey<double>(textScaleMultiplier),
-                        initialValue: textScaleMultiplier,
-                        decoration: const InputDecoration(
-                          labelText: 'App text size',
-                        ),
-                        items: const [
-                          DropdownMenuItem<double>(
-                            value: 1.0,
-                            child: Text('System default'),
-                          ),
-                          DropdownMenuItem<double>(
-                            value: 1.15,
-                            child: Text('Large'),
-                          ),
-                          DropdownMenuItem<double>(
-                            value: 1.3,
-                            child: Text('Extra large'),
-                          ),
-                        ],
-                        onChanged: (value) {
-                          if (value != null) onTextScaleChanged(value);
-                        },
-                      ),
-                    ],
+              PremiumSection(
+                title: 'PREFERENCES',
+                children: [
+                  PremiumSwitchTile(
+                    icon: Icons.dark_mode_outlined,
+                    title: 'Dark appearance',
+                    subtitle: 'Use a darker surface throughout the app',
+                    value: darkMode,
+                    onChanged: onDarkModeChanged,
+                    color: PremiumTokens.violet,
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Text size',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                              ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          'Adds larger text on top of your device or browser text settings.',
+                          style: TextStyle(color: mutedTextColor(context)),
+                        ),
+                        const SizedBox(height: 12),
+                        DropdownButtonFormField<double>(
+                          // FormField keeps its internal selection across parent
+                          // rebuilds. Recreate it when an optimistic choice is
+                          // rolled back so the visible option follows persisted state.
+                          key: ValueKey<double>(textScaleMultiplier),
+                          initialValue: textScaleMultiplier,
+                          decoration: const InputDecoration(
+                            labelText: 'App text size',
+                          ),
+                          items: const [
+                            DropdownMenuItem<double>(
+                              value: 1.0,
+                              child: Text('System default'),
+                            ),
+                            DropdownMenuItem<double>(
+                              value: 1.15,
+                              child: Text('Large'),
+                            ),
+                            DropdownMenuItem<double>(
+                              value: 1.3,
+                              child: Text('Extra large'),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            if (value != null) onTextScaleChanged(value);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
-              const DetailSectionLabel(label: 'YOUR DATA'),
-              const SizedBox(height: 8),
-              SettingsRow(
-                icon: Icons.backup_outlined,
-                title: 'Backup & privacy',
-                subtitle: 'Export, restore and understand storage limits',
-                color: const Color(0xFF2F8968),
-                background: const Color(0xFFE7F7EF),
-                onTap: () => _openBackup(context),
-              ),
-              const SizedBox(height: 8),
-              SettingsRow(
-                icon: Icons.manage_search_rounded,
-                title: 'Search & saved content',
-                subtitle: kIsWeb
-                    ? 'What is searchable in this browser'
-                    : 'What is searchable on this device',
-                color: const Color(0xFFB87A22),
-                background: const Color(0xFFFFF2DF),
-                onTap: () => _showInfo(
-                  context,
-                  'What can StashHive search?',
-                  'This first version searches titles, URLs, notes, tags and collection names stored in your local library. OCR and PDF text extraction are not enabled yet, so text found only inside an image or PDF is not searchable unless you add it to the notes.',
-                ),
+              PremiumSection(
+                title: 'YOUR DATA',
+                children: [
+                  SettingsRow(
+                    icon: Icons.backup_outlined,
+                    title: 'Backup & privacy',
+                    subtitle: 'Export, restore and understand storage limits',
+                    color: PremiumTokens.success,
+                    onTap: () => _openBackup(context),
+                  ),
+                  SettingsRow(
+                    icon: Icons.manage_search_rounded,
+                    title: 'Search & saved content',
+                    subtitle: kIsWeb
+                        ? 'What is searchable in this browser'
+                        : 'What is searchable on this device',
+                    color: PremiumTokens.warning,
+                    onTap: () => _showInfo(
+                      context,
+                      'What can StashHive search?',
+                      'This first version searches titles, URLs, notes, tags and collection names stored in your local library. OCR and PDF text extraction are not enabled yet, so text found only inside an image or PDF is not searchable unless you add it to the notes.',
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
-              const DetailSectionLabel(label: 'SUPPORT'),
-              const SizedBox(height: 8),
-              SettingsRow(
-                icon: Icons.help_outline_rounded,
-                title: 'Help & tips',
-                subtitle: 'How local saving and backups work',
-                color: const Color(0xFFB24E8C),
-                background: const Color(0xFFFCEAF5),
-                onTap: () => _showInfo(
-                  context,
-                  'A few helpful tips',
-                  'Save website URLs as bookmarks, or choose a file to keep a local copy. Back up your library before uninstalling the app or clearing browser data. Web and Android libraries do not sync automatically.',
-                ),
-              ),
-              const SizedBox(height: 8),
-              SettingsRow(
-                icon: Icons.info_outline_rounded,
-                title: 'About StashHive',
-                subtitle: 'Version 0.1.0 · Local-first personal library',
-                color: kBrand,
-                background: const Color(0xFFEAF2FF),
-                onTap: () => _showInfo(
-                  context,
-                  'StashHive',
-                  'A personal save-and-find library.\n\nVersion 0.1.0 — first development increment.\n\nYour library is stored locally. There is no StashHive cloud account or automatic cross-device sync in this release.',
-                ),
+              PremiumSection(
+                title: 'SUPPORT',
+                children: [
+                  SettingsRow(
+                    icon: Icons.help_outline_rounded,
+                    title: 'Help & tips',
+                    subtitle: 'How local saving and backups work',
+                    color: PremiumTokens.violet,
+                    onTap: () => _showInfo(
+                      context,
+                      'A few helpful tips',
+                      'Save website URLs as bookmarks, or choose a file to keep a local copy. Back up your library before uninstalling the app or clearing browser data. Web and Android libraries do not sync automatically.',
+                    ),
+                  ),
+                  SettingsRow(
+                    icon: Icons.info_outline_rounded,
+                    title: 'About StashHive',
+                    subtitle: 'Version 0.1.0 · Local-first personal library',
+                    color: PremiumTokens.brand,
+                    onTap: () => _showInfo(
+                      context,
+                      'StashHive',
+                      'A personal save-and-find library.\\n\\nVersion 0.1.0 — first development increment.\\n\\nYour library is stored locally. There is no StashHive cloud account or automatic cross-device sync in this release.',
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 22),
               const Center(
@@ -3979,7 +3974,6 @@ class SettingsRow extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.color,
-    required this.background,
     required this.onTap,
     super.key,
   });
@@ -3988,31 +3982,16 @@ class SettingsRow extends StatelessWidget {
   final String title;
   final String subtitle;
   final Color color;
-  final Color background;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(PremiumTokens.radiusCard),
-        side: BorderSide(color: Theme.of(context).dividerColor),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 13, vertical: 4),
-        leading: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(12)),
-          child: Icon(icon, color: color),
-        ),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-        subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
-        trailing: Icon(Icons.chevron_right_rounded, color: mutedTextColor(context)),
-      ),
+    return PremiumTile(
+      icon: icon,
+      title: title,
+      subtitle: subtitle,
+      color: color,
+      onTap: onTap,
     );
   }
 }
