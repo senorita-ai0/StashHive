@@ -4,8 +4,14 @@ import 'package:stashhive/services/article_reader.dart';
 void main() {
   group('parseArticleReaderUrl', () {
     test('accepts HTTP and HTTPS public-looking URLs', () {
-      expect(parseArticleReaderUrl('https://example.com/article')?.scheme, 'https');
-      expect(parseArticleReaderUrl('http://news.example.org')?.host, 'news.example.org');
+      expect(
+        parseArticleReaderUrl('https://example.com/article')?.scheme,
+        'https',
+      );
+      expect(
+        parseArticleReaderUrl('http://news.example.org')?.host,
+        'news.example.org',
+      );
     });
 
     test('rejects non-web schemes and credential-bearing URLs', () {
@@ -19,7 +25,7 @@ void main() {
       }
     });
 
-    test('rejects localhost, local suffixes, and malformed values', () {
+    test('rejects localhost, local suffixes, private literals and malformed values', () {
       for (final value in <String>[
         'http://localhost/',
         'http://service.local/',
@@ -34,7 +40,7 @@ void main() {
     });
   });
 
-  test('reader result exposes success without persisting content', () {
+  test('reader result exposes success without involving repository storage', () {
     const result = ArticleReaderResult(
       state: ArticleReaderState.success,
       title: 'Article title',
@@ -43,7 +49,6 @@ void main() {
     expect(result.isSuccess, isTrue);
     expect(result.text, 'Temporary page text');
   });
-}
 
   test('sanitizes hostile HTML to readable plain text', () {
     final text = sanitizeArticleMarkup(
@@ -61,9 +66,10 @@ void main() {
     expect(text, isNot(contains('<script')));
   });
 
-  test('plain text normalization preserves Unicode', () {
+  test('plain text normalization preserves Unicode and line breaks', () {
     expect(
-      sanitizeArticleMarkup('  سلام  \\r\\n  hello  ', isHtml: false),
-      'سلام\\nhello',
+      sanitizeArticleMarkup('  سلام  \r\n  hello  ', isHtml: false),
+      'سلام\nhello',
     );
   });
+}
