@@ -1746,7 +1746,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Assert that StashHive's light/dark themes use the shared primary colors, light canvas/dark canvas and rounded card shapes.
 - Pump `PremiumPageHeader` and confirm its title/subtitle render; pump `PremiumIconChip` with the configured size and expected icon.
 - Pump `PremiumSection`, `PremiumTile` and `PremiumSwitchTile`; verify grouped rows remain readable and tile/switch actions are forwarded.
-- Pump `PremiumEmptyState`, confirm the explanatory copy and action are available, and verify its action callback fires.
+- Pump `PremiumEmptyState`, confirm the explanatory copy and action are available, and verify its action callback fires. Compare its use in Library, Search, Collections and Tags.
 - **Status:** Regression source is committed but unrun. Run at the manual validation checkpoint, then compare Library, Search, Collections, Item Details, Quick Save, Backup & Privacy and Settings on Android/web against the refreshed SVG references.
 
 ### TC-245 — Normalize the generated Android build baseline and launcher resources
