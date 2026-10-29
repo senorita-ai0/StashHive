@@ -18,7 +18,7 @@ void main() {
 
     expect(find.text('Article preview unavailable'), findsOneWidget);
     expect(
-      find.text('This saved URL is not supported by the reader. Use HTTP or HTTPS on standard ports (80 or 443).'),
+      find.text('The reader supports only credential-free HTTP/HTTPS links on standard ports (80/443).'),
       findsOneWidget,
     );
     expect(find.text('Open in browser'), findsOneWidget);
