@@ -1755,3 +1755,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Cap extracted title text without splitting a UTF-16 surrogate pair | `_truncateAtUnicodeBoundary` called from `_extractTitle` in `lib/services/article_reader_io.dart` | TC-272; `does not split a supplementary Unicode character at the title cap` in `test/article_reader_test.dart` | Source and regression authored and re-fetched; not executed; platform checks pending |
+
+
+## SH-006 HTML meta charset traceability — TC-273/TC-274 — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| When HTTP charset is absent, detect a bounded early direct HTML meta charset | _charsetFromHtmlMeta in lib/services/article_reader_io.dart | TC-273; uses an early HTML meta charset when the response omits charset | Source/test authored and re-fetched; not run; platform verification pending |
+| When HTTP charset is absent, detect a bounded early legacy http-equiv/content charset | _charsetFromHtmlMeta in lib/services/article_reader_io.dart | TC-274; reads legacy charset from an early http-equiv meta tag | Source/test authored and re-fetched; not run; platform verification pending |
