@@ -67,12 +67,17 @@ void main() {
 
     // A deterministic synthetic article proves the reader route without
     // making any external request or sending the saved note to the transport.
-    articleReaderLoaderForTesting = (url, timeout) async =>
-        const ArticleReaderResult(
-          state: ArticleReaderState.success,
-          title: 'Temporary article preview',
-          text: 'Synthetic page text that must remain outside library storage.',
-        );
+    var readerLoadCount = 0;
+    String? requestedUrl;
+    articleReaderLoaderForTesting = (url, timeout) async {
+      readerLoadCount++;
+      requestedUrl = url;
+      return const ArticleReaderResult(
+        state: ArticleReaderState.success,
+        title: 'Temporary article preview',
+        text: 'Synthetic page text that must remain outside library storage.',
+      );
+    };
 
     await tester.pumpWidget(
       MaterialApp(
@@ -83,10 +88,13 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    expect(readerLoadCount, 0, reason: 'Details must not fetch on its own.');
 
     await tester.tap(find.byKey(const ValueKey('open-article-reader')));
     await tester.pumpAndSettle();
 
+    expect(readerLoadCount, 1);
+    expect(requestedUrl, 'https://example.com/article');
     expect(find.text('Temporary article preview'), findsOneWidget);
     expect(
       find.text('Synthetic page text that must remain outside library storage.'),
