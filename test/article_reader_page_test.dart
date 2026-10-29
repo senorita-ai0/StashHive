@@ -33,7 +33,9 @@ void main() {
           text:
               'The river flows through the quiet green valley, carrying stories from the old town.',
         );
-    addTearDown(() => articleReaderLoaderForTesting = null);
+    addTearDown(() {
+      articleReaderLoaderForTesting = null;
+    });
 
     String? savedQuote;
     int? savedStart;
