@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/models/saved_item.dart';
+import 'package:stashhive/models/link_health_record.dart';
 import 'package:stashhive/services/backup_codec.dart';
 import 'package:stashhive/services/search_filters.dart';
 import 'package:stashhive/services/smart_tag_rules.dart';
@@ -126,6 +127,51 @@ void main() {
       }
     },
   );
+
+  test('stores link health results locally without changing saved items', () async {
+    await repository.save(buildLink(url: 'https://flutter.dev'));
+    final savedBeforeCheck = repository.findById('link-1')!;
+    final result = LinkHealthRecord(
+      itemId: 'link-1',
+      checkedUrl: 'https://flutter.dev',
+      state: LinkHealthState.healthy,
+      checkedAtMs: DateTime.now().millisecondsSinceEpoch,
+      httpStatusCode: 200,
+    );
+
+    await repository.saveLinkHealthRecord(result);
+
+    final stored = repository.findLinkHealthRecord(
+      'link-1',
+      url: 'https://flutter.dev',
+    );
+    expect(stored, isNotNull);
+    expect(stored!.state, LinkHealthState.healthy);
+    expect(stored.httpStatusCode, 200);
+    expect(stored.checkedAtMs, result.checkedAtMs);
+    expect(repository.findLinkHealthRecord('link-1', url: 'https://changed.example'), isNull);
+
+    final savedAfterCheck = repository.findById('link-1')!;
+    expect(savedAfterCheck.title, savedBeforeCheck.title);
+    expect(savedAfterCheck.url, savedBeforeCheck.url);
+    expect(savedAfterCheck.updatedAtMs, savedBeforeCheck.updatedAtMs);
+  });
+
+  test('refuses to attach a health result to a changed or non-link item', () async {
+    await repository.save(buildLink(url: 'https://flutter.dev'));
+    final mismatched = LinkHealthRecord(
+      itemId: 'link-1',
+      checkedUrl: 'https://different.example',
+      state: LinkHealthState.healthy,
+      checkedAtMs: DateTime.now().millisecondsSinceEpoch,
+      httpStatusCode: 200,
+    );
+    await expectLater(
+      repository.saveLinkHealthRecord(mismatched),
+      throwsA(isA<FormatException>()),
+    );
+    expect(repository.linkHealthHistory, isEmpty);
+  });
 
   test('lookups expose the last committed item while a save is staged', () async {
     await repository.save(buildLink());
