@@ -58,6 +58,27 @@ void main() {
       expect(markdown, isNot(contains('attachment-one')));
     });
 
+    test('exports quotes and notes as Markdown blockquotes', () {
+      final markdown = buildSelectedItemsMarkdown(<SavedItem>[
+        makeExportItem().copyWith(
+          annotations: <SavedAnnotation>[
+            SavedAnnotation(
+              id: 'annotation-1',
+              quote: 'A copied passage\\ncontinues here.',
+              note: 'Review this claim later.',
+              createdAtMs: 2000,
+            ),
+          ],
+        ),
+      ]);
+
+      expect(markdown, contains('### Highlights & annotations'));
+      expect(markdown, contains('> A copied passage'));
+      expect(markdown, contains('> continues here.'));
+      expect(markdown, contains('**Note:**'));
+      expect(markdown, contains('> Review this claim later.'));
+    });
+
     test('rejects empty selections and oversized item counts', () {
       expect(
         () => buildSelectedItemsMarkdown(const <SavedItem>[]),
