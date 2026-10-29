@@ -1085,3 +1085,14 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - Added model regression source for round-trip serialization, legacy defaults and invalid values; added a widget regression for completing an item from details.
 - Added Library quick filters for Unread, In progress and Completed, plus FR-023, TC-256, traceability and roadmap notes. A dedicated ranked revisit queue is still a possible follow-up.
 - **Verification:** Tests, formatter, analyzer, web/Android builds and visual/accessibility checks have not run. CI remains manual-only.
+
+
+## SH-006 — User-entered highlights and annotations (2026-10-29)
+
+- **Model:** Added immutable `SavedAnnotation` records with stable IDs, optional quote text, optional personal note, and a timestamp. Saved items accept at most 50 annotations; text lengths, timestamps, list size and duplicate IDs are validated. Older records without the field decode as an empty list.
+- **Item Details:** Added a Highlights & Annotations panel for manually entering a quote/excerpt, a note, or both, and deleting an entry after confirmation. The UI explicitly says it does not fetch or scrape website text. Editing the parent item preserves its annotations.
+- **Retrieval/export:** Annotation quote/note text participates in local text search and is included in versioned JSON backup, CSV and selected-item Markdown exports.
+- **Regression source:** Added model validation/search cases, backup round-trip/rejection cases, export cases, and `test/annotations_widget_test.dart` for add/delete and blank-entry validation.
+- **Requirements:** Added FR-024, TC-257 and SH-006/TSK-537 traceability.
+- **Scope boundary:** This is the annotations sub-slice only. A readable article view and selecting text inside rendered webpages are not implemented; users paste their own text.
+- **Verification:** No formatter, analyzer, tests, CI workflow, web build or Android build has run for this increment. Source is committed to `main`; verification remains pending. CI remains manual-only.
