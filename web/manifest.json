@@ -3,7 +3,7 @@
   "short_name": "StashHive",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#F8F9FD",
-  "theme_color": "#5B5CE2",
+  "background_color": "#F6F8FC",
+  "theme_color": "#2563EB",
   "description": "A private library for links, ideas, images and documents."
 }
