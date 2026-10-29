@@ -1206,3 +1206,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 ## SH-006 — charset alias coverage — 2026-10-29
 
 Added a regression case for charset=cp1252 and a paired Latin-1 assertion so both labels' distinct byte mappings are explicit in the test source. Commit: 1ed3b06. Not run; no formatter, analyzer or build was run.
+
+
+## SH-006 — Reader accessibility semantics — 2026-10-29
+
+- Labelled the reader loading and save-progress indicators for assistive technologies and exposed the main article/error title as headings.
+- Added a deterministic widget regression using a pending fake response to assert the loading indicator's semantic label. Commits: 10e1f87 and e8d0fab.
+- This is source-only: no test, formatter, analyzer or build was run. Screen-reader/device validation remains pending.
