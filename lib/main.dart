@@ -1012,13 +1012,13 @@ class _HomeShellState extends State<HomeShell> {
         onDestinationSelected: (index) => setState(() => _selectedTab = index),
         destinations: const [
           NavigationDestination(
-            icon: Icon(Icons.grid_view_rounded),
+            icon: Icon(Icons.grid_view_outlined),
             selectedIcon: Icon(Icons.grid_view_rounded),
             label: 'Library',
           ),
           NavigationDestination(
             icon: Icon(Icons.search_rounded),
-            selectedIcon: Icon(Icons.search_rounded),
+            selectedIcon: Icon(Icons.manage_search_rounded),
             label: 'Search',
           ),
           NavigationDestination(
