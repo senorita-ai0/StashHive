@@ -5543,7 +5543,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                     subtitle: 'Import links from a Chrome, Firefox, Edge or other browser HTML bookmark export. Existing links are skipped.',
                     buttonText: _importingBookmarks ? 'Importing…' : 'Choose HTML file',
                     loading: _importingBookmarks,
-                    onPressed: (_exporting || _choosingBackup || _restoring) ? null : _importBookmarks,
+                    onPressed: (_exporting || _choosingBackup || _restoring || _exportingCsv) ? null : _importBookmarks,
                   ),
                   const SizedBox(height: 24),
                   Text('Restore', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700)),
@@ -5563,7 +5563,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                                 ? 'Backup in progress…'
                                 : 'Choose backup file',
                     loading: _choosingBackup || _restoring,
-                    onPressed: _exporting ? null : _restore,
+                    onPressed: (_exporting || _importingBookmarks || _exportingCsv) ? null : _restore,
                   ),
                   const SizedBox(height: 18),
                   Container(
