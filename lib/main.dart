@@ -1725,38 +1725,20 @@ class EmptySearchState extends StatelessWidget {
                 ? 'Try another type or clear the filter to see all your saved items.'
                 : 'Your saved items will appear here as soon as you add them.';
 
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.search_off_rounded, size: 46, color: mutedTextColor(context)),
-            const SizedBox(height: 12),
-            Text(
-              hasQuery
-                  ? 'No matches found'
-                  : filterHasNoMatches
-                      ? 'No items in this filter'
-                      : 'Your search starts here',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 6),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: mutedTextColor(context)),
-            ),
-            if (hasNoResults || hasFilter) ...[
-              const SizedBox(height: 14),
-              OutlinedButton(onPressed: onClear, child: Text(actionLabel)),
-            ],
-          ],
-        ),
-      ),
+    return PremiumEmptyState(
+      icon: hasQuery
+          ? Icons.search_off_rounded
+          : filterHasNoMatches
+              ? Icons.filter_alt_off_rounded
+              : Icons.search_rounded,
+      title: hasQuery
+          ? 'No matches found'
+          : filterHasNoMatches
+              ? 'No items in this filter'
+              : 'Your search starts here',
+      message: message,
+      actionLabel: hasNoResults || hasFilter ? actionLabel : null,
+      onAction: hasNoResults || hasFilter ? onClear : null,
     );
   }
 }
