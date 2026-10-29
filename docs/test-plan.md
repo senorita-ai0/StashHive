@@ -1897,3 +1897,13 @@ The previous Android debug build failed when the generated plugin registrant cou
 - On web, verify the UI explains that browser security prevents reliable cross-origin status inspection; it must not imply that the destination was checked or use a proxy. On unsupported platforms, show the limitation.
 - Confirm no background polling, analytics, scraping, page archive, or network call occurs before the user presses Check link.
 - Status: Unit, repository and widget regression source is committed but unrun. Run at the owner's manual validation checkpoint; CI remains manual-only.
+
+
+### TC-260 — Export only explicitly selected items as a Markdown attachment
+
+- In Library, select multiple items, deselect one while selection mode is active, and choose **Export selected**.
+- Intercept the platform share call in the widget regression and verify the payload is named `stashhive-selected-YYYY-MM-DD.md`, uses `text/markdown`, and contains a Markdown index of selected titles, URLs, tags, collections, reading status/progress, notes and saved annotations.
+- Verify deselected items are not present in the exported Markdown. Copied attachment bytes must not be embedded; the UI must continue directing users to versioned JSON backup for full recovery.
+- Simulate a share-sheet failure. The UI must show safe retry guidance without exposing plugin/storage diagnostics or throwing a framework exception.
+- Confirm the selection and saved library are unchanged by a successful or failed export.
+- **Status:** Widget regression source is committed but unrun. Validate at the owner-requested manual checkpoint; CI stays manual-only.
