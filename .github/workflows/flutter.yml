@@ -9,15 +9,28 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Java 27
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '27'
+
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
+          flutter-version: '3.47.2'
           cache: true
+
+      - name: Record toolchain versions
+        run: |
+          java -version
+          flutter --version
+          dart --version
 
       - name: Generate Android runner when absent
         shell: bash
@@ -32,8 +45,14 @@ jobs:
             rm -rf "$temp_dir"
           fi
 
+      - name: Apply shared Android build configuration
+        run: python3 tool/configure_android_build.py
+
       - name: Register Android incoming share targets
         run: python3 tool/configure_android_share_intents.py
+
+      - name: Test Android build configurator
+        run: python3 -m unittest tool.test_configure_android_build
 
       - name: Test Android share manifest configurator
         run: python3 -m unittest tool.test_configure_android_share_intents
