@@ -140,7 +140,173 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
       ),
       ' ',
     );
+    // Malformed active blocks without a closing tag must not leak their
+    // remaining source into the reader as apparent article prose.
+    text = text.replaceAll(
+      RegExp(
+        r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*
+      RegExp(
+        r'<br\s*/?>|</(p|div|article|section|h[1-6]|li|tr)\s*>',
+        caseSensitive: false,
+      ),
+      '\n',
+    );
+    text = text.replaceAll(RegExp(r'<[^>]{0,2048}>'), ' ');
+  }
+  const entities = <String, String>{
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&apos;': "'",
+    '&nbsp;': ' ',
+    '&mdash;': '—',
+    '&ndash;': '–',
+    '&hellip;': '…',
+  };
+  text = text.replaceAllMapped(
+    RegExp(r'&(?:amp|lt|gt|quot|apos|nbsp|mdash|ndash|hellip|#39);',
+        caseSensitive: false),
+    (match) => entities[match[0]!.toLowerCase()] ?? match[0]!,
+  );
+  text = text.replaceAllMapped(RegExp(r'&#(\d{1,7});'), (match) {
+    final code = int.tryParse(match.group(1)!);
+    if (code == null ||
+        code < 1 ||
+        code > 0x10FFFF ||
+        (code >= 0xD800 && code <= 0xDFFF)) {
+      return ' ';
+    }
+    return String.fromCharCode(code);
+  });
+  text = text.replaceAllMapped(
+    RegExp(r'&#x([0-9a-f]{1,6});', caseSensitive: false),
+    (match) {
+      final code = int.tryParse(match.group(1)!, radix: 16);
+      if (code == null ||
+          code < 1 ||
+          code > 0x10FFFF ||
+          (code >= 0xD800 && code <= 0xDFFF)) {
+        return ' ';
+      }
+      return String.fromCharCode(code);
+    },
+  );
+  text = text.replaceAll('\r', '\n').replaceAll(RegExp(r'[\t\f\v ]+'), ' ');
+  text = text
+      .replaceAll(RegExp(r' *\n *'), '\n')
+      .replaceAll(RegExp(r'\n{3,}'), '\n\n');
+  return text.trim();
+}
+
+/// Test seam for deterministic reader UI tests. Production leaves this unset.
+@visibleForTesting
+Future<ArticleReaderResult> Function(String url, Duration timeout)?
+    articleReaderLoaderForTesting;
+
+/// Called only from an explicit reader action. The result is transient and is
+/// never written to LibraryRepository or included in backups.
+Future<ArticleReaderResult> loadArticleForReader(
+  String url, {
+  Duration timeout = defaultArticleReaderTimeout,
+}) {
+  // Keep URL validation ahead of every transport path, including test seams,
+  // so an injected transport cannot accidentally mask invalid-input behavior.
+  if (parseArticleReaderUrl(url) == null) {
+    return Future<ArticleReaderResult>.value(
+      const ArticleReaderResult(state: ArticleReaderState.invalidUrl),
+    );
+  }
+  final testLoader = articleReaderLoaderForTesting;
+  if (testLoader != null) return testLoader(url, timeout);
+  return platform.loadArticleForReader(url, timeout: timeout);
+}
+,
+        caseSensitive: false,
+      ),
+      ' ',
+    );
     text = text.replaceAll(RegExp(r'<!--[\s\S]*?-->'), ' ');
+    text = text.replaceAll(RegExp(r'<!--[\s\S]*
+      RegExp(
+        r'<br\s*/?>|</(p|div|article|section|h[1-6]|li|tr)\s*>',
+        caseSensitive: false,
+      ),
+      '\n',
+    );
+    text = text.replaceAll(RegExp(r'<[^>]{0,2048}>'), ' ');
+  }
+  const entities = <String, String>{
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&apos;': "'",
+    '&nbsp;': ' ',
+    '&mdash;': '—',
+    '&ndash;': '–',
+    '&hellip;': '…',
+  };
+  text = text.replaceAllMapped(
+    RegExp(r'&(?:amp|lt|gt|quot|apos|nbsp|mdash|ndash|hellip|#39);',
+        caseSensitive: false),
+    (match) => entities[match[0]!.toLowerCase()] ?? match[0]!,
+  );
+  text = text.replaceAllMapped(RegExp(r'&#(\d{1,7});'), (match) {
+    final code = int.tryParse(match.group(1)!);
+    if (code == null ||
+        code < 1 ||
+        code > 0x10FFFF ||
+        (code >= 0xD800 && code <= 0xDFFF)) {
+      return ' ';
+    }
+    return String.fromCharCode(code);
+  });
+  text = text.replaceAllMapped(
+    RegExp(r'&#x([0-9a-f]{1,6});', caseSensitive: false),
+    (match) {
+      final code = int.tryParse(match.group(1)!, radix: 16);
+      if (code == null ||
+          code < 1 ||
+          code > 0x10FFFF ||
+          (code >= 0xD800 && code <= 0xDFFF)) {
+        return ' ';
+      }
+      return String.fromCharCode(code);
+    },
+  );
+  text = text.replaceAll('\r', '\n').replaceAll(RegExp(r'[\t\f\v ]+'), ' ');
+  text = text
+      .replaceAll(RegExp(r' *\n *'), '\n')
+      .replaceAll(RegExp(r'\n{3,}'), '\n\n');
+  return text.trim();
+}
+
+/// Test seam for deterministic reader UI tests. Production leaves this unset.
+@visibleForTesting
+Future<ArticleReaderResult> Function(String url, Duration timeout)?
+    articleReaderLoaderForTesting;
+
+/// Called only from an explicit reader action. The result is transient and is
+/// never written to LibraryRepository or included in backups.
+Future<ArticleReaderResult> loadArticleForReader(
+  String url, {
+  Duration timeout = defaultArticleReaderTimeout,
+}) {
+  // Keep URL validation ahead of every transport path, including test seams,
+  // so an injected transport cannot accidentally mask invalid-input behavior.
+  if (parseArticleReaderUrl(url) == null) {
+    return Future<ArticleReaderResult>.value(
+      const ArticleReaderResult(state: ArticleReaderState.invalidUrl),
+    );
+  }
+  final testLoader = articleReaderLoaderForTesting;
+  if (testLoader != null) return testLoader(url, timeout);
+  return platform.loadArticleForReader(url, timeout: timeout);
+}
+), ' ');
     text = text.replaceAll(
       RegExp(
         r'<br\s*/?>|</(p|div|article|section|h[1-6]|li|tr)\s*>',
