@@ -1021,6 +1021,20 @@ class LibraryRepository {
       rethrow;
     }
 
+    // Link-health metadata is derived and optional. Remove the known result
+    // when deleting an item, but never turn a successful item delete into a
+    // reported failure if this sidecar cleanup encounters a storage problem.
+    try {
+      final history = linkHealthHistory;
+      if (history.containsKey(id)) {
+        await _writeLinkHealthRecords(
+          history.values.where((record) => record.itemId != id).toList(),
+        );
+      }
+    } catch (_) {
+      // The saved item is already deleted; keep core deletion successful.
+    }
+
     _refreshItems();
     _refreshCollections();
   }
