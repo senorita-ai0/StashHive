@@ -1738,3 +1738,19 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm configure_manifest propagates the replacement error, leaves the original manifest byte-for-byte unchanged, and removes the temporary file.
 - Retain coverage for malformed input, missing application/activity, MIME filters, app label, launch mode and idempotent configuration.
 - **Status:** Regression source is committed but unrun. Execute the Python configurator suite at the manual validation checkpoint; CI remains manual-only.
+
+
+### TC-244 — Match shared premium UI tokens and core components
+
+- Assert that `PremiumTokens` uses the documented brand blue, mint, violet, 24 dp card radius and 17 dp control radius.
+- Pump `PremiumPageHeader` and confirm its title/subtitle render; pump `PremiumIconChip` with the configured size and expected icon.
+- Pump `PremiumEmptyState`, confirm the explanatory copy and action are available, and verify its action callback fires.
+- **Status:** Regression source is committed but unrun. Run at the manual validation checkpoint, then compare Library, Search, Collections, Item Details, Quick Save, Backup & Privacy and Settings on Android/web against the refreshed SVG references.
+
+### TC-245 — Normalize the generated Android build baseline and launcher resources
+
+- Configure a temporary generated-style Android runner and confirm AGP/Kotlin plugin versions, Gradle wrapper URL, Gradle properties, compile SDK/build-tools and Java/Kotlin JVM targets match the documented baseline.
+- Confirm AGP built-in Kotlin is enabled and the generated app module does not apply the legacy Kotlin Android plugin.
+- Confirm custom StashHive launcher color/vector/legacy/adaptive resources are generated; rerun configuration and assert no files change a second time.
+- Confirm an incomplete generated runner fails with a clear error.
+- **Status:** Python regression source is committed but unrun. Run alongside TC-243 and the manual Android build; do not claim the Android toolchain works until an APK build succeeds.
