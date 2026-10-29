@@ -218,7 +218,330 @@ String? _charsetFromHtmlMeta(List<int> bytes) {
   // bytes. Latin-1 preserves the ASCII markup even when the document body
   // uses a legacy encoding that UTF-8 would decode incorrectly.
   final scanLength = bytes.length < 1024 ? bytes.length : 1024;
-  final prefix = latin1.decode(bytes.sublist(0, scanLength), allowInvalid: true);
+  var prefix = latin1.decode(bytes.sublist(0, scanLength), allowInvalid: true);
+  // Do not trust apparent charset declarations inside comments or embedded
+  // script/style data. Strip those regions before scanning the bounded prefix.
+  prefix = prefix
+      .replaceAll(RegExp(r'<!--[\s\S]*?-->'), ' ')
+      .replaceAll(RegExp(r'<!--[\s\S]*
+    r'<meta\b[^>]{0,1024}>',
+    caseSensitive: false,
+  ).allMatches(prefix);
+
+  for (final match in metaTags) {
+    final tag = match[0]!;
+    // This catches both the direct charset attribute and the legacy
+    // http-equiv content attribute, while not matching data-charset.
+    final charset = RegExp(
+      r'(?:^|[\s;])charset\s*=\s*["\x27]?([^;\s"\x27/>]+)',
+      caseSensitive: false,
+    ).firstMatch(tag);
+    final value = charset?.group(1)?.trim();
+    if (value != null && value.isNotEmpty) return value;
+  }
+  return null;
+}
+Duration _remaining(DateTime deadline) {
+  final remaining = deadline.difference(DateTime.now());
+  if (remaining <= Duration.zero) {
+    throw TimeoutException('Article reader request deadline exceeded.');
+  }
+  return remaining;
+}
+
+class _ArticleResponseTooLarge implements Exception {
+  const _ArticleResponseTooLarge();
+}
+
+Future<Uint8List> _readBoundedResponse(
+  HttpClientResponse response,
+  DateTime deadline,
+) async {
+  final bytes = BytesBuilder(copy: false);
+  await response.fold<int>(0, (total, chunk) {
+    final nextTotal = total + chunk.length;
+    if (nextTotal > maxArticleResponseBytes) {
+      throw const _ArticleResponseTooLarge();
+    }
+    bytes.add(chunk);
+    return nextTotal;
+  }).timeout(_remaining(deadline));
+  return bytes.takeBytes();
+}
+
+String _decodeText(List<int> bytes, String? charset) {
+  // A leading UTF-8 BOM is an encoding signature, not article content. Strip
+  // it before the declared-charset fallback so it never leaks into titles or
+  // the first visible character of a plain-text preview.
+  if (bytes.length >= 3 &&
+      bytes[0] == 0xEF &&
+      bytes[1] == 0xBB &&
+      bytes[2] == 0xBF) {
+    return utf8.decode(bytes.sublist(3), allowMalformed: true);
+  }
+  final normalizedCharset = charset?.trim().toLowerCase();
+  if (normalizedCharset == 'windows-1252' ||
+      normalizedCharset == 'cp1252') {
+    // Latin-1 and Windows-1252 differ in the 0x80–0x9F range. Mapping these
+    // bytes as Latin-1 would turn common punctuation and the euro sign into
+    // invisible control characters in reader previews.
+    const windows1252Specials = <int, int>{
+      0x80: 0x20AC,
+      0x82: 0x201A,
+      0x83: 0x0192,
+      0x84: 0x201E,
+      0x85: 0x2026,
+      0x86: 0x2020,
+      0x87: 0x2021,
+      0x88: 0x02C6,
+      0x89: 0x2030,
+      0x8A: 0x0160,
+      0x8B: 0x2039,
+      0x8C: 0x0152,
+      0x8E: 0x017D,
+      0x91: 0x2018,
+      0x92: 0x2019,
+      0x93: 0x201C,
+      0x94: 0x201D,
+      0x95: 0x2022,
+      0x96: 0x2013,
+      0x97: 0x2014,
+      0x98: 0x02DC,
+      0x99: 0x2122,
+      0x9A: 0x0161,
+      0x9B: 0x203A,
+      0x9C: 0x0153,
+      0x9E: 0x017E,
+      0x9F: 0x0178,
+    };
+    return String.fromCharCodes(bytes.map(
+      (byte) => windows1252Specials[byte] ?? byte,
+    ));
+  }
+  if (normalizedCharset == 'latin1' ||
+      normalizedCharset == 'iso-8859-1') {
+    return latin1.decode(bytes, allowInvalid: true);
+  }
+  return utf8.decode(bytes, allowMalformed: true);
+}
+
+String? _extractTitle(String html) {
+  // Ignore title-looking text from script strings or comments when choosing
+  // the document title.
+  var titleSource = html.replaceAll(
+    RegExp(
+      r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*?</\1\s*>',
+      caseSensitive: false,
+    ),
+    ' ',
+  );
+  titleSource = titleSource.replaceAll(
+    RegExp(
+      r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*$',
+      caseSensitive: false,
+    ),
+    ' ',
+  );
+  titleSource = titleSource
+      .replaceAll(RegExp(r'<!--[\s\S]*?-->'), ' ')
+      .replaceAll(RegExp(r'<!--[\s\S]*$'), ' ');
+
+  final match = RegExp(
+    r'<title\b[^>]*>([\s\S]*?)</title\s*>',
+    caseSensitive: false,
+  ).firstMatch(titleSource);
+  if (match == null) return null;
+  final title = sanitizeArticleMarkup(match.group(1)!, isHtml: true).trim();
+  return title.isEmpty ? null : _truncateAtUnicodeBoundary(title, 300);
+}
+
+bool _isPublicAddress(InternetAddress address) {
+  final bytes = address.rawAddress;
+  if (address.type == InternetAddressType.IPv4 && bytes.length == 4) {
+    final a = bytes[0], b = bytes[1], c = bytes[2];
+    if (a == 0 || a == 10 || a == 127 || a >= 224 ||
+        (a == 100 && b >= 64 && b <= 127) ||
+        (a == 169 && b == 254) ||
+        (a == 172 && b >= 16 && b <= 31) ||
+        (a == 192 && b == 168) ||
+        (a == 192 && b == 0 && (c == 0 || c == 2)) ||
+        (a == 192 && b == 88 && c == 99) ||
+        (a == 198 && (b == 18 || b == 19)) ||
+        (a == 198 && b == 51 && c == 100) ||
+        (a == 203 && b == 0 && c == 113)) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+), ' ')
+      .replaceAll(
+        RegExp(
+          r'<(script|style|noscript)\b[^>]*>[\s\S]*?</\1\s*>',
+          caseSensitive: false,
+        ),
+        ' ',
+      )
+      .replaceAll(
+        RegExp(
+          r'<(script|style|noscript)\b[^>]*>[\s\S]*
+    r'<meta\b[^>]{0,1024}>',
+    caseSensitive: false,
+  ).allMatches(prefix);
+
+  for (final match in metaTags) {
+    final tag = match[0]!;
+    // This catches both the direct charset attribute and the legacy
+    // http-equiv content attribute, while not matching data-charset.
+    final charset = RegExp(
+      r'(?:^|[\s;])charset\s*=\s*["\x27]?([^;\s"\x27/>]+)',
+      caseSensitive: false,
+    ).firstMatch(tag);
+    final value = charset?.group(1)?.trim();
+    if (value != null && value.isNotEmpty) return value;
+  }
+  return null;
+}
+Duration _remaining(DateTime deadline) {
+  final remaining = deadline.difference(DateTime.now());
+  if (remaining <= Duration.zero) {
+    throw TimeoutException('Article reader request deadline exceeded.');
+  }
+  return remaining;
+}
+
+class _ArticleResponseTooLarge implements Exception {
+  const _ArticleResponseTooLarge();
+}
+
+Future<Uint8List> _readBoundedResponse(
+  HttpClientResponse response,
+  DateTime deadline,
+) async {
+  final bytes = BytesBuilder(copy: false);
+  await response.fold<int>(0, (total, chunk) {
+    final nextTotal = total + chunk.length;
+    if (nextTotal > maxArticleResponseBytes) {
+      throw const _ArticleResponseTooLarge();
+    }
+    bytes.add(chunk);
+    return nextTotal;
+  }).timeout(_remaining(deadline));
+  return bytes.takeBytes();
+}
+
+String _decodeText(List<int> bytes, String? charset) {
+  // A leading UTF-8 BOM is an encoding signature, not article content. Strip
+  // it before the declared-charset fallback so it never leaks into titles or
+  // the first visible character of a plain-text preview.
+  if (bytes.length >= 3 &&
+      bytes[0] == 0xEF &&
+      bytes[1] == 0xBB &&
+      bytes[2] == 0xBF) {
+    return utf8.decode(bytes.sublist(3), allowMalformed: true);
+  }
+  final normalizedCharset = charset?.trim().toLowerCase();
+  if (normalizedCharset == 'windows-1252' ||
+      normalizedCharset == 'cp1252') {
+    // Latin-1 and Windows-1252 differ in the 0x80–0x9F range. Mapping these
+    // bytes as Latin-1 would turn common punctuation and the euro sign into
+    // invisible control characters in reader previews.
+    const windows1252Specials = <int, int>{
+      0x80: 0x20AC,
+      0x82: 0x201A,
+      0x83: 0x0192,
+      0x84: 0x201E,
+      0x85: 0x2026,
+      0x86: 0x2020,
+      0x87: 0x2021,
+      0x88: 0x02C6,
+      0x89: 0x2030,
+      0x8A: 0x0160,
+      0x8B: 0x2039,
+      0x8C: 0x0152,
+      0x8E: 0x017D,
+      0x91: 0x2018,
+      0x92: 0x2019,
+      0x93: 0x201C,
+      0x94: 0x201D,
+      0x95: 0x2022,
+      0x96: 0x2013,
+      0x97: 0x2014,
+      0x98: 0x02DC,
+      0x99: 0x2122,
+      0x9A: 0x0161,
+      0x9B: 0x203A,
+      0x9C: 0x0153,
+      0x9E: 0x017E,
+      0x9F: 0x0178,
+    };
+    return String.fromCharCodes(bytes.map(
+      (byte) => windows1252Specials[byte] ?? byte,
+    ));
+  }
+  if (normalizedCharset == 'latin1' ||
+      normalizedCharset == 'iso-8859-1') {
+    return latin1.decode(bytes, allowInvalid: true);
+  }
+  return utf8.decode(bytes, allowMalformed: true);
+}
+
+String? _extractTitle(String html) {
+  // Ignore title-looking text from script strings or comments when choosing
+  // the document title.
+  var titleSource = html.replaceAll(
+    RegExp(
+      r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*?</\1\s*>',
+      caseSensitive: false,
+    ),
+    ' ',
+  );
+  titleSource = titleSource.replaceAll(
+    RegExp(
+      r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*$',
+      caseSensitive: false,
+    ),
+    ' ',
+  );
+  titleSource = titleSource
+      .replaceAll(RegExp(r'<!--[\s\S]*?-->'), ' ')
+      .replaceAll(RegExp(r'<!--[\s\S]*$'), ' ');
+
+  final match = RegExp(
+    r'<title\b[^>]*>([\s\S]*?)</title\s*>',
+    caseSensitive: false,
+  ).firstMatch(titleSource);
+  if (match == null) return null;
+  final title = sanitizeArticleMarkup(match.group(1)!, isHtml: true).trim();
+  return title.isEmpty ? null : _truncateAtUnicodeBoundary(title, 300);
+}
+
+bool _isPublicAddress(InternetAddress address) {
+  final bytes = address.rawAddress;
+  if (address.type == InternetAddressType.IPv4 && bytes.length == 4) {
+    final a = bytes[0], b = bytes[1], c = bytes[2];
+    if (a == 0 || a == 10 || a == 127 || a >= 224 ||
+        (a == 100 && b >= 64 && b <= 127) ||
+        (a == 169 && b == 254) ||
+        (a == 172 && b >= 16 && b <= 31) ||
+        (a == 192 && b == 168) ||
+        (a == 192 && b == 0 && (c == 0 || c == 2)) ||
+        (a == 192 && b == 88 && c == 99) ||
+        (a == 198 && (b == 18 || b == 19)) ||
+        (a == 198 && b == 51 && c == 100) ||
+        (a == 203 && b == 0 && c == 113)) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+,
+          caseSensitive: false,
+        ),
+        ' ',
+      );
   final metaTags = RegExp(
     r'<meta\b[^>]{0,1024}>',
     caseSensitive: false,
