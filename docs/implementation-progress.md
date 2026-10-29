@@ -1022,3 +1022,13 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - **Regression source:** Added `test/duplicate_detector_test.dart` for normalization and matching, plus duplicate-review cancellation, explicit-save, and edit-without-self-prompt widget cases in `test/quick_save_test.dart`.
 - **Traceability:** FR-019 / TC-019 are linked to SH-001 and TC-246 documents the new focused cases.
 - **Verification:** Tests, formatter, analyzer, manual workflow, web build, Android build and device verification have **not** been run for this increment. This is source-complete for the first link-only slice, not yet test-verified. CI remains manual-only.
+
+
+## Feature backlog — SH-002 advanced Search and local presets (2026-10-29)
+
+- **Backlog:** SH-002 was added to `docs/FEATURE_BACKLOG.md` and linked to FR-022/TC-247–TC-249.
+- **Filter model:** Added `lib/services/search_filters.dart`: composable offline search across query, type, tag, collection, hostname/subdomain, favorite state, saved-date range and sort order. Domain inputs are normalized locally; malformed/oversized saved filter values are rejected.
+- **Local preferences:** Added `LibraryRepository.savedSearchPresets`, save/replace/delete APIs, a 20-preset cap and best-effort rollback when a preference write fails after commit. Malformed stored preset entries are skipped safely.
+- **UI:** Search adds an Advanced filters dialog, active filter chips, a Save search action, saved preset chips that reapply the complete filter/sort/query snapshot, and confirmed removal. Presets are local to the current app/browser profile and are not in backup v1.
+- **Regression source:** Added `test/search_filters_test.dart` and `test/search_filters_widget_test.dart`, and added preset-storage persistence, bounds, malformed-entry and rollback cases to `test/library_repository_test.dart`.
+- **Verification:** No formatter, analyzer, tests, workflow, web build, Android build or real-device/browser verification has run for SH-002. Source and regression cases are committed but unverified; CI remains manual-only.
