@@ -181,3 +181,10 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - Native article metadata extraction now removes script/style/noscript/SVG/iframe/object/template blocks and HTML comments before looking for the document `<title>`, so title-shaped strings in scripts/comments cannot take precedence over the real title. The actual title text still passes through the reader's plain-text/entity sanitizer and remains capped at 300 characters.
 - Added a synthetic HTTP response regression with fake titles in both script and comment content and a real entity-encoded title. The new case is committed but not run.
 - Source review caught malformed duplicate tail content after the first title edit; the IO service was reconstructed from its valid prefix plus one complete title extractor and one public-address helper. A fresh fetch confirms one declaration each for loader, fetch, response parser, charset parser, text decoder, title extractor, and address checker. Commits: a774ec0 and 627717f. SH-006 remains partial; all validation stays pending, CI manual-only.
+
+
+## SH-006 UTF-8 BOM decoding — 2026-10-29
+
+- Native reader decoding now recognizes a leading UTF-8 byte-order mark (EF BB BF) and removes it before rendering the temporary article/plain-text preview; the signature no longer appears as the first visible character.
+- Added TC-270 regression source using an injected plain-text response with a leading UTF-8 BOM. This source change is committed, but the test has not been run.
+- Commits: source `7c38b51`; regression source `5a78361`. SH-006 remains partial; no formatter, analyzer, tests, builds or CI were run. Android/web behavior and the full reader suite remain pending.
