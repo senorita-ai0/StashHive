@@ -34,7 +34,7 @@
 | TC-016 | FR-016, NFR-008 | Run optional text extraction against a fixed local sample set | Report language-specific accuracy, extraction failure, model/package size, latency and memory. | NOT STARTED / POC |
 | TC-017 | FR-017 | Save URL without preview/archival action | The item is represented as a bookmark, not offline content. | NOT STARTED |
 | TC-018 | FR-018, NFR-002 | Inspect permissions, logs and network during core flows | Only justified permissions; no saved content in logs or outbound requests. | NOT STARTED |
-| TC-019 | FR-019 | Import same item twice | If duplicate suggestion exists, user can decide; no silent loss. | NOT APPLICABLE until feature approved |
+| TC-019 | FR-019 | Save the same link more than once | Duplicate candidates are shown for review; the user may cancel or explicitly save another copy. Nothing is silently discarded. | SOURCE IMPLEMENTED — execution pending |
 | TC-020 | FR-010, FR-011 | Keep Collections open while saving, editing, moving and deleting saved items | Collection counts update immediately and remain consistent with item assignments. | NOT STARTED — manual UI regression |
 
 ## Release quality gates
@@ -1757,3 +1757,14 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Rerun configuration and assert no files change a second time.
 - Confirm an incomplete generated runner fails with a clear error.
 - **Status:** Python regression source is committed but unrun. Run alongside TC-243 and the manual Android build; do not claim the Android toolchain works until an APK build succeeds.
+
+
+### TC-246 — Detect duplicate links without silently discarding user saves
+
+- Save a URL, then try a new link with only scheme/host casing, default port, trailing slash, fragment or common tracking parameters changed. The existing item must appear in the review dialog.
+- Confirm a meaningful path/query difference is not treated as the same destination; invalid and non-web URLs must not create duplicate matches.
+- Cancel the dialog and verify the original remains, the draft stays editable, and no second record is saved.
+- Choose **Save another copy** and verify both records remain in the library.
+- Confirm editing an existing link does not report that item as its own duplicate.
+- Check the detector preserves the original saved/displayed URL and performs no network request.
+- **Status:** Unit and widget regression sources are committed but unrun. Run at the owner-requested manual validation checkpoint; CI remains manual-only.
