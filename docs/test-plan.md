@@ -1985,3 +1985,15 @@ The repository widget regression source now checks three export formats after sa
 
 - A widget regression holds an injected article load pending and checks that the loading progress indicator is exposed with the semantic label “Loading article text”.
 - A second widget regression delays the save callback and asserts the “Saving highlight” semantic label while saving, then resolves the callback and checks success feedback. The Reader source also marks article/error titles as headings. These semantics are authored, not verified: test execution, keyboard/text-selection behavior and Android/web screen-reader checks remain pending.
+
+
+### TC-266 update — single-pass entity decoding (2026-10-29)
+
+- Verify common named entities (copyright, registered, trademark, euro, curly quotes, bullet) decode into readable Unicode text, including case-insensitive entity spelling.
+- Verify hexadecimal numeric references decode correctly and escaped ampersand forms such as `&amp;#169;` are not recursively decoded in the same sanitizer pass.
+- **Status:** Synthetic regression source added to `test/article_reader_test.dart`; not run. Platform rendering and the full hostile/malformed markup matrix remain pending.
+
+### TC-268 update — save-progress semantic regression (2026-10-29)
+
+- The Reader widget suite now includes a delayed-save test that asserts the “Saving highlight” semantic progress label, resolves the pending save, and checks the visible success message.
+- **Status:** Authored only; not run. Loading semantics, save semantics, heading semantics and actual assistive-technology behavior remain unverified.
