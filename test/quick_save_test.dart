@@ -822,6 +822,80 @@ void main() {
     expect(repository.items.value, isEmpty);
   });
 
+  testWidgets('asks before saving a link that already exists', (tester) async {
+    await repository.save(
+      SavedItem(
+        id: 'existing-link',
+        kind: ItemKind.link,
+        title: 'Existing article',
+        content: '',
+        url: 'https://example.com/article?utm_campaign=first',
+        tags: const <String>[],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 1000,
+      ),
+    );
+
+    await openNewLink(tester);
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'HTTPS://EXAMPLE.COM/article/?utm_source=share#section',
+    );
+    await tester.ensureVisible(find.text('Save to StashHive'));
+    await tester.tap(find.text('Save to StashHive'));
+    await tester.pump();
+
+    expect(find.text('This link is already saved'), findsOneWidget);
+    expect(find.text('Existing article'), findsOneWidget);
+    expect(repository.items.value, hasLength(1));
+
+    await tester.tap(find.text('Cancel save'));
+    await tester.pumpAndSettle();
+
+    expect(repository.items.value, hasLength(1));
+    expect(find.text('This link is already saved'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('lets the user save another copy after duplicate review', (tester) async {
+    await repository.save(
+      SavedItem(
+        id: 'existing-link',
+        kind: ItemKind.link,
+        title: 'Existing article',
+        content: '',
+        url: 'https://example.com/article',
+        tags: const <String>[],
+        collection: null,
+        isFavorite: false,
+        createdAtMs: 1000,
+        updatedAtMs: 1000,
+      ),
+    );
+
+    await openNewLink(tester);
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      'https://example.com/article/',
+    );
+    await tester.ensureVisible(find.text('Save to StashHive'));
+    await tester.tap(find.text('Save to StashHive'));
+    await tester.pump();
+
+    expect(find.text('This link is already saved'), findsOneWidget);
+    await tester.tap(find.text('Save another copy'));
+    await tester.pumpAndSettle();
+
+    expect(repository.items.value, hasLength(2));
+    expect(
+      repository.items.value.where((item) => item.url == 'https://example.com/article'),
+      hasLength(2),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('normalizes uppercase URL schemes before saving', (tester) async {
     await openNewLink(tester);
     await tester.enterText(
