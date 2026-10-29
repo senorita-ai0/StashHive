@@ -1734,3 +1734,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Exclude title-shaped text inside scripts/comments when extracting document title | `_extractTitle` in `lib/services/article_reader_io.dart` | TC-266; `extracts a real title instead of title-looking script or comment text` in `test/article_reader_test.dart` | Source and test authored; not run; native/browser verification pending |
+
+
+## SH-006 UTF-8 BOM decoding traceability — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Remove the leading UTF-8 BOM before displaying native Reader text | `_decodeText` in `lib/services/article_reader_io.dart` | TC-270; `strips a leading UTF-8 BOM from reader text` in `test/article_reader_test.dart` | Source and regression authored and re-fetched; not executed; platform checks pending |
