@@ -106,4 +106,62 @@ void main() {
       'A private note that must not be sent with a reader request.',
     );
   });
+  testWidgets('saving a selected passage persists only the quote annotation',
+      (tester) async {
+    tester.view.physicalSize = const Size(1280, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final saved = _linkItem();
+    const articleText =
+        'The river flows through the quiet green valley, carrying stories from the old town.';
+    await _repository.save(saved);
+
+    articleReaderLoaderForTesting = (url, timeout) async =>
+        const ArticleReaderResult(
+          state: ArticleReaderState.success,
+          title: 'Temporary article preview',
+          text: articleText,
+        );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ItemDetailsPage(
+          repository: _repository,
+          itemId: saved.id,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('open-article-reader')));
+    await tester.pumpAndSettle();
+
+    await tester.longPress(find.byKey(const ValueKey('article-reader-text')));
+    await tester.pumpAndSettle();
+    expect(find.text('SELECTED PASSAGE'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('save-reader-highlight')));
+    await tester.pumpAndSettle();
+
+    final stored = _repository.findById(saved.id)!;
+    expect(stored.annotations, hasLength(1));
+    final annotation = stored.annotations.single;
+    expect(annotation.quote, isNotEmpty);
+    expect(annotation.sourceStartOffset, isNotNull);
+    expect(
+      annotation.sourceEndOffset! - annotation.sourceStartOffset!,
+      annotation.quote.length,
+    );
+    expect(annotation.contextBefore.length,
+        lessThanOrEqualTo(maxSavedAnnotationContextCharacters));
+    expect(annotation.contextAfter.length,
+        lessThanOrEqualTo(maxSavedAnnotationContextCharacters));
+    expect(stored.content, saved.content);
+    expect(stored.title, saved.title);
+    expect(stored.url, saved.url);
+    expect(stored.content, isNot(contains(articleText)));
+    expect(stored.content, contains('A private note that must not be sent'));
+  });
+
 }
