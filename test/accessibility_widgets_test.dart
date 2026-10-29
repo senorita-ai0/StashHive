@@ -2172,6 +2172,7 @@ void main() {
         ),
       ),
     );
+    await tester.pumpAndSettle();
     expect(find.text('What is searchable on this device'), findsOneWidget);
     await tester.tap(find.text('Search & saved content'));
     await tester.pumpAndSettle();
