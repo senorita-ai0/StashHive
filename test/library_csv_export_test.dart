@@ -10,6 +10,8 @@ SavedItem csvItem({
   List<String> tags = const <String>['Reading', 'Research'],
   String? collection = 'Learning',
   bool favorite = true,
+  ReadingStatus readingStatus = ReadingStatus.unread,
+  int readingProgress = 0,
   String? attachmentName,
 }) =>
     SavedItem(
@@ -21,6 +23,8 @@ SavedItem csvItem({
       tags: tags,
       collection: collection,
       isFavorite: favorite,
+      readingStatus: readingStatus,
+      readingProgress: readingProgress,
       createdAtMs: 1000,
       updatedAtMs: 2000,
       attachmentKey: attachmentName == null ? null : 'attachment-$id',
@@ -40,7 +44,14 @@ void main() {
       expect(csv, contains('https://example.com/?a=1&b=2'));
       expect(csv, contains('Reading|Research'));
       expect(csv, contains('Learning'));
-      expect(csv, contains(',true,1000,2000,'));
+      expect(csv, contains(',true,unread,0,1000,2000,'));
+    });
+
+    test('exports non-default reading status and progress', () {
+      final csv = buildLibraryCsv(<SavedItem>[
+        csvItem(readingStatus: ReadingStatus.inProgress, readingProgress: 45),
+      ]);
+      expect(csv, contains(',inProgress,45,'));
     });
 
     test('rejects oversized item counts and generated output', () {
