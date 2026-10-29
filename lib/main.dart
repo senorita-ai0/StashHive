@@ -3468,35 +3468,13 @@ class _CollectionsPageState extends State<CollectionsPage> {
       valueListenable: widget.repository.collections,
       builder: (context, names, _) {
         if (names.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.folder_open_rounded, size: 50, color: kBrand),
-                  const SizedBox(height: 13),
-                  Text(
-                    'Make room for your ideas',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                  ),
-                  const SizedBox(height: 7),
-                  const Text(
-                    'Collections group related items. Tags can still help you connect ideas across collections.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: mutedTextColor(context), height: 1.4),
-                  ),
-                  const SizedBox(height: 18),
-                  FilledButton.icon(
-                    onPressed: () => _newCollection(),
-                    icon: const Icon(Icons.add_rounded),
-                    label: const Text('Create collection'),
-                  ),
-                ],
-              ),
-            ),
+          return PremiumEmptyState(
+            icon: Icons.folder_open_rounded,
+            title: 'Make room for your ideas',
+            message:
+                'Collections group related items. Tags can still help you connect ideas across collections.',
+            actionLabel: 'Create collection',
+            onAction: () => _newCollection(),
           );
         }
 
@@ -3521,12 +3499,12 @@ class _CollectionsPageState extends State<CollectionsPage> {
                 final name = names[index];
                 final count =
                     items.where((item) => item.collection?.toLowerCase() == name.toLowerCase()).length;
-                final palette = [
-                  const Color(0xFF5B5CE2),
-                  const Color(0xFF3673BE),
-                  const Color(0xFF218F84),
-                  const Color(0xFFB87A22),
-                  const Color(0xFFB24E8C),
+                const palette = [
+                  PremiumTokens.brand,
+                  Color(0xFF3673BE),
+                  Color(0xFF218F84),
+                  PremiumTokens.warning,
+                  PremiumTokens.violet,
                 ];
                 final color = palette[index % palette.length];
                 return Card(
@@ -3601,25 +3579,11 @@ class _CollectionsPageState extends State<CollectionsPage> {
         final tags = counts.keys.toList()
           ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
         if (tags.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.sell_outlined, size: 48, color: kBrand),
-                  const SizedBox(height: 12),
-                  Text('Tags appear as you save items',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Add comma-separated tags while saving or editing an item. They will be collected here automatically.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: mutedTextColor(context)),
-                  ),
-                ],
-              ),
-            ),
+          return const PremiumEmptyState(
+            icon: Icons.sell_outlined,
+            title: 'Tags appear as you save items',
+            message:
+                'Add comma-separated tags while saving or editing an item. They will be collected here automatically.',
           );
         }
         return ListView.separated(
