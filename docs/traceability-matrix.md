@@ -1763,3 +1763,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 |---|---|---|---|
 | When HTTP charset is absent, detect a bounded early direct HTML meta charset | _charsetFromHtmlMeta in lib/services/article_reader_io.dart | TC-273; uses an early HTML meta charset when the response omits charset | Source/test authored and re-fetched; not run; platform verification pending |
 | When HTTP charset is absent, detect a bounded early legacy http-equiv/content charset | _charsetFromHtmlMeta in lib/services/article_reader_io.dart | TC-274; reads legacy charset from an early http-equiv meta tag | Source/test authored and re-fetched; not run; platform verification pending |
+
+
+## SH-006 embedded charset filtering traceability — TC-275 — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Ignore meta-like charset hints in comments and script/style/noscript blocks during bounded HTML prescan | _charsetFromHtmlMeta in lib/services/article_reader_io.dart | TC-275; ignores charset-looking tags inside scripts and comments | Source and regression committed together; not executed; native/web validation pending |
