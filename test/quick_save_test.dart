@@ -991,6 +991,8 @@ void main() {
       isFavorite: false,
       createdAtMs: 1000,
       updatedAtMs: 1000,
+      readingStatus: ReadingStatus.inProgress,
+      readingProgress: 40,
     );
     await repository.save(original);
     await repository.save(
@@ -1015,6 +1017,8 @@ void main() {
 
     expect(find.text('This link is already saved'), findsNothing);
     expect(repository.items.value, hasLength(2));
+    expect(repository.findById('existing-link')?.readingStatus, ReadingStatus.inProgress);
+    expect(repository.findById('existing-link')?.readingProgress, 40);
     expect(tester.takeException(), isNull);
   });
 
