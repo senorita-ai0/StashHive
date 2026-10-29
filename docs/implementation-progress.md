@@ -1096,3 +1096,13 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - **Requirements:** Added FR-024, TC-257 and SH-006/TSK-537 traceability.
 - **Scope boundary:** This is the annotations sub-slice only. A readable article view and selecting text inside rendered webpages are not implemented; users paste their own text.
 - **Verification:** No formatter, analyzer, tests, CI workflow, web build or Android build has run for this increment. Source is committed to `main`; verification remains pending. CI remains manual-only.
+
+
+## SH-008 — Local smart tag rules (2026-10-29)
+
+- **Rule engine:** Added `lib/services/smart_tag_rules.dart` for validated phrase-to-tag rules and local suggestions from the current title, URL and notes. Matching is case-insensitive and bounded; existing tags and duplicate suggested tags are omitted.
+- **Settings:** Added Settings → Organization → Smart tag rules. Users can create/delete rules and see the current 50-rule limit. Rules are kept in the local preferences box, not included in JSON backup v1, and do not sync between Android and web.
+- **Quick Save:** Added a **Suggest tags** action. It shows chips with the matched phrase; users must tap a chip to add the tag. No automatic tagging, webpage fetch, AI call, or network request was added.
+- **Regression source:** Added `test/smart_tag_rules_test.dart`, `test/smart_tag_rules_widget_test.dart`, repository tests for persistence/duplicate replacement/limits/malformed preference handling/write rollback, and a Quick Save test for review-before-add.
+- **Requirements:** Added FR-025, TC-258, and SH-008/TSK-538 traceability.
+- **Verification:** No formatter, analyzer, tests, CI workflow, Android build, or web build has been run for this increment. All source is committed to `main`; validation remains pending and the workflow stays manual-only.
