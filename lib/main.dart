@@ -19,11 +19,12 @@ import 'services/mime_types.dart';
 import 'services/backup_codec.dart';
 import 'services/web_url.dart';
 import 'ui/layout_metrics.dart';
+import 'ui/premium_kit.dart';
 
-const Color kBrand = Color(0xFF5B5CE2);
-const Color kInk = Color(0xFF1B2340);
-const Color kMutedLight = Color(0xFF646C82);
-const Color kMutedDark = Color(0xFFAAB2C5);
+const Color kBrand = PremiumTokens.brand;
+const Color kInk = Color(0xFF10203A);
+const Color kMutedLight = Color(0xFF65738B);
+const Color kMutedDark = Color(0xFFB2BDD0);
 
 Color mutedTextColor(BuildContext context) =>
     Theme.of(context).brightness == Brightness.dark ? kMutedDark : kMutedLight;
@@ -78,8 +79,8 @@ class _PreferenceTextScaler extends TextScaler {
   int get hashCode => Object.hash(system, multiplier);
 }
 
-const Color kCanvas = Color(0xFFF8F9FD);
-const Color kBorder = Color(0xFFE7E9F2);
+const Color kCanvas = Color(0xFFF6F8FC);
+const Color kBorder = Color(0xFFE3E8F0);
 const int kMaxAttachmentBytes = BackupCodec.maxAttachmentBytes;
 const int maxQuickSaveTagsInputCharacters = 12000;
 
@@ -240,132 +241,405 @@ class _StashHiveAppState extends State<StashHiveApp> {
 }
 
 ThemeData buildLightTheme() {
+  const error = PremiumTokens.danger;
+  const surface = Colors.white;
   final colors = ColorScheme.fromSeed(
-    seedColor: kBrand,
+    seedColor: PremiumTokens.brand,
     brightness: Brightness.light,
   ).copyWith(
-    primary: kBrand,
+    primary: PremiumTokens.brand,
     onPrimary: Colors.white,
-    surface: Colors.white,
+    secondary: PremiumTokens.mint,
+    onSecondary: const Color(0xFF073D33),
+    tertiary: PremiumTokens.violet,
+    surface: surface,
     onSurface: kInk,
     outline: kBorder,
-    error: const Color(0xFFC74A5B),
+    outlineVariant: kBorder,
+    error: error,
   );
+  final baseTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.light,
+    colorScheme: colors,
+  );
+  final text = baseTheme.textTheme.copyWith(
+    displaySmall: baseTheme.textTheme.displaySmall?.copyWith(
+      fontWeight: FontWeight.w900,
+      letterSpacing: -1.6,
+    ),
+    headlineMedium: baseTheme.textTheme.headlineMedium?.copyWith(
+      fontWeight: FontWeight.w900,
+      letterSpacing: -1.0,
+    ),
+    headlineSmall: baseTheme.textTheme.headlineSmall?.copyWith(
+      fontWeight: FontWeight.w900,
+      letterSpacing: -.75,
+    ),
+    titleLarge: baseTheme.textTheme.titleLarge?.copyWith(
+      fontWeight: FontWeight.w800,
+      letterSpacing: -.4,
+    ),
+    titleMedium: baseTheme.textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.w800,
+      letterSpacing: -.2,
+    ),
+    bodyLarge: baseTheme.textTheme.bodyLarge?.copyWith(height: 1.45),
+    bodyMedium: baseTheme.textTheme.bodyMedium?.copyWith(height: 1.4),
+  );
+
   return ThemeData(
     useMaterial3: true,
+    brightness: Brightness.light,
     colorScheme: colors,
     scaffoldBackgroundColor: kCanvas,
+    canvasColor: kCanvas,
     dividerColor: kBorder,
-    appBarTheme: const AppBarTheme(
-      backgroundColor: kCanvas,
+    textTheme: text,
+    visualDensity: VisualDensity.standard,
+    materialTapTargetSize: MaterialTapTargetSize.padded,
+    splashFactory: InkSparkle.splashFactory,
+    iconTheme: const IconThemeData(color: PremiumTokens.brand, size: 22),
+    primaryIconTheme: const IconThemeData(color: Colors.white, size: 22),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
+        TargetPlatform.linux: CupertinoPageTransitionsBuilder(),
+      },
+    ),
+    appBarTheme: AppBarTheme(
+      centerTitle: false,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      backgroundColor: kCanvas.withValues(alpha: .96),
       foregroundColor: kInk,
       surfaceTintColor: Colors.transparent,
-      elevation: 0,
-      centerTitle: false,
+      iconTheme: const IconThemeData(color: PremiumTokens.brand),
+      actionsIconTheme: const IconThemeData(color: PremiumTokens.brand),
+      titleTextStyle: const TextStyle(
+        color: kInk,
+        fontSize: 22,
+        fontWeight: FontWeight.w900,
+        letterSpacing: -.6,
+      ),
+    ),
+    cardTheme: CardThemeData(
+      elevation: 1,
+      margin: EdgeInsets.zero,
+      color: surface,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: PremiumTokens.brand.withValues(alpha: .08),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusCard),
+        side: const BorderSide(color: kBorder),
+      ),
+    ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(
+        foregroundColor: PremiumTokens.brand,
+        minimumSize: const Size(48, 48),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        ),
+      ),
+    ),
+    listTileTheme: ListTileThemeData(
+      iconColor: PremiumTokens.brand,
+      textColor: kInk,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      horizontalTitleGap: 14,
+      minLeadingWidth: 28,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+      ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
+      fillColor: surface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(13),
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
         borderSide: const BorderSide(color: kBorder),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(13),
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
         borderSide: const BorderSide(color: kBorder),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(13),
-        borderSide: const BorderSide(color: kBrand, width: 1.5),
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        borderSide: const BorderSide(color: PremiumTokens.brand, width: 1.6),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(13),
-        borderSide: const BorderSide(color: Color(0xFFC74A5B)),
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        borderSide: const BorderSide(color: error),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        borderSide: const BorderSide(color: error, width: 1.6),
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: kBrand,
+        backgroundColor: PremiumTokens.brand,
         foregroundColor: Colors.white,
         minimumSize: const Size(0, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        ),
+        textStyle: const TextStyle(fontWeight: FontWeight.w800),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: kBrand,
+        foregroundColor: PremiumTokens.brand,
         minimumSize: const Size(0, 44),
         side: const BorderSide(color: kBorder),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        ),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: PremiumTokens.brand,
+        minimumSize: const Size(44, 44),
+        textStyle: const TextStyle(fontWeight: FontWeight.w700),
       ),
     ),
     chipTheme: ChipThemeData(
-      backgroundColor: Colors.white,
-      selectedColor: const Color(0xFFEEF0FF),
+      backgroundColor: surface,
+      selectedColor: const Color(0xFFEAF2FF),
       side: const BorderSide(color: kBorder),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      labelStyle: const TextStyle(fontSize: 12, color: kMutedLight),
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      labelStyle: const TextStyle(
+        fontSize: 12,
+        color: kMutedLight,
+        fontWeight: FontWeight.w600,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
     ),
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: Colors.white,
-      indicatorColor: const Color(0xFFEEF0FF),
+      height: 72,
+      backgroundColor: surface,
+      indicatorColor: const Color(0xFFEAF2FF),
+      elevation: 0,
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         return TextStyle(
           fontSize: 11,
           fontWeight: states.contains(WidgetState.selected)
-              ? FontWeight.w700
-              : FontWeight.w500,
+              ? FontWeight.w800
+              : FontWeight.w600,
         );
       }),
+    ),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: PremiumTokens.brand,
+      foregroundColor: Colors.white,
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(19)),
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: surface,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
   );
 }
 
 ThemeData buildDarkTheme() {
+  const Color darkCanvas = Color(0xFF07111F);
+  const Color darkSurface = Color(0xFF101B2C);
+  const Color darkBorder = Color(0xFF2B3B52);
+  const Color darkInk = Color(0xFFF0F4FA);
+  const Color darkInput = Color(0xFF111C2D);
+  const error = PremiumTokens.danger;
   final colors = ColorScheme.fromSeed(
-    seedColor: kBrand,
+    seedColor: PremiumTokens.brandDark,
     brightness: Brightness.dark,
+  ).copyWith(
+    primary: PremiumTokens.brandDark,
+    onPrimary: const Color(0xFF07111F),
+    secondary: PremiumTokens.mint,
+    onSecondary: const Color(0xFF073D33),
+    tertiary: PremiumTokens.violet,
+    surface: darkSurface,
+    onSurface: darkInk,
+    outline: darkBorder,
+    outlineVariant: darkBorder,
+    error: error,
   );
+  final baseTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    colorScheme: colors,
+  );
+  final text = baseTheme.textTheme.copyWith(
+    displaySmall: baseTheme.textTheme.displaySmall?.copyWith(
+      fontWeight: FontWeight.w900,
+      letterSpacing: -1.6,
+    ),
+    headlineMedium: baseTheme.textTheme.headlineMedium?.copyWith(
+      fontWeight: FontWeight.w900,
+      letterSpacing: -1.0,
+    ),
+    headlineSmall: baseTheme.textTheme.headlineSmall?.copyWith(
+      fontWeight: FontWeight.w900,
+      letterSpacing: -.75,
+    ),
+    titleLarge: baseTheme.textTheme.titleLarge?.copyWith(
+      fontWeight: FontWeight.w800,
+      letterSpacing: -.4,
+    ),
+    titleMedium: baseTheme.textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.w800,
+      letterSpacing: -.2,
+    ),
+    bodyLarge: baseTheme.textTheme.bodyLarge?.copyWith(height: 1.45),
+    bodyMedium: baseTheme.textTheme.bodyMedium?.copyWith(height: 1.4),
+  );
+
   return ThemeData(
     useMaterial3: true,
+    brightness: Brightness.dark,
     colorScheme: colors,
-    scaffoldBackgroundColor: const Color(0xFF131724),
-    dividerColor: const Color(0xFF343A4D),
+    scaffoldBackgroundColor: darkCanvas,
+    canvasColor: darkCanvas,
+    dividerColor: darkBorder,
+    textTheme: text,
+    visualDensity: VisualDensity.standard,
+    materialTapTargetSize: MaterialTapTargetSize.padded,
+    splashFactory: InkSparkle.splashFactory,
+    iconTheme: IconThemeData(color: colors.primary, size: 22),
+    primaryIconTheme: IconThemeData(color: colors.onPrimary, size: 22),
     appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF131724),
-      surfaceTintColor: Colors.transparent,
+      centerTitle: false,
       elevation: 0,
+      scrolledUnderElevation: 0,
+      backgroundColor: darkCanvas,
+      foregroundColor: darkInk,
+      surfaceTintColor: Colors.transparent,
+    ),
+    cardTheme: CardThemeData(
+      elevation: 1,
+      margin: EdgeInsets.zero,
+      color: darkSurface,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.black.withValues(alpha: .24),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusCard),
+        side: const BorderSide(color: darkBorder),
+      ),
+    ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(
+        foregroundColor: colors.primary,
+        minimumSize: const Size(48, 48),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        ),
+      ),
+    ),
+    listTileTheme: ListTileThemeData(
+      iconColor: colors.primary,
+      textColor: darkInk,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      horizontalTitleGap: 14,
+      minLeadingWidth: 28,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: const Color(0xFF202638),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
+      fillColor: darkInput,
+      hintStyle: const TextStyle(color: Color(0xFF9AAAC0)),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(13),
-        borderSide: const BorderSide(color: Color(0xFF343A4D)),
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        borderSide: const BorderSide(color: darkBorder),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(13),
-        borderSide: const BorderSide(color: Color(0xFF343A4D)),
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        borderSide: const BorderSide(color: darkBorder),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(13),
-        borderSide: const BorderSide(color: kBrand, width: 1.5),
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        borderSide: BorderSide(color: colors.primary, width: 1.6),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        borderSide: const BorderSide(color: error),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        borderSide: const BorderSide(color: error, width: 1.6),
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: kBrand,
-        foregroundColor: Colors.white,
+        backgroundColor: colors.primary,
+        foregroundColor: const Color(0xFF07111F),
         minimumSize: const Size(0, 48),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        ),
+        textStyle: const TextStyle(fontWeight: FontWeight.w800),
       ),
     ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: colors.primary,
+        minimumSize: const Size(0, 44),
+        side: const BorderSide(color: darkBorder),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+        ),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: colors.primary,
+        minimumSize: const Size(44, 44),
+        textStyle: const TextStyle(fontWeight: FontWeight.w700),
+      ),
+    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: darkSurface,
+      selectedColor: const Color(0xFF203858),
+      side: const BorderSide(color: darkBorder),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      labelStyle: const TextStyle(color: Color(0xFFCDD7E6), fontSize: 12, fontWeight: FontWeight.w600),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+    ),
     navigationBarTheme: const NavigationBarThemeData(
-      backgroundColor: Color(0xFF1A2030),
-      indicatorColor: Color(0xFF34345F),
+      height: 72,
+      backgroundColor: darkSurface,
+      indicatorColor: Color(0xFF203858),
+      elevation: 0,
+    ),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: colors.primary,
+      foregroundColor: const Color(0xFF07111F),
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(19)),
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: darkSurface,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
   );
 }
@@ -915,16 +1189,10 @@ class _LibraryPageState extends State<LibraryPage> {
                   ],
                 ),
                 const SizedBox(height: 18),
-                Text('Your library',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.7,
-                        )),
-                const SizedBox(height: 5),
-                Text('A home for the things worth keeping.',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).textTheme.bodySmall?.color,
-                        )),
+                const PremiumPageHeader(
+                  title: 'Your library',
+                  subtitle: 'A home for the things worth keeping.',
+                ),
                 if (widget.showStorageReminder)
                   Padding(
                     padding: const EdgeInsets.only(top: 14),
@@ -1169,50 +1437,16 @@ class EmptyLibraryState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 360),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                height: 86,
-                width: 86,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEEF0FF),
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                child: const Icon(Icons.auto_awesome_mosaic_rounded,
-                    color: kBrand, size: 40),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                isFiltered ? 'Nothing here yet' : 'Save your first good find',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                isFiltered
-                    ? 'Try another filter or add something new to this library.'
-                    : 'Links, ideas, screenshots and files—all in one calm, searchable place.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: mutedTextColor(context)),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 18),
-              FilledButton.icon(
-                onPressed: isFiltered ? onClear : onAdd,
-                icon: Icon(isFiltered ? Icons.filter_alt_off_rounded : Icons.add_rounded),
-                label: Text(isFiltered ? 'Clear filter' : 'Save something'),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return PremiumEmptyState(
+      icon: isFiltered
+          ? Icons.filter_alt_off_rounded
+          : Icons.auto_awesome_mosaic_rounded,
+      title: isFiltered ? 'Nothing here yet' : 'Save your first good find',
+      message: isFiltered
+          ? 'Try another filter or add something new to this library.'
+          : 'Links, ideas, screenshots and files—all in one calm, searchable place.',
+      actionLabel: isFiltered ? 'Clear filter' : 'Save something',
+      onAction: isFiltered ? onClear : onAdd,
     );
   }
 }
@@ -1278,14 +1512,10 @@ class _SearchPageState extends State<SearchPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Search',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.7,
-                        )),
-                const SizedBox(height: 6),
-                Text('Find something you saved, without remembering where.',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: mutedTextColor(context))),
+                const PremiumPageHeader(
+                  title: 'Search',
+                  subtitle: 'Find something you saved, without remembering where.',
+                ),
                 const SizedBox(height: 18),
                 TextField(
                   controller: _controller,
@@ -1551,7 +1781,7 @@ class SavedItemTile extends StatelessWidget {
       color: theme.colorScheme.surface,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusCard),
         side: BorderSide(color: theme.dividerColor),
       ),
       clipBehavior: Clip.antiAlias,
@@ -1756,7 +1986,7 @@ class _ItemThumbnailState extends State<_ItemThumbnail> {
         builder: (context, snapshot) {
           if (snapshot.data != null && snapshot.data!.isNotEmpty) {
             return ClipRRect(
-              borderRadius: BorderRadius.circular(13),
+              borderRadius: BorderRadius.circular(18),
               child: Image.memory(
                 snapshot.data!,
                 semanticLabel: 'Image preview: ${item.title}',
@@ -1782,9 +2012,12 @@ class _ItemThumbnailState extends State<_ItemThumbnail> {
       width: size,
       decoration: BoxDecoration(
         color: item.kind.softAccent,
-        borderRadius: BorderRadius.circular(13),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: item.kind.accent.withValues(alpha: .15),
+        ),
       ),
-      child: Icon(item.kind.icon, color: item.kind.accent, size: 27),
+      child: Icon(item.kind.icon, color: item.kind.accent, size: 29),
     );
   }
 }
@@ -3214,11 +3447,12 @@ class _CollectionsPageState extends State<CollectionsPage> {
                 Row(
                   children: [
                     Expanded(
-                      child: Text('Organize',
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: -0.6,
-                              )),
+                      child: Expanded(
+                          child: const PremiumPageHeader(
+                            title: 'Organize',
+                            subtitle: 'Bring related things together.',
+                          ),
+                        ),
                     ),
                     if (!_showTags)
                       IconButton.filledTonal(
@@ -3228,8 +3462,6 @@ class _CollectionsPageState extends State<CollectionsPage> {
                       ),
                   ],
                 ),
-                const SizedBox(height: 5),
-                Text('Bring related things together.', style: TextStyle(color: mutedTextColor(context))),
                 const SizedBox(height: 18),
                 SegmentedButton<bool>(
                   segments: const [
@@ -3322,7 +3554,7 @@ class _CollectionsPageState extends State<CollectionsPage> {
                   elevation: 0,
                   color: Theme.of(context).colorScheme.surface,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(PremiumTokens.radiusCard),
                     side: BorderSide(color: Theme.of(context).dividerColor),
                   ),
                   child: ListTile(
@@ -3562,37 +3794,59 @@ class SettingsPage extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 18, 20, 28),
             children: [
-              Text('Settings',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.7,
-                      )),
-              const SizedBox(height: 5),
-              Text('Make StashHive feel like yours.', style: TextStyle(color: mutedTextColor(context))),
+              const PremiumPageHeader(
+                title: 'Settings',
+                subtitle: 'Make StashHive feel like yours.',
+              ),
               const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEEF0FF),
-                  borderRadius: BorderRadius.circular(17),
-                ),
-                child: const Row(
+              PremiumHeroCard(
+                child: Row(
                   children: [
-                    BrandMark(size: 48),
-                    SizedBox(width: 12),
-                    Expanded(
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: .16),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: .22),
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.hive_rounded,
+                        color: Colors.white,
+                        size: 29,
+                      ),
+                    ),
+                    const SizedBox(width: 13),
+                    const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Your personal library',
-                              style: TextStyle(color: kInk, fontWeight: FontWeight.w700)),
+                          Text(
+                            'Your personal library',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 17,
+                            ),
+                          ),
                           SizedBox(height: 4),
-                          Text('Local-first · No account required',
-                              style: TextStyle(color: mutedTextColor(context), fontSize: 12)),
+                          Text(
+                            'Local-first · No account required',
+                            style: TextStyle(
+                              color: Color(0xD9FFFFFF),
+                              fontSize: 12,
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    Icon(Icons.shield_outlined, color: kBrand),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.shield_outlined,
+                      color: Colors.white.withValues(alpha: .9),
+                    ),
                   ],
                 ),
               ),
@@ -3709,7 +3963,7 @@ class SettingsPage extends StatelessWidget {
                 title: 'About StashHive',
                 subtitle: 'Version 0.1.0 · Local-first personal library',
                 color: kBrand,
-                background: const Color(0xFFEEF0FF),
+                background: const Color(0xFFEAF2FF),
                 onTap: () => _showInfo(
                   context,
                   'StashHive',
@@ -3736,15 +3990,7 @@ class SettingIcon extends StatelessWidget {
   final IconData icon;
 
   @override
-  Widget build(BuildContext context) => Container(
-        height: 42,
-        width: 42,
-        decoration: BoxDecoration(
-          color: const Color(0xFFEEF0FF),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Icon(icon, color: kBrand),
-      );
+  Widget build(BuildContext context) => PremiumIconChip(icon: icon);
 }
 
 class SettingsRow extends StatelessWidget {
@@ -3771,7 +4017,7 @@ class SettingsRow extends StatelessWidget {
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusCard),
         side: BorderSide(color: Theme.of(context).dividerColor),
       ),
       child: ListTile(
@@ -4306,7 +4552,7 @@ class _BackupCard extends StatelessWidget {
                   width: 46,
                   height: 46,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEEF0FF),
+                    color: const Color(0xFFEAF2FF),
                     borderRadius: BorderRadius.circular(13),
                   ),
                   child: Icon(icon, color: kBrand, size: 25),
@@ -4366,7 +4612,7 @@ class BrandMark extends StatelessWidget {
       height: size,
       width: size,
       decoration: BoxDecoration(
-        color: const Color(0xFFEEF0FF),
+        color: PremiumTokens.brand.withValues(alpha: .12),
         borderRadius: BorderRadius.circular(size * 0.32),
       ),
       child: Icon(Icons.hive_rounded, color: kBrand, size: size * 0.62),
