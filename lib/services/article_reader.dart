@@ -33,8 +33,8 @@ class ArticleReaderResult {
   bool get isSuccess => state == ArticleReaderState.success;
 }
 
-/// Validates a URL before any request is attempted. Network-address validation
-/// is repeated by the native transport after DNS resolution.
+/// Validates a URL before any request is attempted. Native transport repeats
+/// destination checks after DNS resolution and pins its connection to that IP.
 Uri? parseArticleReaderUrl(String value) {
   final uri = Uri.tryParse(value.trim());
   if (uri == null ||
@@ -46,22 +46,14 @@ Uri? parseArticleReaderUrl(String value) {
       uri.toString().length > 4096) {
     return null;
   }
-  final host = uri.host.toLowerCase().replaceAll(RegExp(r'\\. The result is transient and is
-/// never written to LibraryRepository or included in backups.
-Future<ArticleReaderResult> loadArticleForReader(
-  String url, {
-  Duration timeout = defaultArticleReaderTimeout,
-}) {
-  return platform.loadArticleForReader(url, timeout: timeout);
-}
-), '');
+  final host = uri.host.toLowerCase().replaceAll(RegExp(r'\.$'), '');
   if (host == 'localhost' ||
       host.endsWith('.localhost') ||
       host.endsWith('.local') ||
       host.endsWith('.internal') ||
       host.contains('%') ||
       _isPrivateIpv4Literal(host) ||
-      host.startsWith('[') && host.endsWith(']')) {
+      (host.startsWith('[') && host.endsWith(']'))) {
     // Literal IPv6 destinations are conservatively excluded in this first
     // slice. A public IPv6 URL can still be opened in the external browser.
     return null;
@@ -93,16 +85,25 @@ bool _isPrivateIpv4Literal(String host) {
 }
 
 /// Removes active markup and decodes a conservative set of text entities.
-/// The result is always plain text and is safe to display as text, not HTML.
+/// The result is plain text and must never be interpreted as HTML.
 String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
   var text = source;
   if (isHtml) {
     text = text.replaceAll(
-      RegExp(r'<(script|style|noscript|svg|iframe|object|template)\\b[^>]*>[\\s\\S]*?</\\1\\s*>', caseSensitive: false),
+      RegExp(
+        r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*?</\1\s*>',
+        caseSensitive: false,
+      ),
       ' ',
     );
-    text = text.replaceAll(RegExp(r'<!--[\\s\\S]*?-->'), ' ');
-    text = text.replaceAll(RegExp(r'<br\\s*/?>|</(p|div|article|section|h[1-6]|li|tr)\\s*>', caseSensitive: false), '\\n');
+    text = text.replaceAll(RegExp(r'<!--[\s\S]*?-->'), ' ');
+    text = text.replaceAll(
+      RegExp(
+        r'<br\s*/?>|</(p|div|article|section|h[1-6]|li|tr)\s*>',
+        caseSensitive: false,
+      ),
+      '\n',
+    );
     text = text.replaceAll(RegExp(r'<[^>]{0,2048}>'), ' ');
   }
   const entities = <String, String>{
@@ -118,21 +119,37 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
     '&hellip;': '…',
   };
   text = text.replaceAllMapped(
-    RegExp(r'&(?:amp|lt|gt|quot|apos|nbsp|mdash|ndash|hellip|#39);', caseSensitive: false),
+    RegExp(r'&(?:amp|lt|gt|quot|apos|nbsp|mdash|ndash|hellip|#39);',
+        caseSensitive: false),
     (match) => entities[match[0]!.toLowerCase()] ?? match[0]!,
   );
-  text = text.replaceAllMapped(RegExp(r'&#(\\d{1,7});'), (match) {
+  text = text.replaceAllMapped(RegExp(r'&#(\d{1,7});'), (match) {
     final code = int.tryParse(match.group(1)!);
-    if (code == null || code < 1 || code > 0x10FFFF || (code >= 0xD800 && code <= 0xDFFF)) return ' ';
+    if (code == null ||
+        code < 1 ||
+        code > 0x10FFFF ||
+        (code >= 0xD800 && code <= 0xDFFF)) {
+      return ' ';
+    }
     return String.fromCharCode(code);
   });
-  text = text.replaceAllMapped(RegExp(r'&#x([0-9a-f]{1,6});', caseSensitive: false), (match) {
-    final code = int.tryParse(match.group(1)!, radix: 16);
-    if (code == null || code < 1 || code > 0x10FFFF || (code >= 0xD800 && code <= 0xDFFF)) return ' ';
-    return String.fromCharCode(code);
-  });
-  text = text.replaceAll('\\r', '\\n').replaceAll(RegExp(r'[\\t\\f\\v ]+'), ' ');
-  text = text.replaceAll(RegExp(r' *\\n *'), '\\n').replaceAll(RegExp(r'\\n{3,}'), '\\n\\n');
+  text = text.replaceAllMapped(
+    RegExp(r'&#x([0-9a-f]{1,6});', caseSensitive: false),
+    (match) {
+      final code = int.tryParse(match.group(1)!, radix: 16);
+      if (code == null ||
+          code < 1 ||
+          code > 0x10FFFF ||
+          (code >= 0xD800 && code <= 0xDFFF)) {
+        return ' ';
+      }
+      return String.fromCharCode(code);
+    },
+  );
+  text = text.replaceAll('\r', '\n').replaceAll(RegExp(r'[\t\f\v ]+'), ' ');
+  text = text
+      .replaceAll(RegExp(r' *\n *'), '\n')
+      .replaceAll(RegExp(r'\n{3,}'), '\n\n');
   return text.trim();
 }
 
