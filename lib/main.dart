@@ -3446,13 +3446,11 @@ class _CollectionsPageState extends State<CollectionsPage> {
               children: [
                 Row(
                   children: [
-                    Expanded(
-                      child: Expanded(
-                          child: const PremiumPageHeader(
-                            title: 'Organize',
-                            subtitle: 'Bring related things together.',
-                          ),
-                        ),
+                    const Expanded(
+                      child: PremiumPageHeader(
+                        title: 'Organize',
+                        subtitle: 'Bring related things together.',
+                      ),
                     ),
                     if (!_showTags)
                       IconButton.filledTonal(
