@@ -224,7 +224,7 @@ Future<Uint8List> _readBoundedResponse(
   return bytes.takeBytes();
 }
 
-String _decodeText(Uint8List bytes, String? charset) {
+String _decodeText(List<int> bytes, String? charset) {
   if (charset != null &&
       (charset.toLowerCase() == 'latin1' ||
           charset.toLowerCase() == 'iso-8859-1' ||
