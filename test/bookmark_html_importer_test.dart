@@ -46,6 +46,17 @@ void main() {
       expect(result.duplicateCount, 1);
     });
 
+    test('does not import fake anchors embedded in script or style content', () {
+      const html = '''
+<script>document.write('<A HREF="https://fake.example/">fake</A>');</script>
+<style>.sample { content: '<A HREF="https://style.example/">fake</A>'; }</style>
+<DL><A HREF="https://real.example/">Real bookmark</A></DL>
+''';
+      final result = parseBookmarkHtml(html);
+      expect(result.entries, hasLength(1));
+      expect(result.entries.single.url, 'https://real.example/');
+    });
+
     test('rejects empty, oversized and non-bookmark content', () {
       expect(() => parseBookmarkHtml(''), throwsFormatException);
       expect(
