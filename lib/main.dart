@@ -3813,7 +3813,9 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
   void _reload() {
     final current = widget.repository.findById(widget.itemId);
     _item = current;
-    _linkHealthRecord = current == null || current.kind != ItemKind.link
+    _linkHealthRecord = current == null ||
+            current.kind != ItemKind.link ||
+            current.url == null
         ? null
         : widget.repository.findLinkHealthRecord(
             current.id,
