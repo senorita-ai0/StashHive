@@ -42,6 +42,13 @@ void main() {
       );
     });
 
+    test('treats an empty root path and a single slash as the same URL', () {
+      expect(
+        normalizeUrlForDuplicateCheck('https://example.com'),
+        normalizeUrlForDuplicateCheck('https://example.com/'),
+      );
+    });
+
     test('preserves meaningful query parameters and path case', () {
       expect(
         normalizeUrlForDuplicateCheck('https://example.com/Article?id=42'),
