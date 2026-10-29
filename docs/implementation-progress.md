@@ -1187,3 +1187,11 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - Moved highlight success/failure snackbars to the Reader screen itself. The Item Details persistence callback now returns a result without showing feedback behind the pushed route.
 - Added widget regression source that checks failure feedback remains visible and the selected passage stays available for another save attempt.
 - Test source is committed but not executed. No formatting, analyzer, unit/widget tests, Android build or web build were run. CI remains manual-only.
+
+
+## SH-006 — declared Windows-1252 decoding — 2026-10-29
+
+- Corrected native reader text decoding so explicit windows-1252 and cp1252 charsets map the special bytes in the 0x80–0x9F range to their Windows-1252 Unicode characters. The previous use of latin1.decode was not equivalent and could display euro/punctuation bytes as control characters.
+- Kept latin1 and iso-8859-1 handling separate; UTF-8 remains the fallback when no supported legacy charset is declared.
+- Added a synthetic response test for a quoted charset="windows-1252" declaration and euro sign, curly quotes, and em dash characters. Source-review only; no test was run.
+- Commits: 94c4677 decoder fix; a350571 regression source. Formatter, analyzer, tests and builds remain unrun; CI remains manual-only.
