@@ -77,7 +77,12 @@ Future<LinkHealthRecord> checkLinkHealth({
           const SocketException('Unsupported connection route.'),
         );
       }
-      return Socket.startConnect(publicAddresses.first, requestedUri.port);
+      final port = requestedUri.hasPort
+          ? requestedUri.port
+          : requestedUri.scheme.toLowerCase() == 'https'
+              ? 443
+              : 80;
+      return Socket.startConnect(publicAddresses.first, port);
     };
 
   try {
