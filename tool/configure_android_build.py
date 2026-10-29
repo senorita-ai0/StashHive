@@ -36,7 +36,7 @@ LAUNCHER_RESOURCES = {
         android:strokeColor="#FFFFFFFF"
         android:strokeWidth="3.5"
         android:strokeLineJoin="round"
-        android:pathData="M54,17 L67,24.5 L67,39.5 L54,47 L41,39.5 L41,24.5 Z" />
+        android:pathData="M54,21 L67,28.5 L67,43.5 L54,51 L41,43.5 L41,28.5 Z" />
     <path
         android:fillColor="#00000000"
         android:strokeColor="#FFFFFFFF"
@@ -54,7 +54,7 @@ LAUNCHER_RESOURCES = {
         android:strokeColor="#FFFFFFFF"
         android:strokeWidth="3.5"
         android:strokeLineJoin="round"
-        android:pathData="M54,59 L67,66.5 L67,81.5 L54,89 L41,81.5 L41,66.5 Z" />
+        android:pathData="M54,54 L67,61.5 L67,76.5 L54,84 L41,76.5 L41,61.5 Z" />
     <path
         android:fillColor="#17C7A1"
         android:pathData="M54,43 L62,47.5 L62,56.5 L54,61 L46,56.5 L46,47.5 Z" />
