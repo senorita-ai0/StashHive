@@ -126,3 +126,12 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Remove script/style/noscript/SVG/iframe/object/template blocks and HTML comments before locating semantic article/main containers.
 - [x] Author a regression for fake article tags in script strings/comments alongside a real article and navigation content.
 - [ ] Run the sanitizer regression matrix and inspect native/web behavior at the owner-approved checkpoint. The lightweight regex sanitizer is still not a complete HTML parser.
+
+
+## SH-006 — source integrity, extraction order and text controls (2026-10-29)
+
+- [x] Remove a duplicated malformed tail from the reader service and confirm each core URL/sanitizer/loader declaration occurs once in the committed file.
+- [x] Strip embedded active content and navigation chrome before article/main extraction, so fake article-shaped markup cannot shadow the actual article.
+- [x] Replace non-printing control bytes during plain-text normalization without altering Urdu/other ordinary Unicode text.
+- [x] Add synthetic cases for fake article tags inside script/comment/navigation content and control-character cleanup.
+- [ ] Run the reader regression suite and current Flutter checks at the owner's manual validation checkpoint; no tests have been run for these changes.
