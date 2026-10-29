@@ -195,3 +195,9 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - Native Reader now truncates displayed article text and extracted titles at a UTF-16 boundary that will not leave a dangling surrogate when the cap falls between the two code units of an emoji or other supplementary Unicode character.
 - Added TC-271 regression source with a supplementary character placed exactly across the 60,000-code-unit display limit; the case asserts the character is not split and no surrogate code units leak into the resulting text.
 - Commits: source `3bf987e`; regression source `2588cc0`. This is source/test authoring only: no formatter, analyzer, tests, builds or CI were run. SH-006 remains partial pending test execution and Android/web verification.
+
+
+## SH-006 Unicode-safe title regression — TC-272 (2026-10-29)
+
+- Added a second Unicode-boundary regression for the 300-code-unit extracted-title cap. It places an emoji across the title limit and asserts the title does not contain a dangling surrogate while the article body remains readable.
+- Test source committed as `0374c24`; the test has not been run. TC-271 covers the body cap and TC-272 covers the title cap. No formatter, analyzer, test, build or CI run was performed; SH-006 remains partial pending manual validation.
