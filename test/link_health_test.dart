@@ -19,7 +19,7 @@ void main() {
     });
 
     test('rejects status codes outside the HTTP range', () {
-      expect(() => linkHealthStateForStatusCode(99), throwsFormatException);
+      expect(() => linkHealthStateForStatusCode(99), throwsA(isA<FormatException>()));
       expect(() => linkHealthStateForStatusCode(600), throwsFormatException);
     });
   });
