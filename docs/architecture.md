@@ -175,3 +175,12 @@ The user-facing product brand is StashHive. Keep the existing `stashhive` Dart p
 - Saved preset metadata is stored in the existing `stashhive_preferences_v1` Hive box. Storage is local to the current Android app installation or browser origin/profile. The implementation caps the list at 20 presets, bounds names and filter fields, skips malformed entries, replaces names case-insensitively and attempts best-effort rollback when a preference write reports failure after commit.
 - Saved search presets are preferences, not library items, and are not included in JSON backup v1. They do not sync between Android and web. This limitation is communicated in the UI when a preset is saved.
 - Test targets: TC-247 filter combinations and bounds, TC-248 UI/save/reuse behavior, and TC-249 persistence/invalid-entry/rollback handling. All require the owner-requested manual validation checkpoint before they are considered verified.
+
+
+## Smart tag rules (SH-008)
+
+- `lib/services/smart_tag_rules.dart` owns bounded, user-authored matching rules. A rule contains a phrase and the tag to suggest; matching is case-insensitive over the current Quick Save title, URL and notes text only.
+- Suggestions are computed locally and shown as chips in Quick Save. The user must select a chip to append a tag. Existing tags and duplicate suggested outputs are excluded; rules do not auto-apply, fetch pages, or invoke AI.
+- Rules are stored in the existing `stashhive_preferences_v1` preferences box with a limit of 50, validation, malformed-record recovery and best-effort rollback for late write failures. They are local to the current Android installation or browser profile and are intentionally excluded from JSON backup v1.
+- The Settings → Organization page creates and deletes rules. Reusing the same phrase/tag pair (case-insensitive) replaces that rule rather than creating a duplicate.
+- Test targets: TC-258, `test/smart_tag_rules_test.dart`, `test/smart_tag_rules_widget_test.dart`, Quick Save widget tests and repository persistence/rollback tests. Source is committed; verification remains pending at the manual checkpoint.
