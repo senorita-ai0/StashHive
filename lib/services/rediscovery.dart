@@ -23,7 +23,6 @@ List<SavedItem> filterRediscoverItems(
             item.readingStatus != ReadingStatus.completed &&
             item.createdAtMs <= cutoffMs,
       )
-      .toList(growable: false)
       .toList();
 
   results.sort(
