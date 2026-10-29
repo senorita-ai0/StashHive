@@ -41,6 +41,7 @@ String? normalizeUrlForDuplicateCheck(String? rawUrl) {
       : port;
 
   var path = parsed.normalizePath().path;
+  if (path.isEmpty) path = '/';
   if (path.length > 1 && path.endsWith('/')) {
     path = path.replaceFirst(RegExp(r'/+$'), '');
     if (path.isEmpty) path = '/';
