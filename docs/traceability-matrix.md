@@ -1720,3 +1720,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Strip active blocks/comments before semantic article extraction so fake markup cannot shadow the real article | `sanitizeArticleMarkup` in lib/services/article_reader.dart | TC-266; `ignores fake article containers inside scripts and comments` in test/article_reader_test.dart | Source and test authored; not run; browser/native behavior pending |
+
+
+## SH-006 sanitizer integrity follow-up — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Keep one coherent reader URL/sanitizer/loader definition; strip active/comment/navigation markup before semantic extraction and normalize non-printing controls | lib/services/article_reader.dart | TC-266; `test/article_reader_test.dart` fake-container and control-character cases | Source integrity reviewed by re-fetch; regression source authored but not run; platform checks pending |
