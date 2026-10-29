@@ -1528,3 +1528,14 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **Privacy:** This is a user-managed reading tracker only; it does not monitor external-site activity, and no network calls or background reminders were added.
 - **Regression:** `test/saved_item_test.dart` covers serialization, legacy defaults and invalid values; `test/quick_save_test.dart` covers saving Completed from Item Details. TC-256 documents the broader acceptance check.
 - **Status:** Source/test changes committed to `main`; tests, formatter, analyzer, web/Android builds and UI/accessibility checks have not run. The rediscovery/revisit view remains outstanding. CI remains manual-only.
+
+
+### TSK-537 — User-entered highlights and annotations (SH-006 partial slice) — 2026-10-29
+
+- **Requirements:** FR-024, plus FR-005, FR-012–013 and NFR-003/NFR-005.
+- **Model:** `SavedItem` stores up to 50 immutable `SavedAnnotation` records (stable ID, optional quote, optional note, creation timestamp). Bounds and duplicate IDs are validated; old records default to an empty annotation list.
+- **UI:** Item Details provides a Highlights & Annotations panel; users can paste a quote/excerpt, write a personal note, or both, then delete an entry with confirmation. Quick Save edits preserve existing annotations.
+- **Retrieval/portability:** Annotation text is searchable and included in versioned JSON backup, library CSV and selected-item Markdown.
+- **Regression:** TC-257 plus `test/annotations_widget_test.dart`, `test/saved_item_test.dart`, `test/backup_codec_test.dart`, `test/library_csv_export_test.dart` and `test/selected_items_export_test.dart`.
+- **Scope boundary:** Does not fetch/scrape linked pages and does not yet implement an in-app article reader or selecting text in a rendered page.
+- **Status:** Source and regression tests committed to `main`; tests, formatter, analyzer, web/Android builds and accessibility review have not run. Keep the manual workflow untouched unless the owner requests validation.
