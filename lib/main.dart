@@ -20,6 +20,7 @@ import 'services/duplicate_detector.dart';
 import 'services/library_csv_export.dart';
 import 'services/link_health_checker.dart';
 import 'services/mime_types.dart';
+import 'services/rediscovery.dart';
 import 'services/search_filters.dart';
 import 'services/smart_tag_rules.dart';
 import 'services/selected_items_export.dart';
@@ -1207,6 +1208,9 @@ class _LibraryPageState extends State<LibraryPage> {
   }
 
   List<SavedItem> _applyFilters(List<SavedItem> items) {
+    if (_filter == 'Rediscover') {
+      return filterRediscoverItems(items);
+    }
     var result = items;
     if (_filter == 'Favorites') {
       result = result.where((item) => item.isFavorite).toList();
@@ -1394,13 +1398,19 @@ class _LibraryPageState extends State<LibraryPage> {
                         'Unread',
                         'In progress',
                         'Completed',
+                        'Rediscover',
                       ])
                         Padding(
                           padding: const EdgeInsets.only(right: 7),
                           child: ChoiceChip(
                             label: Text(label),
                             selected: _filter == label,
-                            onSelected: (_) => setState(() => _filter = label),
+                            onSelected: (_) => setState(() {
+                              _filter = label;
+                              if (label == 'Rediscover') {
+                                _sort = 'Oldest first';
+                              }
+                            }),
                             showCheckmark: false,
                           ),
                         ),
@@ -1439,11 +1449,27 @@ class _LibraryPageState extends State<LibraryPage> {
                       tooltip: 'Sort library',
                       initialValue: _sort,
                       onSelected: (value) => setState(() => _sort = value),
-                      itemBuilder: (_) => const [
-                        PopupMenuItem(value: 'Recently saved', child: Text('Recently saved')),
-                        PopupMenuItem(value: 'Oldest first', child: Text('Oldest first')),
-                        PopupMenuItem(value: 'Title A–Z', child: Text('Title A–Z')),
-                      ],
+                      itemBuilder: (_) => _filter == 'Rediscover'
+                          ? const [
+                              PopupMenuItem(
+                                value: 'Oldest first',
+                                child: Text('Oldest first'),
+                              ),
+                            ]
+                          : const [
+                              PopupMenuItem(
+                                value: 'Recently saved',
+                                child: Text('Recently saved'),
+                              ),
+                              PopupMenuItem(
+                                value: 'Oldest first',
+                                child: Text('Oldest first'),
+                              ),
+                              PopupMenuItem(
+                                value: 'Title A–Z',
+                                child: Text('Title A–Z'),
+                              ),
+                            ],
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 3),
                         child: Row(
@@ -1456,6 +1482,18 @@ class _LibraryPageState extends State<LibraryPage> {
                     ),
                   ],
                 ),
+                if (_filter == 'Rediscover')
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5, bottom: 4),
+                    child: Text(
+                      'Saved at least 14 days ago and not marked Completed. Oldest items appear first.',
+                      style: TextStyle(
+                        color: mutedTextColor(context),
+                        fontSize: 12,
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 8),
                 Expanded(
                   child: ValueListenableBuilder<List<SavedItem>>(
