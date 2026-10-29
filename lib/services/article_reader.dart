@@ -169,25 +169,8 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
     text = text.replaceAll(RegExp(r'<[^>]{0,2048}>'), ' ');
   }
 
-  const entities = <String, String>{
-    '&amp;': '&',
-    '&lt;': '<',
-    '&gt;': '>',
-    '&quot;': '"',
-    '&#39;': "'",
-    '&apos;': "'",
-    '&nbsp;': ' ',
-    '&mdash;': '—',
-    '&ndash;': '–',
-    '&hellip;': '…',
-  };
-  text = text.replaceAllMapped(
-    RegExp(
-      r'&(?:amp|lt|gt|quot|apos|nbsp|mdash|ndash|hellip|#39);',
-      caseSensitive: false,
-    ),
-    (match) => entities[match[0]!.toLowerCase()] ?? match[0]!,
-  );
+  // Decode numeric references before named references so an escaped
+  // ampersand such as &amp;#169; is only decoded one layer, not recursively.
   text = text.replaceAllMapped(RegExp(r'&#(\d{1,7});'), (match) {
     final code = int.tryParse(match.group(1)!);
     if (code == null ||
@@ -210,6 +193,46 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
       }
       return String.fromCharCode(code);
     },
+  );
+
+  const entities = <String, String>{
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&apos;': "'",
+    '&nbsp;': ' ',
+    '&mdash;': '—',
+    '&ndash;': '–',
+    '&hellip;': '…',
+    '&copy;': '©',
+    '&reg;': '®',
+    '&trade;': '™',
+    '&euro;': '€',
+    '&lsquo;': '‘',
+    '&rsquo;': '’',
+    '&ldquo;': '“',
+    '&rdquo;': '”',
+    '&bull;': '•',
+    '&middot;': '·',
+    '&deg;': '°',
+    '&laquo;': '«',
+    '&raquo;': '»',
+    '&times;': '×',
+    '&divide;': '÷',
+    '&plusmn;': '±',
+    '&cent;': '¢',
+    '&pound;': '£',
+    '&yen;': '¥',
+    '&sect;': '§',
+    '&para;': '¶',
+  };
+  text = text.replaceAllMapped(
+    RegExp(
+      r'&(?:amp|lt|gt|quot|apos|nbsp|mdash|ndash|hellip|copy|reg|trade|euro|lsquo|rsquo|ldquo|rdquo|bull|middot|deg|laquo|raquo|times|divide|plusmn|cent|pound|yen|sect|para);',
+      caseSensitive: false,
+    ),
+    (match) => entities[match[0]!.toLowerCase()] ?? match[0]!,
   );
   text = text.replaceAll('\r', '\n').replaceAll(RegExp(r'[\t\f\v ]+'), ' ');
   text = text
