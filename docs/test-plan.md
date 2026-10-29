@@ -1872,3 +1872,15 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Edit the base saved item and confirm existing annotations are preserved.
 - Confirm UI copy says the user supplies the text; saving a URL does not fetch page content or create an offline website archive.
 - **Status:** Model, backup, export and widget regression source is committed but unrun. Formatter/analyzer/tests and Android/web verification remain pending at the manual checkpoint; CI remains manual-only.
+
+
+### TC-258 — Manage local smart tag rules and review suggestions
+
+- Create a rule with a phrase and suggested tag; verify blank or over-limit values are rejected and valid values are trimmed.
+- Save an equivalent phrase/tag pair with different casing and confirm it replaces the existing rule. Different tags for the same phrase remain separate rules.
+- Verify preferences preserve valid rules across repository reopening. Malformed entries and duplicate IDs/pairs are ignored safely; reject more than 50 unique rules and verify a late write failure rolls back.
+- Use Quick Save with a rule matching a title, URL or notes field. Verify matching is case-insensitive and existing tags/duplicate outputs are not suggested.
+- Confirm no tag is appended until the user selects a suggestion chip. Confirm adding a suggestion updates the tag input and still respects existing tag length/count limits.
+- Delete a rule with confirmation and confirm existing item tags remain unchanged. Verify the UI explains rules are local to the app/browser profile and not included in backup v1.
+- Confirm no network request, AI request, page scraping, or background auto-tagging is introduced.
+- **Status:** Service, repository, UI and regression test sources are committed but unrun. Formatter/analyzer/tests/builds and Android/web accessibility checks remain pending at the owner-requested manual checkpoint; CI remains manual-only.
