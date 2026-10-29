@@ -63,13 +63,13 @@ Traceability: FR-004–005, FR-016.
 
 Purpose: canonical detail view for item content, metadata, and real storage state.
 
-Visible hierarchy: back/share/more; type-appropriate preview; title and saved time; source URL or file info; notes, tags and collection; Open/Edit/Favorite actions.
+Visible hierarchy: back/share/more; type-appropriate preview; title and saved time; source URL or file info; notes, tags and collection; Highlights & Annotations panel; Open/Edit/Favorite actions.
 
-Interactions: URLs open externally and may need network; files open in a supported viewer; edit/favorite/collection/delete update the same item.
+Interactions: URLs open externally and may need network; files open in a supported viewer; users can manually paste a quote/excerpt and note, then delete annotations with confirmation. These entries are local user-provided text; the app does not scrape the linked page. Edit/favorite/collection/delete update the same item.
 
 Required states: missing attachment, unsupported viewer, broken URL, delete confirmation, honest extraction-unavailable state.
 
-Traceability: FR-003, FR-006, FR-011, FR-017.
+Traceability: FR-003, FR-006, FR-011, FR-017, FR-024.
 
 ## SCR-005 — Collections & Tags
 
