@@ -53,17 +53,21 @@ void main() {
 
   test('sanitizes hostile HTML to readable plain text', () {
     final text = sanitizeArticleMarkup(
-      '<h1>News &amp; updates</h1>'
+      '<nav>Navigation links</nav>'
+      '<article><h1>News &amp; updates</h1>'
       '<script>stealCookies()</script>'
       '<style>.hidden{display:none}</style>'
       '<p>Useful &lt;safe&gt; text</p>'
-      '<iframe src="https://evil.example">frame secret</iframe>',
+      '<iframe src="https://evil.example">frame secret</iframe></article>'
+      '<footer>Footer links</footer>',
     );
 
     expect(text, contains('News & updates'));
     expect(text, contains('Useful <safe> text'));
     expect(text, isNot(contains('stealCookies')));
     expect(text, isNot(contains('frame secret')));
+    expect(text, isNot(contains('Navigation links')));
+    expect(text, isNot(contains('Footer links')));
     expect(text, isNot(contains('<script')));
   });
 
