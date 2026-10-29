@@ -1783,6 +1783,7 @@ The previous Android debug build failed when the generated plugin registrant cou
 
 - Open Advanced filters, select a domain and Favorites only, apply and confirm the result list matches both filters.
 - Save those query/filter/type/sort settings under a named preset; confirm the preset is available after a widget rebuild.
+- Open Organize → Collections and verify the saved preset appears under Smart Searches; activating it opens Search with the complete query/filter/sort settings restored.
 - Clear the current filters and reapply the saved preset; confirm the same results return.
 - Exercise Cancel and Reset filters in the dialog; cancel must not mutate active filters, and reset clears advanced filters while preserving the query, type and sort.
 - Verify invalid domain input is rejected with visible feedback; preset removal requires confirmation.
