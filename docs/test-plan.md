@@ -1817,3 +1817,21 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Verify attachment bytes are not included and the UI directs users to JSON backup for full recovery.
 - Verify empty selections, more than 2,000 items, and generated text above 2 MiB are rejected with user-readable feedback.
 - **Status:** Pure unit regression source committed but unrun. Formatter, analyzer and platform builds remain pending manual validation.
+
+
+### TC-253 — Preview and import browser bookmark HTML
+
+- Import a valid Netscape-format HTML file with root links, nested folders, quoted/unquoted attributes and HTML entities.
+- Confirm a preview appears before writes and reports new links, existing duplicates, in-file duplicates, invalid URLs and folders.
+- Cancel preview and verify the repository remains unchanged.
+- Confirm import and verify only HTTP(S) links are saved, folder names map to collections when capacity permits, and duplicate URLs are skipped.
+- Reject empty, malformed/non-bookmark, invalid UTF-8 and over-10-MiB files without modifying existing data.
+- **Status:** Parser regression source committed but unrun; manual picker/device checks pending.
+
+### TC-254 — Full-library CSV export
+
+- Verify CSV contains metadata and user text for all saved item types and correctly quotes commas, quotes and newlines.
+- Confirm attachment names may be listed but attachment bytes/keys are not included.
+- Reject libraries beyond the supported item/output limits with a readable message.
+- Verify the UI does not claim the destination saved the file when the share sheet was dismissed.
+- **Status:** Pure unit regression source committed but unrun.
