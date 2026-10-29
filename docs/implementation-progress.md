@@ -1219,3 +1219,10 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 
 - Added a widget test with a pending save completer so the Reader remains in the saving state long enough to assert that the spinner exposes the semantic label “Saving highlight”. The test then completes the save and checks the visible success feedback.
 - Commit: 7df2f18. No tests, formatter, analyzer or builds were run; CI remains manual-only.
+
+
+## SH-006 — entity decoder single-pass hardening — 2026-10-29
+
+- Expanded the lightweight reader sanitizer's common named entity set (copyright/trademark, currency, typographic quotes, bullets, and related symbols).
+- Numeric decimal/hex references are now decoded before named entities so `&amp;#169;` becomes the literal `&#169;` rather than being recursively decoded to ©. Rendering remains plain text; this is still not a complete HTML parser.
+- Added `test/article_reader_test.dart` coverage for named/case-insensitive entities, a hexadecimal numeric entity, and escaped ampersand behavior. Commit pair: abbb973 and a79b9fd. Tests, formatter, analyzer and builds remain unrun.
