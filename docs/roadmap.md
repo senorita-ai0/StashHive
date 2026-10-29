@@ -1575,3 +1575,12 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **Regression:** TC-261; `test/bookmark_import_widget_test.dart` covers preview counts, same-file normalized duplicates, duplicates against existing library data, invalid schemes, folder assignment, confirmation and cancellation.
 - **Privacy/data safety:** The user must approve the preview before any bookmarks or folders are created. Imported URLs are not fetched or opened.
 - **Status:** Source and test source committed; test execution, formatting, analysis, web/Android builds and platform checks remain pending.
+
+
+### TSK-542 — Isolated local PDF text probe (SH-005) — 2026-10-29
+
+- **Scope:** Digital PDFs with selectable text only. Scanned/image PDFs, OCR, production indexing and automatic extraction remain out of scope for this slice.
+- **Source:** Added `tool/pdf_text_extraction_poc` as a separate Flutter package targeting `pdfrx 2.10.1`. It includes 15 MiB input, 250-page and 1,000,000-character limits; statuses distinguish empty/oversized input, excessive pages/text, encrypted, textless and generic failure. A simple local UI records input size, page count, character count, elapsed time and expected-phrase recall.
+- **Regression:** TC-262 with synthetic in-memory PDF tests for selectable text, textless PDFs, empty/oversized input and malformed bytes.
+- **Architecture:** Production `pubspec.yaml` remains unchanged. The isolated package is outside the root manual workflow.
+- **Status:** Scaffold is committed, but package resolution, tests, Android/Web runtime, offline behavior, native/web bundle-size delta, memory and sample accuracy are unverified. SH-005/FR-016 remains BLOCKED until the measurements meet the feasibility report gates.
