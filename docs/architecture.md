@@ -188,3 +188,8 @@ The user-facing product brand is StashHive. Keep the existing `stashhive` Dart p
 - Rules are stored in the existing `stashhive_preferences_v1` preferences box with a limit of 50, validation, malformed-record recovery and best-effort rollback for late write failures. They are local to the current Android installation or browser profile and are intentionally excluded from JSON backup v1.
 - The Settings → Organization page creates and deletes rules. Reusing the same phrase/tag pair (case-insensitive) replaces that rule rather than creating a duplicate.
 - Test targets: TC-258, `test/smart_tag_rules_test.dart`, `test/smart_tag_rules_widget_test.dart`, Quick Save widget tests and repository persistence/rollback tests. Source is committed; verification remains pending at the manual checkpoint.
+
+
+### Reader response character encoding
+
+The native article reader honors declared Windows-1252 (windows-1252 and cp1252) with an explicit mapping for its special 0x80–0x9F byte range. It keeps Latin-1/ISO-8859-1 separate and otherwise falls back to UTF-8 with malformed sequences replaced. Encoding regressions are source-authored and remain unverified until the manual validation checkpoint; this is not a promise of complete charset detection or full Readability support.
