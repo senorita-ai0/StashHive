@@ -98,24 +98,24 @@ void main() {
     });
 
     test('strips a leading UTF-8 BOM from reader text', () async {
-          articleReaderTransportForTesting = (uri, addresses, timeout) async =>
-              ArticleReaderTransportResponse(
-                statusCode: 200,
-                contentType: 'text/plain; charset=utf-8',
-                body: <int>[
-                  0xEF,
-                  0xBB,
-                  0xBF,
-                  ...utf8.encode('BOM-free article'),
-                ],
-              );
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/plain; charset=utf-8',
+            body: <int>[
+              0xEF,
+              0xBB,
+              0xBF,
+              ...utf8.encode('BOM-free article'),
+            ],
+          );
 
-          final result = await loadArticleForReader('https://example.com/bom');
+      final result = await loadArticleForReader('https://example.com/bom');
 
-          expect(result.state, ArticleReaderState.success);
-          expect(result.text, 'BOM-free article');
-          expect(result.text.codeUnitAt(0), isNot(0xFEFF));
-        });
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text, 'BOM-free article');
+      expect(result.text.codeUnitAt(0), isNot(0xFEFF));
+    });
 
     test('decodes Windows-1252 punctuation and the euro sign', () async {
       articleReaderTransportForTesting = (uri, addresses, timeout) async =>
