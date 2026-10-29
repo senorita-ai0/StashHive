@@ -20,7 +20,7 @@ Read [Premium Screen Reference](screen-reference.md) for each mockup, its visibl
 
 ## Visual direction
 
-Light warm-neutral canvas, white surfaces, indigo actions, deep-navy typography and restrained type accents. Search stays prominent; content is the visual focus. Screens must be responsive, accessible, and honest about local-storage and bookmark/file states.
+Light neutral canvas, white surfaces, premium blue (#2563EB) actions, mint (#17C7A1) accents, deep-navy typography and restrained type accents. Cards use the shared 24 dp radius and hero surfaces use the blue-to-mint gradient. Search stays prominent; content is the visual focus. Screens must be responsive, accessible, and honest about local-storage and bookmark/file states.
 
 ## Implementation rule
 
