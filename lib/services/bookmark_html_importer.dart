@@ -47,11 +47,11 @@ BookmarkHtmlImportResult parseBookmarkHtml(String source) {
 
   final inertSource = source
       .replaceAll(
-        RegExp(r'<script\\b[^>]*>.*?</script\\s*>', caseSensitive: false, dotAll: true),
+        RegExp(r'<script\b[^>]*>.*?</script\s*>', caseSensitive: false, dotAll: true),
         ' ',
       )
       .replaceAll(
-        RegExp(r'<style\\b[^>]*>.*?</style\\s*>', caseSensitive: false, dotAll: true),
+        RegExp(r'<style\b[^>]*>.*?</style\s*>', caseSensitive: false, dotAll: true),
         ' ',
       );
   final tokenPattern = RegExp(
