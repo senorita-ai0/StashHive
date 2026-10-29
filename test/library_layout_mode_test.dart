@@ -106,6 +106,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: app.LibraryPage(
+          key: const ValueKey('recreated-library-page'),
           repository: repository,
           onAdd: (_) {},
           onSearch: (_) {},
