@@ -81,6 +81,22 @@ void main() {
       expect(suggestions.first.matchText, 'design');
     });
 
+    test('a non-matching rule cannot suppress a later matching tag suggestion', () {
+      final suggestions = suggestSmartTags(
+        title: 'Design ideas',
+        url: '',
+        content: '',
+        existingTags: const <String>[],
+        rules: <SmartTagRule>[
+          rule(id: 'no-match', matchText: 'not-present', suggestedTag: 'Design'),
+          rule(id: 'matches', matchText: 'design', suggestedTag: 'design'),
+        ],
+      );
+
+      expect(suggestions, hasLength(1));
+      expect(suggestions.single.ruleId, 'matches');
+    });
+
     test('does not offer existing tags or duplicate suggested tags', () {
       final suggestions = suggestSmartTags(
         title: 'Design inspiration',
