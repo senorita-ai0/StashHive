@@ -9,6 +9,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/services/backup_codec.dart';
+import 'package:stashhive/services/search_filters.dart';
 
 late Directory testDirectory;
 late LibraryRepository repository;
@@ -2976,4 +2977,106 @@ void main() {
     );
     expect(repository.items.value, isEmpty);
   });
+
+  test('saves, updates and removes local search filter presets', () async {
+    await repository.saveSearchPreset(
+      SavedSearchPreset.create(
+        name: 'Favorite reading',
+        filters: const SearchFilters(
+          tag: 'Reading',
+          favoritesOnly: true,
+        ),
+      ),
+    );
+    expect(repository.savedSearchPresets, hasLength(1));
+    expect(repository.savedSearchPresets.single.name, 'Favorite reading');
+    expect(repository.savedSearchPresets.single.filters.tag, 'Reading');
+    expect(repository.savedSearchPresets.single.filters.favoritesOnly, isTrue);
+
+    await repository.saveSearchPreset(
+      SavedSearchPreset.create(
+        name: 'favorite READING',
+        filters: const SearchFilters(
+          tag: 'Work',
+          domain: 'example.com',
+        ),
+      ),
+    );
+    expect(repository.savedSearchPresets, hasLength(1));
+    expect(repository.savedSearchPresets.single.name, 'favorite READING');
+    expect(repository.savedSearchPresets.single.filters.tag, 'Work');
+    expect(
+      repository.savedSearchPresets.single.filters.domain,
+      'example.com',
+    );
+
+    await repository.deleteSearchPreset('FAVORITE reading');
+    expect(repository.savedSearchPresets, isEmpty);
+  });
+
+  test('limits local saved search presets and leaves existing ones intact', () async {
+    for (var index = 0; index < 20; index++) {
+      await repository.saveSearchPreset(
+        SavedSearchPreset.create(
+          name: 'Search $index',
+          filters: SearchFilters(query: 'query $index'),
+        ),
+      );
+    }
+
+    await expectLater(
+      repository.saveSearchPreset(
+        SavedSearchPreset.create(
+          name: 'Twenty first',
+          filters: const SearchFilters(),
+        ),
+      ),
+      throwsFormatException,
+    );
+    expect(repository.savedSearchPresets, hasLength(20));
+    expect(
+      repository.savedSearchPresets.last.name,
+      'Search 19',
+    );
+  });
+
+  test('ignores malformed local saved search entries safely', () async {
+    final preferences = await Hive.openBox<dynamic>('stashhive_preferences_v1');
+    await preferences.put('savedSearchPresets', <Object?>[
+      <String, Object?>{
+        'name': 'Bad filter',
+        'filters': <String, Object?>{'kindLabel': 'Unknown kind'},
+      },
+      <String, Object?>{
+        'name': 'Good filter',
+        'filters': <String, Object?>{'favoritesOnly': true},
+      },
+      'not-a-map',
+    ]);
+
+    expect(repository.savedSearchPresets, hasLength(1));
+    expect(repository.savedSearchPresets.single.name, 'Good filter');
+    expect(repository.savedSearchPresets.single.filters.favoritesOnly, isTrue);
+  });
+
+  test('rolls back a saved-search preference write that fails after commit', () async {
+    LibraryRepository.savedSearchPresetsAfterWriteForTesting = () async {
+      throw StateError('private storage diagnostic');
+    };
+    try {
+      await expectLater(
+        repository.saveSearchPreset(
+          SavedSearchPreset.create(
+            name: 'Rollback test',
+            filters: const SearchFilters(favoritesOnly: true),
+          ),
+        ),
+        throwsStateError,
+      );
+      expect(repository.savedSearchPresets, isEmpty);
+    } finally {
+      LibraryRepository.savedSearchPresetsAfterWriteForTesting = null;
+    }
+  });
+
 }
