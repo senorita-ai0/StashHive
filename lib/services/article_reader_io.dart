@@ -151,62 +151,8 @@ String? _extractTitle(String html) {
     caseSensitive: false,
   ).firstMatch(html);
   if (match == null) return null;
-  final title = _decodeEntities(_stripTags(match.group(1)!)).trim();
-  return title.isEmpty ? null : title.substring(0, title.length.clamp(0, 300));
-}
-
-String _plainText(String source, {required bool isHtml}) {
-  var text = source;
-  if (isHtml) {
-    text = text.replaceAll(
-      RegExp(r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*?</\1\s*>', caseSensitive: false),
-      ' ',
-    );
-    text = text.replaceAll(RegExp(r'<!--([\s\S]*?)-->'), ' ');
-    text = text.replaceAll(RegExp(r'<br\s*/?>|</(p|div|article|section|h[1-6]|li|tr)\s*>', caseSensitive: false), '\n');
-    text = _stripTags(text);
-  }
-  text = _decodeEntities(text);
-  text = text.replaceAll('\r', '\n').replaceAll(RegExp(r'[\t\f\v ]+'), ' ');
-  text = text.replaceAll(RegExp(r' *\n *'), '\n');
-  text = text.replaceAll(RegExp(r'\n{3,}'), '\n\n');
-  return text.trim();
-}
-
-String _stripTags(String value) => value.replaceAll(RegExp(r'<[^>]{0,2048}>'), ' ');
-
-String _decodeEntities(String value) {
-  const named = <String, String>{
-    '&amp;': '&',
-    '&lt;': '<',
-    '&gt;': '>',
-    '&quot;': '"',
-    '&#39;': "'",
-    '&apos;': "'",
-    '&nbsp;': ' ',
-    '&mdash;': '—',
-    '&ndash;': '–',
-    '&hellip;': '…',
-  };
-  var result = value.replaceAllMapped(
-    RegExp(r'&(?:amp|lt|gt|quot|apos|nbsp|mdash|ndash|hellip|#39);', caseSensitive: false),
-    (match) => named[match[0]!.toLowerCase()] ?? match[0]!,
-  );
-  result = result.replaceAllMapped(RegExp(r'&#(\d{1,7});'), (match) {
-    final code = int.tryParse(match.group(1)!);
-    if (code == null || code < 1 || code > 0x10FFFF || (code >= 0xD800 && code <= 0xDFFF)) {
-      return ' ';
-    }
-    return String.fromCharCode(code);
-  });
-  result = result.replaceAllMapped(RegExp(r'&#x([0-9a-f]{1,6});', caseSensitive: false), (match) {
-    final code = int.tryParse(match.group(1)!, radix: 16);
-    if (code == null || code < 1 || code > 0x10FFFF || (code >= 0xD800 && code <= 0xDFFF)) {
-      return ' ';
-    }
-    return String.fromCharCode(code);
-  });
-  return result;
+  final title = sanitizeArticleMarkup(match.group(1)!, isHtml: true).trim();
+  return title.isEmpty ? null : (title.length > 300 ? title.substring(0, 300) : title);
 }
 
 bool _isPublicAddress(InternetAddress address) {
