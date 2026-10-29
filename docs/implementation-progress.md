@@ -1124,3 +1124,12 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - Added widget regressions for selected-only Markdown content, filename/MIME type, excluded deselected item data, and safe user feedback when sharing fails.
 - Updated the feature backlog, test plan, roadmap and traceability row with TC-260 / TSK-540.
 - **Not verified:** test sources are committed but no Dart formatter, analyzer, unit/widget tests, builds, manual workflow or platform checks have been run. CI remains manual-only.
+
+
+## SH-004 — Browser bookmark import review coverage (2026-10-29)
+
+- Added `bookmarkFilePickerForTesting` for widget coverage; production still uses the native file picker.
+- Corrected singular/plural copy for new links, existing duplicates, repeated in-file links, invalid links, folder counts and import summaries.
+- Added `test/bookmark_import_widget_test.dart` for a mixed bookmark file with a new URL, an existing duplicate, an in-file tracking/fragment duplicate, a rejected non-web scheme, and a folder assignment. The second case confirms cancellation leaves both items and collections unchanged.
+- Updated SH-004 status, traceability and TC-261 acceptance steps.
+- **Not verified:** no formatter, analyzer, Dart tests, CI workflow, web/Android build or browser/device check has been run. The workflow remains manual-only.
