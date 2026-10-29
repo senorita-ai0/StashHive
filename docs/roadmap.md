@@ -1,6 +1,6 @@
 # StashHive — Roadmap and Implementation Plan
 
-**Status:** Phase 2/3 source implementation is at the manual-testing handoff; platform assurance and release validation remain pending. Blueprint approved on 2026-10-21; validation workflow is intentionally manual-only.
+**Status:** Premium UI refresh and shared Flutter/Android source configuration are committed; Phase 2/3 platform assurance and release validation remain pending. Blueprint approved on 2026-10-21; validation workflow is intentionally manual-only.
 
 ## Milestones
 
@@ -9,7 +9,7 @@
 | Task | Scope | Requirements | Status | Exit criteria |
 |---|---|---|---|---|
 | TSK-001 | Review/approve requirements, platform split, MVP exclusions | All | DONE | User approves `docs/BLUEPRINT_REVIEW.md` or requests a revision. |
-| TSK-002 | Verify current local Flutter/Dart and Android toolchain | NFR-009 | NOT STARTED | Record versions and `flutter doctor` output; no SDK upgrade without reason. |
+| TSK-002 | Verify current local Flutter/Dart and Android toolchain | NFR-009 | IN PROGRESS — the manual workflow pins Flutter/JDK and the generated runner configurator pins AGP/Gradle/Kotlin/SDK/JVM targets; actual toolchain/build confirmation remains pending | Record exact versions and `flutter doctor` output at the manual checkpoint; do not claim compatibility until the Android build succeeds. |
 | TSK-003 | Compare storage candidates on Android + web | FR-012–015, NFR-003, NFR-007 | NOT STARTED | Create/read/update/delete, tags, migrations, 1k/10k metadata benchmark, browser restart, export/restore concept pass. |
 | TSK-004 | Android share-intent spike for URL/text/image/file | FR-009 | IN PROGRESS | At least one source app successfully shares each supported MIME type; cancellation/error behaviors documented. |
 | TSK-005 | OCR/PDF extraction feasibility spike | FR-016, NFR-005, NFR-008 | NOT STARTED | Compare offline options for language support, sample accuracy, binary-size increase, latency and memory. No library commitment until results. |
@@ -1451,3 +1451,18 @@ The active Phase 2/3 source queue has reached the point where the next meaningfu
 - The next checkpoint is to run the manual workflow, resolve any Flutter/Dart or Android FilePickerPlugin build issues, and then perform the browser/Android smoke tests against the seven committed screen references.
 - Required validation includes share-in from real Android apps, browser-profile persistence, backup export/restore and failure recovery, accessibility/screen-reader behavior, and a performance baseline.
 - OCR/PDF text extraction remains gated on a separate feasibility study and is not part of this source handoff. Release readiness must not be claimed until validation evidence is added to the traceability matrix.
+
+
+### TSK-531 — Apply shared premium UI language to StashHive — 2026-10-29
+
+- **Requirements:** FR-004, FR-018 and NFR-006.
+- **Source:** Added the shared FinMate/Stockly `PremiumTokens` and reusable components, then applied their blue/mint palette, rounded Material 3 theme, premium page headers, empty state, settings hero/icon chips and stronger selected navigation icons to StashHive. Refreshed all seven editable screen references and the mobile-flow board to the current palette, while keeping StashHive-specific screens and behavior.
+- **Regression:** TC-244 covers the documented tokens, page header, icon chip and empty-state action.
+- **Status:** Source and test are committed on main; no formatter, analyzer, widget tests or visual platform checks have run. Validate with all seven references during the manual checkpoint.
+
+### TSK-532 — Pin shared Flutter and Android build configuration — 2026-10-29
+
+- **Requirements:** NFR-009.
+- **Source:** StashHive now declares minimum Dart 3.13.2/Flutter 3.47.2, and the manual workflow pins Flutter 3.47.2/JDK 27. `tool/configure_android_build.py` normalizes the generated runner to AGP 9.4.0, Kotlin 2.4.10, Gradle 9.8.1, compile SDK 36, Build Tools 36.1.0 and JVM target 17, enables AGP built-in Kotlin consistently, and creates StashHive adaptive hive launcher resources.
+- **Regression:** TC-245 covers the generated build baseline, launcher resources, idempotence and fail-clear behavior.
+- **Status:** Source and test are committed on main. Do not mark complete until the manual Python tests, analyzer, full tests, web build and Android debug APK succeed; CI remains manual-only.
