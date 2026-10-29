@@ -1005,3 +1005,10 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - [x] Added generated custom Android adaptive hive icon resources and corrected the AGP built-in Kotlin setup so the app module does not apply the legacy Kotlin Android plugin.
 - [x] Added TC-244 widget/theme/token coverage and TC-245 configurator regression source; updated the roadmap and traceability matrix.
 - [ ] No tests, formatter, analyzer, CI run or platform build has been run for this increment. At the manual checkpoint, run the configurator/Python tests and TC-244 with the full suite, then verify the Android APK, browser build, and visual reference match before declaring the enhancement complete.
+
+## Phase 3 — finalize reference-aligned Android toolchain and launcher safeguards (2026-10-29)
+
+- [x] Updated the generated Gradle wrapper target from 9.8.1 to 9.8.2, the latest 9.8 patch release; official Gradle notes recommend 9.8.2 and confirm JDK 27 support.
+- [x] Made the built-in Kotlin migrator remove both `org.jetbrains.kotlin.android` and `kotlin-android` from the generated app module.
+- [x] Adjusted hive mark vector coordinates for the adaptive icon safe zone; regression source rejects unsupported `transform` attributes and checks generated icon XML is well-formed.
+- [ ] All source and regression changes remain unrun. At the manual validation checkpoint, run the Python configurator suites and full workflow; confirm the actual Android APK compiles and the launcher icon renders correctly on API 25 and API 26+ before marking toolchain/branding work done.
