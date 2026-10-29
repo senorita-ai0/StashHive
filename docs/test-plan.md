@@ -2004,3 +2004,10 @@ The repository widget regression source now checks three export formats after sa
 - Feed the sanitizer a script string and an HTML comment that each contain a literal `<article>` tag, followed by navigation markup and a real article container.
 - Verify the real article's readable text is retained, while fake script/comment text and navigation are absent.
 - **Status:** Regression source added to `test/article_reader_test.dart`; not run. The lightweight regex sanitizer still requires broader malformed/complex HTML review and Android/web verification.
+
+
+### TC-266 update — navigation containers and text-control normalization (2026-10-29)
+
+- Include a navigation container containing a fake `<article>` before a real article; verify the real article is selected and navigation text is absent.
+- Feed plain text containing NUL/control characters alongside Urdu/ordinary Unicode; verify non-printing controls become spacing and useful text remains intact.
+- **Status:** Synthetic regression source is committed in `test/article_reader_test.dart`; not run. Verify complex malformed markup and Android/web rendering at the manual validation checkpoint.
