@@ -1917,3 +1917,13 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Confirm the preview and verify only the new safe link is imported, its folder becomes the intended collection, the existing item is not duplicated, and invalid links are skipped with an accurate summary.
 - Confirm the flow only parses the chosen file; it does not open, fetch, or send any bookmark URL to a network service. Check the 10 MB bound and recoverable errors for empty, malformed and unreadable input.
 - **Status:** Bookmark-import widget regression source is committed but unrun. Validate at the owner-requested manual checkpoint; CI stays manual-only.
+
+
+### TC-262 — Isolated selectable-text PDF extraction proof of concept
+
+- Run only inside `tool/pdf_text_extraction_poc`; do not add `pdfrx` to the production app dependency graph at this stage.
+- Use the synthetic in-memory one-page PDF test to verify expected text can be extracted, textless PDFs report `noSelectableText`, empty/over-limit input is rejected before PDFium initialization, and malformed bytes produce a safe failure result.
+- On the manual POC checkpoint, run `flutter pub get`, `flutter test`, and the probe on a real Android device and supported browser. Record dependency resolution, platform/build success or failure, and toolchain versions.
+- Test at least 10 permissively licensed or synthetic digital PDFs. Measure expected-phrase recall, page count, input bytes, character count, cold/warm latency, peak memory, Android APK delta, web output-size delta, and offline behavior. Inspect logs/network to ensure PDF bytes and extracted text are not transmitted.
+- Include encrypted, malformed, empty, textless/scanned and high-page-count files. Treat a scanned PDF reporting no selectable text as expected for this probe; OCR is a separate later evaluation.
+- **Status:** Source/test scaffold committed but unrun; runtime feasibility is still BLOCKED. Do not mark FR-016 passed or integrate the package until the measurements and acceptance gates are documented. Root CI remains manual-only.
