@@ -96,7 +96,7 @@ def configure_manifest(manifest_path: str | Path) -> int:
     # configurator; the PNGs remain the fallback for pre-Android-8 devices.
     application.set(ANDROID + "label", "StashHive")
     application.set(ANDROID + "icon", "@mipmap/ic_launcher")
-    application.set(ANDROID + "roundIcon", "@mipmap/ic_launcher_round")
+    application.set(ANDROID + "roundIcon", "@mipmap/ic_launcher")
 
     activities = application.findall("activity")
     main_activity = next(
