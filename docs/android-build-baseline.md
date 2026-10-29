@@ -22,7 +22,7 @@
 
 JDK runtime and application bytecode targets are intentionally different: Gradle runs on JDK 27, while StashHive and its Kotlin sources target JVM 17. The app module does not apply `org.jetbrains.kotlin.android` when AGP built-in Kotlin is enabled; the version declaration is retained in `settings.gradle.kts` to match the reference projects' plugin-management convention.
 
-Gradle uses 9.8.1 rather than FinMate/Stockly's 9.8.0 wrapper, to take the patch release instead of keeping the earlier wrapper version.
+Gradle uses 9.8.1 rather than FinMate/Stockly's 9.8.0 wrapper. The [Gradle 9.8.1 release notes](https://docs.gradle.org/9.8.1/release-notes.html) recommend this patch: it fixes three high-rated vulnerabilities and adds supported execution on JDK 27. The [AGP 9.4.0 compatibility table](https://developer.android.com/build/releases/agp-9-4-0-release-notes) lists Gradle 9.6.0 as the minimum and JDK 17 as the minimum; the selected wrapper/JDK exceed those minimums.
 
 ## Generated Android runner
 
