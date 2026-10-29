@@ -1466,3 +1466,15 @@ The active Phase 2/3 source queue has reached the point where the next meaningfu
 - **Source:** StashHive now declares minimum Dart 3.13.2/Flutter 3.47.2, and the manual workflow pins Flutter 3.47.2/JDK 27. `tool/configure_android_build.py` normalizes the generated runner to AGP 9.4.0, Kotlin 2.4.10, Gradle 9.8.2, compile SDK 36, Build Tools 36.1.0 and JVM target 17, enables AGP built-in Kotlin consistently, removes either legacy Kotlin plugin alias from the app module, and creates StashHive adaptive hive launcher resources with Android-safe vector path coordinates.
 - **Regression:** TC-245 covers the generated build baseline, both Kotlin aliases, XML resource well-formedness, launcher safe-zone constraints, idempotence and fail-clear behavior.
 - **Status:** Source and test are committed on main. Do not mark complete until the manual Python tests, analyzer, full tests, web build and Android debug APK succeed; CI remains manual-only.
+
+
+## Feature backlog kickoff — 2026-10-29
+
+Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.md); the ordered delivery sequence begins with SH-001. This is separate from the currently pending Phase 2/3 manual platform-validation checkpoint and does not imply release readiness.
+
+### TSK-533 — Duplicate link detection and review (SH-001)
+
+- **Requirements:** FR-019; NFR-002 and NFR-003.
+- **Source:** Added a local URL normalization/detection service and a Quick Save confirmation dialog for new links whose normalized destination already exists. The dialog lists matching entries and lets the user cancel or explicitly save another copy; no record is automatically deleted or suppressed. Original URLs remain unchanged. Attachment-byte hashes and duplicate detection during backup import remain future slices.
+- **Regression:** TC-246 plus unit/widget source in `test/duplicate_detector_test.dart` and `test/quick_save_test.dart`.
+- **Status:** Source and regression cases are committed on `main`; formatter, analyzer, tests, web/Android builds, and real-device/browser checks have not run. Do not dispatch the manual workflow unless the owner requests validation.
