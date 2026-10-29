@@ -1489,6 +1489,11 @@ class _LibraryPageState extends State<LibraryPage> {
                 icon: const Icon(Icons.remove_rounded),
                 label: const Text('Remove tags'),
               ),
+              OutlinedButton.icon(
+                onPressed: _exportSelected,
+                icon: const Icon(Icons.ios_share_rounded),
+                label: const Text('Export list'),
+              ),
               FilledButton.tonalIcon(
                 onPressed: () => _runBulkAction('delete'),
                 icon: const Icon(Icons.delete_outline_rounded),
@@ -1584,6 +1589,75 @@ class _LibraryPageState extends State<LibraryPage> {
     controller.dispose();
     if (tags == null || !mounted) return;
     await _runBulkAction(remove ? 'removeTags' : 'addTags', tags: tags);
+  }
+
+  Future<void> _exportSelected() async {
+    final selected = widget.repository.items.value
+        .where((item) => _selectedIds.contains(item.id))
+        .toList(growable: false);
+    if (selected.isEmpty) return;
+    if (selected.length > 2000) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Export up to 2,000 selected items at a time.')),
+      );
+      return;
+    }
+
+    final buffer = StringBuffer('# StashHive selected items\n\n');
+    for (final item in selected) {
+      buffer.writeln('## ${item.title.replaceAll('\n', ' ')}');
+      buffer.writeln('- Type: ${item.kind.label}');
+      if (item.url != null) buffer.writeln('- URL: ${item.url}');
+      if (item.collection != null) buffer.writeln('- Collection: ${item.collection}');
+      if (item.tags.isNotEmpty) buffer.writeln('- Tags: ${item.tags.join(', ')}');
+      if (item.isFavorite) buffer.writeln('- Favorite: yes');
+      if (item.attachmentName != null) {
+        buffer.writeln('- Attachment: ${item.attachmentName}');
+      }
+      if (item.content.trim().isNotEmpty) {
+        buffer.writeln();
+        buffer.writeln(item.content.trim());
+      }
+      buffer.writeln();
+      if (buffer.length > 2 * 1024 * 1024) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('This selection is too large to export as one list. Select fewer items.'),
+          ),
+        );
+        return;
+      }
+    }
+
+    try {
+      final bytes = utf8.encode(buffer.toString());
+      final name = 'stashhive-selected-${DateTime.now().toUtc().toIso8601String().substring(0, 10)}.md';
+      await SharePlus.instance.share(
+        ShareParams(
+          title: 'StashHive selected items',
+          subject: 'Selected items from StashHive',
+          files: [
+            XFile.fromData(
+              bytes,
+              mimeType: 'text/markdown',
+              name: name,
+            ),
+          ],
+        ),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Export list prepared. Attachment file contents are not included; use JSON backup for full recovery.'),
+          duration: Duration(seconds: 5),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not export the selected list. Try again.')),
+      );
+    }
   }
 
   Future<void> _runBulkAction(
