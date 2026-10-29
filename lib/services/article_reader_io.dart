@@ -272,13 +272,80 @@ String _decodeText(List<int> bytes, String? charset) {
 }
 
 String? _extractTitle(String html) {
+  // Do not accept title-looking text from a script string or comment as the
+  // document title. Apply the same active-content boundary used by the reader
+  // before looking for the real title element.
+  var titleSource = html.replaceAll(
+    RegExp(
+      r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*?</\1\s*>',
+      caseSensitive: false,
+    ),
+    ' ',
+  );
+  titleSource = titleSource.replaceAll(
+    RegExp(
+      r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*
+
+bool _isPublicAddress(InternetAddress address) {
+  final bytes = address.rawAddress;
+  if (address.type == InternetAddressType.IPv4 && bytes.length == 4) {
+    final a = bytes[0], b = bytes[1], c = bytes[2];
+    if (a == 0 || a == 10 || a == 127 || a >= 224 ||
+        (a == 100 && b >= 64 && b <= 127) ||
+        (a == 169 && b == 254) ||
+        (a == 172 && b >= 16 && b <= 31) ||
+        (a == 192 && b == 168) ||
+        (a == 192 && b == 0 && (c == 0 || c == 2)) ||
+        (a == 192 && b == 88 && c == 99) ||
+        (a == 198 && (b == 18 || b == 19)) ||
+        (a == 198 && b == 51 && c == 100) ||
+        (a == 203 && b == 0 && c == 113)) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+,
+      caseSensitive: false,
+    ),
+    ' ',
+  );
+  titleSource = titleSource
+      .replaceAll(RegExp(r'<!--[\s\S]*?-->'), ' ')
+      .replaceAll(RegExp(r'<!--[\s\S]*
+
+bool _isPublicAddress(InternetAddress address) {
+  final bytes = address.rawAddress;
+  if (address.type == InternetAddressType.IPv4 && bytes.length == 4) {
+    final a = bytes[0], b = bytes[1], c = bytes[2];
+    if (a == 0 || a == 10 || a == 127 || a >= 224 ||
+        (a == 100 && b >= 64 && b <= 127) ||
+        (a == 169 && b == 254) ||
+        (a == 172 && b >= 16 && b <= 31) ||
+        (a == 192 && b == 168) ||
+        (a == 192 && b == 0 && (c == 0 || c == 2)) ||
+        (a == 192 && b == 88 && c == 99) ||
+        (a == 198 && (b == 18 || b == 19)) ||
+        (a == 198 && b == 51 && c == 100) ||
+        (a == 203 && b == 0 && c == 113)) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+), ' ');
+
   final match = RegExp(
     r'<title\b[^>]*>([\s\S]*?)</title\s*>',
     caseSensitive: false,
-  ).firstMatch(html);
+  ).firstMatch(titleSource);
   if (match == null) return null;
   final title = sanitizeArticleMarkup(match.group(1)!, isHtml: true).trim();
-  return title.isEmpty ? null : (title.length > 300 ? title.substring(0, 300) : title);
+  return title.isEmpty
+      ? null
+      : (title.length > 300 ? title.substring(0, 300) : title);
 }
 
 bool _isPublicAddress(InternetAddress address) {
