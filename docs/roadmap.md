@@ -1567,3 +1567,11 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 - **Test seam:** Added `selectedItemsShareForTesting`, used only by tests. Production still calls SharePlus to open the platform share sheet.
 - **Regression:** TC-260 in `docs/test-plan.md`; `test/bulk_actions_widget_test.dart` checks selected-only contents and safe feedback when sharing fails.
 - **Status:** Source and test source are committed; execution and platform verification remain pending. No CI workflow was dispatched.
+
+
+### TSK-541 — Harden the bookmark import review experience (SH-004) — 2026-10-29
+
+- **Source:** Added a test-only file picker seam to exercise the real parse/preview/import path without a native dialog. Preview and summary messages now use correct singular/plural counts for one or many new, duplicate, invalid or folder entries.
+- **Regression:** TC-261; `test/bookmark_import_widget_test.dart` covers preview counts, same-file normalized duplicates, duplicates against existing library data, invalid schemes, folder assignment, confirmation and cancellation.
+- **Privacy/data safety:** The user must approve the preview before any bookmarks or folders are created. Imported URLs are not fetched or opened.
+- **Status:** Source and test source committed; test execution, formatting, analysis, web/Android builds and platform checks remain pending.
