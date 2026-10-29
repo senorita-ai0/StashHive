@@ -98,3 +98,10 @@ Before source implementation, follow [the article-reader feasibility and privacy
 
 - [x] Add source coverage for the cp1252 alias and ensure the Latin-1 decoder remains separate from Windows-1252 mapping.
 - [ ] Execute TC-269 and the full reader test set at the owner-approved manual validation checkpoint.
+
+
+## SH-006 — reader accessibility source (2026-10-29)
+
+- [x] Add explicit semantic labels for loading and save progress and heading semantics for the article and error-state titles.
+- [x] Author a widget regression for the loading progress label using a pending synthetic response.
+- [ ] Execute the widget regression and inspect selection, navigation, errors and saving with Android/web assistive technology; source labels alone do not establish accessibility completion.
