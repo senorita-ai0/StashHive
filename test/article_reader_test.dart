@@ -142,6 +142,48 @@ void main() {
       expect(transportCalled, isFalse);
     });
 
+    test('blocks reserved IPv4 destination ranges before transport', () async {
+      const blockedAddresses = <String>[
+        '0.1.2.3',
+        '10.0.0.8',
+        '100.64.0.1',
+        '127.0.0.1',
+        '169.254.1.1',
+        '172.16.0.1',
+        '192.0.0.1',
+        '192.0.2.1',
+        '192.168.1.1',
+        '192.88.99.1',
+        '198.18.0.1',
+        '198.51.100.1',
+        '203.0.113.1',
+        '224.0.0.1',
+        '240.0.0.1',
+      ];
+
+      for (final address in blockedAddresses) {
+        articleReaderDnsResolverForTesting = (host) async => <String>[address];
+        var transportCalled = false;
+        articleReaderTransportForTesting = (uri, addresses, timeout) async {
+          transportCalled = true;
+          return ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/plain',
+            body: utf8.encode('must not be loaded'),
+          );
+        };
+
+        final result = await loadArticleForReader('https://example.com/article');
+
+        expect(
+          result.state,
+          ArticleReaderState.blockedAddress,
+          reason: 'Blocked address should be rejected: $address',
+        );
+        expect(transportCalled, isFalse, reason: address);
+      }
+    });
+
     test('maps DNS resolution timeout to the reader timeout state', () async {
       articleReaderDnsResolverForTesting =
           (host) => Completer<List<String>>().future;
