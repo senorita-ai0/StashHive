@@ -259,6 +259,8 @@ void main() {
         'file:///etc/passwd',
         'ftp://example.com/article',
         'https://user:password@example.com/',
+        'http://example.com:8080/',
+        'https://example.com:8443/',
       ]) {
         expect(parseArticleReaderUrl(value), isNull, reason: value);
       }
