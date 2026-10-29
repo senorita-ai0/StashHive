@@ -184,12 +184,12 @@ void main() {
         httpStatusCode: 200,
       ),
     );
-    expect(repository.linkHealthHistory, contains('link-1'));
+    expect(repository.linkHealthHistory.containsKey('link-1'), isTrue);
 
     await repository.delete('link-1');
 
     expect(repository.findById('link-1'), isNull);
-    expect(repository.linkHealthHistory, isNot(contains('link-1')));
+    expect(repository.linkHealthHistory.containsKey('link-1'), isFalse);
   });
 
   test('lookups expose the last committed item while a save is staged', () async {
