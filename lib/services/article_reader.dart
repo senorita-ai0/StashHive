@@ -92,9 +92,21 @@ bool _isPrivateIpv4Literal(String host) {
 String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
   var text = source;
   if (isHtml) {
+    // Prefer semantic article/main containers when available. This is a
+    // lightweight fallback, not a full readability engine; some sites will
+    // still include navigation or omit their main content from these tags.
+    final article = RegExp(
+      r'<article\b[^>]*>([\s\S]*?)</article\s*>',
+      caseSensitive: false,
+    ).firstMatch(source);
+    final main = RegExp(
+      r'<main\b[^>]*>([\s\S]*?)</main\s*>',
+      caseSensitive: false,
+    ).firstMatch(source);
+    text = article?.group(1) ?? main?.group(1) ?? source;
     text = text.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*?</\1\s*>',
+        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside)\b[^>]*>[\s\S]*?</\1\s*>',
         caseSensitive: false,
       ),
       ' ',
