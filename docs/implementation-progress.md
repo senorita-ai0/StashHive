@@ -1047,6 +1047,6 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - **UI:** Library now supports select-all-visible, long-press selection, per-item selection checkboxes, and a selected-count action panel.
 - **Actions implemented in source:** set selected items as favorites, move them to an existing collection or no collection, add comma-separated tags, remove tags, and delete only after confirmation.
 - **Failure handling:** each item mutation is attempted independently; the UI reports success/failure counts rather than claiming the whole batch succeeded. Failed items are not intentionally removed by the selection flow.
-- **Remaining in SH-003:** export selected items is not implemented yet. The current move dialog selects existing collections; creating a new collection during a bulk move is not part of this slice.
-- **Regression source:** `test/bulk_actions_widget_test.dart` covers favorite/move/tag actions and cancellation of confirmed deletion.
+- **Export:** added a bounded Markdown index export for up to 2,000 selected records and a 2 MiB generated-text cap. It includes item metadata and user-entered text, but not attachment bytes; use the existing JSON backup for full recovery. The current move dialog selects existing collections; creating a new collection during a bulk move is not part of this slice.
+- **Regression source:** `test/bulk_actions_widget_test.dart` covers favorite/move/tag actions and cancellation of confirmed deletion. `test/selected_items_export_test.dart` covers Markdown output and export bounds.
 - **Verification:** tests, formatter, analyzer, web/Android builds, and manual UI checks have not been run. This increment is source-implemented but unverified. CI remains manual-only.
