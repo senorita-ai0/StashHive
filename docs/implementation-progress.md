@@ -1195,3 +1195,9 @@ No tests, formatter, analyzer, Android build or web build were run for the lates
 - Kept latin1 and iso-8859-1 handling separate; UTF-8 remains the fallback when no supported legacy charset is declared.
 - Added a synthetic response test for a quoted charset="windows-1252" declaration and euro sign, curly quotes, and em dash characters. Source-review only; no test was run.
 - Commits: 94c4677 decoder fix; a350571 regression source. Formatter, analyzer, tests and builds remain unrun; CI remains manual-only.
+
+
+## SH-006 — temporary article body excluded from text exports (2026-10-29)
+
+- Extended test/article_reader_repository_test.dart to build CSV and selected-Markdown exports after a user saves a highlight. The assertions require the annotation quote to be exported while the complete synthetic article body stays out of both files; the existing JSON backup assertions remain.
+- Commit: f770abb. This is authored test source only. No test, formatting, analyzer or build was run; CI remains manual-only.
