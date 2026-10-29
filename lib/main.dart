@@ -1517,7 +1517,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> _showAdvancedFilters() async {
-    final currentItems = widget.repository.items.value;
     final tagOptions = _tagOptions();
     final collectionOptions = widget.repository.collections.value.toList();
     var selectedTag = _filters.tag ?? '';
@@ -1527,11 +1526,20 @@ class _SearchPageState extends State<SearchPage> {
     var domainError = false;
     final domainController = TextEditingController(text: _filters.domain);
 
-    if (selectedCollection.isNotEmpty &&
-        !collectionOptions.any(
-          (name) => name.toLowerCase() == selectedCollection.toLowerCase(),
-        )) {
-      collectionOptions.insert(0, selectedCollection);
+    if (selectedTag.isNotEmpty) {
+      selectedTag = tagOptions.firstWhere(
+        (tag) => tag.toLowerCase() == selectedTag.toLowerCase(),
+        orElse: () => selectedTag,
+      );
+    }
+    if (selectedCollection.isNotEmpty) {
+      selectedCollection = collectionOptions.firstWhere(
+        (name) => name.toLowerCase() == selectedCollection.toLowerCase(),
+        orElse: () => selectedCollection,
+      );
+      if (!collectionOptions.contains(selectedCollection)) {
+        collectionOptions.insert(0, selectedCollection);
+      }
     }
 
     try {
