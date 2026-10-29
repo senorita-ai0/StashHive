@@ -102,10 +102,10 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 ## SH-006 source increment — 2026-10-29
 
 - Added an explicit **Read in StashHive** action to Item Details for saved HTTP(S) links. It only opens the reader route after a user tap; save, search and background flows do not initiate a fetch.
-- Added a bounded native reader service: HTTP(S) only, reject URL credentials and private/reserved destinations, resolve and pin a public destination address, refuse redirects, accept HTML/plain text only, cap the response at 1 MiB and displayed text at 60,000 characters, and apply a short timeout.
+- Added a bounded native reader service: HTTP(S) only, reject URL credentials and private/reserved destinations, resolve and pin a public destination address, refuse redirects, accept HTML/plain text only, cap the response at 1 MiB and displayed text at 60,000 characters, and apply a total response deadline. IPv6 native destinations are conservatively blocked in this first slice.
 - Native reader content is sanitized to plain text; script/style/iframe/object/template/svg/noscript blocks are removed before display. Page content is held in transient UI state and is not added to SavedItem, repository storage or backups.
 - Web behavior deliberately reports cross-origin/CORS limitations and offers the external-browser path; no proxy was added. The external-browser action remains available on the reader screen.
 - Added test/article_reader_test.dart source for URL scheme/credential/private-literal rejection, text sanitization and Unicode normalization, plus test/article_reader_page_test.dart for the invalid-URL recovery state. These tests have **not** been run.
 - **Still incomplete:** selection-based quote/highlight capture and offset/context metadata. Native fetch behavior, security edge cases, web UX, analyzer, formatter, unit/widget tests, Android build and web build remain unverified. Do not mark SH-006 complete.
 - CI remains manual-only; no workflow, build, formatter, analyzer or test command was run for this source increment.
-- Latest source commits include 4cfec61 (Item Details integration), 6ac3610 (native sanitizer reuse) and b8c8ff7 (reader regression source). Re-check HEAD before the next edit.
+- Latest source increments include 4cfec61 (Item Details integration), 5e1f640 (total response deadline and byte cap), and b51cfed (IPv6 loopback regression source). Latest verified HEAD at the time of this note should be re-checked before the next edit.
