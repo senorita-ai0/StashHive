@@ -1240,3 +1240,10 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Source review uncovered duplicate copies of the reader sanitizer/URL-loader tail plus a malformed residual fragment in `lib/services/article_reader.dart`. Removed the entire stale suffix, keeping the first complete service definitions, then fetched the committed file and verified the validator, private-address helper, sanitizer and loader each appear once and the malformed fragment is absent.
 - Updated the single sanitizer to strip scripts/embedded content, nav/footer/aside containers and comments before semantic article/main selection. The same cleanup handles unclosed container tails conservatively, so fake `<article>` tags inside those regions cannot win extraction. Added replacement of non-printing control characters before whitespace normalization.
 - Regression source extends the fake article fixture to include navigation and adds a plain-text control-character case while preserving the Urdu text assertion. Commits: b818cad (source repair + sanitizer) and 4501f50 (test source). No test, formatter, analyzer or build was run; CI remains manual-only.
+
+
+## SH-006 — ignore fake HTML titles in embedded content — 2026-10-29
+
+- Updated native `_extractTitle` to strip script/style/noscript/SVG/iframe/object/template blocks and comments before looking for the document title. Sanitization still decodes supported entities to plain text and caps titles at 300 characters.
+- Added an injected HTML response test with a fake title in a script string, another in a comment, and the real `Actual &amp; useful title`; it checks that the actual title and article body are retained.
+- Source review found a malformed duplicate residual tail after the first title-extractor write; rebuilt the IO file using the verified prefix and a single complete title function plus the single existing public-address helper. Re-fetched and confirmed one definition each for the native loader, fetcher, parser, charset parser, decoder, title extractor and public-address helper. Commits: a774ec0 and 627717f. No tests/formatter/analyzer/builds were run; CI remains manual-only.
