@@ -46,3 +46,7 @@ Selection-based quote capture is now prototyped in source using selectable sanit
 - Existing bookmark, annotation, backup and search behavior remains intact.
 - Android and web behavior is demonstrated separately; browser CORS limitations are explained rather than bypassed through a hosted proxy.
 - No tests/builds are marked passed until actually executed at the owner-approved manual validation checkpoint.
+
+## Source hardening update — 2026-10-29
+
+The initial native transport now separates response handling behind a test-only resolver/transport boundary. Production defaults remain OS DNS plus direct connections to vetted/pinned IPv4 destinations; no proxy or third-party service is introduced. A single absolute deadline spans the native request flow. Tests can use synthetic response bodies/statuses and fake DNS answers, avoiding real internet traffic. Source and regression coverage are authored only; no test/build/analysis has been run, and this does not replace Android/web platform checks.
