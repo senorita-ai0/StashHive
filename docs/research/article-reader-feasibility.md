@@ -11,7 +11,7 @@ Build an optional, explicit **Open in StashHive reader** action for saved HTTP(S
 
 - Keep the original saved bookmark and its metadata unchanged when opening reader mode.
 - Do not fetch page content during Quick Save, background work, or while the app is idle.
-- Only accept valid HTTP(S) URLs. Reject credentials embedded in URLs and local/private/reserved destinations; validate DNS resolution and redirects before any native fetch to reduce SSRF/DNS-rebinding risk.
+- Only accept credential-free HTTP(S) URLs on standard ports (HTTP 80, HTTPS 443). Reject local/private/reserved destinations; validate DNS resolution and refuse redirects before native fetch to reduce SSRF/DNS-rebinding risk. Non-standard ports remain available through the user's explicit external-browser action.
 - Bound request time, response bytes, redirect count, parsing work, and displayed text. Handle timeouts, unsupported content types, malformed HTML, and unavailable connectivity with recoverable UI.
 - Do not send cookies, app credentials, or saved-item notes to the site. Do not log full URLs, response bodies, selected text, or personal annotations.
 - Reader content is a **temporary fetched preview**, not an offline archive. Do not persist fetched HTML/text in the library or imply that it will be available offline.
