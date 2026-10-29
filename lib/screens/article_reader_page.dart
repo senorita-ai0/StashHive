@@ -2,17 +2,28 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../models/saved_item.dart';
 import '../services/article_reader.dart';
+
+typedef SaveArticleReaderSelection = Future<bool> Function(
+  String quote,
+  int startOffset,
+  int endOffset,
+  String contextBefore,
+  String contextAfter,
+);
 
 class ArticleReaderPage extends StatefulWidget {
   const ArticleReaderPage({
     required this.url,
     required this.savedTitle,
+    this.onSaveQuote,
     super.key,
   });
 
   final String url;
   final String savedTitle;
+  final SaveArticleReaderSelection? onSaveQuote;
 
   @override
   State<ArticleReaderPage> createState() => _ArticleReaderPageState();
@@ -20,6 +31,10 @@ class ArticleReaderPage extends StatefulWidget {
 
 class _ArticleReaderPageState extends State<ArticleReaderPage> {
   late Future<ArticleReaderResult> _request;
+  String? _selectedQuote;
+  int? _selectionStart;
+  int? _selectionEnd;
+  bool _savingQuote = false;
 
   @override
   void initState() {
@@ -31,6 +46,73 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
 
   void _retry() {
     setState(() => _request = loadArticleForReader(widget.url));
+  }
+
+  void _onTextSelectionChanged(String text, TextSelection selection) {
+    if (!selection.isValid ||
+        selection.isCollapsed ||
+        selection.start < 0 ||
+        selection.end > text.length) {
+      if (_selectedQuote != null) {
+        setState(() {
+          _selectedQuote = null;
+          _selectionStart = null;
+          _selectionEnd = null;
+        });
+      }
+      return;
+    }
+    final start = selection.start;
+    final end = selection.end;
+    final quote = text.substring(start, end);
+    setState(() {
+      _selectedQuote = quote.trim().isEmpty ? null : quote;
+      _selectionStart = quote.trim().isEmpty ? null : start;
+      _selectionEnd = quote.trim().isEmpty ? null : end;
+    });
+  }
+
+  Future<void> _saveSelectedQuote(String text) async {
+    final save = widget.onSaveQuote;
+    final quote = _selectedQuote;
+    final start = _selectionStart;
+    final end = _selectionEnd;
+    if (save == null ||
+        quote == null ||
+        start == null ||
+        end == null ||
+        quote.trim().isEmpty ||
+        quote.length > maxSavedAnnotationQuoteCharacters ||
+        _savingQuote) {
+      return;
+    }
+    final beforeStart = (start - 80).clamp(0, start).toInt();
+    final afterEnd = (end + 80).clamp(end, text.length).toInt();
+    setState(() => _savingQuote = true);
+    try {
+      final saved = await save(
+        quote,
+        start,
+        end,
+        text.substring(beforeStart, start),
+        text.substring(end, afterEnd),
+      );
+      if (saved && mounted) {
+        setState(() {
+          _selectedQuote = null;
+          _selectionStart = null;
+          _selectionEnd = null;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not save this highlight. Please try again.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _savingQuote = false);
+    }
   }
 
   Future<void> _openExternal() async {
@@ -174,8 +256,57 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
                     SelectableText(
                       result.text,
                       key: const ValueKey('article-reader-text'),
+                      onSelectionChanged: (selection, _) =>
+                          _onTextSelectionChanged(result.text, selection),
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.8),
                     ),
+                    if (widget.onSaveQuote != null && _selectedQuote != null) ...[
+                      const SizedBox(height: 16),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'SELECTED PASSAGE',
+                                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                _selectedQuote!,
+                                maxLines: 5,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 10),
+                              if (_selectedQuote!.length > maxSavedAnnotationQuoteCharacters)
+                                Text(
+                                  'Select a shorter passage (up to $maxSavedAnnotationQuoteCharacters characters).',
+                                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                                ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: FilledButton.icon(
+                                  key: const ValueKey('save-reader-highlight'),
+                                  onPressed: _savingQuote ||
+                                          _selectedQuote!.length > maxSavedAnnotationQuoteCharacters
+                                      ? null
+                                      : () => _saveSelectedQuote(result.text),
+                                  icon: _savingQuote
+                                      ? const SizedBox(
+                                          width: 16,
+                                          height: 16,
+                                          child: CircularProgressIndicator(strokeWidth: 2),
+                                        )
+                                      : const Icon(Icons.bookmark_add_outlined),
+                                  label: Text(_savingQuote ? 'Saving…' : 'Save highlight'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 28),
                     OutlinedButton.icon(
                       onPressed: _openExternal,
