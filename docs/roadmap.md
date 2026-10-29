@@ -1665,3 +1665,8 @@ The native Reader now avoids cutting article text or extracted titles in the mid
 ## SH-006 — title Unicode boundary regression — TC-272 — 2026-10-29
 
 TC-272 extends Unicode-safe truncation coverage to the extracted title, alongside TC-271 for article body text. Both are source-only regressions and must be run with the full Reader suite at the owner-approved manual validation checkpoint.
+
+
+## SH-006 — bounded HTML charset prescan — 2026-10-29
+
+Native Reader parsing now falls back to an early HTML meta charset only when the response header omits charset. The prescan is capped at 1,024 bytes and recognizes both direct and legacy http-equiv/content forms. TC-273 and TC-274 are authored but unrun. Treat this as a limited compatibility improvement, not complete HTML encoding-sniffing support; manual validation remains pending.
