@@ -1927,3 +1927,13 @@ The previous Android debug build failed when the generated plugin registrant cou
 - Test at least 10 permissively licensed or synthetic digital PDFs. Measure expected-phrase recall, page count, input bytes, character count, cold/warm latency, peak memory, Android APK delta, web output-size delta, and offline behavior. Inspect logs/network to ensure PDF bytes and extracted text are not transmitted.
 - Include encrypted, malformed, empty, textless/scanned and high-page-count files. Treat a scanned PDF reporting no selectable text as expected for this probe; OCR is a separate later evaluation.
 - **Status:** Source/test scaffold committed but unrun; runtime feasibility is still BLOCKED. Do not mark FR-016 passed or integrate the package until the measurements and acceptance gates are documented. Root CI remains manual-only.
+
+
+### TC-263 — Rediscover older unfinished saved items
+
+- Create unread and in-progress items older than 14 days, an item exactly at the 14-day cutoff, a recently saved unread item, and an older Completed item.
+- Open Library → **Rediscover**. It must include only items whose creation time is at or before the 14-day cutoff and whose status is not Completed.
+- Results must be ordered oldest first by creation time, with deterministic tie-breaking; recently edited metadata must not reset the item's age.
+- Verify the screen explains the 14-day/unfinished rule, selection mode works only on the displayed rediscovery set, and clearing the filter returns to the regular Library.
+- Verify rediscovery is computed locally; no network access, reminder permission, background task or external reading-activity tracking is involved.
+- **Status:** Unit and widget regression sources are committed but unrun. Verify at the owner-requested manual checkpoint; CI remains manual-only.
