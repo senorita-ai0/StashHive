@@ -24,7 +24,7 @@
 | FR-018 | SCR-006, SCR-004 | TSK-304, TSK-428, TSK-429, TSK-444 | TC-018, TC-136, TC-137, TC-152 | IN PROGRESS — safe error copy and HTTP/HTTPS-only external launching are source-covered; initial Dart source scan found no direct diagnostic logging calls, while merged-manifest, plugin-permission and network review remain pending |
 | FR-019 | SCR-001, SCR-002 | SH-001 / TSK-533 | TC-019, TC-246, duplicate_detector_test.dart, quick_save_test.dart | IN PROGRESS — link-only normalized duplicate review is source implemented; tests and platform verification pending |
 | FR-022 | SCR-002, SCR-003 | SH-002 / TSK-534 | TC-247, TC-248, TC-249, search_filters_test.dart, search_filters_widget_test.dart | IN PROGRESS — local combined filters and saved preset storage/UI are source implemented; execution pending |
-| FR-023 | SCR-004 | SH-010 / TSK-536 | TC-256, saved_item_test.dart, quick_save_test.dart | IN PROGRESS — status/progress model serialization and Item Details controls are source implemented; tests and platform verification pending |
+| FR-023 | SCR-004 | SH-010 / TSK-536 / TSK-543 | TC-256, TC-263, saved_item_test.dart, quick_save_test.dart, rediscovery_test.dart, rediscovery_widget_test.dart | IN PROGRESS — status/progress and local 14-day Rediscover selection are source-covered; regression execution and platform verification pending |
 | FR-024 | SCR-004 | SH-006 / TSK-537 | TC-257, annotations_widget_test.dart, saved_item_test.dart, backup_codec_test.dart, export tests | IN PROGRESS — user-entered quote/note records, local Item Details CRUD, search and exports are source implemented; reader mode/page text selection is not implemented; tests and platform verification pending |
 | FR-025 | SCR-002, SCR-007 | SH-008 / TSK-538 | TC-258, smart_tag_rules_test.dart, smart_tag_rules_widget_test.dart, quick_save_test.dart, library_repository_test.dart | IN PROGRESS — local phrase/tag rules, preference persistence, Settings management and review-before-add Quick Save chips are source implemented; tests/platform verification pending |
 | FR-026 | SCR-004 | SH-009 / TSK-539 | TC-259, link_health_test.dart, accessibility_widgets_test.dart, library_repository_test.dart | IN PROGRESS — explicit Android-only network check with local result persistence and browser limitation messaging is source implemented; regression execution/platform verification pending |
@@ -1641,3 +1641,13 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Source:** Added `tool/pdf_text_extraction_poc`, a separate Flutter package targeting `pdfrx 2.10.1`, with bounded in-memory PDF text extraction, a manual phrase-recall screen, and synthetic text-bearing/textless/malformed-input test source. Production `pubspec.yaml` is unchanged.
 - **Regression:** TC-262 and `tool/pdf_text_extraction_poc/test/pdf_text_probe_test.dart`.
 - **Status:** Source and test source are committed. Package resolution, tests, Android/Web builds, offline behavior, size and memory measurements remain pending. FR-016 remains BLOCKED; no OCR capability is implemented or claimed.
+
+
+### TSK-543 — Add a local Rediscover filter for older unfinished items (SH-010)
+
+- **Requirement:** FR-023, plus NFR-001/NFR-003.
+- **Rule:** Include items created at least 14 days ago that are not marked Completed. Sort by creation time oldest first; edits to notes/progress do not make an old item appear newly saved.
+- **Source:** Added `lib/services/rediscovery.dart`, the Library **Rediscover** choice chip, explanatory rule text, and oldest-first sorting. The normal Library remains unchanged; clearing the filter returns to the usual view.
+- **Regression:** TC-263; `test/rediscovery_test.dart` covers the cutoff, completion exclusion, edit-time independence and ordering; `test/rediscovery_widget_test.dart` covers the visible filter.
+- **Privacy/scope:** Local-only; no reminder, background task, permission, sync or external-site activity monitoring was added.
+- **Status:** Source and regression source committed to `main`; tests, formatter, analyzer, builds and platform checks remain pending. CI remains manual-only.
