@@ -1625,3 +1625,8 @@ TC-269 source now includes both the quoted windows-1252 label, the cp1252 alias,
 ## SH-006 Reader accessibility refinement — 2026-10-29
 
 Reader now provides explicit semantic labels for loading and save-progress indicators and heading semantics for article/error titles. A widget test source checks that the loading label is exposed while a synthetic response is pending. This does not replace Android/web screen-reader review; the test is unrun and SH-006 remains partial.
+
+
+## SH-006 save-progress accessibility coverage — 2026-10-29
+
+Added a deterministic widget regression for the saving indicator's semantic label and the eventual success message after a delayed callback resolves. Test source only; no execution or screen-reader verification has occurred. Keep SH-006 partial pending the manual validation checkpoint.
