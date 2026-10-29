@@ -32,6 +32,7 @@ void main() {
         'http://router.internal/',
         'http://127.0.0.1/',
         'http://192.168.1.20/',
+        'http://[::1]/',
         'not a URL',
         '',
       ]) {
