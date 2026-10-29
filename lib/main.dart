@@ -5522,7 +5522,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                                   ? 'Backup selection in progress…'
                                   : 'Create backup',
                       loading: _exporting,
-                      onPressed: (_choosingBackup || _restoring)
+                      onPressed: (_choosingBackup || _restoring || _importingBookmarks || _exportingCsv)
                           ? null
                           : _export,
                     ),
