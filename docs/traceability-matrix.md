@@ -19,7 +19,7 @@
 | FR-013 | SCR-006 | TSK-006, TSK-302, TSK-413, TSK-415, TSK-472, TSK-480, TSK-482, TSK-483, TSK-487, TSK-489, TSK-498, TSK-500, TSK-502, TSK-503, TSK-504, TSK-505, TSK-506, TSK-507, TSK-508, TSK-509, TSK-514 | TC-013, TC-117, TC-119, TC-120, TC-182, TC-190, TC-192, TC-193, TC-198, TC-200, TC-210, TC-212, TC-214, TC-215, TC-216, TC-217, TC-218, TC-219, TC-220, TC-221, TC-226, TC-227 | IN PROGRESS — codec/source, restore rollback and snapshot isolation, staged-record lookup, bounded malformed metadata feedback, early tag/collection validation and pre-normalization size checks are source-covered; validation pending |
 | FR-014 | Global | TSK-102, TSK-303 | TC-007, TC-014 | IN PROGRESS — local-first flows are implemented in source; offline/restart tests pending |
 | FR-015 | SCR-006, SCR-001, SCR-004 | TSK-003, TSK-303, TSK-422, TSK-425 | TC-015, TC-130, TC-133 | IN PROGRESS — storage reminders and platform-specific attachment copy added; browser restart/platform review pending |
-| FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205 | TC-016 | BLOCKED pending POC |
+| FR-016 | SCR-003, SCR-004 | TSK-005, TSK-205, TSK-542 | TC-016, TC-262, tool/pdf_text_extraction_poc/test/pdf_text_probe_test.dart | BLOCKED — isolated selectable-text PDF probe source added but unrun; OCR, offline runtime and size/language feasibility still unproven |
 | FR-017 | SCR-004 | TSK-203 | TC-017 | IN PROGRESS — URLs remain bookmarks without page scraping/capture; acceptance check pending |
 | FR-018 | SCR-006, SCR-004 | TSK-304, TSK-428, TSK-429, TSK-444 | TC-018, TC-136, TC-137, TC-152 | IN PROGRESS — safe error copy and HTTP/HTTPS-only external launching are source-covered; initial Dart source scan found no direct diagnostic logging calls, while merged-manifest, plugin-permission and network review remain pending |
 | FR-019 | SCR-001, SCR-002 | SH-001 / TSK-533 | TC-019, TC-246, duplicate_detector_test.dart, quick_save_test.dart | IN PROGRESS — link-only normalized duplicate review is source implemented; tests and platform verification pending |
@@ -1633,3 +1633,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Source:** Added a test-only bookmark file picker seam while leaving production on the native file picker. Corrected singular/plural text in import preview and summary counts.
 - **Regression:** TC-261 in `docs/test-plan.md`; `test/bookmark_import_widget_test.dart` confirms duplicate/invalid preview details, folder preservation, import-on-confirm, and no library or collection writes when the user cancels.
 - **Status:** Source and regression test source are committed to `main`; formatting, analyzer, tests, builds and real-device/browser verification have not run. CI remains manual-only.
+
+
+### TSK-542 — Scaffold isolated selectable-text PDF probe (SH-005)
+
+- **Requirements:** FR-016; NFR-005, NFR-008 and local-first privacy constraints.
+- **Source:** Added `tool/pdf_text_extraction_poc`, a separate Flutter package targeting `pdfrx 2.10.1`, with bounded in-memory PDF text extraction, a manual phrase-recall screen, and synthetic text-bearing/textless/malformed-input test source. Production `pubspec.yaml` is unchanged.
+- **Regression:** TC-262 and `tool/pdf_text_extraction_poc/test/pdf_text_probe_test.dart`.
+- **Status:** Source and test source are committed. Package resolution, tests, Android/Web builds, offline behavior, size and memory measurements remain pending. FR-016 remains BLOCKED; no OCR capability is implemented or claimed.
