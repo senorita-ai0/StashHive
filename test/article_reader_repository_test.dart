@@ -146,6 +146,12 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('save-reader-highlight')));
     await tester.pumpAndSettle();
+    expect(
+      find.text(
+        'Highlight saved to this item. It may not align if the article changes.',
+      ),
+      findsOneWidget,
+    );
 
     final stored = _repository.findById(saved.id)!;
     expect(stored.annotations, hasLength(1));
