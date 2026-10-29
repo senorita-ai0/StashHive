@@ -1950,3 +1950,12 @@ These cases are **planned, not implemented or run**. Add them to the automated s
 | TC-268 | SH-006 / NFR-006 | Inspect reader states and text selection on Android and web | Loading/empty/error/unsupported states are accessible; selection/highlight support is only claimed where verified | PLANNED |
 
 Network safety tests must use injected/fake transport and synthetic HTML; do not use real private user URLs or private saved content as fixtures.
+
+## SH-006 reader source cases — 2026-10-29
+
+Initial regression source is in test/article_reader_test.dart:
+- Validate HTTP/HTTPS only; reject credential-bearing URLs, unsupported schemes, localhost/local suffixes and private IPv4 literals.
+- Convert hostile HTML to plain text without script, style or iframe contents; preserve Unicode and normalize whitespace.
+- Verify the reader result object exposes transient content without involving repository persistence.
+
+The tests are authored but **not run**. Planned TC-264–TC-268 remain required for request/redirect/DNS safety, byte/time limits, explicit-only network access, no page-content persistence and reader UI states. Add platform-specific coverage after the native transport can be exercised deterministically.
