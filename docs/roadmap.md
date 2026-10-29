@@ -1554,7 +1554,7 @@ Feature enhancements are tracked in [`docs/FEATURE_BACKLOG.md`](FEATURE_BACKLOG.
 ### TSK-539 — Local, user-triggered link health checks (SH-009) — 2026-10-29
 
 - Requirements: FR-026; NFR-002–004.
-- Service: Added a platform-aware link checker. On Android/native IO it issues a bounded HEAD request, retrying with GET only when HEAD is not implemented; the body is not read or stored. It validates HTTP(S) URLs and public-address DNS results, blocks loopback/private/local/reserved destinations, uses timeouts, and does not follow redirects.
+- Service: Added a platform-aware link checker. On Android/native IO it issues a bounded HEAD request only. A 405/501 response is labeled as an unsupported status-check method instead of retrying with GET; page content is never fetched or stored. It validates HTTP(S) URLs and public-address DNS results, blocks loopback/private/local/reserved destinations, uses timeouts, and does not follow redirects.
 - Web behavior: A browser build explains that browser security prevents reliable status inspection for many cross-origin sites. It does not pretend a check succeeded, use a proxy, or upload saved library data.
 - Persistence/UI: Item Details shows Link Health only for links, lets the user request a check, records response category/status code and time in a bounded local-preference sidecar, and does not change the saved item or its updated timestamp. Result history is not part of backup v1.
 - Regression: TC-259; test/link_health_test.dart, test/library_repository_test.dart, and the Item Details widget case in test/accessibility_widgets_test.dart.
