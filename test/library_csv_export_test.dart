@@ -47,6 +47,24 @@ void main() {
       expect(csv, contains(',true,unread,0,1000,2000,'));
     });
 
+    test('exports user quotes and annotation notes', () {
+      final csv = buildLibraryCsv(<SavedItem>[
+        csvItem().copyWith(
+          annotations: <SavedAnnotation>[
+            SavedAnnotation(
+              id: 'annotation-1',
+              quote: 'A “quoted” idea',
+              note: 'Remember, review again.',
+              createdAtMs: 3000,
+            ),
+          ],
+        ),
+      ]);
+      expect(csv.split('\\n').first, contains('highlights_and_annotations'));
+      expect(csv, contains('A “quoted” idea'));
+      expect(csv, contains('Remember, review again.'));
+    });
+
     test('exports non-default reading status and progress', () {
       final csv = buildLibraryCsv(<SavedItem>[
         csvItem(readingStatus: ReadingStatus.inProgress, readingProgress: 45),
