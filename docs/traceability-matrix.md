@@ -1613,6 +1613,15 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 - **Regression:** TC-237 accesses the date getters on directly constructed models whose created/updated timestamps exceed the supported bounds, and retains an in-range control.
 - **Verification:** Regression source is committed but unrun. Validate the model and repository timestamp paths together at the manual checkpoint.
 
-| SH-003 | SCR-001 | TSK-534 | TC-247, bulk_actions_widget_test.dart | PARTIAL SOURCE IMPLEMENTED — export-selected remains open; tests and platform verification pending |
+| SH-003 | SCR-001 | TSK-534 / TSK-540 | TC-247, TC-260, bulk_actions_widget_test.dart, selected_items_export_test.dart | SOURCE + WIDGET REGRESSION SOURCE IMPLEMENTED — selected-only Markdown share path has success and safe-failure coverage; execution pending |
 
 | SH-004 | SCR-001, SCR-002 | TSK-535 | TC-253, TC-254, bookmark_html_importer_test.dart, library_csv_export_test.dart, selected_items_export_test.dart | SOURCE IMPLEMENTED — manual verification pending |
+
+
+### TSK-540 — Verify selected-only Markdown export flow
+
+- **Requirement:** SH-003 bulk export; FR-018 and NFR-002/NFR-003.
+- **Source:** Renamed the Library action to **Export selected** and introduced a test-only share callback so the payload and failure path can be tested without invoking a platform share sheet. Production continues to use the existing SharePlus flow.
+- **Regression:** TC-260; `test/bulk_actions_widget_test.dart` verifies selecting/deselecting items, Markdown filename/MIME/content, excludes deselected records, and safe handling of share failure.
+- **Scope:** Metadata and user-entered text only; attachment bytes are not embedded. The existing versioned JSON backup remains the full-recovery export.
+- **Status:** Source and widget-test source committed to `main`; no formatter, analyzer, tests, builds, CI run, or device/browser check has been performed. CI remains manual-only.
