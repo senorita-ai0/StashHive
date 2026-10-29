@@ -1655,3 +1655,8 @@ The native title extractor now removes active embedded content and comments befo
 ## SH-006 — UTF-8 BOM handling — 2026-10-29
 
 The native temporary reader now strips a leading UTF-8 BOM before rendering page text, and TC-270 regression source covers a BOM-prefixed plain-text response. This remains source-only until tests and platform behavior are verified at the owner-approved manual validation checkpoint. CI remains manual-only.
+
+
+## SH-006 — Unicode-safe Reader truncation — 2026-10-29
+
+The native Reader now avoids cutting article text or extracted titles in the middle of a supplementary Unicode character. TC-271 covers an emoji placed across the display limit. This remains source-only pending the owner-approved validation checkpoint; CI remains manual-only.
