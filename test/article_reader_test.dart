@@ -123,6 +123,52 @@ void main() {
       expect(transportCalled, isFalse);
     });
 
+    test('blocks a DNS answer set containing both public and private IPv4', () async {
+      articleReaderDnsResolverForTesting =
+          (host) async => <String>['93.184.216.34', '10.0.0.8'];
+      var transportCalled = false;
+      articleReaderTransportForTesting = (uri, addresses, timeout) async {
+        transportCalled = true;
+        return ArticleReaderTransportResponse(
+          statusCode: 200,
+          contentType: 'text/plain',
+          body: utf8.encode('should not load'),
+        );
+      };
+
+      final result = await loadArticleForReader('https://example.com/mixed-dns');
+
+      expect(result.state, ArticleReaderState.blockedAddress);
+      expect(transportCalled, isFalse);
+    });
+
+    test('maps DNS resolution timeout to the reader timeout state', () async {
+      articleReaderDnsResolverForTesting =
+          (host) => Completer<List<String>>().future;
+
+      final result = await loadArticleForReader(
+        'https://example.com/slow-dns',
+        timeout: const Duration(milliseconds: 1),
+      );
+
+      expect(result.state, ArticleReaderState.timedOut);
+    });
+
+    test('does not expose content from unsuccessful HTTP responses', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 503,
+            contentType: 'text/plain',
+            body: utf8.encode('private server diagnostic details'),
+          );
+
+      final result = await loadArticleForReader('https://example.com/unavailable');
+
+      expect(result.state, ArticleReaderState.networkError);
+      expect(result.text, isEmpty);
+      expect(result.message, isNot(contains('diagnostic details')));
+    });
+
     test('maps an injected network timeout to a recoverable reader state', () async {
       articleReaderTransportForTesting = (uri, addresses, timeout) =>
           Completer<ArticleReaderTransportResponse>().future;
