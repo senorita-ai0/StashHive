@@ -41,6 +41,7 @@ The visible product name is StashHive. Keep the existing `stashhive` package/sto
 | FR-019 | Prevent duplicate imports from accidental repeated taps when a reliable content fingerprint can be computed. | Could | If implemented, duplicates are identified for review; no item is silently discarded. | Hashing and UX; TC-019 |
 | FR-020 | Support reminders for saved items. | Won't for MVP | No reminder or notification is scheduled in MVP. | Later backlog |
 | FR-021 | Keep user library private; no public feed, collaboration, or shared collections. | Won't for MVP | No content is publicly accessible or remotely synchronized. | Architecture / privacy review |
+| FR-022 | Compose advanced local search filters and save reusable named search presets. | Should | Type, text query, tag, collection, domain, favorite state, saved-date range and sort combine predictably. Up to 20 locally stored presets can be created, replaced by case-insensitive name, applied and deleted. Invalid stored presets are ignored safely. Presets remain in the current app/browser profile and are not included in backup v1. | SH-002; TC-247–TC-249 |
 
 ## Non-functional requirements
 
