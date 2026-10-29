@@ -2052,3 +2052,10 @@ The repository widget regression source now checks three export formats after sa
 - Inject an HTML response with Content-Type text/html (no charset), an early meta http-equiv Content-Type declaration specifying windows-1252, and byte 0x80 inside the article body.
 - Verify the legacy declaration is recognized and the article contains the euro sign rather than a Latin-1 control character.
 - **Status:** Regression source is committed in test/article_reader_test.dart; not run. Complete charset detection, native fetch and browser fallback remain pending validation.
+
+
+### TC-275 — Ignore fake charset tags inside embedded content (2026-10-29)
+
+- Inject an HTML response without a declared HTTP charset whose first 1,024 bytes contain a fake Windows-1252 meta tag inside an HTML comment and another inside a script string. Put byte 0x80 in the article body.
+- Verify neither embedded fake declaration is selected; decoding follows the UTF-8 fallback and does not produce a euro sign from the 0x80 byte.
+- **Status:** Regression source is committed in test/article_reader_test.dart; not run. Execute TC-273–TC-275 and the full Reader suite at the owner-approved manual validation checkpoint.
