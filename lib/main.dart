@@ -1603,7 +1603,7 @@ class _LibraryPageState extends State<LibraryPage> {
     } on FormatException catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.message)),
+        SnackBar(content: Text(error.message.toString())),
       );
       return;
     }
