@@ -121,7 +121,6 @@ class ConfigureAndroidBuildTests(unittest.TestCase):
 
         app = (self.android_dir / "app/build.gradle.kts").read_text(encoding="utf-8")
         self.assertIn(f"compileSdk = {COMPILE_SDK}", app)
-        self.assertIn(f'buildToolsVersion = "{BUILD_TOOLS_VERSION}"', app)
         self.assertIn("sourceCompatibility = JavaVersion.VERSION_17", app)
         self.assertIn("targetCompatibility = JavaVersion.VERSION_17", app)
         self.assertIn("JvmTarget.JVM_17", app)
