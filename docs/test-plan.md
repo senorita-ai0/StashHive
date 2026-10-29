@@ -2025,3 +2025,10 @@ The repository widget regression source now checks three export formats after sa
 - Inject a successful `text/plain; charset=utf-8` response whose body begins with bytes `EF BB BF` followed by a readable sentence.
 - Verify the Reader result is successful, the text equals the sentence without a leading BOM, and the first code unit is not U+FEFF.
 - **Status:** Regression source is committed in `test/article_reader_test.dart`; not run. Execute with the full Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-271 — Reader text cap preserves Unicode boundaries (2026-10-29)
+
+- Inject a successful UTF-8 plain-text response whose content places a supplementary character (for example, an emoji) across the 60,000-code-unit Reader display limit.
+- Verify the response stays within the configured limit, the cutoff does not leave a lone surrogate, and all retained text before the boundary remains intact.
+- **Status:** Regression source is committed in `test/article_reader_test.dart`; not run. Execute with the complete Reader test suite at the owner-approved manual validation checkpoint.
