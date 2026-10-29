@@ -70,6 +70,7 @@ void main() {
           ),
         ),
       );
+      await tester.pumpAndSettle();
 
       expect(find.text('Save your first good find'), findsOneWidget);
       expect(find.text('Keep useful links, ideas and files in one place.'),
