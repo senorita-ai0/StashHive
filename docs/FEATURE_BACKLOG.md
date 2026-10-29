@@ -149,3 +149,10 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Strip the leading UTF-8 byte-order mark from native decoded response text.
 - [x] Add TC-270 source coverage verifying the BOM is absent from the first visible character.
 - [ ] Run the reader regression suite at the owner-approved manual validation checkpoint; source and test have not been executed.
+
+
+## SH-006 — Unicode-safe Reader truncation (2026-10-29)
+
+- [x] Ensure the body and extracted-title display caps do not end between the high and low surrogates of a supplementary Unicode character.
+- [x] Add TC-271 source coverage placing an emoji across the body text limit.
+- [ ] Run the Reader regression suite at the owner-approved manual validation checkpoint; source and test have not been executed.
