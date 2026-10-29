@@ -1955,7 +1955,7 @@ Network safety tests must use injected/fake transport and synthetic HTML; do not
 
 Initial regression source is in test/article_reader_test.dart, test/article_reader_page_test.dart and test/saved_item_test.dart:
 - Validate HTTP/HTTPS only; reject credential-bearing URLs, unsupported schemes, localhost/local suffixes and private IPv4/IPv6 literals.
-- Convert hostile HTML to plain text without script, style or iframe contents; preserve Unicode and normalize whitespace.
+- Convert hostile HTML to plain text without script, style or iframe contents; prefer article/main content over page chrome; preserve Unicode and normalize whitespace.
 - Verify the reader result object exposes transient content without involving repository persistence.
 - Exercise the reader selection/save callback with an injected temporary article result; verify quote offsets and context bounds without making a network request.
 
