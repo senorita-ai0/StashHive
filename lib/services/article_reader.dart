@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import 'article_reader_stub.dart'
@@ -34,6 +36,35 @@ class ArticleReaderResult {
 
   bool get isSuccess => state == ArticleReaderState.success;
 }
+
+/// Bounded, already-received HTTP response data. This DTO is shared so the
+/// native request pipeline can be tested with a fake response and no network.
+class ArticleReaderTransportResponse {
+  ArticleReaderTransportResponse({
+    required this.statusCode,
+    required this.contentType,
+    required List<int> body,
+  }) : body = Uint8List.fromList(body);
+
+  final int statusCode;
+  final String contentType;
+  final Uint8List body;
+}
+
+typedef ArticleReaderDnsResolver = Future<List<String>> Function(String host);
+typedef ArticleReaderTransport = Future<ArticleReaderTransportResponse> Function(
+  Uri uri,
+  List<String> vettedIpv4Addresses,
+  Duration timeout,
+);
+
+/// Test seams only. Production leaves these null and uses OS DNS + direct
+/// socket networking, with validated addresses pinned to the connection.
+@visibleForTesting
+ArticleReaderDnsResolver? articleReaderDnsResolverForTesting;
+
+@visibleForTesting
+ArticleReaderTransport? articleReaderTransportForTesting;
 
 /// Validates a URL before any request is attempted. Native transport repeats
 /// destination checks after DNS resolution and pins its connection to that IP.
