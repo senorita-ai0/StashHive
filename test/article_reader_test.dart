@@ -253,7 +253,7 @@ void main() {
       );
     });
 
-    test('rejects non-web schemes and credential-bearing URLs', () {
+    test('rejects non-web schemes, credentials, and unsupported ports', () {
       for (final value in <String>[
         'javascript:alert(1)',
         'file:///etc/passwd',
