@@ -52,6 +52,7 @@ Uri? parseArticleReaderUrl(String value) {
       host.endsWith('.local') ||
       host.endsWith('.internal') ||
       host.contains('%') ||
+      host.contains(':') ||
       _isPrivateIpv4Literal(host) ||
       (host.startsWith('[') && host.endsWith(']'))) {
     // Literal IPv6 destinations are conservatively excluded in this first
