@@ -1684,3 +1684,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 |---|---|---|---|
 | Highlight success confirmed on visible Reader route | lib/screens/article_reader_page.dart | test/article_reader_repository_test.dart | Authored, not run |
 | Failed highlight save stays recoverable and keeps the selection for retry | lib/screens/article_reader_page.dart | test/article_reader_page_test.dart | Authored, not run |
+
+
+## SH-006 text-encoding refinement — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Decode explicit Windows-1252 charset without misrendering euro/punctuation bytes | lib/services/article_reader_io.dart (_decodeText) | TC-269; synthetic quoted charset response in test/article_reader_test.dart | Source + test authored; not run |
