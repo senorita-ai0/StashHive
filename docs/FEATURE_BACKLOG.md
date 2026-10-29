@@ -111,3 +111,11 @@ Before source implementation, follow [the article-reader feasibility and privacy
 
 - [x] Author a delayed-save widget test for the “Saving highlight” semantic label and eventual success feedback.
 - [ ] Run both Reader accessibility widget cases and perform Android/web assistive-technology checks; all remain unverified.
+
+
+## SH-006 — HTML entity parsing edge cases (2026-10-29)
+
+- [x] Decode a conservative set of common named text entities used for typography, currency and symbols.
+- [x] Decode numeric references before named references so escaped ampersands are not recursively decoded in the same pass.
+- [x] Add synthetic regression coverage for named entities, case-insensitive names, hexadecimal numeric references and single-pass escaping.
+- [ ] Execute sanitizer/reader tests and confirm rendering output on Android/web; source and test are not verified.
