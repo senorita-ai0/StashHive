@@ -122,8 +122,7 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
   var text = source;
   if (isHtml) {
     // Prefer semantic article/main containers when available. This is a
-    // lightweight fallback, not a full readability engine; some sites will
-    // still include navigation or omit their main content from these tags.
+    // lightweight fallback, not a full readability engine.
     final article = RegExp(
       r'<article\b[^>]*>([\s\S]*?)</article\s*>',
       caseSensitive: false,
@@ -133,6 +132,9 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
       caseSensitive: false,
     ).firstMatch(source);
     text = article?.group(1) ?? main?.group(1) ?? source;
+
+    // Remove paired active/embedded blocks first, then fail closed for an
+    // unclosed active block by discarding the remaining source tail.
     text = text.replaceAll(
       RegExp(
         r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside)\b[^>]*>[\s\S]*?</\1\s*>',
@@ -140,11 +142,16 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
       ),
       ' ',
     );
-    // Malformed active blocks without a closing tag must not leak their
-    // remaining source into the reader as apparent article prose.
     text = text.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*
+        r'<(script|style|noscript|svg|iframe|object|template)\b[^>]*>[\s\S]*$',
+        caseSensitive: false,
+      ),
+      ' ',
+    );
+    text = text.replaceAll(RegExp(r'<!--[\s\S]*?-->'), ' ');
+    text = text.replaceAll(RegExp(r'<!--[\s\S]*$'), ' ');
+    text = text.replaceAll(
       RegExp(
         r'<br\s*/?>|</(p|div|article|section|h[1-6]|li|tr)\s*>',
         caseSensitive: false,
@@ -153,6 +160,7 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
     );
     text = text.replaceAll(RegExp(r'<[^>]{0,2048}>'), ' ');
   }
+
   const entities = <String, String>{
     '&amp;': '&',
     '&lt;': '<',
@@ -166,8 +174,10 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
     '&hellip;': '…',
   };
   text = text.replaceAllMapped(
-    RegExp(r'&(?:amp|lt|gt|quot|apos|nbsp|mdash|ndash|hellip|#39);',
-        caseSensitive: false),
+    RegExp(
+      r'&(?:amp|lt|gt|quot|apos|nbsp|mdash|ndash|hellip|#39);',
+      caseSensitive: false,
+    ),
     (match) => entities[match[0]!.toLowerCase()] ?? match[0]!,
   );
   text = text.replaceAllMapped(RegExp(r'&#(\d{1,7});'), (match) {
