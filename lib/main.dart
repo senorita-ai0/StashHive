@@ -3940,7 +3940,7 @@ class SettingsPage extends StatelessWidget {
                     onTap: () => _showInfo(
                       context,
                       'StashHive',
-                      'A personal save-and-find library.\\n\\nVersion 0.1.0 — first development increment.\\n\\nYour library is stored locally. There is no StashHive cloud account or automatic cross-device sync in this release.',
+                      'A personal save-and-find library.\n\nVersion 0.1.0 — first development increment.\n\nYour library is stored locally. There is no StashHive cloud account or automatic cross-device sync in this release.',
                     ),
                   ),
                 ],
