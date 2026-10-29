@@ -41,6 +41,10 @@ flowchart TD
 - **Backup/restore service:** versioned manifest + metadata + copied attachments; validate archive paths, sizes, schema version, file hashes, and conflicts before committing imported state. Export via user-selected destination/download.
 - **External links:** open in system browser. Optional title/favicons/page metadata may be fetched only after a later scope decision, using clear UI and safe network boundaries.
 
+### Optional link health checks
+
+Link status is a user-triggered, direct request from the native device, not an online service or background crawler. The native checker validates the HTTP(S) URL, resolves and blocks local/private/reserved addresses, uses a short timeout, does not follow redirects, and uses response headers/status only. The browser implementation explains its cross-origin limitation rather than proxying requests. Status/time are bounded local preference metadata, not part of the saved-item record or version-1 backup; checking must not update the saved item's content or timestamp.
+
 ## Data model (draft)
 
 ### SavedItem
