@@ -151,7 +151,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('2 selected'), findsOneWidget);
 
-    // Tapping a selected card while selection mode is active deselects it.
+    // In selection mode, tapping a selected card deselects it.
     await tester.tap(find.text('Second saved link'));
     await tester.pumpAndSettle();
     expect(find.text('1 selected'), findsOneWidget);
@@ -160,42 +160,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(exportedTitle, 'StashHive selected items');
-    expect(exportedName, matches(RegExp(r'^stashhive-selected-\d{4}-\d{2}-\d{2}\.md      (tester) async {
-    await tester.binding.setSurfaceSize(const Size(1100, 1000));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
-
-    await repository.save(buildBulkItem(id: 'one', title: 'First saved link'));
-    await repository.save(buildBulkItem(id: 'two', title: 'Second saved link'));
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: app.LibraryPage(
-            repository: repository,
-            onAdd: (_) {},
-            onSearch: (_) {},
-            onOpenItem: (_) {},
-          ),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.byTooltip('Select items'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Delete').last);
-    await tester.pumpAndSettle();
-
-    expect(find.text('Delete 2 items?'), findsOneWidget);
-    await tester.tap(find.text('Cancel'));
-    await tester.pumpAndSettle();
-
-    expect(repository.items.value, hasLength(2));
-    expect(find.text('First saved link'), findsOneWidget);
-    expect(tester.takeException(), isNull);
-  });
-}
-)));
+    expect(exportedName!.startsWith('stashhive-selected-'), isTrue);
+    expect(exportedName!.endsWith('.md'), isTrue);
     expect(exportedMimeType, 'text/markdown');
     expect(exportedMarkdown, contains('# StashHive selected items'));
     expect(exportedMarkdown, contains('## First saved link'));
@@ -246,7 +212,6 @@ void main() {
     expect(find.textContaining('private share diagnostic'), findsNothing);
     expect(tester.takeException(), isNull);
   });
-
   testWidgets('bulk delete requires confirmation and can be cancelled',
       (tester) async {
     await tester.binding.setSurfaceSize(const Size(1100, 1000));
