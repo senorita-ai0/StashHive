@@ -45,6 +45,15 @@ BookmarkHtmlImportResult parseBookmarkHtml(String source) {
     throw const FormatException('The bookmark file is too large to import.');
   }
 
+  final inertSource = source
+      .replaceAll(
+        RegExp(r'<script\\b[^>]*>.*?</script\\s*>', caseSensitive: false, dotAll: true),
+        ' ',
+      )
+      .replaceAll(
+        RegExp(r'<style\\b[^>]*>.*?</style\\s*>', caseSensitive: false, dotAll: true),
+        ' ',
+      );
   final tokenPattern = RegExp(
     r'<h3\b[^>]*>.*?</h3\s*>|<a\b[^>]*>.*?</a\s*>|</?dl\b[^>]*>',
     caseSensitive: false,
@@ -73,7 +82,7 @@ BookmarkHtmlImportResult parseBookmarkHtml(String source) {
   var duplicateCount = 0;
   var invalidCount = 0;
 
-  for (final token in tokenPattern.allMatches(source)) {
+  for (final token in tokenPattern.allMatches(inertSource)) {
     final value = token.group(0)!;
     if (RegExp(r'^</dl\b', caseSensitive: false).hasMatch(value)) {
       if (folderStack.isNotEmpty) folderStack.removeLast();
