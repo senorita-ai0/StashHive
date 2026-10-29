@@ -55,6 +55,7 @@ OCR/PDF text extraction, in-app PDF rendering, cloud sync, accounts, public shar
 - [Design pack](docs/design/README.md)
 - [Technical sources](docs/research/official-sources.md)
 - [Competitor hypotheses](docs/research/competitor-gap-hypotheses.md)
+- [Prioritized feature backlog](docs/FEATURE_BACKLOG.md)
 - [Cost and monetization](docs/cost-and-monetization.md)
 - [AI workflow](docs/AI_WORKFLOW.md)
 - [Blueprint review](docs/BLUEPRINT_REVIEW.md)
