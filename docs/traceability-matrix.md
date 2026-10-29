@@ -1741,3 +1741,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Remove the leading UTF-8 BOM before displaying native Reader text | `_decodeText` in `lib/services/article_reader_io.dart` | TC-270; `strips a leading UTF-8 BOM from reader text` in `test/article_reader_test.dart` | Source and regression authored and re-fetched; not executed; platform checks pending |
+
+
+## SH-006 Unicode-safe Reader truncation traceability — 2026-10-29
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Enforce article/title length caps without splitting a UTF-16 surrogate pair | `_truncateAtUnicodeBoundary` in `lib/services/article_reader_io.dart` | TC-271; `does not split a supplementary Unicode character at the text cap` in `test/article_reader_test.dart` | Source and regression authored and re-fetched; not executed; platform checks pending |
