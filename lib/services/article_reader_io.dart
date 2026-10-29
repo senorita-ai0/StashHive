@@ -174,17 +174,10 @@ bool _isPublicAddress(InternetAddress address) {
     return true;
   }
   if (address.type == InternetAddressType.IPv6 && bytes.length == 16) {
-    final mapped = bytes.take(10).every((byte) => byte == 0) &&
-        bytes[10] == 0xff && bytes[11] == 0xff;
-    if (mapped) {
-      return _isPublicAddress(InternetAddress.fromRawAddress(
-        Uint8List.fromList(bytes.sublist(12)),
-        type: InternetAddressType.IPv4,
-      ));
-    }
-    return (bytes[0] & 0xe0) == 0x20 &&
-        !(bytes[0] == 0x20 && bytes[1] == 0x01 &&
-            bytes[2] == 0x0d && bytes[3] == 0xb8);
+    // Conservatively exclude IPv6 for this first reader slice. This avoids
+    // incomplete special-purpose-range classification; external browser
+    // opening remains available to the user.
+    return false;
   }
   return false;
 }
