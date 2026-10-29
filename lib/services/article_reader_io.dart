@@ -17,6 +17,7 @@ Future<ArticleReaderResult> loadArticleForReader(
           timeout > const Duration(seconds: 15)
       ? defaultArticleReaderTimeout
       : timeout;
+  final deadline = DateTime.now().add(boundedTimeout);
   final host = uri.host.toLowerCase();
   if (host == 'localhost' ||
       host.endsWith('.localhost') ||
@@ -30,10 +31,10 @@ Future<ArticleReaderResult> loadArticleForReader(
   try {
     final resolver = articleReaderDnsResolverForTesting;
     final resolved = resolver == null
-        ? (await InternetAddress.lookup(host).timeout(boundedTimeout))
+        ? (await InternetAddress.lookup(host).timeout(_remaining(deadline)))
             .map((address) => address.address)
             .toList(growable: false)
-        : await resolver(host).timeout(boundedTimeout);
+        : await resolver(host).timeout(_remaining(deadline));
     if (resolved.isEmpty) {
       return const ArticleReaderResult(state: ArticleReaderState.networkError);
     }
@@ -68,12 +69,12 @@ Future<ArticleReaderResult> loadArticleForReader(
   try {
     final testTransport = articleReaderTransportForTesting;
     final response = testTransport == null
-        ? await _fetchNativeResponse(uri, host, addresses, boundedTimeout)
+        ? await _fetchNativeResponse(uri, host, addresses, deadline)
         : await testTransport(
             uri,
             addresses.map((address) => address.address).toList(growable: false),
-            boundedTimeout,
-          ).timeout(boundedTimeout);
+            _remaining(deadline),
+          ).timeout(_remaining(deadline));
     return _parseResponse(response);
   } on _ArticleResponseTooLarge {
     return const ArticleReaderResult(state: ArticleReaderState.tooLarge);
@@ -92,11 +93,11 @@ Future<ArticleReaderTransportResponse> _fetchNativeResponse(
   Uri uri,
   String host,
   List<InternetAddress> addresses,
-  Duration timeout,
+  DateTime deadline,
 ) async {
   final client = HttpClient()
-    ..connectionTimeout = timeout
-    ..idleTimeout = timeout
+    ..connectionTimeout = _remaining(deadline)
+    ..idleTimeout = _remaining(deadline)
     ..userAgent = 'StashHive-Reader'
     ..maxConnectionsPerHost = 1
     ..findProxy = (_) => 'DIRECT'
@@ -117,7 +118,7 @@ Future<ArticleReaderTransportResponse> _fetchNativeResponse(
     };
 
   try {
-    final request = await client.getUrl(uri).timeout(timeout);
+    final request = await client.getUrl(uri).timeout(_remaining(deadline));
     // Never automatically follow a redirect: it could target a local/private
     // service or a different host that was never checked.
     request.followRedirects = false;
@@ -126,11 +127,11 @@ Future<ArticleReaderTransportResponse> _fetchNativeResponse(
       ..set(HttpHeaders.acceptHeader, 'text/html, text/plain;q=0.9')
       ..set(HttpHeaders.acceptEncodingHeader, 'identity')
       ..set(HttpHeaders.cacheControlHeader, 'no-cache');
-    final response = await request.close().timeout(timeout);
+    final response = await request.close().timeout(_remaining(deadline));
     if (response.contentLength > maxArticleResponseBytes) {
       throw const _ArticleResponseTooLarge();
     }
-    final body = await _readBoundedResponse(response, timeout);
+    final body = await _readBoundedResponse(response, deadline);
     return ArticleReaderTransportResponse(
       statusCode: response.statusCode,
       contentType: response.headers.value(HttpHeaders.contentTypeHeader) ?? '',
@@ -195,13 +196,21 @@ String? _charsetFromContentType(String contentType) {
   return match?.group(1);
 }
 
+Duration _remaining(DateTime deadline) {
+  final remaining = deadline.difference(DateTime.now());
+  if (remaining <= Duration.zero) {
+    throw TimeoutException('Article reader request deadline exceeded.');
+  }
+  return remaining;
+}
+
 class _ArticleResponseTooLarge implements Exception {
   const _ArticleResponseTooLarge();
 }
 
 Future<Uint8List> _readBoundedResponse(
   HttpClientResponse response,
-  Duration timeout,
+  DateTime deadline,
 ) async {
   final bytes = BytesBuilder(copy: false);
   await response.fold<int>(0, (total, chunk) {
@@ -211,7 +220,7 @@ Future<Uint8List> _readBoundedResponse(
     }
     bytes.add(chunk);
     return nextTotal;
-  }).timeout(timeout);
+  }).timeout(_remaining(deadline));
   return bytes.takeBytes();
 }
 
