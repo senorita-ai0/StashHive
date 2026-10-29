@@ -57,6 +57,79 @@ void main() {
       expect(restored.createdAtMs, original.createdAtMs);
     });
 
+    test('annotations survive serialization, immutable copies, and search', () {
+      final annotation = SavedAnnotation(
+        id: 'annotation-1',
+        quote: 'Local-first storage keeps data on-device.',
+        note: 'Review this before choosing a sync design.',
+        createdAtMs: 3000,
+      );
+      final original = makeItem().copyWith(annotations: [annotation]);
+      final restored = SavedItem.fromMap(original.toMap());
+
+      expect(restored.annotations, [annotation]);
+      expect(restored.matchesQuery('LOCAL-FIRST'), isTrue);
+      expect(restored.matchesQuery('sync design'), isTrue);
+      expect(
+        () => restored.annotations.add(
+          SavedAnnotation(id: 'annotation-2', note: 'Cannot mutate', createdAtMs: 4000),
+        ),
+        throwsUnsupportedError,
+      );
+      expect(
+        restored.copyWith(title: 'Updated').annotations,
+        [annotation],
+      );
+    });
+
+    test('legacy item maps without annotations default to an empty list', () {
+      final legacy = makeItem().toMap()..remove('annotations');
+      final restored = SavedItem.fromMap(legacy);
+
+      expect(restored.annotations, isEmpty);
+    });
+
+    test('rejects malformed, duplicate, or excessive annotations', () {
+      final malformed = makeItem().toMap()
+        ..['annotations'] = <Object?>['not a map'];
+      expect(
+        () => SavedItem.fromMap(malformed),
+        throwsA(isA<FormatException>()),
+      );
+
+      final duplicate = SavedAnnotation(
+        id: 'same-id',
+        quote: 'A quote',
+        createdAtMs: 3000,
+      );
+      expect(
+        () => makeItem().copyWith(annotations: [duplicate, duplicate]).toMap(),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => makeItem().copyWith(
+          annotations: List<SavedAnnotation>.generate(
+            maxSavedAnnotationsPerItem + 1,
+            (index) => SavedAnnotation(
+              id: 'annotation-$index',
+              note: 'Note $index',
+              createdAtMs: 3000,
+            ),
+          ),
+        ).toMap(),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => SavedAnnotation(
+          id: 'annotation-empty',
+          quote: ' ',
+          note: '',
+          createdAtMs: 3000,
+        ).toMap(),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
     test('reading progress survives serialization and copyWith', () {
       final original = makeItem().copyWith(
         readingStatus: ReadingStatus.inProgress,
