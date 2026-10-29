@@ -84,7 +84,9 @@ Uri? parseArticleReaderUrl(String value) {
     // public hosts; the external browser remains available for such URLs.
     return null;
   }
-  final host = uri.host.toLowerCase().replaceAll(RegExp(r'\.
+  final host = uri.host.toLowerCase();
+  if (host.endsWith('.') ||
+      host == 'localhost' ||
       host.endsWith('.localhost') ||
       host.endsWith('.local') ||
       host.endsWith('.internal') ||
