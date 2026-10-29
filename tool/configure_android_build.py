@@ -223,6 +223,14 @@ def configure_android_build(android_dir: str | Path) -> list[str]:
         changed.append(str(properties_path.relative_to(root)))
 
     app_build = app_build_path.read_text(encoding="utf-8")
+    # AGP 9.4 provides built-in Kotlin support. FinMate and Stockly leave the
+    # Kotlin plugin declared in settings for compatibility but do not apply it
+    # to the app module when android.builtInKotlin=true.
+    app_build = re.sub(
+        r"(?m)^\\s*id\\([\"']org\\.jetbrains\\.kotlin\\.android[\"']\\)\\s*\\n",
+        "",
+        app_build,
+    )
     app_build = _replace_one(
         r"^(\s*compileSdk\s*=\s*)(?:flutter\.compileSdkVersion|\d+)(\s*)$",
         rf"\g<1>{COMPILE_SDK}\g<2>",
