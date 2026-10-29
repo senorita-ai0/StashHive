@@ -95,6 +95,8 @@ enum ItemKind {
 const int maxSavedAnnotationsPerItem = 50;
 const int maxSavedAnnotationQuoteCharacters = 4000;
 const int maxSavedAnnotationNoteCharacters = 4000;
+const int maxSavedAnnotationContextCharacters = 200;
+const int maxSavedAnnotationSourceOffset = 60000;
 
 /// A user-captured quote and/or private note attached to one saved item.
 /// StashHive never fetches website text to create these; the user supplies it.
@@ -104,23 +106,43 @@ class SavedAnnotation {
     required this.id,
     this.quote = '',
     this.note = '',
+    this.sourceStartOffset,
+    this.sourceEndOffset,
+    this.contextBefore = '',
+    this.contextAfter = '',
     required this.createdAtMs,
   });
 
   final String id;
   final String quote;
   final String note;
+  /// UTF-16 offsets in the temporary reader text, if captured from a selection.
+  final int? sourceStartOffset;
+  final int? sourceEndOffset;
+  /// Small nearby excerpts used to help the user recognize a changed article.
+  final String contextBefore;
+  final String contextAfter;
   final int createdAtMs;
 
   Map<String, dynamic> toMap() {
     if (id.trim().isEmpty ||
         id.length > 128 ||
         quote.length > maxSavedAnnotationQuoteCharacters ||
-        note.length > maxSavedAnnotationNoteCharacters) {
+        note.length > maxSavedAnnotationNoteCharacters ||
+        contextBefore.length > maxSavedAnnotationContextCharacters ||
+        contextAfter.length > maxSavedAnnotationContextCharacters) {
       throw const FormatException('A saved annotation exceeds supported limits.');
     }
     if (quote.trim().isEmpty && note.trim().isEmpty) {
       throw const FormatException('A saved annotation must contain a quote or note.');
+    }
+    if ((sourceStartOffset == null) != (sourceEndOffset == null) ||
+        (sourceStartOffset != null &&
+            (sourceStartOffset! < 0 ||
+                sourceEndOffset! < sourceStartOffset! ||
+                sourceEndOffset! > maxSavedAnnotationSourceOffset ||
+                sourceEndOffset! - sourceStartOffset! != quote.length))) {
+      throw const FormatException('A saved annotation has invalid reader offsets.');
     }
     if (createdAtMs < minSavedItemTimestampMs ||
         createdAtMs > maxSavedItemTimestampMs) {
@@ -132,6 +154,10 @@ class SavedAnnotation {
       'id': id,
       'quote': quote,
       'note': note,
+      'sourceStartOffset': sourceStartOffset,
+      'sourceEndOffset': sourceEndOffset,
+      'contextBefore': contextBefore,
+      'contextAfter': contextAfter,
       'createdAtMs': createdAtMs,
     };
   }
@@ -140,15 +166,25 @@ class SavedAnnotation {
     final idValue = raw['id'];
     final quoteValue = raw['quote'];
     final noteValue = raw['note'];
+    final sourceStartValue = raw['sourceStartOffset'];
+    final sourceEndValue = raw['sourceEndOffset'];
+    final contextBeforeValue = raw['contextBefore'] ?? '';
+    final contextAfterValue = raw['contextAfter'] ?? '';
     final createdAtValue = raw['createdAtMs'];
 
     if (idValue is! String ||
         quoteValue is! String ||
         noteValue is! String ||
+        (sourceStartValue != null && sourceStartValue is! int) ||
+        (sourceEndValue != null && sourceEndValue is! int) ||
+        contextBeforeValue is! String ||
+        contextAfterValue is! String ||
         createdAtValue is! int ||
         idValue.length > 128 ||
         quoteValue.length > maxSavedAnnotationQuoteCharacters ||
-        noteValue.length > maxSavedAnnotationNoteCharacters) {
+        noteValue.length > maxSavedAnnotationNoteCharacters ||
+        contextBeforeValue.length > maxSavedAnnotationContextCharacters ||
+        contextAfterValue.length > maxSavedAnnotationContextCharacters) {
       throw const FormatException('A saved annotation has invalid fields.');
     }
 
@@ -156,6 +192,10 @@ class SavedAnnotation {
       id: idValue,
       quote: quoteValue,
       note: noteValue,
+      sourceStartOffset: sourceStartValue as int?,
+      sourceEndOffset: sourceEndValue as int?,
+      contextBefore: contextBeforeValue,
+      contextAfter: contextAfterValue,
       createdAtMs: createdAtValue,
     );
     annotation.toMap();
