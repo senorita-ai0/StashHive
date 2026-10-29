@@ -156,3 +156,9 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Ensure the body and extracted-title display caps do not end between the high and low surrogates of a supplementary Unicode character.
 - [x] Add TC-271 source coverage placing an emoji across the body text limit.
 - [ ] Run the Reader regression suite at the owner-approved manual validation checkpoint; source and test have not been executed.
+
+
+## SH-006 — title truncation regression — TC-272 (2026-10-29)
+
+- [x] Add a regression case placing a supplementary Unicode character across the 300-code-unit title cap.
+- [ ] Execute TC-271, TC-272 and the full Reader regression suite at the owner-approved manual validation checkpoint.
