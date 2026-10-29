@@ -7,6 +7,7 @@ import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/main.dart' show ItemDetailsPage;
 import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/services/article_reader.dart';
+import 'package:stashhive/services/backup_codec.dart';
 
 late Directory _testDirectory;
 late LibraryRepository _repository;
@@ -162,6 +163,13 @@ void main() {
     expect(stored.url, saved.url);
     expect(stored.content, isNot(contains(articleText)));
     expect(stored.content, contains('A private note that must not be sent'));
+
+    final decodedBackup = BackupCodec.decode(await _repository.createBackup());
+    expect(decodedBackup.items, hasLength(1));
+    expect(decodedBackup.items.single.content, saved.content);
+    expect(decodedBackup.items.single.annotations, hasLength(1));
+    expect(decodedBackup.items.single.annotations.single.quote, annotation.quote);
+    expect(decodedBackup.items.single.content, isNot(contains(articleText)));
   });
 
 }
