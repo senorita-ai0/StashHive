@@ -5,6 +5,7 @@ const int maxLinkHealthHistoryRecords = 1000;
 enum LinkHealthState {
   healthy,
   redirect,
+  methodUnsupported,
   notFound,
   gone,
   restricted,
@@ -21,6 +22,7 @@ enum LinkHealthState {
   String get label => switch (this) {
         LinkHealthState.healthy => 'Responded successfully',
         LinkHealthState.redirect => 'Redirect response',
+        LinkHealthState.methodUnsupported => 'Status check method unsupported',
         LinkHealthState.notFound => 'Not found (404)',
         LinkHealthState.gone => 'No longer available (410)',
         LinkHealthState.restricted => 'Access restricted',
@@ -40,6 +42,8 @@ enum LinkHealthState {
           'The destination responded successfully when checked.',
         LinkHealthState.redirect =>
           'The server returned a redirect. This check does not follow it; open the link in your browser to inspect the destination.',
+        LinkHealthState.methodUnsupported =>
+          'The server rejected the HEAD status check. StashHive did not retry with GET or download page content; open the link in your browser to inspect it.',
         LinkHealthState.notFound =>
           'The destination returned 404. The page may have moved or been removed.',
         LinkHealthState.gone =>
@@ -152,6 +156,7 @@ LinkHealthState linkHealthStateForStatusCode(int statusCode) {
   }
   if (statusCode >= 200 && statusCode < 300) return LinkHealthState.healthy;
   if (statusCode >= 300 && statusCode < 400) return LinkHealthState.redirect;
+  if (statusCode == 405 || statusCode == 501) return LinkHealthState.methodUnsupported;
   if (statusCode == 404) return LinkHealthState.notFound;
   if (statusCode == 410) return LinkHealthState.gone;
   if (statusCode == 401 || statusCode == 403) return LinkHealthState.restricted;
