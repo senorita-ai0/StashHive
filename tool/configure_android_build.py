@@ -14,7 +14,7 @@ from pathlib import Path
 
 ANDROID_PLUGIN_VERSION = "9.4.0"
 KOTLIN_PLUGIN_VERSION = "2.4.10"
-GRADLE_VERSION = "9.8.1"
+GRADLE_VERSION = "9.8.2"
 COMPILE_SDK = 36
 BUILD_TOOLS_VERSION = "36.1.0"
 JAVA_TARGET = 17
@@ -226,11 +226,14 @@ def configure_android_build(android_dir: str | Path) -> list[str]:
     # AGP 9.4 provides built-in Kotlin support. FinMate and Stockly leave the
     # Kotlin plugin declared in settings for compatibility but do not apply it
     # to the app module when android.builtInKotlin=true.
-    app_build = re.sub(
-        r"(?m)^\s*id\([\"']org\.jetbrains\.kotlin\.android[\"']\)\s*\n",
-        "",
-        app_build,
-    )
+    # Flutter templates have used both the fully qualified plugin id and
+    # the short kotlin-android alias. Remove either legacy KGP application
+    # when AGP built-in Kotlin is enabled.
+    for legacy_kotlin_plugin_pattern in (
+        r"""(?m)^\s*id\([\"']org\.jetbrains\.kotlin\.android[\"']\)\s*\n""",
+        r"""(?m)^\s*id\([\"']kotlin-android[\"']\)\s*\n""",
+    ):
+        app_build = re.sub(legacy_kotlin_plugin_pattern, "", app_build)
     app_build = _replace_one(
         r"^(\s*compileSdk\s*=\s*)(?:flutter\.compileSdkVersion|\d+)(\s*)$",
         rf"\g<1>{COMPILE_SDK}\g<2>",
