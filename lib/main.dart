@@ -1632,12 +1632,14 @@ class _LibraryPageState extends State<LibraryPage> {
               isFavorite: true,
               updatedAtMs: now,
             ));
+            break;
           case 'move':
             await widget.repository.save(item.copyWith(
               collection: collection,
               clearCollection: collection == null,
               updatedAtMs: now,
             ));
+            break;
           case 'addTags':
             final merged = <String>[...item.tags];
             final known = item.tags.map((tag) => tag.toLowerCase()).toSet();
@@ -1648,14 +1650,17 @@ class _LibraryPageState extends State<LibraryPage> {
               tags: merged,
               updatedAtMs: now,
             ));
+            break;
           case 'removeTags':
             final removing = tags.map((tag) => tag.toLowerCase()).toSet();
             await widget.repository.save(item.copyWith(
               tags: item.tags.where((tag) => !removing.contains(tag.toLowerCase())).toList(),
               updatedAtMs: now,
             ));
+            break;
           case 'delete':
             await widget.repository.delete(item.id);
+            break;
         }
         succeeded++;
       } catch (_) {
