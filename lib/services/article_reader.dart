@@ -286,7 +286,7 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
     text = text.replaceAll(RegExp(r'<!--[\s\S]*$'), ' ');
     text = text.replaceAll(
       RegExp(
-        r'<br\s*/?>|</(p|div|article|section|h[1-6]|li|tr)\s*>',
+        r'<(?:br|hr)\b[^>]*>|</?(address|article|blockquote|dd|div|dl|dt|fieldset|figcaption|figure|h[1-6]|li|main|ol|p|pre|section|table|tbody|td|tfoot|th|thead|tr|ul)\b[^>]*>',
         caseSensitive: false,
       ),
       '\n',
