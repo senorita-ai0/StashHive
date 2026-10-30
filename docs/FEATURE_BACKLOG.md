@@ -251,3 +251,13 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Add TC-291 and TC-292 sanitizer regression source.
 - [ ] Run TC-291–TC-292 and the full Reader suite at the owner-approved manual validation checkpoint.
 - [ ] Verify extraction quality and selection/scroll behavior on Android and web. This remains a bounded regex sanitizer, not a standards-complete HTML parser or full Readability engine.
+
+
+## SH-006 — balanced semantic article/main extraction — TSK-545 (2026-10-30)
+
+- [x] Replace first-closing-tag extraction with a balanced semantic-container scan for nested `article` and `main` elements.
+- [x] Treat each quoted HTML attribute as part of its containing tag token so tag-looking attribute text does not change nesting depth.
+- [x] Keep fallback behavior when the first semantic container is incomplete; do not treat an unmatched partial container as a confirmed extraction boundary.
+- [x] Add TC-293/TC-294 coverage for nested article/main, content after the inner close, quoted attributes and sibling exclusion.
+- [ ] Run TC-293–TC-294 and the complete Reader unit/widget/repository tests at the owner-approved manual validation checkpoint.
+- [ ] Validate real-world extraction quality on Android and web. The scanner is still a deliberately small tag tokenizer, not a complete HTML5 tree builder or Readability engine.
