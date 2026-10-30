@@ -191,4 +191,76 @@ void main() {
     expect(markdown, isNot(contains(articleText)));
   });
 
+
+  testWidgets('explicitly re-anchors a saved quote without changing its text or note',
+      (tester) async {
+    tester.view.physicalSize = const Size(1280, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    const articleText =
+        'Changed introduction. Before excerpt remains stable: highlight me'
+        '. After excerpt remains stable.';
+    final originalAnnotation = SavedAnnotation(
+      id: 'reanchor-existing',
+      quote: 'highlight me',
+      note: 'Keep this personal note.',
+      sourceStartOffset: 800,
+      sourceEndOffset: 812,
+      contextBefore: 'Old page context before the quote.',
+      contextAfter: 'Old page context after the quote.',
+      createdAtMs: 3000,
+    );
+    final saved = _linkItem().copyWith(
+      annotations: <SavedAnnotation>[originalAnnotation],
+    );
+    await _repository.addCollection('Reading');
+    await _repository.save(saved);
+
+    articleReaderLoaderForTesting = (url, timeout) async =>
+        const ArticleReaderResult(
+          state: ArticleReaderState.success,
+          title: 'Updated page',
+          text: articleText,
+        );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ItemDetailsPage(
+          repository: _repository,
+          itemId: saved.id,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(
+      find.byKey(const ValueKey('locate-annotation-reanchor-existing')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Saved quote found'), findsOneWidget);
+    expect(find.byKey(const ValueKey('update-annotation-anchor')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('update-annotation-anchor')));
+    await tester.pumpAndSettle();
+
+    final updated = _repository.findById(saved.id)!;
+    final annotation = updated.annotations.single;
+    expect(annotation.id, originalAnnotation.id);
+    expect(annotation.quote, originalAnnotation.quote);
+    expect(annotation.note, originalAnnotation.note);
+    expect(annotation.createdAtMs, originalAnnotation.createdAtMs);
+    expect(annotation.sourceStartOffset, articleText.indexOf('highlight me'));
+    expect(
+      annotation.sourceEndOffset! - annotation.sourceStartOffset!,
+      originalAnnotation.quote.length,
+    );
+    expect(annotation.contextBefore, 'Changed introduction. Before excerpt remains stable: ');
+    expect(annotation.contextAfter, '. After excerpt remains stable.');
+    expect(updated.title, saved.title);
+    expect(updated.content, saved.content);
+    expect(updated.url, saved.url);
+  });
+
 }
