@@ -222,24 +222,24 @@ String? _charsetFromHtmlMeta(List<int> bytes) {
   // Do not trust apparent charset declarations inside comments or embedded
   // script/style data. Strip those regions before scanning the bounded prefix.
   prefix = prefix
-      .replaceAll(RegExp(r'<!--[\\s\\S]*?-->'), ' ')
-      .replaceAll(RegExp(r'<!--[\\s\\S]*$'), ' ')
+      .replaceAll(RegExp(r'<!--[\s\S]*?-->'), ' ')
+      .replaceAll(RegExp(r'<!--[\s\S]*$'), ' ')
       .replaceAll(
         RegExp(
-          r'<(script|style|noscript)\\b[^>]*>[\\s\\S]*?</\\1\\s*>',
+          r'<(script|style|noscript)\b[^>]*>[\s\S]*?</\1\s*>',
           caseSensitive: false,
         ),
         ' ',
       )
       .replaceAll(
         RegExp(
-          r'<(script|style|noscript)\\b[^>]*>[\\s\\S]*$',
+          r'<(script|style|noscript)\b[^>]*>[\s\S]*$',
           caseSensitive: false,
         ),
         ' ',
       );
   final metaTags = RegExp(
-    r'<meta\\b[^>]{0,1024}>',
+    r'<meta\b[^>]{0,1024}>',
     caseSensitive: false,
   ).allMatches(prefix);
 
@@ -260,7 +260,7 @@ String? _charsetFromHtmlMeta(List<int> bytes) {
     if (attributes['http-equiv']?.trim().toLowerCase() == 'content-type') {
       final content = attributes['content'] ?? '';
       final legacyCharset = RegExp(
-        r'(?:^|;)\\s*charset\\s*=\\s*["\\x27]?([^;\\s"\\x27]+)',
+        r'(?:^|;)\s*charset\s*=\s*["\x27]?([^;\s"\x27]+)',
         caseSensitive: false,
       ).firstMatch(content)?.group(1)?.trim();
       if (legacyCharset != null && legacyCharset.isNotEmpty) {
@@ -274,7 +274,7 @@ String? _charsetFromHtmlMeta(List<int> bytes) {
 Map<String, String> _parseMetaAttributes(String source) {
   final attributes = <String, String>{};
   final matches = RegExp(
-    r'''([^\\s=/>]+)(?:\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+)))?''',
+    r'''([^\s=/>]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?''',
   ).allMatches(source);
   for (final match in matches) {
     final name = match.group(1)!.toLowerCase();
