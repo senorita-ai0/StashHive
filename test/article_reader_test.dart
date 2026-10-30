@@ -583,6 +583,67 @@ void main() {
     });
   });
 
+  test('expands selection edges that split a supplementary Unicode character', () {
+    const text = 'A🙂B';
+
+    final selectedAfterHighSurrogate =
+        captureArticleReaderSelection(text, 2, 3);
+    expect(selectedAfterHighSurrogate, isNotNull);
+    expect(selectedAfterHighSurrogate!.quote, '🙂');
+    expect(selectedAfterHighSurrogate.startOffset, 1);
+    expect(selectedAfterHighSurrogate.endOffset, 3);
+    expect(selectedAfterHighSurrogate.contextBefore, 'A');
+    expect(selectedAfterHighSurrogate.contextAfter, 'B');
+
+    final selectedBeforeLowSurrogate =
+        captureArticleReaderSelection(text, 0, 2);
+    expect(selectedBeforeLowSurrogate, isNotNull);
+    expect(selectedBeforeLowSurrogate!.quote, 'A🙂');
+    expect(selectedBeforeLowSurrogate.endOffset, 3);
+  });
+
+  test('keeps context window edges outside supplementary Unicode characters', () {
+    final beforeText = '🙂${List<String>.filled(79, 'a').join()}X';
+    final beforeSelection = captureArticleReaderSelection(
+      beforeText,
+      81,
+      82,
+    );
+    expect(beforeSelection, isNotNull);
+    expect(beforeSelection!.quote, 'X');
+    expect(beforeSelection.contextBefore, startsWith('🙂'));
+    expect(beforeSelection.contextBefore.length, 81);
+    expect(
+      beforeSelection.contextBefore.codeUnitAt(0),
+      inInclusiveRange(0xD800, 0xDBFF),
+    );
+    expect(
+      beforeSelection.contextBefore.codeUnitAt(1),
+      inInclusiveRange(0xDC00, 0xDFFF),
+    );
+
+    final afterText = 'X${List<String>.filled(79, 'a').join()}🙂Z';
+    final afterSelection = captureArticleReaderSelection(afterText, 0, 1);
+    expect(afterSelection, isNotNull);
+    expect(afterSelection!.quote, 'X');
+    expect(afterSelection.contextAfter, endsWith('🙂'));
+    expect(afterSelection.contextAfter.length, 81);
+    expect(
+      afterSelection.contextAfter.codeUnitAt(79),
+      inInclusiveRange(0xD800, 0xDBFF),
+    );
+    expect(
+      afterSelection.contextAfter.codeUnitAt(80),
+      inInclusiveRange(0xDC00, 0xDFFF),
+    );
+  });
+
+  test('rejects collapsed or out-of-range Reader selections', () {
+    expect(captureArticleReaderSelection('article', 2, 2), isNull);
+    expect(captureArticleReaderSelection('article', -1, 2), isNull);
+    expect(captureArticleReaderSelection('article', 2, 99), isNull);
+  });
+
   test('reader result exposes success without involving repository storage', () {
     const result = ArticleReaderResult(
       state: ArticleReaderState.success,
