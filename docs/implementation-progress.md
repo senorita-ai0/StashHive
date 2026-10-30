@@ -1321,3 +1321,12 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added a separate **Update saved position** action. It rechecks the selected quote range, then updates only the annotation's source offsets and bounded context, preserving its ID, quote, personal note and creation time. The saved item title/content/URL remain unchanged.
 - Regression sources: \`test/annotation_reanchoring_test.dart\` (TC-283–TC-285, TC-287), \`test/article_reader_page_test.dart\` (TC-285–TC-286), and \`test/article_reader_repository_test.dart\` (TC-286). Source commits include \`bad4a7ff\`, \`1405e99d\`, \`4f2ed7ff\`, \`e5fb7339\`; test commits include \`d8074be1\`, \`69f818f0\`, \`700b145a\`, \`f7399449\`.
 - Source/tests were re-fetched from \`main\`. No formatter, analyzer, tests, builds or CI were run. The matching is exact-text only, not fuzzy/readability-aware; SH-006 remains partial and CI manual-only.
+
+
+### SH-006 — re-anchoring safety follow-up — 2026-10-30
+
+- Hardened \`findSavedAnnotationAnchor\` to reject malformed UTF-16 in legacy quote/context strings, preventing half-surrogate remnants from contributing false context confidence. The matcher already rejects quote lengths below 8 code units, contexts over the model limit and article text above the Reader cap.
+- Added regression assertions for malformed quote/context strings and for the eight-candidate output cap while still reporting the total occurrence count.
+- Added a repository widget case proving that simply opening a locate-quote preview leaves the complete saved item map unchanged; the separate confirmation action remains the only path that refreshes location metadata.
+- Follow-up source commit: \`ec816cbe630b11ef1a8a8244b04f237b0f1164ed\`; regression commits: \`b98d2540fe91e6696f9bb026b88a40cf2a3cfd06\`, \`525bf7a071c68a682635cf9bac10731b695e0f42\`, \`47ff5fa1d2703e6cbd42f2f430686affa05f8832\`, \`6d4db7b4c8c087b2a3a966ca90e31e416cbe6a03\`, \`09b1805c97fc6ae70c879e2f094d5fb042230c90\`.
+- These remain authored regressions, not test execution. Formatter, analyzer, tests, builds and CI were not run.
