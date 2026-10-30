@@ -238,3 +238,8 @@ Re-anchoring changes only the selected annotation's offset and bounded context m
 ### Re-anchor optimistic concurrency snapshot — 2026-10-30
 
 The Reader update callback sends the original \`SavedAnnotation\` snapshot. Before persisting, Item Details finds the current annotation by ID and compares its quote, old source offsets, and old before/after context with that snapshot. A mismatch rejects the operation, covering concurrent changes even when the quote and annotation ID remain identical. The update constructs a replacement using the current stored note and creation time, changing only location metadata. TC-290 is the regression for this optimistic concurrency boundary; source remains unexecuted.
+
+
+### Native Reader interactive-widget filtering — 2026-10-30
+
+The native Reader's plain-text sanitizer removes complete `form`, `button`, `select`, `textarea` and `dialog` blocks before selecting semantic article/main content, then applies the same filter to the selected fragment. If one of these widgets is unclosed, its remaining tail is discarded rather than exposed as article prose. Article headings and paragraphs outside the controls remain eligible. TC-291/TC-292 cover closed and malformed widgets. This is still a small bounded regex sanitizer; it is not a standards-complete HTML parser or Readability implementation, and fetched markup is never rendered as HTML.
