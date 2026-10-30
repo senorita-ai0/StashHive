@@ -1705,3 +1705,8 @@ The Reader can now look for a previously saved quote in the current temporary pa
 ### SH-006 — re-anchoring safety refinements — 2026-10-30
 
 Re-anchoring now rejects malformed UTF-16 in legacy saved quote/context fields, applies the minimum quote and source-size bounds, and exposes no more than eight ranked candidates. An additional repository/widget regression proves that merely opening the locate-quote preview does not change the saved annotation; only the explicit Update saved position action writes refreshed offsets/context. Regression source remains unrun at the manual checkpoint.
+
+
+### SH-006 — re-anchor review and stale-write protection — TC-288 — 2026-10-30
+
+The re-anchor card now displays the candidate quote with its surrounding context above the full article, in addition to highlighting the occurrence in the article text. The update callback carries the quote that was originally located; the persistence layer compares it with the current stored annotation and refuses to move a changed quote. TC-288 covers that stale-write conflict. Tests remain unrun, and the entire matching/re-anchor feature remains exact-text and owner-validation pending.
