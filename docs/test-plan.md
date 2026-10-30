@@ -2141,5 +2141,5 @@ The repository widget regression source now checks three export formats after sa
 
 ### TC-287 — Bound re-anchoring inputs and candidate results (2026-10-30)
 
-- Verify empty/too-short quotes, oversized article text and oversized stored context are rejected. Verify overlapping occurrences are counted and candidate output is capped.
+- Verify empty/too-short quotes, malformed UTF-16 quote/context, oversized article text and oversized stored context are rejected. Verify overlapping occurrences are counted and the exposed candidate list is capped at eight.
 - **Status:** Regression source committed in \`test/annotation_reanchoring_test.dart\`; not run. Execute TC-283–TC-287 and the complete Reader suite at the owner-approved manual validation checkpoint.
