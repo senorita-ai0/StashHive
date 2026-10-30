@@ -316,4 +316,75 @@ void main() {
     expect(_repository.findById(saved.id)!.toMap(), equals(before));
   });
 
+
+  testWidgets('does not apply a stale re-anchor after the saved quote changes',
+      (tester) async {
+    tester.view.physicalSize = const Size(1280, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final originalAnnotation = SavedAnnotation(
+      id: 'reanchor-stale',
+      quote: 'highlight me',
+      note: 'Original note',
+      sourceStartOffset: 800,
+      sourceEndOffset: 812,
+      createdAtMs: 3000,
+    );
+    final saved = _linkItem().copyWith(
+      annotations: <SavedAnnotation>[originalAnnotation],
+    );
+    await _repository.addCollection('Reading');
+    await _repository.save(saved);
+
+    articleReaderLoaderForTesting = (url, timeout) async =>
+        const ArticleReaderResult(
+          state: ArticleReaderState.success,
+          title: 'Updated page',
+          text: 'A refreshed page now contains highlight me once.',
+        );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ItemDetailsPage(
+          repository: _repository,
+          itemId: saved.id,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final locateButton =
+        find.byKey(const ValueKey('locate-annotation-reanchor-stale'));
+    await tester.ensureVisible(locateButton);
+    await tester.tap(locateButton);
+    await tester.pumpAndSettle();
+
+    // Simulate another edit replacing the quote while the Reader route is open.
+    final replacement = SavedAnnotation(
+      id: originalAnnotation.id,
+      quote: 'new quote!!!',
+      note: 'Newer note',
+      sourceStartOffset: 800,
+      sourceEndOffset: 812,
+      createdAtMs: originalAnnotation.createdAtMs,
+    );
+    await _repository.save(
+      saved.copyWith(annotations: <SavedAnnotation>[replacement]),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('update-annotation-anchor')));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Could not update this highlight position. Please retry.'),
+      findsOneWidget,
+    );
+    final current = _repository.findById(saved.id)!.annotations.single;
+    expect(current.quote, 'new quote!!!');
+    expect(current.note, 'Newer note');
+    expect(current.sourceStartOffset, 800);
+    expect(current.sourceEndOffset, 812);
+  });
+
 }
