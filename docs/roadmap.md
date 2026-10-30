@@ -1738,3 +1738,12 @@ The re-anchor write now compares the complete original annotation anchor snapsho
 - **Behavior:** Article/main extraction now counts nested same-name semantic elements and completes only at the matching outer close. Quoted attribute values are consumed as part of their tag token. An unclosed candidate does not become a trusted boundary.
 - **Tests:** TC-293–TC-294 in `test/article_reader_test.dart`.
 - **Status:** Source and regression source committed; tests, formatting, analysis, Android/web builds and real-page extraction checks remain pending. This is not a full HTML5 parser/readability engine.
+
+
+### TSK-546 — Preserve structural block boundaries in Reader text (SH-006) — 2026-10-30
+
+- **Implementation:** `lib/services/article_reader.dart`, HTML-to-plain-text separator rule inside `sanitizeArticleMarkup`.
+- **Requirements:** FR-024, NFR-005, NFR-006.
+- **Behavior:** Structural opening/closing tags now become line separators for headings, paragraphs, blockquotes, figures/captions, lists, description lists, tables/cells and horizontal rules. Inline formatting is not promoted to block spacing.
+- **Tests:** TC-295 in `test/article_reader_test.dart`.
+- **Status:** Source and regression source committed; Dart/Flutter tests, formatter, analyzer and Android/web text-selection/layout checks pending. Sanitization is still a lightweight fallback, not a complete HTML parser.
