@@ -4157,6 +4157,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                     _updateReaderAnnotationAnchor(
                   item.id,
                   annotationId,
+                  expectedQuote,
                   startOffset,
                   endOffset,
                   contextBefore,
