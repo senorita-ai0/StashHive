@@ -211,6 +211,59 @@ void main() {
       expect(result.text, 'Price: €');
     });
 
+    test('ignores charset-like text in unrelated meta attributes', () async {
+      const prefix =
+          '<html><head><meta name="description" '
+          'content="This page mentions charset=windows-1252">'
+          '<meta name="keywords" '
+          'content="encoding; charset=windows-1252"></head><body>'
+          '<article>Price: ';
+      const suffix = '</article></body></html>';
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/html',
+            body: <int>[
+              ...utf8.encode(prefix),
+              0x80,
+              ...utf8.encode(suffix),
+            ],
+          );
+
+      final result = await loadArticleForReader(
+        'https://example.com/unrelated-meta-charset',
+      );
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text, 'Price: \uFFFD');
+      expect(result.text, isNot(contains('€')));
+    });
+
+    test('continues scanning after unrelated meta content to find a real charset', () async {
+      const prefix =
+          '<html><head><meta name="description" '
+          'content="This page mentions charset=utf-8">'
+          '<meta charset="windows-1252"></head><body><article>Price: ';
+      const suffix = '</article></body></html>';
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/html',
+            body: <int>[
+              ...utf8.encode(prefix),
+              0x80,
+              ...utf8.encode(suffix),
+            ],
+          );
+
+      final result = await loadArticleForReader(
+        'https://example.com/real-meta-after-description',
+      );
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text, 'Price: €');
+    });
+
     test('prefers the HTTP charset over an HTML meta charset', () async {
       const prefix =
           '<html><head><meta charset="utf-8"></head><body>'
