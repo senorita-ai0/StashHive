@@ -261,3 +261,12 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Add TC-293/TC-294 coverage for nested article/main, content after the inner close, quoted attributes and sibling exclusion.
 - [ ] Run TC-293–TC-294 and the complete Reader unit/widget/repository tests at the owner-approved manual validation checkpoint.
 - [ ] Validate real-world extraction quality on Android and web. The scanner is still a deliberately small tag tokenizer, not a complete HTML5 tree builder or Readability engine.
+
+
+## SH-006 — preserve Reader block-level text layout — TSK-546 / TC-295 (2026-10-30)
+
+- [x] Convert structural elements such as headings, paragraphs, blockquotes, figures/captions, lists, table sections/rows/cells and horizontal rules into line boundaries during plain-text sanitization.
+- [x] Keep ordinary inline formatting tags compact; continue to render only plain text.
+- [x] Add TC-295 covering content order and line separation across quotes, captions, lists and tables.
+- [ ] Run TC-295 with TC-291–TC-294 and the complete Reader unit/widget/repository suites at the owner-approved manual validation checkpoint.
+- [ ] Review real-page text quality and selection behavior on Android/web; extraction remains a lightweight sanitizer and is not standards-complete.
