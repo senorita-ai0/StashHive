@@ -50,10 +50,10 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
   }
 
   void _onTextSelectionChanged(String text, TextSelection selection) {
-    if (!selection.isValid ||
-        selection.isCollapsed ||
-        selection.start < 0 ||
-        selection.end > text.length) {
+    final captured = !selection.isValid || selection.isCollapsed
+        ? null
+        : captureArticleReaderSelection(text, selection.start, selection.end);
+    if (captured == null || captured.quote.trim().isEmpty) {
       if (_selectedQuote != null) {
         setState(() {
           _selectedQuote = null;
@@ -63,13 +63,10 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
       }
       return;
     }
-    final start = selection.start;
-    final end = selection.end;
-    final quote = text.substring(start, end);
     setState(() {
-      _selectedQuote = quote.trim().isEmpty ? null : quote;
-      _selectionStart = quote.trim().isEmpty ? null : start;
-      _selectionEnd = quote.trim().isEmpty ? null : end;
+      _selectedQuote = captured.quote;
+      _selectionStart = captured.startOffset;
+      _selectionEnd = captured.endOffset;
     });
   }
 
@@ -87,16 +84,16 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
         _savingQuote) {
       return;
     }
-    final beforeStart = (start - 80).clamp(0, start).toInt();
-    final afterEnd = (end + 80).clamp(end, text.length).toInt();
+    final selection = captureArticleReaderSelection(text, start, end);
+    if (selection == null || selection.quote != quote) return;
     setState(() => _savingQuote = true);
     try {
       final saved = await save(
-        quote,
-        start,
-        end,
-        text.substring(beforeStart, start),
-        text.substring(end, afterEnd),
+        selection.quote,
+        selection.startOffset,
+        selection.endOffset,
+        selection.contextBefore,
+        selection.contextAfter,
       );
       if (!mounted) return;
       if (saved) {
