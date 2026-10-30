@@ -1281,3 +1281,9 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - The HTML charset prefix scan now removes comments plus script/style/noscript blocks before matching meta tags; this prevents fake HTML-looking text embedded in those regions from influencing decoding.
 - Added TC-275 regression with the same fake Windows-1252 hint in a comment and a script string, and an invalid UTF-8 body byte to distinguish accidental selection of that hint.
 - Rebuilt the affected Reader source/test files using Git blob/tree objects after an edit attempt duplicated fragments; the repair commit contains a single decoder, title extractor, charset helper and address checker. This was source-level verification only; no tests, formatter, analyzer, build or CI were run.
+
+
+## SH-006 — HTTP charset precedence regression (TC-276) — 2026-10-30
+
+- Added a synthetic HTML response whose HTTP header declares Windows-1252 while an early meta tag claims UTF-8. The 0x80 body byte must decode as the euro sign, proving that the explicit HTTP charset remains authoritative over the fallback meta prescan.
+- This protects the existing `_parseResponse` precedence expression; no production decoder behavior was changed. Test source was committed as `766b8dda50a8960f61414454b00978bd523b28c1` but has not been executed. No formatter, analyzer, tests, build or CI were run; SH-006 remains partial and CI manual-only.
