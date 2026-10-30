@@ -1352,3 +1352,10 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Extended the repository-level successful re-anchor test: after the explicit position update, versioned JSON backup decoding must retain annotation ID, quote, note, normalized offsets and refreshed before/after context.
 - The same restored item is then passed through CSV and selected Markdown exports. Both retain the user-saved quote/note but exclude unrelated fetched article paragraphs. Existing title/content/URL invariants continue to be checked.
 - No production export/backup code changed; this slice adds integration regression coverage around the existing local data boundary. Test source commit: \`e4051f8af0c66b9976c191364551df76b1801d9f\`. Tests remain unrun.
+
+
+### SH-006 — full anchor-snapshot conflict guard — TC-290 — 2026-10-30
+
+- Strengthened the update callback to carry the complete immutable \`SavedAnnotation\` snapshot that was opened in Reader. Persistence now compares current ID lookup, quote, old start/end offsets and old context-before/after before writing new location metadata.
+- This catches both changed-quote races (TC-288) and same-quote races where a second session already refreshed the saved offsets/context. The current stored note and creation timestamp are retained.
+- Updated Reader page callback tests and changed the stale-position repository regression to keep the quote/ID the same but advance offsets/context before attempting the stale update. This is TC-290; source has been committed but not run.
