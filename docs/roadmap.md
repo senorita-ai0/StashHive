@@ -1690,3 +1690,8 @@ Added coverage that a charset declaration beyond the first 1,024 response bytes 
 ## SH-006 — meta charset attribute parsing — TC-278/TC-279 — 2026-10-30
 
 The bounded native HTML charset prescan now parses meta attributes instead of matching charset-like text anywhere inside a tag. It recognizes a direct charset attribute and the legacy Content-Type pragma only when its \`http-equiv\` attribute is correct. TC-278 protects against descriptions/keywords that merely mention charset syntax; TC-279 confirms the parser continues to a real declaration after unrelated metadata. Both regressions are source-only and remain unrun; execute them with the complete Reader suite at the owner-approved manual validation checkpoint.
+
+
+## SH-006 — Unicode-safe quote and context capture — TC-280–TC-282 — 2026-10-30
+
+Reader quote capture now normalizes selection and context-window edges so they cannot split UTF-16 surrogate pairs. The quote and persisted offsets are derived from the same normalized range; surrounding context is bounded to 80 code units per side and expands by at most one code unit to preserve a complete supplementary character. Collapsed and out-of-range selections are rejected. TC-280–TC-282 are authored but unrun; execute them with the full Reader suite and platform selection checks at the manual validation checkpoint.
