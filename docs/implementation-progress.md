@@ -1330,3 +1330,12 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added a repository widget case proving that simply opening a locate-quote preview leaves the complete saved item map unchanged; the separate confirmation action remains the only path that refreshes location metadata.
 - Follow-up source commit: \`ec816cbe630b11ef1a8a8244b04f237b0f1164ed\`; regression commits: \`b98d2540fe91e6696f9bb026b88a40cf2a3cfd06\`, \`525bf7a071c68a682635cf9bac10731b695e0f42\`, \`47ff5fa1d2703e6cbd42f2f430686affa05f8832\`, \`6d4db7b4c8c087b2a3a966ca90e31e416cbe6a03\`, \`09b1805c97fc6ae70c879e2f094d5fb042230c90\`.
 - These remain authored regressions, not test execution. Formatter, analyzer, tests, builds and CI were not run.
+
+
+### SH-006 — stale-update guard and candidate review preview — 2026-10-30
+
+- Extended the Reader anchor-update callback to include the expected quote. The repository boundary now compares that value with the current annotation before writing; a changed quote or inconsistent range rejects the update without overwriting newer annotation content.
+- Added a compact before/quote/after preview to the Reader anchor card, alongside the highlighted occurrence in the full temporary article, to make the proposed position reviewable before confirmation.
+- Added TC-288 repository regression for the stale quote conflict and strengthened the Reader widget test to assert the preview is visible.
+- Source commits: \`ab10ddf879e1a75b7af43b4896217160307a0e8b\`, \`781775d054f1567cf3064cd1a691077a4cf25659\`, \`55c088a492ccfdb6c2de481cc47de18f48c2b185\`, \`32ea7165539ff89c228b3710a6cbf8c8ea7fb595\`. Regression commits: \`d4dcab946a402de5966b6b48d1c42e91f60ed1c3\`, \`c43f16f16403577c7a7d4d7fcefc6c33441513e2\`, \`00cebe08f89c74e7b0b87f29d1247a4f8c72fbcb\`.
+- Source and tests were re-fetched. No formatter, analyzer, unit/widget tests, builds or CI were run.
