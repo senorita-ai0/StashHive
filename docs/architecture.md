@@ -233,3 +233,8 @@ The Reader passes the expected quote alongside the annotation ID when requesting
 ### Re-anchored annotations and portable backup/export — 2026-10-30
 
 Re-anchoring changes only the selected annotation's offset and bounded context metadata; the fetched article remains transient. The existing versioned backup serializes the saved annotation fields, while CSV/Markdown exports contain only the user's saved quote and note, not fetched page paragraphs. TC-289 exercises the re-anchor → JSON backup decode → CSV/Markdown path and checks that the saved item's original title/content/URL remain unchanged. Test source exists but has not been executed.
+
+
+### Re-anchor optimistic concurrency snapshot — 2026-10-30
+
+The Reader update callback sends the original \`SavedAnnotation\` snapshot. Before persisting, Item Details finds the current annotation by ID and compares its quote, old source offsets, and old before/after context with that snapshot. A mismatch rejects the operation, covering concurrent changes even when the quote and annotation ID remain identical. The update constructs a replacement using the current stored note and creation time, changing only location metadata. TC-290 is the regression for this optimistic concurrency boundary; source remains unexecuted.
