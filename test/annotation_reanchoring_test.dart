@@ -161,5 +161,19 @@ void main() {
     expect(result.totalMatches, 3);
     expect(result.candidates.map((candidate) => candidate.startOffset),
         [0, 1, 2]);
+
+    final manyMatches = findSavedAnnotationAnchor(
+      articleText: List<String>.filled(20, 'target passage').join(' | '),
+      annotation: _annotation(
+        quote: 'target passage',
+        contextBefore: '',
+        contextAfter: '',
+      ),
+    );
+    expect(manyMatches.totalMatches, 20);
+    expect(
+      manyMatches.candidates,
+      hasLength(maxAnnotationAnchorCandidates),
+    );
   });
 }
