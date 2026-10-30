@@ -1,6 +1,6 @@
 # StashHive — Feature Backlog
 
-**Last reviewed:** 2026-10-29  
+**Last reviewed:** 2026-10-30  
 **Master status / new-chat handoff:** [docs/FEATURE_STATUS.md](FEATURE_STATUS.md) — update the master table and relevant detailed records after each feature increment.
 **Implementation rule:** complete each feature as a small vertical slice: source, regression tests, user-facing behavior, documentation, and explicit verification status. Changes go directly to `main`; CI/builds remain manual-only.
 
