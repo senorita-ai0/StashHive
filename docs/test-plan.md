@@ -2157,3 +2157,10 @@ The repository widget regression source now checks three export formats after sa
 - Re-anchor a saved quote in a refreshed temporary article and verify its normalized offsets and bounded context round-trip through the versioned JSON backup.
 - Verify the saved quote and personal note remain available in CSV/Markdown exports, while unrelated fetched page text and the temporary article body do not enter the saved item or exports.
 - **Status:** Repository/widget regression source committed in \`test/article_reader_repository_test.dart\`; not run. Execute TC-283–TC-289 with backup/export and Reader suites at the owner-approved manual validation checkpoint.
+
+
+### TC-290 — Reject stale re-anchor when the quote is unchanged but its saved position has changed (2026-10-30)
+
+- Open a Reader locate flow for an annotation, then simulate another session updating that same annotation's offsets and surrounding context while leaving its ID and quote unchanged.
+- Verify the older Reader suggestion is rejected and the newer offsets/context and note remain intact.
+- **Status:** Repository/widget regression source committed in \`test/article_reader_repository_test.dart\`; not run. Execute TC-283–TC-290 and the complete Reader/repository suite at the owner-approved manual validation checkpoint.
