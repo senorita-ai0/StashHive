@@ -132,11 +132,11 @@ void main() {
 
     final malformedQuote = findSavedAnnotationAnchor(
       articleText: 'A sufficiently long target passage appears here.',
-      annotation: _annotation(quote: 'target passage\\uD800'),
+      annotation: _annotation(quote: 'target passage\uD800'),
     );
     final malformedContext = findSavedAnnotationAnchor(
       articleText: 'A sufficiently long target passage appears here.',
-      annotation: _annotation(contextBefore: 'old\\uDC00context'),
+      annotation: _annotation(contextBefore: 'old\uDC00context'),
     );
 
     expect(empty.status, AnnotationAnchorStatus.invalidInput);
