@@ -806,4 +806,48 @@ void main() {
     expect(text, contains('Main continuation.'));
     expect(text, isNot(contains('Page masthead outside main')));
   });
+
+  test('preserves block boundaries for quotes, figures, lists and table cells', () {
+    final text = sanitizeArticleMarkup(
+      '<article><h1>Reader headline</h1>'
+      '<p>Opening paragraph.</p>'
+      '<blockquote><p>Quoted first line.</p>'
+      '<p>Quoted second line.</p></blockquote>'
+      '<figure><figcaption>Photo caption.</figcaption></figure>'
+      '<ul><li>First list item.</li><li>Second list item.</li></ul>'
+      '<table><tbody><tr><th>Year</th><th>Value</th></tr>'
+      '<tr><td>2026</td><td>Readable result.</td></tr></tbody></table>'
+      '<hr><p>Closing paragraph.</p></article>',
+    );
+
+    expect(text, contains('Reader headline'));
+    expect(text, contains('Opening paragraph.'));
+    expect(text, contains('Quoted first line.'));
+    expect(text, contains('Quoted second line.'));
+    expect(text, contains('Photo caption.'));
+    expect(text, contains('First list item.'));
+    expect(text, contains('Second list item.'));
+    expect(text, contains('Year'));
+    expect(text, contains('Value'));
+    expect(text, contains('2026'));
+    expect(text, contains('Readable result.'));
+    expect(text, contains('Closing paragraph.'));
+
+    expect(text.indexOf('Opening paragraph.'),
+        lessThan(text.indexOf('Quoted first line.')));
+    expect(text.indexOf('Quoted second line.'),
+        lessThan(text.indexOf('Photo caption.')));
+    expect(text.indexOf('Photo caption.'),
+        lessThan(text.indexOf('First list item.')));
+    expect(text.indexOf('First list item.'),
+        lessThan(text.indexOf('Second list item.')));
+    expect(text.indexOf('Year'), lessThan(text.indexOf('Value')));
+    expect(text.indexOf('Value'), lessThan(text.indexOf('2026')));
+    expect(text.indexOf('2026'),
+        lessThan(text.indexOf('Readable result.')));
+    expect(text, contains('Opening paragraph.\n'));
+    expect(text, contains('Quoted first line.\n'));
+    expect(text, contains('First list item.\n'));
+    expect(text, contains('Year\n'));
+  });
 }
