@@ -219,9 +219,11 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [ ] Execute re-anchoring, full Reader, backup/export and platform tests at the owner-approved manual validation checkpoint. Matching is exact-text only; edited/translated/reformatted quotes may not be found and are never fuzzy-guessed.
 
 
-### SH-006 — re-anchoring input and persistence safety follow-up — TC-286/TC-287 (2026-10-30)
+### SH-006 — re-anchoring input and persistence safety follow-up — TC-286–TC-288 (2026-10-30)
 
 - [x] Add a repository/widget regression proving that opening the locate-quote preview does not mutate the saved annotation before explicit confirmation.
 - [x] Reject malformed UTF-16 quote/context values from legacy annotation data before matching.
 - [x] Verify the matcher exposes no more than eight candidate positions even when the exact quote occurs many times.
-- [ ] Run TC-283–TC-287 and the full Reader/repository/export regression suite at the manual validation checkpoint.
+- [x] Carry the expected quote into the persistence boundary and reject a stale Reader suggestion if the saved quote changed before confirmation.
+- [x] Show a compact excerpt with before/after context above the full article so the proposed occurrence can be reviewed before confirmation.
+- [ ] Run TC-283–TC-288 and the full Reader/repository/export regression suite at the manual validation checkpoint.
