@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'data/library_repository.dart';
 import 'models/saved_item.dart';
 import 'screens/article_reader_page.dart';
+import 'services/annotation_reanchoring.dart';
 import 'services/backup_codec.dart';
 import 'services/bookmark_html_importer.dart';
 import 'services/bounded_bytes_reader.dart';
@@ -4071,7 +4072,58 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     }
   }
 
-  Future<void> _openArticleReader(SavedItem item) async {
+  Future<bool> _updateReaderAnnotationAnchor(
+    String itemId,
+    String annotationId,
+    int startOffset,
+    int endOffset,
+    String contextBefore,
+    String contextAfter,
+  ) async {
+    final current = widget.repository.findById(itemId);
+    if (current == null) return false;
+    final index = current.annotations.indexWhere(
+      (annotation) => annotation.id == annotationId,
+    );
+    if (index < 0) return false;
+
+    final previous = current.annotations[index];
+    final refreshed = SavedAnnotation(
+      id: previous.id,
+      quote: previous.quote,
+      note: previous.note,
+      sourceStartOffset: startOffset,
+      sourceEndOffset: endOffset,
+      contextBefore: contextBefore.length > maxSavedAnnotationContextCharacters
+          ? contextBefore.substring(
+              contextBefore.length - maxSavedAnnotationContextCharacters,
+            )
+          : contextBefore,
+      contextAfter: contextAfter.length > maxSavedAnnotationContextCharacters
+          ? contextAfter.substring(0, maxSavedAnnotationContextCharacters)
+          : contextAfter,
+      createdAtMs: previous.createdAtMs,
+    );
+    final annotations = List<SavedAnnotation>.from(current.annotations);
+    annotations[index] = refreshed;
+    final updated = current.copyWith(
+      annotations: annotations,
+      updatedAtMs: DateTime.now().toUtc().millisecondsSinceEpoch,
+    );
+    try {
+      await widget.repository.save(updated);
+      if (!mounted) return false;
+      setState(_reload);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> _openArticleReader(
+    SavedItem item, {
+    SavedAnnotation? annotationToLocate,
+  }) async {
     final uri = item.url == null ? null : parseHttpUrl(item.url);
     if (item.kind != ItemKind.link || uri == null) {
       _message('This item does not have a valid HTTP or HTTPS link.');
@@ -4083,6 +4135,24 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
         builder: (_) => ArticleReaderPage(
           url: uri.toString(),
           savedTitle: item.title,
+          annotationToLocate: annotationToLocate,
+          onUpdateAnnotationAnchor: annotationToLocate == null
+              ? null
+              : (
+                  annotationId,
+                  startOffset,
+                  endOffset,
+                  contextBefore,
+                  contextAfter,
+                ) =>
+                    _updateReaderAnnotationAnchor(
+                  item.id,
+                  annotationId,
+                  startOffset,
+                  endOffset,
+                  contextBefore,
+                  contextAfter,
+                ),
           onSaveQuote: (
             quote,
             startOffset,
@@ -4914,6 +4984,24 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                                     Text(
                                       annotation.note,
                                       style: const TextStyle(height: 1.45),
+                                    ),
+                                  ],
+                                  if (item.kind == ItemKind.link &&
+                                      item.url != null &&
+                                      annotation.quote.trim().isNotEmpty) ...[
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: TextButton.icon(
+                                        key: ValueKey(
+                                          'locate-annotation-${annotation.id}',
+                                        ),
+                                        onPressed: () => _openArticleReader(
+                                          item,
+                                          annotationToLocate: annotation,
+                                        ),
+                                        icon: const Icon(Icons.manage_search_rounded),
+                                        label: const Text('Find in latest article'),
+                                      ),
                                     ),
                                   ],
                                   const SizedBox(height: 4),
