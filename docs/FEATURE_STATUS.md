@@ -3,7 +3,7 @@
 **Last audited:** 2026-10-30  
 **Repository:** [senorita-ai0/StashHive](https://github.com/senorita-ai0/StashHive)  
 **Default branch:** `main`  
-**Audit baseline commit:** `ddb46ae66e709ca72c5d57cf0e2d04345eb6de80`  
+**Audit baseline commit:** `e1ef640422f78f3315ed20572eb40ea649ecda5c`  
 **Purpose:** This is the short, durable status page for the owner and any future ChatGPT session. Read it before resuming development and update it after every meaningful implementation, test, build, or scope change.
 
 > **Important status distinction:** “Source implemented” means code and/or test source has been committed. It does **not** mean tests pass or the feature is ready. Mark a feature fully done only when its required automated and platform checks have evidence recorded.
@@ -39,7 +39,7 @@
 | SH-003 | Bulk library actions | **Source implemented** — select items; favorite, move collection, add/remove tags, confirmed delete, selected-only Markdown export. | **Pending** | Run TC-251, TC-252, TC-260 and widget regressions; verify cancellation, selection boundaries, and partial-failure feedback. |
 | SH-004 | Import and portable exports | **Source implemented** — preview-first browser bookmark HTML import, duplicate review, CSV export and selected Markdown export; existing versioned JSON backup remains. | **Pending** | Run TC-253, TC-254, TC-260–TC-261; test malformed/large imports, duplicate entries, folder assignment, cancellation, and export file behavior. |
 | SH-005 | Local PDF/OCR full-text extraction | **Blocked / feasibility only** — an isolated digital-PDF selectable-text probe exists; no production OCR dependency has been added to the app. | **Not run** | Run the isolated probe and record runtime/accuracy, offline behavior, memory, package-size delta, and language limitations. Scanned-PDF/image OCR (including Urdu/Nastaleeq) remains unproven; do not promote to production until evidence and owner approval. |
-| SH-006 | Reader, highlights and annotations | **Partial source implemented** — explicit reader action, bounded native temporary preview, single-pass common HTML entity decoding, HTTP charset plus bounded early HTML meta charset fallback (ignoring comments and embedded script/style/noscript blocks), UTF-8 BOM stripping, Unicode-safe title/body caps, selectable text, save-selected-quote action, and bounded context/offset metadata on local annotations. | **Pending** | Validate native fetch/URL protections, entity/charset decoding including TC-273–TC-277, browser fallback, selection UX, annotation/backup and CSV/Markdown export compatibility, and accessibility. Article extraction remains a lightweight sanitizer, not a full readability engine; saved offsets may not re-anchor after page changes. |
+| SH-006 | Reader, highlights and annotations | **Partial source implemented** — explicit reader action, bounded native temporary preview, single-pass common HTML entity decoding, HTTP charset plus bounded early HTML meta charset fallback (ignoring comments and embedded script/style/noscript blocks), UTF-8 BOM stripping, Unicode-safe title/body caps, selectable text, save-selected-quote action, and bounded context/offset metadata on local annotations. | **Pending** | Validate native fetch/URL protections, entity/charset decoding including TC-273–TC-279, browser fallback, selection UX, annotation/backup and CSV/Markdown export compatibility, and accessibility. Article extraction remains a lightweight sanitizer, not a full readability engine; saved offsets may not re-anchor after page changes. |
 | SH-007 | Visual library improvements | **Source implemented** — persistent Library grid/list toggle. | **Pending** | Run TC-255 and responsive/accessibility checks; masonry and further image/document preview improvements remain optional refinements. |
 | SH-008 | Smart organization rules | **Source implemented** — local rule manager, bounded preference storage, suggested tags shown as reviewable Quick Save chips. | **Pending** | Run TC-258 and confirm suggestions are optional, explainable, removable, and do not silently change saved items. |
 | SH-009 | Link health and archive status | **Source implemented** — on-demand Android HTTP status check, bounded local check history, private-address blocking, and honest browser limitations. | **Pending** | Run TC-259; verify timeouts, redirects, local/private targets, network errors, Android behavior and browser copy. This does not create an offline page archive. |
@@ -227,3 +227,12 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 
 - Added a deterministic Reader regression placing a Windows-1252 meta tag after the first 1,024 response bytes. The test expects UTF-8 fallback (replacement character for byte 0x80), protecting the prescan's strict size bound.
 - Test source commit: `95b0c68fbed0decc824d812e369ced76798016ba`. The test has not been run. No formatter, analyzer, tests, builds or CI were run; SH-006 remains partial and CI manual-only.
+
+
+## SH-006 actual meta charset attribute parsing — 2026-10-30
+
+- Hardened the bounded native HTML charset prescan to parse actual meta attributes rather than searching the entire tag string for \`charset=\`.
+- A direct \`charset\` attribute is accepted. The legacy form is accepted only when \`http-equiv=Content-Type\` and the \`content\` attribute contains the charset declaration. Description/keyword values that merely mention charset syntax are ignored.
+- Added TC-278 (ignore charset-like text in unrelated meta attributes) and TC-279 (continue to a real charset after unrelated metadata).
+- Production source commits: \`7cf1c3553ae96c6c9509a0baee7b1cdd1811ce60\` and \`b6ff3fedc0161235a465bea23f01de734dfc636c\` (regex escaping correction). Regression source commit: \`e1ef640422f78f3315ed20572eb40ea649ecda5c\`.
+- Updated test plan, traceability, backlog, implementation progress and roadmap. Source/test files were re-fetched, but no formatter, analyzer, test, build or CI run was performed. SH-006 remains partial; CI remains manual-only.
