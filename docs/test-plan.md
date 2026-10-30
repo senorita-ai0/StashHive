@@ -2108,3 +2108,38 @@ The repository widget regression source now checks three export formats after sa
 - Attempt to capture a collapsed selection, a negative start offset, and an end offset beyond the available Reader text.
 - Verify each invalid range is rejected without creating a quote or annotation payload.
 - **Status:** Regression source committed in \`test/article_reader_test.dart\`; not run. Execute TC-280–TC-282 and the complete Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-283 — Locate a unique saved quote at its new article offset (2026-10-30)
+
+- Give the re-anchoring helper an updated article containing the saved quote once, at a location different from the stored offset.
+- Verify the helper returns the current occurrence and does not trust the stale offset.
+- **Status:** Regression source committed in \`test/annotation_reanchoring_test.dart\`; not run. Execute TC-283–TC-287 and the complete Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-284 — Disambiguate repeated quotes using saved context (2026-10-30)
+
+- Provide an updated article containing the same exact quote more than once, with only one occurrence matching the saved before/after context.
+- Verify that occurrence is proposed as a contextual match; tied or weak context must remain ambiguous.
+- **Status:** Regression source committed in \`test/annotation_reanchoring_test.dart\`; not run. Execute TC-283–TC-287 and the complete Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-285 — Never guess an ambiguous or missing saved quote (2026-10-30)
+
+- Provide repeated quotes with tied/no context and a second article where the saved quote no longer exists.
+- Verify no recommended position is returned and the Reader does not offer the position-update action.
+- **Status:** Regression source committed in \`test/annotation_reanchoring_test.dart\` and \`test/article_reader_page_test.dart\`; not run. Execute TC-283–TC-287 and the complete Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-286 — Require confirmation and preserve annotation content when re-anchoring (2026-10-30)
+
+- Open a saved annotation from Item Details, locate its quote in the latest temporary Reader text, and explicitly choose Update saved position.
+- Verify only offsets and bounded context are refreshed; annotation ID, quote, personal note, creation timestamp and the saved item's title/content/URL remain unchanged.
+- Verify dismissing the Reader or not pressing Update leaves the previous annotation unchanged.
+- **Status:** Widget/repository regression source committed in \`test/article_reader_page_test.dart\` and \`test/article_reader_repository_test.dart\`; not run. Execute TC-283–TC-287 and the complete Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-287 — Bound re-anchoring inputs and candidate results (2026-10-30)
+
+- Verify empty/too-short quotes, oversized article text and oversized stored context are rejected. Verify overlapping occurrences are counted and candidate output is capped.
+- **Status:** Regression source committed in \`test/annotation_reanchoring_test.dart\`; not run. Execute TC-283–TC-287 and the complete Reader suite at the owner-approved manual validation checkpoint.
