@@ -2192,3 +2192,10 @@ The repository widget regression source now checks three export formats after sa
 - Serve HTML with a main container containing a nested main and text after the inner closing tag, plus a semantic page header outside main.
 - Confirm all content inside the balanced outer main is retained and content outside that main is not included.
 - **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-293–TC-294 and the complete native Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-295 — Preserve readable block boundaries in Reader output (2026-10-30)
+
+- Serve an article containing headings, paragraphs, a multi-paragraph blockquote, figure caption, ordered/unordered list items, table headings/cells, horizontal rule and a following paragraph.
+- Confirm block content stays in source order and is separated by line breaks; table cells must not collapse into an ambiguous run-on value and inline text should remain readable.
+- **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-295 with TC-293–TC-294 and the complete native Reader sanitizer/response suite at the owner-approved manual validation checkpoint.
