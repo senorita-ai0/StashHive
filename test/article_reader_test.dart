@@ -772,4 +772,38 @@ void main() {
     expect(unclosedButton, contains('Readable before the broken widget.'));
     expect(unclosedButton, isNot(contains('Private widget tail')));
   });
+
+  test('keeps the complete outer article when article elements are nested', () {
+    final text = sanitizeArticleMarkup(
+      '<div data-template="<article>not a container</article>">'
+      '<article data-label="quoted > character">'
+      '<h1>Outer article introduction.</h1>'
+      '<article class="related"><p>Nested article text.</p></article>'
+      '<p>Outer article continuation.</p>'
+      '</article></div>'
+      '<article><p>Sibling article text.</p></article>',
+    );
+
+    expect(text, contains('Outer article introduction.'));
+    expect(text, contains('Nested article text.'));
+    expect(text, contains('Outer article continuation.'));
+    expect(text, isNot(contains('not a container')));
+    expect(text, isNot(contains('Sibling article text')));
+  });
+
+  test('keeps the complete main container when main elements are nested', () {
+    final text = sanitizeArticleMarkup(
+      '<header>Page masthead outside main.</header>'
+      '<main data-label="quoted > character">'
+      '<h1>Main introduction.</h1>'
+      '<main class="content"><p>Nested main content.</p></main>'
+      '<p>Main continuation.</p>'
+      '</main>',
+    );
+
+    expect(text, contains('Main introduction.'));
+    expect(text, contains('Nested main content.'));
+    expect(text, contains('Main continuation.'));
+    expect(text, isNot(contains('Page masthead outside main')));
+  });
 }
