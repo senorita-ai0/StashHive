@@ -175,10 +175,16 @@ Before source implementation, follow [the article-reader feasibility and privacy
 
 - [x] Remove HTML comments and script/style/noscript blocks from the bounded meta charset scan before extracting encoding hints.
 - [x] Add TC-275 regression source with fake charset tags in comment/script content.
-- [ ] Run TC-273–TC-276 and the complete Reader regression suite at the owner-approved manual validation checkpoint; tests remain unexecuted.
+- [ ] Run TC-273–TC-277 and the complete Reader regression suite at the owner-approved manual validation checkpoint; tests remain unexecuted.
 
 
 ## SH-006 — protect HTTP charset precedence — TC-276 (2026-10-30)
 
 - [x] Add a synthetic response regression where HTTP declares Windows-1252 but the HTML meta tag claims UTF-8; verify the header's euro-byte decoding wins.
 - [ ] Run TC-273–TC-276 and the complete Reader regression suite at the owner-approved manual validation checkpoint; tests remain unexecuted.
+
+
+## SH-006 — enforce the 1,024-byte charset prescan boundary — TC-277 (2026-10-30)
+
+- [x] Add a synthetic response regression with a Windows-1252 meta declaration positioned after byte 1,024; verify the declaration is ignored and UTF-8 fallback remains active.
+- [ ] Run TC-273–TC-277 and the complete Reader regression suite at the owner-approved manual validation checkpoint; tests remain unexecuted.
