@@ -207,6 +207,14 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
     String text,
   ) {
     final recommended = result.recommended;
+    final preview = recommended == null
+        ? null
+        : captureArticleReaderSelection(
+            text,
+            recommended.startOffset,
+            recommended.endOffset,
+            contextCharacters: 48,
+          );
     final (title, message, icon) = switch (result.status) {
       AnnotationAnchorStatus.uniqueQuote => (
           'Saved quote found',
@@ -258,6 +266,37 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
             ),
             const SizedBox(height: 8),
             Text(message),
+            if (preview != null) ...[
+              const SizedBox(height: 10),
+              Container(
+                key: const ValueKey('annotation-anchor-preview'),
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(text: '…${preview.contextBefore}'),
+                      TextSpan(
+                        text: preview.quote,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.tertiaryContainer,
+                        ),
+                      ),
+                      TextSpan(text: '${preview.contextAfter}…'),
+                    ],
+                  ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        height: 1.5,
+                      ),
+                ),
+              ),
+            ],
             if (recommended != null && !_anchorUpdated) ...[
               const SizedBox(height: 10),
               OutlinedButton.icon(
