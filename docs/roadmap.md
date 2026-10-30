@@ -1720,3 +1720,12 @@ The successful explicit re-anchor repository scenario now checks that refreshed 
 ### SH-006 — full re-anchor snapshot conflict check — TC-290 — 2026-10-30
 
 The re-anchor write now compares the complete original annotation anchor snapshot (quote, old offsets and old before/after context) with the current local record. A stale Reader route is rejected even when another session updated the same quote's position without changing its text or ID. The latest personal note is retained; only location metadata is replaced after a successful check. TC-290 covers this same-quote stale-position race; regression remains unrun.
+
+
+### TSK-544 — Filter embedded Reader form and interactive-widget text (SH-006) — 2026-10-30
+
+- **Implementation:** `lib/services/article_reader.dart`, `sanitizeArticleMarkup`.
+- **Requirements:** FR-024, NFR-002, NFR-006.
+- **Behavior:** Closed form/button/select/textarea/dialog blocks and malformed unclosed widget tails are removed before plain-text article presentation. Meaningful article headings/paragraphs remain eligible. No HTML is executed or rendered.
+- **Tests:** TC-291 and TC-292 in `test/article_reader_test.dart`.
+- **Status:** Source and regression source committed; tests, formatter, analyzer, Android/web builds and platform extraction review remain pending. This remains a lightweight regex sanitizer, not a full readability parser.
