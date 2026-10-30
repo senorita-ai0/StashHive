@@ -218,3 +218,8 @@ Reader selections and offsets use Dart/Flutter UTF-16 code-unit indexing. The sh
 ### Reader annotation re-anchoring — 2026-10-30
 
 A saved annotation's old UTF-16 offsets are metadata for the extraction from which it was originally captured, not proof of its position in a later page version. \`findSavedAnnotationAnchor\` therefore ignores those offsets and searches the current temporary text for exact quote occurrences. It proposes a unique occurrence directly, or a repeated occurrence only when the stored before/after context yields a uniquely stronger contiguous match of at least 12 code units. Quotes shorter than 8 characters and oversized inputs are rejected; candidate output is capped at eight. Ambiguous/not-found results do not offer an update. Reader highlights a safe candidate for review, and only the explicit Update saved position action persists new offsets/context while retaining annotation identity, quote, note and creation time. Matching is exact-text only; there is no fuzzy matching and no fetched page body is stored.
+
+
+### Re-anchoring legacy data and candidate bounds — 2026-10-30
+
+The exact matcher rejects malformed UTF-16 in stored quote/context strings (including possible remnants from older selection boundaries), quotes shorter than eight code units, context over the model's 200-character cap, and article text over the Reader's 60,000-character cap. It reports the full occurrence count but exposes at most eight ranked candidate positions. The locate-quote route itself is read-only; only the user's separate Update saved position action writes new offset/context metadata.
