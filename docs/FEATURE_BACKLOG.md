@@ -21,7 +21,7 @@
 | SH-003 | P1 | Bulk actions | Allow multi-select, collection assignment, tag add/remove, favorite changes, export, and confirmed deletion. Partial failures must be reported and not silently lose items. | SOURCE + WIDGET REGRESSION SOURCE IMPLEMENTED — favorite/move/tag/delete and selected-only Markdown export; tests unrun |
 | SH-004 | P1 | Importers and portable exports | Support a documented, tested bookmark HTML importer and selected service exports where a stable format exists. Add CSV and Markdown export without removing versioned JSON backup/restore. Validate file sizes/shapes and preview import counts before writing. | SOURCE + UNIT/WIDGET REGRESSION SOURCE IMPLEMENTED — preview-first HTML import, CSV export, selected Markdown; tests unrun |
 | SH-005 | P1 / gated | Local full-text extraction | Prototype offline text extraction for PDFs and OCR for supported images. Measure accuracy across English, Urdu-script samples, Roman Urdu, app size, latency, memory, and failure handling before adopting a dependency. | BLOCKED — isolated digital-PDF probe scaffold committed; tests, runtime benchmarks, platform/size measurements still pending. See `tool/pdf_text_extraction_poc/README.md` and `docs/research/local-text-extraction-feasibility.md` |
-| SH-006 | P2 | Reader mode, highlights, and annotations | Add optional readable article content only through a user-initiated flow; support highlights and personal notes tied to a saved item. Clearly distinguish bookmark metadata, temporary preview, and an offline archive. | PARTIAL SOURCE IMPLEMENTED — explicit temporary reader, native bounded fetch, web CORS fallback, selectable quote capture, bounded context/offset metadata and reader UI regression source committed; tests/platform checks unrun |
+| SH-006 | P2 | Reader mode, highlights, and annotations | Add optional readable article content only through a user-initiated flow; support highlights and personal notes tied to a saved item. Clearly distinguish bookmark metadata, temporary preview, and an offline archive. | PARTIAL SOURCE IMPLEMENTED — explicit temporary reader, bounded fetch, selectable quote capture, Unicode-safe offsets, conservative exact-quote/context re-anchoring with explicit user confirmation; tests/platform checks unrun |
 | SH-007 | P2 | Visual library improvements | Improve image/document previews and add useful grid/masonry layouts without degrading list navigation, accessibility, or performance for large libraries. | SOURCE IMPLEMENTED — persistent grid/list toggle and regression source committed; execution pending |
 | SH-008 | P2 | Smart organization rules | Offer user-controlled rules and suggested tags. Keep basic tagging functional without AI; suggestions must be explainable, optional, and reviewable before applying. | SOURCE IMPLEMENTED — local rule manager, bounded preference storage and Quick Save review chips committed; regression tests unrun |
 | SH-009 | P2 | Link health and archive status | Provide an explicit user-triggered or configurable check, record last checked status and time, and explain that network failures may be temporary. No hidden background scraping. | SOURCE IMPLEMENTED — on-demand Android HTTP status check, bounded local result history, private-address blocking and honest browser limitations; tests unrun |
@@ -205,3 +205,15 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Reject collapsed and out-of-range selection offsets before creating a quote payload.
 - [x] Add TC-280–TC-282 source coverage.
 - [ ] Run TC-280–TC-282 and the full Reader regression suite at the owner-approved manual validation checkpoint; tests remain unexecuted.
+
+
+## SH-006 — conservative saved-quote re-anchoring — TC-283–TC-287 (2026-10-30)
+
+- [x] Find exact saved-quote occurrences in the newly fetched temporary article; never treat old offsets as current evidence.
+- [x] Rank repeated occurrences by contiguous suffix/prefix agreement with the saved before/after context.
+- [x] Return a suggestion only for a unique quote or a uniquely strongest contextual match with at least 12 exact context code units; tied/weak matches remain ambiguous.
+- [x] Reject quotes shorter than 8 characters, oversized article text and invalid/oversized context; expose at most 8 ranked candidates.
+- [x] Add Item Details' **Find in latest article** action and show a temporary highlighted suggestion in Reader.
+- [x] Require the user's explicit **Update saved position** action before persisting refreshed offsets/context; preserve annotation ID, quote, note and creation time.
+- [x] Add TC-283–TC-287 unit, widget and repository regression source.
+- [ ] Execute re-anchoring, full Reader, backup/export and platform tests at the owner-approved manual validation checkpoint. Matching is exact-text only; edited/translated/reformatted quotes may not be found and are never fuzzy-guessed.
