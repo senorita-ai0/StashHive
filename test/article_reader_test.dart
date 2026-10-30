@@ -235,6 +235,31 @@ void main() {
       expect(result.text, 'Price: €');
     });
 
+    test('ignores HTML meta charset declarations beyond the 1024-byte prescan', () async {
+      final prefix = List<int>.filled(1024, 0x20);
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/html',
+            body: <int>[
+              ...prefix,
+              ...utf8.encode(
+                '<meta charset="windows-1252"><article>Price: ',
+              ),
+              0x80,
+              ...utf8.encode('</article>'),
+            ],
+          );
+
+      final result = await loadArticleForReader(
+        'https://example.com/late-meta-charset',
+      );
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text, 'Price: \uFFFD');
+      expect(result.text, isNot(contains('€')));
+    });
+
     test('decodes Windows-1252 punctuation and the euro sign', () async {
       articleReaderTransportForTesting = (uri, addresses, timeout) async =>
           ArticleReaderTransportResponse(
