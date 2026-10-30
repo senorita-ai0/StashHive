@@ -65,6 +65,9 @@ AnnotationAnchorResult findSavedAnnotationAnchor({
       quote.length > maxSavedAnnotationQuoteCharacters ||
       annotation.contextBefore.length > maxSavedAnnotationContextCharacters ||
       annotation.contextAfter.length > maxSavedAnnotationContextCharacters ||
+      _containsUnpairedSurrogate(quote) ||
+      _containsUnpairedSurrogate(annotation.contextBefore) ||
+      _containsUnpairedSurrogate(annotation.contextAfter) ||
       articleText.length > maxArticleTextCharacters ||
       quote.length > articleText.length) {
     return const AnnotationAnchorResult(
@@ -165,4 +168,20 @@ int _matchingContextPrefix(String text, int quoteEnd, String context) {
     matched++;
   }
   return matched;
+}
+
+
+bool _containsUnpairedSurrogate(String value) {
+  for (var index = 0; index < value.length; index++) {
+    final unit = value.codeUnitAt(index);
+    if (unit >= 0xD800 && unit <= 0xDBFF) {
+      if (index + 1 >= value.length) return true;
+      final next = value.codeUnitAt(index + 1);
+      if (next < 0xDC00 || next > 0xDFFF) return true;
+      index++;
+    } else if (unit >= 0xDC00 && unit <= 0xDFFF) {
+      return true;
+    }
+  }
+  return false;
 }
