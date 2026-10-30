@@ -242,3 +242,12 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Reject a write if the currently stored quote, offsets or context differ from the snapshot opened in Reader; preserve the latest note by updating only location metadata.
 - [x] Add a same-quote/different-offset repository race regression (TC-290).
 - [ ] Run TC-283–TC-290 and the complete Reader/repository/export suites at the manual validation checkpoint.
+
+
+## SH-006 — native Reader interactive-widget filtering — TC-291/TC-292 (2026-10-30)
+
+- [x] Strip closed form, button, select, textarea and dialog blocks before semantic article extraction; retain article headings and paragraphs outside those controls.
+- [x] Strip malformed unclosed form/widget tails so their remaining text is not mistaken for article content.
+- [x] Add TC-291 and TC-292 sanitizer regression source.
+- [ ] Run TC-291–TC-292 and the full Reader suite at the owner-approved manual validation checkpoint.
+- [ ] Verify extraction quality and selection/scroll behavior on Android and web. This remains a bounded regex sanitizer, not a standards-complete HTML parser or full Readability engine.
