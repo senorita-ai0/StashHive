@@ -1301,3 +1301,13 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Charset-looking text in description/keyword content no longer overrides UTF-8 fallback, and it cannot shadow a real charset attribute on a later meta element.
 - Added TC-278 and TC-279 in \`test/article_reader_test.dart\`. Production source commit: \`7cf1c3553ae96c6c9509a0baee7b1cdd1811ce60\` (regex escaping correction: \`b6ff3fedc0161235a465bea23f01de734dfc636c\`); regression source commit: \`e1ef640422f78f3315ed20572eb40ea649ecda5c\`.
 - Source and test files were re-fetched after the edits. Tests, formatter, analyzer, builds and CI were not run. SH-006 remains partial; CI remains manual-only.
+
+
+## SH-006 — Unicode-safe Reader selection and context — TC-280–TC-282 (2026-10-30)
+
+- Added \`ArticleReaderSelection\` and \`captureArticleReaderSelection\` to centralize quote, UTF-16 offset and context extraction.
+- If a selection endpoint falls between the high/low surrogate of a supplementary Unicode character, the captured range expands outward so the quote contains the complete character and the stored offsets still equal its UTF-16 length.
+- The helper also moves bounded context edges outward when the 80-code-unit window would otherwise include only half of a character. Invalid, collapsed and out-of-range selections return no capture.
+- Updated \`ArticleReaderPage\` to use the same helper when displaying a selected quote and immediately before saving it, keeping UI and persisted data consistent.
+- Added TC-280–TC-282 source tests in \`test/article_reader_test.dart\`. Source commit: \`a79b83098c8443047ad12891bf712fb6e3588535\`; Reader UI integration commit: \`1e58492ac78088d34cf61c3d686d52098e08281b\`; regression source commit: \`ca09268a44a70cb4e8a2e7cd915755dc604eded5\`.
+- Test and source files were re-fetched. No formatter, analyzer, tests, builds or CI were run. SH-006 remains partial; CI remains manual-only.
