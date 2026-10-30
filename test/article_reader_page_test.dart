@@ -240,8 +240,16 @@ void main() {
           url: 'https://example.com/article',
           savedTitle: 'Saved title',
           annotationToLocate: annotation,
-          onUpdateAnnotationAnchor: (id, start, end, before, after) async {
+          onUpdateAnnotationAnchor: (
+            id,
+            expectedQuote,
+            start,
+            end,
+            before,
+            after,
+          ) async {
             updatedId = id;
+            expect(expectedQuote, annotation.quote);
             updatedStart = start;
             updatedEnd = end;
             updatedBefore = before;
@@ -295,7 +303,8 @@ void main() {
           url: 'https://example.com/article',
           savedTitle: 'Saved title',
           annotationToLocate: annotation,
-          onUpdateAnnotationAnchor: (id, start, end, before, after) async => true,
+          onUpdateAnnotationAnchor:
+              (id, expectedQuote, start, end, before, after) async => true,
         ),
       ),
     );
