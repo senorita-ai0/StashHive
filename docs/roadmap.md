@@ -1700,3 +1700,8 @@ Reader quote capture now normalizes selection and context-window edges so they c
 ## SH-006 — saved-quote re-anchoring — TC-283–TC-287 — 2026-10-30
 
 The Reader can now look for a previously saved quote in the current temporary page text. It ignores the old UTF-16 offset and searches exact quote occurrences; saved before/after context can distinguish repeated passages, but ties and weak matches remain unresolved. Item Details exposes **Find in latest article**; the Reader shows a temporary highlight and requires an explicit **Update saved position** action before storing the new offsets/context. Annotation ID, quote, note and creation timestamp are retained. The matcher rejects short/oversized input and returns a bounded candidate list. Regression source is committed but unrun. This is deliberately not fuzzy matching: punctuation, whitespace, translation or article rewrites can still prevent a match.
+
+
+### SH-006 — re-anchoring safety refinements — 2026-10-30
+
+Re-anchoring now rejects malformed UTF-16 in legacy saved quote/context fields, applies the minimum quote and source-size bounds, and exposes no more than eight ranked candidates. An additional repository/widget regression proves that merely opening the locate-quote preview does not change the saved annotation; only the explicit Update saved position action writes refreshed offsets/context. Regression source remains unrun at the manual checkpoint.
