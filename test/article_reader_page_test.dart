@@ -206,7 +206,7 @@ void main() {
   testWidgets('suggests and explicitly updates a unique saved quote location',
       (tester) async {
     const articleText =
-        'A revised opening. context before appears before saved quote. '
+        'A revised opening. context before appears before saved quote'
         '. and matching context follows the saved quote.';
     final annotation = SavedAnnotation(
       id: 'old-highlight',
