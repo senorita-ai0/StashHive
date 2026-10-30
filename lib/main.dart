@@ -4150,7 +4150,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
           onUpdateAnnotationAnchor: annotationToLocate == null
               ? null
               : (
-                  annotationToLocate,
+                  expectedAnnotation,
                   startOffset,
                   endOffset,
                   contextBefore,
@@ -4158,8 +4158,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                 ) =>
                     _updateReaderAnnotationAnchor(
                   item.id,
-                  annotationId,
-                  expectedQuote,
+                  expectedAnnotation,
                   startOffset,
                   endOffset,
                   contextBefore,
