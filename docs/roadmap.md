@@ -1710,3 +1710,8 @@ Re-anchoring now rejects malformed UTF-16 in legacy saved quote/context fields, 
 ### SH-006 — re-anchor review and stale-write protection — TC-288 — 2026-10-30
 
 The re-anchor card now displays the candidate quote with its surrounding context above the full article, in addition to highlighting the occurrence in the article text. The update callback carries the quote that was originally located; the persistence layer compares it with the current stored annotation and refuses to move a changed quote. TC-288 covers that stale-write conflict. Tests remain unrun, and the entire matching/re-anchor feature remains exact-text and owner-validation pending.
+
+
+### SH-006 — re-anchor recovery/export compatibility — TC-289 — 2026-10-30
+
+The successful explicit re-anchor repository scenario now checks that refreshed offsets/context survive versioned JSON backup decoding and that CSV/Markdown preserve the quote/note while excluding unrelated temporary page paragraphs. No production storage/export changes were needed; the increment closes a regression-coverage gap only. Execute TC-289 together with backup/export and Reader suites during manual validation.
