@@ -1812,3 +1812,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Leave tied, weak-context and missing quote results without a recommended position | \`findSavedAnnotationAnchor\`; \`ArticleReaderPage._anchorStatusCard\` | TC-285; ambiguous/missing service and Reader UI cases | Source and widget/unit regression committed; not run |
 | Update offset/context only after an explicit user action, preserving annotation identity, quote, note and creation time | \`ArticleReaderPage._updateSavedAnchor\`; \`ItemDetailsPage._updateReaderAnnotationAnchor\` in \`lib/main.dart\` | TC-286; Reader page and repository re-anchor widget tests | Source and integration regression committed; not run |
 | Reject unsupported quote/context/article sizes and bound returned candidates | \`findSavedAnnotationAnchor\` in \`lib/services/annotation_reanchoring.dart\` | TC-287; invalid/oversized/overlapping input cases | Source and unit regression committed; not run |
+
+
+### TC-286 verification detail — preview is non-mutating
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Opening a locate-quote Reader preview leaves the complete saved item map unchanged until the user confirms Update saved position | \`ItemDetailsPage._openArticleReader\`; repository remains unchanged unless \`_updateReaderAnnotationAnchor\` is called | \`locating a quote does not change saved annotation metadata before confirmation\` in \`test/article_reader_repository_test.dart\` | Test source committed; not run |
