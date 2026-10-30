@@ -1377,3 +1377,12 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added TC-293 for nested article containers, quoted attributes and sibling exclusion; TC-294 covers nested main and exclusion of content outside main.
 - Source changes were committed in `eb66ef464a7302a4bcb8e7103ad4ab55b98ca7e0`, `8f2410ced443ccda051c9daa13e672bba4f48e10`, `f402ed77abf80722c852ccc7d6d6e5b410ff35a8`, `451c203b94145293ac1763f1f9e831664e6ab7f9` and `e2b2ee746359da0e68c5bde5cbdc8830d3e275ea`; test source commit: `cb9def37345fe52fa9687796294440a165d0692c`.
 - Source and tests were re-fetched after the correction. No Flutter/Dart executable is available in the runtime, so formatting, analysis, unit/widget tests, builds and CI were not run. SH-006 remains partial; CI remains manual-only.
+
+
+### SH-006 — preserve Reader block-level layout — TSK-546 / TC-295 — 2026-10-30
+
+- Expanded the HTML-to-text separator rule from a small closing-tag subset to structural block boundaries for headings, paragraphs, address, article/main/section, blockquotes, description lists, fieldsets, figures/captions, ordered/unordered lists, preformatted blocks, tables/sections/rows/cells and horizontal rules. Inline formatting elements remain compact.
+- Structural opening and closing tags now contribute line separators, preserving paragraph/quote/list/table reading order and keeping table headers/cells distinct in plain-text Reader output.
+- Added TC-295 in `test/article_reader_test.dart` covering a heading, paragraphs, multi-paragraph quotation, figure caption, list items, table header/cells and a following paragraph.
+- Source commit: `4b2fa7af3b3c578387e0c2b3b782bc547f9fba44`; test commit: `ed291a2e06c15bd9c2103800b39ca8624970e523`.
+- A separate JavaScript sanity check of the fixture's separator/normalization logic preserved expected order and line boundaries; it is not a Dart/Flutter test result. Flutter/Dart remain unavailable, so formatter, analyzer, unit/widget tests, builds and CI were not run. SH-006 remains partial; CI remains manual-only.
