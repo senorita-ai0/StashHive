@@ -112,7 +112,7 @@ void main() {
       annotation: _annotation(quote: '  '),
     );
     final oversized = findSavedAnnotationAnchor(
-      articleText: 'a' * (maxArticleTextCharacters + 1),
+      articleText: List<String>.filled(maxArticleTextCharacters + 1, 'a').join(),
       annotation: _annotation(quote: 'a'),
     );
 
