@@ -222,39 +222,66 @@ String? _charsetFromHtmlMeta(List<int> bytes) {
   // Do not trust apparent charset declarations inside comments or embedded
   // script/style data. Strip those regions before scanning the bounded prefix.
   prefix = prefix
-      .replaceAll(RegExp(r'<!--[\s\S]*?-->'), ' ')
-      .replaceAll(RegExp(r'<!--[\s\S]*$'), ' ')
+      .replaceAll(RegExp(r'<!--[\\s\\S]*?-->'), ' ')
+      .replaceAll(RegExp(r'<!--[\\s\\S]*$'), ' ')
       .replaceAll(
         RegExp(
-          r'<(script|style|noscript)\b[^>]*>[\s\S]*?</\1\s*>',
+          r'<(script|style|noscript)\\b[^>]*>[\\s\\S]*?</\\1\\s*>',
           caseSensitive: false,
         ),
         ' ',
       )
       .replaceAll(
         RegExp(
-          r'<(script|style|noscript)\b[^>]*>[\s\S]*$',
+          r'<(script|style|noscript)\\b[^>]*>[\\s\\S]*$',
           caseSensitive: false,
         ),
         ' ',
       );
   final metaTags = RegExp(
-    r'<meta\b[^>]{0,1024}>',
+    r'<meta\\b[^>]{0,1024}>',
     caseSensitive: false,
   ).allMatches(prefix);
 
   for (final match in metaTags) {
     final tag = match[0]!;
-    // This catches both the direct charset attribute and the legacy
-    // http-equiv content attribute, while not matching data-charset.
-    final charset = RegExp(
-      r'(?:^|[\s;])charset\s*=\s*["\x27]?([^;\s"\x27/>]+)',
-      caseSensitive: false,
-    ).firstMatch(tag);
-    final value = charset?.group(1)?.trim();
-    if (value != null && value.isNotEmpty) return value;
+    final attributes = _parseMetaAttributes(tag.substring(5, tag.length - 1));
+
+    // A direct charset attribute is authoritative for this meta element.
+    // Do not search the whole tag text: unrelated content/name values can
+    // themselves contain the string "charset=..." without declaring one.
+    final directCharset = attributes['charset']?.trim();
+    if (directCharset != null && directCharset.isNotEmpty) {
+      return directCharset;
+    }
+
+    // The legacy form is valid only when this is actually a Content-Type
+    // pragma. A description or keyword containing charset= is not a hint.
+    if (attributes['http-equiv']?.trim().toLowerCase() == 'content-type') {
+      final content = attributes['content'] ?? '';
+      final legacyCharset = RegExp(
+        r'(?:^|;)\\s*charset\\s*=\\s*["\\x27]?([^;\\s"\\x27]+)',
+        caseSensitive: false,
+      ).firstMatch(content)?.group(1)?.trim();
+      if (legacyCharset != null && legacyCharset.isNotEmpty) {
+        return legacyCharset;
+      }
+    }
   }
   return null;
+}
+
+Map<String, String> _parseMetaAttributes(String source) {
+  final attributes = <String, String>{};
+  final matches = RegExp(
+    r'''([^\\s=/>]+)(?:\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+)))?''',
+  ).allMatches(source);
+  for (final match in matches) {
+    final name = match.group(1)!.toLowerCase();
+    final value = match.group(2) ?? match.group(3) ?? match.group(4) ?? '';
+    attributes.putIfAbsent(name, () => value);
+  }
+  return attributes;
 }
 Duration _remaining(DateTime deadline) {
   final remaining = deadline.difference(DateTime.now());
