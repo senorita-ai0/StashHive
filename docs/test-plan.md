@@ -2087,3 +2087,24 @@ The repository widget regression source now checks three export formats after sa
 - Inject an HTML response whose first meta element contains charset-like description text and whose following meta element has a real direct Windows-1252 charset attribute.
 - Verify the parser ignores the description text, continues scanning, and decodes article byte 0x80 as the euro sign.
 - **Status:** Regression source committed in \`test/article_reader_test.dart\`; not run. Execute TC-273–TC-279 and the complete Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-280 — Keep selected Reader quotes on Unicode character boundaries (2026-10-30)
+
+- Supply Reader text containing a supplementary Unicode character and selection endpoints that fall between its UTF-16 surrogate code units.
+- Verify the captured quote expands to the complete character and the persisted start/end offsets match the resulting quote length.
+- **Status:** Regression source committed in \`test/article_reader_test.dart\`; not run. Execute TC-280–TC-282 and the complete Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-281 — Keep Reader context windows on Unicode character boundaries (2026-10-30)
+
+- Place a supplementary Unicode character exactly where the 80-code-unit before/after context window would otherwise begin or end.
+- Verify the captured context includes the complete character and contains no isolated high/low surrogate.
+- **Status:** Regression source committed in \`test/article_reader_test.dart\`; not run. Execute TC-280–TC-282 and the complete Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-282 — Reject invalid Reader selection ranges (2026-10-30)
+
+- Attempt to capture a collapsed selection, a negative start offset, and an end offset beyond the available Reader text.
+- Verify each invalid range is rejected without creating a quote or annotation payload.
+- **Status:** Regression source committed in \`test/article_reader_test.dart\`; not run. Execute TC-280–TC-282 and the complete Reader suite at the owner-approved manual validation checkpoint.
