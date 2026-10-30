@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/screens/article_reader_page.dart';
 import 'package:stashhive/services/article_reader.dart';
 
@@ -201,4 +202,107 @@ void main() {
     expect(savedBefore!.length, lessThanOrEqualTo(200));
     expect(savedAfter!.length, lessThanOrEqualTo(200));
   });
+
+  testWidgets('suggests and explicitly updates a unique saved quote location',
+      (tester) async {
+    const articleText =
+        'A revised opening. context before appears before saved quote. '
+        '. and matching context follows the saved quote.';
+    final annotation = SavedAnnotation(
+      id: 'old-highlight',
+      quote: 'saved quote',
+      note: 'Keep my note',
+      sourceStartOffset: 700,
+      sourceEndOffset: 711,
+      contextBefore: 'context before appears before ',
+      contextAfter: '. and matching context follows the saved quote.',
+      createdAtMs: 1000,
+    );
+    articleReaderLoaderForTesting = (url, timeout) async =>
+        const ArticleReaderResult(
+          state: ArticleReaderState.success,
+          title: 'Updated article',
+          text: articleText,
+        );
+    addTearDown(() {
+      articleReaderLoaderForTesting = null;
+    });
+
+    String? updatedId;
+    int? updatedStart;
+    int? updatedEnd;
+    String? updatedBefore;
+    String? updatedAfter;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ArticleReaderPage(
+          url: 'https://example.com/article',
+          savedTitle: 'Saved title',
+          annotationToLocate: annotation,
+          onUpdateAnnotationAnchor: (id, start, end, before, after) async {
+            updatedId = id;
+            updatedStart = start;
+            updatedEnd = end;
+            updatedBefore = before;
+            updatedAfter = after;
+            return true;
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Saved quote found'), findsOneWidget);
+    expect(find.byKey(const ValueKey('update-annotation-anchor')), findsOneWidget);
+    expect(find.byKey(const ValueKey('article-reader-text')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('update-annotation-anchor')));
+    await tester.pumpAndSettle();
+
+    expect(updatedId, 'old-highlight');
+    expect(updatedStart, articleText.indexOf('saved quote'));
+    expect(updatedEnd! - updatedStart!, 'saved quote'.length);
+    expect(updatedBefore, endsWith('context before appears before '));
+    expect(updatedAfter, startsWith('. and matching context follows'));
+    expect(
+      find.text('Saved position now points to this article version.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('does not offer automatic re-anchoring for ambiguous quotes',
+      (tester) async {
+    articleReaderLoaderForTesting = (url, timeout) async =>
+        const ArticleReaderResult(
+          state: ArticleReaderState.success,
+          text: 'repeat passage appears here; repeat passage appears here',
+        );
+    addTearDown(() {
+      articleReaderLoaderForTesting = null;
+    });
+    final annotation = SavedAnnotation(
+      id: 'ambiguous-highlight',
+      quote: 'repeat passage',
+      sourceStartOffset: 10,
+      sourceEndOffset: 24,
+      createdAtMs: 1000,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ArticleReaderPage(
+          url: 'https://example.com/article',
+          savedTitle: 'Saved title',
+          annotationToLocate: annotation,
+          onUpdateAnnotationAnchor: (id, start, end, before, after) async => true,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Saved quote has multiple matches'), findsOneWidget);
+    expect(find.byKey(const ValueKey('update-annotation-anchor')), findsNothing);
+  });
+
 }
