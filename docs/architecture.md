@@ -248,3 +248,8 @@ The native Reader's plain-text sanitizer removes complete `form`, `button`, `sel
 ### Balanced nested Reader semantic containers — 2026-10-30
 
 Native Reader extraction now uses a small tag-token scan for semantic `article` and `main` containers. It consumes quoted attribute values within the current tag token, tracks depth for nested elements with the same name and returns only at the matching outer close. This avoids the previous non-greedy regex behavior that stopped at an inner close and lost subsequent outer paragraphs. Incomplete containers are not accepted as extraction boundaries. TC-293/TC-294 cover nested article/main, tag-like quoted attribute text and sibling/outside-content exclusion. This bounded scanner improves a known case but remains short of a standards-complete HTML5 parser or Readability implementation.
+
+
+### Reader block-layout normalization — 2026-10-30
+
+After semantic extraction and widget removal, the native Reader converts structural opening and closing tags to line separators before stripping remaining inline markup. This includes headings, paragraphs, blockquotes, figures/captions, list and description-list structures, tables/sections/rows/cells, and horizontal rules. Inline formatting such as emphasis remains in the same text run. The goal is to avoid paragraph, quote, list and table text running together while continuing to show only sanitized plain text. TC-295 provides source regression coverage; rendered typography, selectable offsets and accessibility still require Android/web validation.
