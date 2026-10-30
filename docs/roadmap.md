@@ -1675,3 +1675,8 @@ Native Reader parsing now falls back to an early HTML meta charset only when the
 ## SH-006 — fake meta charset filtering — TC-275 — 2026-10-29
 
 The bounded HTML charset prescan now excludes comment and script/style/noscript regions before recognizing a charset declaration. TC-275 covers fake meta tags in a comment and a script string. The source and regression are committed, but the test has not run; full charset compliance and platform validation remain pending.
+
+
+## SH-006 — HTTP charset precedence regression — TC-276 — 2026-10-30
+
+Added a regression that gives the response header and HTML meta tag conflicting encodings and confirms the explicit HTTP charset wins. This locks down the existing header-first behavior without changing runtime code. The test is authored only; run it with TC-273–TC-275 and the full Reader suite at the owner-approved manual validation checkpoint.
