@@ -4074,8 +4074,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
 
   Future<bool> _updateReaderAnnotationAnchor(
     String itemId,
-    String annotationId,
-    String expectedQuote,
+    SavedAnnotation expectedAnnotation,
     int startOffset,
     int endOffset,
     String contextBefore,
@@ -4084,12 +4083,16 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     final current = widget.repository.findById(itemId);
     if (current == null) return false;
     final index = current.annotations.indexWhere(
-      (annotation) => annotation.id == annotationId,
+      (annotation) => annotation.id == expectedAnnotation.id,
     );
     if (index < 0) return false;
 
     final previous = current.annotations[index];
-    if (previous.quote != expectedQuote ||
+    if (previous.quote != expectedAnnotation.quote ||
+        previous.sourceStartOffset != expectedAnnotation.sourceStartOffset ||
+        previous.sourceEndOffset != expectedAnnotation.sourceEndOffset ||
+        previous.contextBefore != expectedAnnotation.contextBefore ||
+        previous.contextAfter != expectedAnnotation.contextAfter ||
         startOffset < 0 ||
         endOffset < startOffset ||
         endOffset - startOffset != previous.quote.length ||
@@ -4147,8 +4150,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
           onUpdateAnnotationAnchor: annotationToLocate == null
               ? null
               : (
-                  annotationId,
-                  expectedQuote,
+                  annotationToLocate,
                   startOffset,
                   endOffset,
                   contextBefore,
