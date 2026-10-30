@@ -1833,3 +1833,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Re-anchored offsets/context survive the versioned JSON backup round trip, while saved annotation quote/note are included in CSV/Markdown and the fetched page body remains transient | \`SavedAnnotation.toMap/fromMap\`; \`BackupCodec\`; \`buildLibraryCsv\`; \`buildSelectedItemsMarkdown\`; temporary Reader state remains separate from \`SavedItem.content\` | TC-289; \`explicitly re-anchors a saved quote without changing its text or note\` in \`test/article_reader_repository_test.dart\` | Source regression committed; not run |
+
+
+### SH-006 stale anchor snapshot protection — TC-290 — 2026-10-30
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Reject a re-anchor update if the same annotation ID and quote now carry different saved offsets/context from the snapshot opened in Reader | \`ItemDetailsPage._updateReaderAnnotationAnchor\` compares the current record with the complete expected \`SavedAnnotation\` quote/offset/context snapshot | TC-290; \`does not apply a stale re-anchor after the saved position changes\` in \`test/article_reader_repository_test.dart\` | Source and repository regression committed; not run |
