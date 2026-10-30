@@ -730,4 +730,46 @@ void main() {
     expect(openComment, contains('Visible paragraph.'));
     expect(openComment, isNot(contains('private hidden tail')));
   });
+
+  test('removes closed forms and interactive widgets but preserves article text', () {
+    final text = sanitizeArticleMarkup(
+      '<form><label>Newsletter address</label>'
+      '<button>Subscribe to updates</button></form>'
+      '<article><h1>Actual article headline</h1>'
+      '<p>The useful story remains readable.</p>'
+      '<form><label>Comment form secret</label></form>'
+      '<select><option>Hidden category option</option></select>'
+      '<textarea>Unsubmitted comment draft</textarea>'
+      '<button>Share this story</button>'
+      '<dialog>Sign in to continue</dialog>'
+      '<p>Final article paragraph.</p></article>',
+    );
+
+    expect(text, contains('Actual article headline'));
+    expect(text, contains('The useful story remains readable.'));
+    expect(text, contains('Final article paragraph.'));
+    expect(text, isNot(contains('Newsletter address')));
+    expect(text, isNot(contains('Subscribe to updates')));
+    expect(text, isNot(contains('Comment form secret')));
+    expect(text, isNot(contains('Hidden category option')));
+    expect(text, isNot(contains('Unsubmitted comment draft')));
+    expect(text, isNot(contains('Share this story')));
+    expect(text, isNot(contains('Sign in to continue')));
+  });
+
+  test('does not leak the tail of an unclosed form or interactive widget', () {
+    final unclosedForm = sanitizeArticleMarkup(
+      '<article><p>Readable before the broken form.</p>'
+      '<form><label>Private form tail',
+    );
+    final unclosedButton = sanitizeArticleMarkup(
+      '<article><p>Readable before the broken widget.</p>'
+      '<button>Private widget tail',
+    );
+
+    expect(unclosedForm, contains('Readable before the broken form.'));
+    expect(unclosedForm, isNot(contains('Private form tail')));
+    expect(unclosedButton, contains('Readable before the broken widget.'));
+    expect(unclosedButton, isNot(contains('Private widget tail')));
+  });
 }
