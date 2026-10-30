@@ -103,3 +103,8 @@ Normal file selection, save, item/collection deletion and backup operation error
 - A timeout, access restriction, server error or redirect is not treated as proof of permanent link failure. This feature does not run in the background.
 
 **Remaining verification before this review can close:** inspect the generated merged Android manifest and resolved dependency permissions; capture browser/Android network behavior; perform real-device file/share, TalkBack and browser screen-reader checks; rerun the source/tests and manual platform builds at the owner's checkpoint. The review remains open until those checks have evidence.
+
+
+## Temporary Reader markup sanitization — source implemented, verification pending
+
+The native temporary Reader converts response markup to plain text before display. Its lightweight sanitizer removes active/embedded content and now also removes form, button, select, textarea and dialog blocks, including the remaining tail of a malformed unclosed widget. This reduces accidental display of newsletter/login/comment controls and their embedded text. It is not a standards-complete HTML parser, a security audit, or proof of complete readability extraction. The app must continue to display only sanitized plain text, never render the fetched HTML. TC-291/TC-292 are authored regressions; execution and Android/web behavior remain pending.
