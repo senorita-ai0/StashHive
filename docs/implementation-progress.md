@@ -1293,3 +1293,11 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 
 - Added a synthetic HTML response with 1,024 leading bytes before a Windows-1252 meta tag and a subsequent 0x80 article byte. The expected replacement character proves that declarations outside the bounded prescan do not influence decoding.
 - This protects the existing 1,024-byte limit; no production source behavior changed. Regression source commit: `95b0c68fbed0decc824d812e369ced76798016ba`. Test not run; no formatter, analyzer, tests, builds or CI were run. SH-006 remains partial and CI manual-only.
+
+
+## SH-006 — parse actual HTML meta charset attributes — TC-278/TC-279 (2026-10-30)
+
+- Replaced whole-tag substring matching with bounded meta-attribute parsing. The native reader now accepts the direct \`charset\` attribute or a legacy \`http-equiv=Content-Type\` pragma whose \`content\` attribute contains a charset.
+- Charset-looking text in description/keyword content no longer overrides UTF-8 fallback, and it cannot shadow a real charset attribute on a later meta element.
+- Added TC-278 and TC-279 in \`test/article_reader_test.dart\`. Production source commit: \`7cf1c3553ae96c6c9509a0baee7b1cdd1811ce60\` (regex escaping correction: \`b6ff3fedc0161235a465bea23f01de734dfc636c\`); regression source commit: \`e1ef640422f78f3315ed20572eb40ea649ecda5c\`.
+- Source and test files were re-fetched after the edits. Tests, formatter, analyzer, builds and CI were not run. SH-006 remains partial; CI remains manual-only.
