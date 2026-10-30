@@ -213,3 +213,8 @@ Before extracting a charset from the bounded HTML prefix, native parsing strips 
 ### Reader annotation Unicode boundaries — 2026-10-30
 
 Reader selections and offsets use Dart/Flutter UTF-16 code-unit indexing. The shared \`captureArticleReaderSelection\` helper expands endpoints outward if they fall inside a surrogate pair and applies the same protection to the bounded surrounding context, so a saved excerpt never contains half of a supplementary character. The saved offsets continue to describe the normalized quote range. TC-280–TC-282 provide source regression coverage; execution and platform selection behavior remain unverified.
+
+
+### Reader annotation re-anchoring — 2026-10-30
+
+A saved annotation's old UTF-16 offsets are metadata for the extraction from which it was originally captured, not proof of its position in a later page version. \`findSavedAnnotationAnchor\` therefore ignores those offsets and searches the current temporary text for exact quote occurrences. It proposes a unique occurrence directly, or a repeated occurrence only when the stored before/after context yields a uniquely stronger contiguous match of at least 12 code units. Quotes shorter than 8 characters and oversized inputs are rejected; candidate output is capped at eight. Ambiguous/not-found results do not offer an update. Reader highlights a safe candidate for review, and only the explicit Update saved position action persists new offsets/context while retaining annotation identity, quote, note and creation time. Matching is exact-text only; there is no fuzzy matching and no fetched page body is stored.
