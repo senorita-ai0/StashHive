@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/saved_item.dart';
+import '../services/annotation_reanchoring.dart';
 import '../services/article_reader.dart';
 import '../services/web_url.dart';
 
@@ -14,17 +15,29 @@ typedef SaveArticleReaderSelection = Future<bool> Function(
   String contextAfter,
 );
 
+typedef UpdateArticleReaderAnchor = Future<bool> Function(
+  String annotationId,
+  int startOffset,
+  int endOffset,
+  String contextBefore,
+  String contextAfter,
+);
+
 class ArticleReaderPage extends StatefulWidget {
   const ArticleReaderPage({
     required this.url,
     required this.savedTitle,
     this.onSaveQuote,
+    this.annotationToLocate,
+    this.onUpdateAnnotationAnchor,
     super.key,
   });
 
   final String url;
   final String savedTitle;
   final SaveArticleReaderSelection? onSaveQuote;
+  final SavedAnnotation? annotationToLocate;
+  final UpdateArticleReaderAnchor? onUpdateAnnotationAnchor;
 
   @override
   State<ArticleReaderPage> createState() => _ArticleReaderPageState();
@@ -36,6 +49,8 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
   int? _selectionStart;
   int? _selectionEnd;
   bool _savingQuote = false;
+  bool _updatingAnchor = false;
+  bool _anchorUpdated = false;
 
   @override
   void initState() {
@@ -127,6 +142,172 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
     } finally {
       if (mounted) setState(() => _savingQuote = false);
     }
+  }
+
+  Future<void> _updateSavedAnchor(
+    String text,
+    AnnotationAnchorCandidate candidate,
+  ) async {
+    final annotation = widget.annotationToLocate;
+    final update = widget.onUpdateAnnotationAnchor;
+    if (annotation == null || update == null || _updatingAnchor || _anchorUpdated) {
+      return;
+    }
+    final selection = captureArticleReaderSelection(
+      text,
+      candidate.startOffset,
+      candidate.endOffset,
+    );
+    if (selection == null || selection.quote != annotation.quote) return;
+
+    setState(() => _updatingAnchor = true);
+    try {
+      final saved = await update(
+        annotation.id,
+        selection.startOffset,
+        selection.endOffset,
+        selection.contextBefore,
+        selection.contextAfter,
+      );
+      if (!mounted) return;
+      if (saved) {
+        setState(() => _anchorUpdated = true);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Saved highlight position updated. Its quote and note were kept unchanged.',
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not update this highlight position. Please retry.'),
+          ),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not update this highlight position. Please retry.'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _updatingAnchor = false);
+    }
+  }
+
+  Widget _anchorStatusCard(
+    BuildContext context,
+    AnnotationAnchorResult result,
+    String text,
+  ) {
+    final recommended = result.recommended;
+    final (title, message, icon) = switch (result.status) {
+      AnnotationAnchorStatus.uniqueQuote => (
+          'Saved quote found',
+          'This exact quote appears once in the current article. Review the highlighted passage before updating its saved position.',
+          Icons.check_circle_outline_rounded,
+        ),
+      AnnotationAnchorStatus.contextualMatch => (
+          'Saved quote matched by context',
+          'The quote appears \${result.totalMatches} times. Its surrounding text identifies one strongest match. Review the highlighted passage before updating its saved position.',
+          Icons.manage_search_rounded,
+        ),
+      AnnotationAnchorStatus.ambiguous => (
+          'Saved quote has multiple matches',
+          '\${result.totalMatches} exact copies were found, but the saved context does not safely distinguish one. Nothing has been highlighted or moved.',
+          Icons.help_outline_rounded,
+        ),
+      AnnotationAnchorStatus.notFound => (
+          'Saved quote not found',
+          'This exact quote was not found in the current article. The page may have changed; the saved annotation remains untouched.',
+          Icons.search_off_rounded,
+        ),
+      AnnotationAnchorStatus.invalidInput => (
+          'Saved quote cannot be located',
+          'This annotation does not contain a supported quote for matching.',
+          Icons.info_outline_rounded,
+        ),
+    };
+
+    return Card(
+      key: const ValueKey('annotation-anchor-status'),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: Theme.of(context).colorScheme.primary),
+                const SizedBox(width: 9),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(message),
+            if (recommended != null && !_anchorUpdated) ...[
+              const SizedBox(height: 10),
+              OutlinedButton.icon(
+                key: const ValueKey('update-annotation-anchor'),
+                onPressed: _updatingAnchor
+                    ? null
+                    : () => _updateSavedAnchor(text, recommended),
+                icon: _updatingAnchor
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.bookmark_add_outlined),
+                label: Text(
+                  _updatingAnchor ? 'Updating position…' : 'Update saved position',
+                ),
+              ),
+            ],
+            if (_anchorUpdated) ...[
+              const SizedBox(height: 8),
+              const Text('Saved position now points to this article version.'),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  TextSpan _articleTextSpan(
+    BuildContext context,
+    String text,
+    AnnotationAnchorCandidate? candidate,
+  ) {
+    final style = Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.8);
+    if (candidate == null) return TextSpan(text: text, style: style);
+    final highlightStyle = style?.copyWith(
+      backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+      color: Theme.of(context).colorScheme.onTertiaryContainer,
+      fontWeight: FontWeight.w800,
+    );
+    return TextSpan(
+      style: style,
+      children: [
+        TextSpan(text: text.substring(0, candidate.startOffset)),
+        TextSpan(
+          text: text.substring(candidate.startOffset, candidate.endOffset),
+          style: highlightStyle,
+        ),
+        TextSpan(text: text.substring(candidate.endOffset)),
+      ],
+    );
   }
 
   Future<void> _openExternal() async {
@@ -235,6 +416,13 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
                   );
                 }
 
+                final anchorResult = widget.annotationToLocate == null
+                    ? null
+                    : findSavedAnnotationAnchor(
+                        articleText: result.text,
+                        annotation: widget.annotationToLocate!,
+                      );
+                final anchorCandidate = anchorResult?.recommended;
                 return ListView(
                   padding: const EdgeInsets.fromLTRB(22, 20, 22, 36),
                   children: [
@@ -274,8 +462,12 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.primary),
                     ),
                     const SizedBox(height: 22),
-                    SelectableText(
-                      result.text,
+                    if (anchorResult != null) ...[
+                      _anchorStatusCard(context, anchorResult, result.text),
+                      const SizedBox(height: 14),
+                    ],
+                    SelectableText.rich(
+                      _articleTextSpan(context, result.text, anchorCandidate),
                       key: const ValueKey('article-reader-text'),
                       onSelectionChanged: (selection, _) =>
                           _onTextSelectionChanged(result.text, selection),
