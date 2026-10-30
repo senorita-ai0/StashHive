@@ -1339,3 +1339,9 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added TC-288 repository regression for the stale quote conflict and strengthened the Reader widget test to assert the preview is visible.
 - Source commits: \`ab10ddf879e1a75b7af43b4896217160307a0e8b\`, \`781775d054f1567cf3064cd1a691077a4cf25659\`, \`55c088a492ccfdb6c2de481cc47de18f48c2b185\`, \`32ea7165539ff89c228b3710a6cbf8c8ea7fb595\`. Regression commits: \`d4dcab946a402de5966b6b48d1c42e91f60ed1c3\`, \`c43f16f16403577c7a7d4d7fcefc6c33441513e2\`, \`00cebe08f89c74e7b0b87f29d1247a4f8c72fbcb\`.
 - Source and tests were re-fetched. No formatter, analyzer, unit/widget tests, builds or CI were run.
+
+
+### SH-006 — overlap fixture alignment and local tool availability — 2026-10-30
+
+- Corrected the overlapping-occurrence matcher fixture to use an eight-code-unit quote, matching the deliberate minimum-quote rule. The test now expects two overlapping occurrences in a nine-code-unit article string and still covers the eight-result candidate cap with a separate repeated-quote fixture.
+- Checked the current working environment: neither \`flutter\` nor \`dart\` is installed. Therefore Flutter tests, Dart formatting and analysis could not be run in this session. No CI workflow or build was triggered; CI remains manual-only.
