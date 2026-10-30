@@ -1685,3 +1685,8 @@ Added a regression that gives the response header and HTML meta tag conflicting 
 ## SH-006 — bounded charset prescan limit regression — TC-277 — 2026-10-30
 
 Added coverage that a charset declaration beyond the first 1,024 response bytes is ignored. The synthetic response uses a legacy-encoded byte after the out-of-window declaration and expects UTF-8 fallback behavior. This protects the existing resource bound without changing runtime code. Test source only; include it in the owner-approved Reader validation checkpoint.
+
+
+## SH-006 — meta charset attribute parsing — TC-278/TC-279 — 2026-10-30
+
+The bounded native HTML charset prescan now parses meta attributes instead of matching charset-like text anywhere inside a tag. It recognizes a direct charset attribute and the legacy Content-Type pragma only when its \`http-equiv\` attribute is correct. TC-278 protects against descriptions/keywords that merely mention charset syntax; TC-279 confirms the parser continues to a real declaration after unrelated metadata. Both regressions are source-only and remain unrun; execute them with the complete Reader suite at the owner-approved manual validation checkpoint.
