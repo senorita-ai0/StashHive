@@ -1359,3 +1359,12 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Strengthened the update callback to carry the complete immutable \`SavedAnnotation\` snapshot that was opened in Reader. Persistence now compares current ID lookup, quote, old start/end offsets and old context-before/after before writing new location metadata.
 - This catches both changed-quote races (TC-288) and same-quote races where a second session already refreshed the saved offsets/context. The current stored note and creation timestamp are retained.
 - Updated Reader page callback tests and changed the stale-position repository regression to keep the quote/ID the same but advance offsets/context before attempting the stale update. This is TC-290; source has been committed but not run.
+
+
+### SH-006 — native Reader interactive-widget filtering — TC-291/TC-292 — 2026-10-30
+
+- Extended `sanitizeArticleMarkup` to remove closed `form`, `button`, `select`, `textarea` and `dialog` blocks before semantic article/main selection and during the post-selection cleanup. This reduces newsletter, login, comment and share-widget text appearing alongside the article.
+- The same bounded pattern removes the remaining tail of an unclosed form or widget. Article headings and paragraphs remain eligible; page header handling and network policy were not changed.
+- Added TC-291 for closed controls and preserved article text, and TC-292 for malformed unclosed form/button tails in `test/article_reader_test.dart`.
+- Source commit: `929a7861e58b512d6cc7de5c4b2616859126de86`; test commit: `22a03935ba6811fd04eae823c8714aace6f7a4ff`.
+- No Flutter/Dart executable is available in the current runtime. Formatter, analyzer, unit/widget tests, builds and CI were not run; CI remains manual-only and SH-006 remains partial.
