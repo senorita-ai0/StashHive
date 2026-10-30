@@ -1729,3 +1729,12 @@ The re-anchor write now compares the complete original annotation anchor snapsho
 - **Behavior:** Closed form/button/select/textarea/dialog blocks and malformed unclosed widget tails are removed before plain-text article presentation. Meaningful article headings/paragraphs remain eligible. No HTML is executed or rendered.
 - **Tests:** TC-291 and TC-292 in `test/article_reader_test.dart`.
 - **Status:** Source and regression source committed; tests, formatter, analyzer, Android/web builds and platform extraction review remain pending. This remains a lightweight regex sanitizer, not a full readability parser.
+
+
+### TSK-545 — Balance nested Reader article/main containers (SH-006) — 2026-10-30
+
+- **Implementation:** `lib/services/article_reader.dart`, `_extractFirstBalancedElementContents`.
+- **Requirements:** FR-024, NFR-005, NFR-006.
+- **Behavior:** Article/main extraction now counts nested same-name semantic elements and completes only at the matching outer close. Quoted attribute values are consumed as part of their tag token. An unclosed candidate does not become a trusted boundary.
+- **Tests:** TC-293–TC-294 in `test/article_reader_test.dart`.
+- **Status:** Source and regression source committed; tests, formatting, analysis, Android/web builds and real-page extraction checks remain pending. This is not a full HTML5 parser/readability engine.
