@@ -1792,3 +1792,12 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 |---|---|---|---|
 | Ignore charset-like text inside unrelated meta name/content attributes | \`_charsetFromHtmlMeta\` and \`_parseMetaAttributes\` in \`lib/services/article_reader_io.dart\` | TC-278; \`ignores charset-like text in unrelated meta attributes\` in \`test/article_reader_test.dart\` | Parser source and regression committed; not executed; native/web validation pending |
 | Continue to a real direct charset attribute after unrelated metadata | \`_charsetFromHtmlMeta\` and \`_parseMetaAttributes\` in \`lib/services/article_reader_io.dart\` | TC-279; \`continues scanning after unrelated meta content to find a real charset\` in \`test/article_reader_test.dart\` | Parser source and regression committed; not executed; native/web validation pending |
+
+
+## SH-006 Unicode-safe Reader selection capture — TC-280–TC-282 — 2026-10-30
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Expand selection endpoints that fall between UTF-16 surrogate code units so saved quote and offsets include a complete Unicode character | \`captureArticleReaderSelection\` in \`lib/services/article_reader.dart\`; used by \`lib/screens/article_reader_page.dart\` | TC-280; \`expands selection edges that split a supplementary Unicode character\` in \`test/article_reader_test.dart\` | Source and regression committed; not executed; Reader/platform verification pending |
+| Keep bounded before/after context excerpts on Unicode character boundaries | \`captureArticleReaderSelection\` in \`lib/services/article_reader.dart\` | TC-281; \`keeps context window edges outside supplementary Unicode characters\` in \`test/article_reader_test.dart\` | Source and regression committed; not executed; Reader/platform verification pending |
+| Reject collapsed and out-of-range selection offsets before producing an annotation payload | \`captureArticleReaderSelection\` in \`lib/services/article_reader.dart\` | TC-282; \`rejects collapsed or out-of-range Reader selections\` in \`test/article_reader_test.dart\` | Source and regression committed; not executed; Reader/platform verification pending |
