@@ -189,8 +189,8 @@ bool _isPrivateIpv4Literal(String host) {
 
 /// Finds the first complete semantic container without mistaking a nested
 /// same-name element's closing tag for the end of its parent. The generic tag
-/// scan consumes quoted attributes as one token, so text such as
-/// data-template="<article>" cannot affect the nesting depth.
+/// scan consumes quoted attributes as one token, so markup-looking strings in
+/// attributes cannot affect the nesting depth.
 String? _extractFirstBalancedElementContents(String source, String tagName) {
   final tagTokens = RegExp(
     r'''<(?:[^>"']|"[^"]*"|'[^']*')*>''',
@@ -203,7 +203,6 @@ String? _extractFirstBalancedElementContents(String source, String tagName) {
     '^<\\s*/\\s*$tagName\\b',
     caseSensitive: false,
   );
-  final selfClosing = RegExp(r'/\s*>;
 
   var depth = 0;
   var contentStart = -1;
@@ -218,7 +217,7 @@ String? _extractFirstBalancedElementContents(String source, String tagName) {
       continue;
     }
 
-    if (targetOpening.hasMatch(token) && !selfClosing.hasMatch(token)) {
+    if (targetOpening.hasMatch(token) && !token.endsWith('/>')) {
       if (depth == 0) contentStart = match.end;
       depth++;
     }
