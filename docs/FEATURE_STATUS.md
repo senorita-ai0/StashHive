@@ -3,7 +3,7 @@
 **Last audited:** 2026-10-30  
 **Repository:** [senorita-ai0/StashHive](https://github.com/senorita-ai0/StashHive)  
 **Default branch:** `main`  
-**Audit baseline commit:** `608d07997c0283a755c2ddc130aa21f7956971a6`  
+**Audit baseline commit:** `fb93004a0a9d6b81c25b176b1093a6a93e5005f1`  
 **Purpose:** This is the short, durable status page for the owner and any future ChatGPT session. Read it before resuming development and update it after every meaningful implementation, test, build, or scope change.
 
 > **Important status distinction:** “Source implemented” means code and/or test source has been committed. It does **not** mean tests pass or the feature is ready. Mark a feature fully done only when its required automated and platform checks have evidence recorded.
@@ -39,7 +39,7 @@
 | SH-003 | Bulk library actions | **Source implemented** — select items; favorite, move collection, add/remove tags, confirmed delete, selected-only Markdown export. | **Pending** | Run TC-251, TC-252, TC-260 and widget regressions; verify cancellation, selection boundaries, and partial-failure feedback. |
 | SH-004 | Import and portable exports | **Source implemented** — preview-first browser bookmark HTML import, duplicate review, CSV export and selected Markdown export; existing versioned JSON backup remains. | **Pending** | Run TC-253, TC-254, TC-260–TC-261; test malformed/large imports, duplicate entries, folder assignment, cancellation, and export file behavior. |
 | SH-005 | Local PDF/OCR full-text extraction | **Blocked / feasibility only** — an isolated digital-PDF selectable-text probe exists; no production OCR dependency has been added to the app. | **Not run** | Run the isolated probe and record runtime/accuracy, offline behavior, memory, package-size delta, and language limitations. Scanned-PDF/image OCR (including Urdu/Nastaleeq) remains unproven; do not promote to production until evidence and owner approval. |
-| SH-006 | Reader, highlights and annotations | **Partial source implemented** — explicit temporary Reader, bounded sanitized native fetch, selectable quotes, Unicode-safe selection/context, local annotations, and conservative exact-quote/context re-anchoring with a visible context preview, explicit position update, and stale-quote conflict guard. | **Pending** | Execute TC-273–TC-288 and full Reader/repository/export suites; validate native URL/fetch security, Android/web selection and scrolling, backup/export compatibility, persistence and accessibility. Matching is exact-text only; short, malformed, rewritten or translated quotes may not be locatable, and ambiguous matches are never guessed. Extraction remains a lightweight sanitizer, not a full readability engine. |
+| SH-006 | Reader, highlights and annotations | **Partial source implemented** — explicit temporary Reader, bounded sanitized native fetch, selectable quotes, Unicode-safe capture, local annotations, and conservative exact-quote/context re-anchoring with context preview, explicit confirmation and optimistic concurrency checks against the original annotation snapshot. | **Pending** | Execute TC-273–TC-290 and complete Reader/repository/backup/export suites; verify native URL/fetch security, Android/web selection/scrolling, browser fallback, persistence and accessibility. Exact-text matching cannot reliably locate rewritten/translated passages; ambiguous cases are not guessed. Extraction remains a lightweight sanitizer, not a full readability engine. |
 | SH-007 | Visual library improvements | **Source implemented** — persistent Library grid/list toggle. | **Pending** | Run TC-255 and responsive/accessibility checks; masonry and further image/document preview improvements remain optional refinements. |
 | SH-008 | Smart organization rules | **Source implemented** — local rule manager, bounded preference storage, suggested tags shown as reviewable Quick Save chips. | **Pending** | Run TC-258 and confirm suggestions are optional, explainable, removable, and do not silently change saved items. |
 | SH-009 | Link health and archive status | **Source implemented** — on-demand Android HTTP status check, bounded local check history, private-address blocking, and honest browser limitations. | **Pending** | Run TC-259; verify timeouts, redirects, local/private targets, network errors, Android behavior and browser copy. This does not create an offline page archive. |
@@ -276,3 +276,11 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 ### SH-006 local validation environment note — 2026-10-30
 
 The current working runtime has no \`flutter\` or \`dart\` executable, so Dart/Flutter tests, formatting and analyzer checks could not be executed in this session. The new regression sources are committed but unverified; no GitHub Actions workflow/build was triggered. The owner's manual validation checkpoint remains necessary.
+
+
+### SH-006 backup/export regression and full anchor snapshot guard — 2026-10-30
+
+- Extended the successful re-anchor repository regression to round-trip the updated annotation through versioned JSON backup and assert that CSV/Markdown retain the saved quote/note without including unrelated temporary page paragraphs (TC-289).
+- Strengthened re-anchor persistence to compare the original immutable annotation snapshot (quote, old offsets and old before/after context) with the current record before writing. A concurrent update to the same quote's location is now rejected even when its ID and quote have not changed (TC-290).
+- Updated architecture, backlog, implementation progress, roadmap, test plan and traceability. Updated Reader callback regressions and the repository stale-position test. Source/tests/docs were re-fetched from \`main\`.
+- No Flutter/Dart executable is available in the current runtime. Formatter, analyzer, unit/widget tests, builds and CI were not run. SH-006 remains partial and verification pending; CI remains manual-only.
