@@ -340,7 +340,7 @@ void main() {
   });
 
 
-  testWidgets('does not apply a stale re-anchor after the saved quote changes',
+  testWidgets('does not apply a stale re-anchor after the saved position changes',
       (tester) async {
     tester.view.physicalSize = const Size(1280, 1600);
     tester.view.devicePixelRatio = 1;
@@ -383,13 +383,16 @@ void main() {
     await tester.tap(locateButton);
     await tester.pumpAndSettle();
 
-    // Simulate another edit replacing the quote while the Reader route is open.
+    // Simulate another session updating the same quote's location while
+    // this Reader route is open. The old preview must not overwrite it.
     final replacement = SavedAnnotation(
       id: originalAnnotation.id,
-      quote: 'new quote!!!',
+      quote: originalAnnotation.quote,
       note: 'Newer note',
-      sourceStartOffset: 800,
-      sourceEndOffset: 812,
+      sourceStartOffset: 900,
+      sourceEndOffset: 912,
+      contextBefore: 'More recent surrounding text before the quote.',
+      contextAfter: 'More recent surrounding text after the quote.',
       createdAtMs: originalAnnotation.createdAtMs,
     );
     await _repository.save(
@@ -404,10 +407,12 @@ void main() {
       findsOneWidget,
     );
     final current = _repository.findById(saved.id)!.annotations.single;
-    expect(current.quote, 'new quote!!!');
+    expect(current.quote, originalAnnotation.quote);
     expect(current.note, 'Newer note');
-    expect(current.sourceStartOffset, 800);
-    expect(current.sourceEndOffset, 812);
+    expect(current.sourceStartOffset, 900);
+    expect(current.sourceEndOffset, 912);
+    expect(current.contextBefore, replacement.contextBefore);
+    expect(current.contextAfter, replacement.contextAfter);
   });
 
 }
