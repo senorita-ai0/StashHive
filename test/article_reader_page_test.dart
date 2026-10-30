@@ -262,6 +262,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Saved quote found'), findsOneWidget);
+    expect(find.byKey(const ValueKey('annotation-anchor-preview')), findsOneWidget);
     expect(find.byKey(const ValueKey('update-annotation-anchor')), findsOneWidget);
     expect(find.byKey(const ValueKey('article-reader-text')), findsOneWidget);
 
