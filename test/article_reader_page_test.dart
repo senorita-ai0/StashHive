@@ -241,15 +241,14 @@ void main() {
           savedTitle: 'Saved title',
           annotationToLocate: annotation,
           onUpdateAnnotationAnchor: (
-            id,
-            expectedQuote,
+            expectedAnnotation,
             start,
             end,
             before,
             after,
           ) async {
-            updatedId = id;
-            expect(expectedQuote, annotation.quote);
+            updatedId = expectedAnnotation.id;
+            expect(expectedAnnotation, annotation);
             updatedStart = start;
             updatedEnd = end;
             updatedBefore = before;
@@ -305,7 +304,7 @@ void main() {
           savedTitle: 'Saved title',
           annotationToLocate: annotation,
           onUpdateAnnotationAnchor:
-              (id, expectedQuote, start, end, before, after) async => true,
+              (expectedAnnotation, start, end, before, after) async => true,
         ),
       ),
     );
