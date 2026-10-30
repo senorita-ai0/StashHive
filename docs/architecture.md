@@ -223,3 +223,8 @@ A saved annotation's old UTF-16 offsets are metadata for the extraction from whi
 ### Re-anchoring legacy data and candidate bounds — 2026-10-30
 
 The exact matcher rejects malformed UTF-16 in stored quote/context strings (including possible remnants from older selection boundaries), quotes shorter than eight code units, context over the model's 200-character cap, and article text over the Reader's 60,000-character cap. It reports the full occurrence count but exposes at most eight ranked candidate positions. The locate-quote route itself is read-only; only the user's separate Update saved position action writes new offset/context metadata.
+
+
+### Re-anchor confirmation conflict guard — 2026-10-30
+
+The Reader passes the expected quote alongside the annotation ID when requesting a position update. Before writing, Item Details reloads the current record and verifies that the annotation still exists, its quote is unchanged, and the proposed range length equals the current quote length and remains within the Reader offset cap. This prevents a stale Reader route from overwriting a newer annotation that reused the same ID. The Reader also displays a compact before/quote/after excerpt for review, while retaining the full-text highlight. TC-288 covers the stale-quote conflict; source remains unexecuted.
