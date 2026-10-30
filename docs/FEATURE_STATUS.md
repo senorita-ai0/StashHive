@@ -1,9 +1,9 @@
 # StashHive — Master Feature Status & Chat Handoff
 
-**Last audited:** 2026-10-29  
+**Last audited:** 2026-10-30  
 **Repository:** [senorita-ai0/StashHive](https://github.com/senorita-ai0/StashHive)  
 **Default branch:** `main`  
-**Audit baseline commit:** `f861bae384e15fbe5ca12419ed010d3723ce9113`  
+**Audit baseline commit:** `ddb46ae66e709ca72c5d57cf0e2d04345eb6de80`  
 **Purpose:** This is the short, durable status page for the owner and any future ChatGPT session. Read it before resuming development and update it after every meaningful implementation, test, build, or scope change.
 
 > **Important status distinction:** “Source implemented” means code and/or test source has been committed. It does **not** mean tests pass or the feature is ready. Mark a feature fully done only when its required automated and platform checks have evidence recorded.
@@ -214,7 +214,7 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 
 - Hardened the bounded HTML charset prescan so comments and script/style/noscript blocks are removed from the scanned prefix before locating meta charset declarations. This prevents a fake tag embedded in untrusted content from overriding text decoding.
 - Added TC-275 regression source containing fake Windows-1252 meta tags inside both an HTML comment and script text, with an invalid UTF-8 byte in the article body to make false detection visible.
-- Source and test were committed together in df4b3c4 using a clean single-copy Reader file after an earlier attempted update duplicated source fragments. Re-fetched file verification is pending in this turn. No tests, formatter, analyzer, build or CI were run; SH-006 remains partial.
+- Source and test were committed together in df4b3c4 using a clean single-copy Reader file after an earlier attempted update duplicated source fragments. The committed Reader IO service and test file were re-fetched during the 2026-10-30 continuation; the fake-charset filter and regression each appear once. No tests, formatter, analyzer, build or CI were run; SH-006 remains partial.
 
 
 ## SH-006 HTTP charset precedence regression — TC-276 (2026-10-30)
