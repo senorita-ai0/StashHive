@@ -192,19 +192,19 @@ bool _isPrivateIpv4Literal(String host) {
 String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
   var text = source;
   if (isHtml) {
-    // Remove active/embedded blocks and comments before semantic extraction.
+    // Remove active/embedded blocks, interactive widgets and comments before semantic extraction.
     // A literal "<article>" inside a script string or HTML comment must not be
     // mistaken for the real article and hide the page's actual readable text.
     var sourceWithoutActiveContent = source.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside)\b[^>]*>[\s\S]*?</\1\s*>',
+        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b[^>]*>[\s\S]*?</\1\s*>',
         caseSensitive: false,
       ),
       ' ',
     );
     sourceWithoutActiveContent = sourceWithoutActiveContent.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside)\b[^>]*>[\s\S]*$',
+        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b[^>]*>[\s\S]*$',
         caseSensitive: false,
       ),
       ' ',
@@ -229,14 +229,14 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
     // Remove remaining navigation chrome and any unclosed active blocks.
     text = text.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside)\b[^>]*>[\s\S]*?</\1\s*>',
+        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b[^>]*>[\s\S]*?</\1\s*>',
         caseSensitive: false,
       ),
       ' ',
     );
     text = text.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside)\b[^>]*>[\s\S]*$',
+        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b[^>]*>[\s\S]*$',
         caseSensitive: false,
       ),
       ' ',
