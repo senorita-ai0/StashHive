@@ -1680,3 +1680,8 @@ The bounded HTML charset prescan now excludes comment and script/style/noscript 
 ## SH-006 — HTTP charset precedence regression — TC-276 — 2026-10-30
 
 Added a regression that gives the response header and HTML meta tag conflicting encodings and confirms the explicit HTTP charset wins. This locks down the existing header-first behavior without changing runtime code. The test is authored only; run it with TC-273–TC-275 and the full Reader suite at the owner-approved manual validation checkpoint.
+
+
+## SH-006 — bounded charset prescan limit regression — TC-277 — 2026-10-30
+
+Added coverage that a charset declaration beyond the first 1,024 response bytes is ignored. The synthetic response uses a legacy-encoded byte after the out-of-window declaration and expects UTF-8 fallback behavior. This protects the existing resource bound without changing runtime code. Test source only; include it in the owner-approved Reader validation checkpoint.
