@@ -116,8 +116,24 @@ void main() {
       annotation: _annotation(quote: 'a'),
     );
 
+    final tooShort = findSavedAnnotationAnchor(
+      articleText: 'A short exact match.',
+      annotation: _annotation(quote: 'exact'),
+    );
+    final excessiveContext = findSavedAnnotationAnchor(
+      articleText: 'A sufficiently long target passage appears here.',
+      annotation: _annotation(
+        contextBefore: List<String>.filled(
+          maxSavedAnnotationContextCharacters + 1,
+          'x',
+        ).join(),
+      ),
+    );
+
     expect(empty.status, AnnotationAnchorStatus.invalidInput);
     expect(oversized.status, AnnotationAnchorStatus.invalidInput);
+    expect(tooShort.status, AnnotationAnchorStatus.invalidInput);
+    expect(excessiveContext.status, AnnotationAnchorStatus.invalidInput);
   });
 
   test('retains overlapping quote occurrences as ambiguous candidates', () {
