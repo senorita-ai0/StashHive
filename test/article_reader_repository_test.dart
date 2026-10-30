@@ -262,6 +262,29 @@ void main() {
     expect(updated.title, saved.title);
     expect(updated.content, saved.content);
     expect(updated.url, saved.url);
+
+    // Re-anchored offsets/context remain portable in JSON backup, while the
+    // fetched article body remains temporary and outside all saved exports.
+    final restoredBackup = BackupCodec.decode(await _repository.createBackup());
+    final restored = restoredBackup.items.single;
+    final restoredAnnotation = restored.annotations.single;
+    expect(restored.content, saved.content);
+    expect(restoredAnnotation.id, annotation.id);
+    expect(restoredAnnotation.quote, annotation.quote);
+    expect(restoredAnnotation.note, annotation.note);
+    expect(restoredAnnotation.sourceStartOffset, annotation.sourceStartOffset);
+    expect(restoredAnnotation.sourceEndOffset, annotation.sourceEndOffset);
+    expect(restoredAnnotation.contextBefore, annotation.contextBefore);
+    expect(restoredAnnotation.contextAfter, annotation.contextAfter);
+
+    final csv = buildLibraryCsv(<SavedItem>[restored]);
+    final markdown = buildSelectedItemsMarkdown(<SavedItem>[restored]);
+    for (final export in <String>[csv, markdown]) {
+      expect(export, contains(annotation.quote));
+      expect(export, contains(annotation.note));
+      expect(export, isNot(contains('Changed introduction')));
+      expect(export, isNot(contains('After excerpt remains stable')));
+    }
   });
 
 
