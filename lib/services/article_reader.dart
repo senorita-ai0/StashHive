@@ -195,9 +195,9 @@ String? _extractFirstBalancedElementContents(String source, String tagName) {
   final tagTokens = RegExp(
     r'''<(?:[^>"']|"[^"]*"|'[^']*')*>''',
   );
-  final targetOpening = RegExp(r'^<\\s*' + tagName + r'\\b', caseSensitive: false);
-  final targetClosing = RegExp(r'^<\\s*/\\s*' + tagName + r'\\b', caseSensitive: false);
-  final selfClosing = RegExp(r'/\\s*>
+  final targetOpening = RegExp(r'^<\s*' + tagName + r'\b', caseSensitive: false);
+  final targetClosing = RegExp(r'^<\s*/\s*' + tagName + r'\b', caseSensitive: false);
+  final selfClosing = RegExp(r'/\s*>
 /// The result is plain text and must never be interpreted as HTML.
 String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
   var text = source;
