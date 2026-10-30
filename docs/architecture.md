@@ -243,3 +243,8 @@ The Reader update callback sends the original \`SavedAnnotation\` snapshot. Befo
 ### Native Reader interactive-widget filtering — 2026-10-30
 
 The native Reader's plain-text sanitizer removes complete `form`, `button`, `select`, `textarea` and `dialog` blocks before selecting semantic article/main content, then applies the same filter to the selected fragment. If one of these widgets is unclosed, its remaining tail is discarded rather than exposed as article prose. Article headings and paragraphs outside the controls remain eligible. TC-291/TC-292 cover closed and malformed widgets. This is still a small bounded regex sanitizer; it is not a standards-complete HTML parser or Readability implementation, and fetched markup is never rendered as HTML.
+
+
+### Balanced nested Reader semantic containers — 2026-10-30
+
+Native Reader extraction now uses a small tag-token scan for semantic `article` and `main` containers. It consumes quoted attribute values within the current tag token, tracks depth for nested elements with the same name and returns only at the matching outer close. This avoids the previous non-greedy regex behavior that stopped at an inner close and lost subsequent outer paragraphs. Incomplete containers are not accepted as extraction boundaries. TC-293/TC-294 cover nested article/main, tag-like quoted attribute text and sibling/outside-content exclusion. This bounded scanner improves a known case but remains short of a standards-complete HTML5 parser or Readability implementation.
