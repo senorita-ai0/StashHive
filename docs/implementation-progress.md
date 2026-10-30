@@ -1368,3 +1368,12 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added TC-291 for closed controls and preserved article text, and TC-292 for malformed unclosed form/button tails in `test/article_reader_test.dart`.
 - Source commit: `929a7861e58b512d6cc7de5c4b2616859126de86`; test commit: `22a03935ba6811fd04eae823c8714aace6f7a4ff`.
 - No Flutter/Dart executable is available in the current runtime. Formatter, analyzer, unit/widget tests, builds and CI were not run; CI remains manual-only and SH-006 remains partial.
+
+
+### SH-006 — balanced nested article/main extraction — TSK-545 / TC-293–TC-294 — 2026-10-30
+
+- Replaced the non-greedy first-close regex for semantic `article` and `main` selection with `_extractFirstBalancedElementContents`. The helper tokenizes complete tags while respecting quoted attribute values, tracks depth for the selected semantic tag and returns only when the outer element closes.
+- This prevents a nested article/main closing tag from truncating the remainder of the outer content. Tag-like strings inside a quoted attribute do not affect depth. An incomplete semantic container is not used as a trusted boundary; extraction falls back to the next semantic option or the whole sanitized page.
+- Added TC-293 for nested article containers, quoted attributes and sibling exclusion; TC-294 covers nested main and exclusion of content outside main.
+- Source changes were committed in `eb66ef464a7302a4bcb8e7103ad4ab55b98ca7e0`, `8f2410ced443ccda051c9daa13e672bba4f48e10`, `f402ed77abf80722c852ccc7d6d6e5b410ff35a8`, `451c203b94145293ac1763f1f9e831664e6ab7f9` and `e2b2ee746359da0e68c5bde5cbdc8830d3e275ea`; test source commit: `cb9def37345fe52fa9687796294440a165d0692c`.
+- Source and tests were re-fetched after the correction. No Flutter/Dart executable is available in the runtime, so formatting, analysis, unit/widget tests, builds and CI were not run. SH-006 remains partial; CI remains manual-only.
