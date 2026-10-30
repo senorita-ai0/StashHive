@@ -227,3 +227,10 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Carry the expected quote into the persistence boundary and reject a stale Reader suggestion if the saved quote changed before confirmation.
 - [x] Show a compact excerpt with before/after context above the full article so the proposed occurrence can be reviewed before confirmation.
 - [ ] Run TC-283–TC-288 and the full Reader/repository/export regression suite at the manual validation checkpoint.
+
+
+### SH-006 — re-anchor backup/export compatibility — TC-289 (2026-10-30)
+
+- [x] Extend the repository re-anchor flow regression to round-trip updated annotation offsets and context through the versioned JSON backup.
+- [x] Confirm CSV/Markdown retain the user-saved quote and note but omit unrelated fetched article paragraphs; saved item title/content/URL remain unchanged.
+- [ ] Run TC-283–TC-289 plus backup, CSV, Markdown and Reader suites at the manual validation checkpoint.
