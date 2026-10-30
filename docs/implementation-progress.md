@@ -1345,3 +1345,10 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 
 - Corrected the overlapping-occurrence matcher fixture to use an eight-code-unit quote, matching the deliberate minimum-quote rule. The test now expects two overlapping occurrences in a nine-code-unit article string and still covers the eight-result candidate cap with a separate repeated-quote fixture.
 - Checked the current working environment: neither \`flutter\` nor \`dart\` is installed. Therefore Flutter tests, Dart formatting and analysis could not be run in this session. No CI workflow or build was triggered; CI remains manual-only.
+
+
+### SH-006 — re-anchor backup/export regression — TC-289 — 2026-10-30
+
+- Extended the repository-level successful re-anchor test: after the explicit position update, versioned JSON backup decoding must retain annotation ID, quote, note, normalized offsets and refreshed before/after context.
+- The same restored item is then passed through CSV and selected Markdown exports. Both retain the user-saved quote/note but exclude unrelated fetched article paragraphs. Existing title/content/URL invariants continue to be checked.
+- No production export/backup code changed; this slice adds integration regression coverage around the existing local data boundary. Test source commit: \`e4051f8af0c66b9976c191364551df76b1801d9f\`. Tests remain unrun.
