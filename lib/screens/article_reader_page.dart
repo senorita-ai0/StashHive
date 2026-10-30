@@ -17,6 +17,7 @@ typedef SaveArticleReaderSelection = Future<bool> Function(
 
 typedef UpdateArticleReaderAnchor = Future<bool> Function(
   String annotationId,
+  String expectedQuote,
   int startOffset,
   int endOffset,
   String contextBefore,
@@ -164,6 +165,7 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
     try {
       final saved = await update(
         annotation.id,
+        annotation.quote,
         selection.startOffset,
         selection.endOffset,
         selection.contextBefore,
