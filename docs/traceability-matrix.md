@@ -1819,3 +1819,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Opening a locate-quote Reader preview leaves the complete saved item map unchanged until the user confirms Update saved position | \`ItemDetailsPage._openArticleReader\`; repository remains unchanged unless \`_updateReaderAnnotationAnchor\` is called | \`locating a quote does not change saved annotation metadata before confirmation\` in \`test/article_reader_repository_test.dart\` | Test source committed; not run |
+
+
+### SH-006 stale annotation update protection — TC-288 — 2026-10-30
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Reject a position update when the current annotation quote no longer matches the quote originally opened in Reader, even if its annotation ID is unchanged | \`ItemDetailsPage._updateReaderAnnotationAnchor\` in \`lib/main.dart\`; expected quote supplied by \`ArticleReaderPage\` | TC-288; \`does not apply a stale re-anchor after the saved quote changes\` in \`test/article_reader_repository_test.dart\` | Source and repository regression committed; not run |
