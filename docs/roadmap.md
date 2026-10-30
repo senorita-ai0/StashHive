@@ -1695,3 +1695,8 @@ The bounded native HTML charset prescan now parses meta attributes instead of ma
 ## SH-006 — Unicode-safe quote and context capture — TC-280–TC-282 — 2026-10-30
 
 Reader quote capture now normalizes selection and context-window edges so they cannot split UTF-16 surrogate pairs. The quote and persisted offsets are derived from the same normalized range; surrounding context is bounded to 80 code units per side and expands by at most one code unit to preserve a complete supplementary character. Collapsed and out-of-range selections are rejected. TC-280–TC-282 are authored but unrun; execute them with the full Reader suite and platform selection checks at the manual validation checkpoint.
+
+
+## SH-006 — saved-quote re-anchoring — TC-283–TC-287 — 2026-10-30
+
+The Reader can now look for a previously saved quote in the current temporary page text. It ignores the old UTF-16 offset and searches exact quote occurrences; saved before/after context can distinguish repeated passages, but ties and weak matches remain unresolved. Item Details exposes **Find in latest article**; the Reader shows a temporary highlight and requires an explicit **Update saved position** action before storing the new offsets/context. Annotation ID, quote, note and creation timestamp are retained. The matcher rejects short/oversized input and returns a bounded candidate list. Regression source is committed but unrun. This is deliberately not fuzzy matching: punctuation, whitespace, translation or article rewrites can still prevent a match.
