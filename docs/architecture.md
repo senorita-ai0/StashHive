@@ -208,3 +208,8 @@ Character decoding prefers the server's Content-Type charset. When an HTML respo
 ### Native Reader rejects embedded meta charset lookalikes — 2026-10-29
 
 Before extracting a charset from the bounded HTML prefix, native parsing strips HTML comments and script/style/noscript blocks. This is a small defensive filter: apparent meta tags inside embedded content must not influence text decoding. TC-275 covers the behavior; tests and platform verification remain pending.
+
+
+### Reader annotation Unicode boundaries — 2026-10-30
+
+Reader selections and offsets use Dart/Flutter UTF-16 code-unit indexing. The shared \`captureArticleReaderSelection\` helper expands endpoints outward if they fall inside a surrogate pair and applies the same protection to the bounded surrounding context, so a saved excerpt never contains half of a supplementary character. The saved offsets continue to describe the normalized quote range. TC-280–TC-282 provide source regression coverage; execution and platform selection behavior remain unverified.
