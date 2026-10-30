@@ -264,4 +264,56 @@ void main() {
     expect(updated.url, saved.url);
   });
 
+
+  testWidgets('locating a quote does not change saved annotation metadata before confirmation',
+      (tester) async {
+    tester.view.physicalSize = const Size(1280, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final originalAnnotation = SavedAnnotation(
+      id: 'reanchor-no-confirm',
+      quote: 'keep this exact quote',
+      note: 'Do not change this note.',
+      sourceStartOffset: 120,
+      sourceEndOffset: 141,
+      contextBefore: 'The old page context.',
+      contextAfter: 'The old following context.',
+      createdAtMs: 3000,
+    );
+    final saved = _linkItem().copyWith(
+      annotations: <SavedAnnotation>[originalAnnotation],
+    );
+    await _repository.addCollection('Reading');
+    await _repository.save(saved);
+    final before = _repository.findById(saved.id)!.toMap();
+
+    articleReaderLoaderForTesting = (url, timeout) async =>
+        const ArticleReaderResult(
+          state: ArticleReaderState.success,
+          title: 'Changed page',
+          text: 'A completely new introduction. keep this exact quote is still here.',
+        );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ItemDetailsPage(
+          repository: _repository,
+          itemId: saved.id,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final locateButton =
+        find.byKey(const ValueKey('locate-annotation-reanchor-no-confirm'));
+    await tester.ensureVisible(locateButton);
+    await tester.tap(locateButton);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Saved quote found'), findsOneWidget);
+    expect(find.byKey(const ValueKey('update-annotation-anchor')), findsOneWidget);
+    expect(_repository.findById(saved.id)!.toMap(), equals(before));
+  });
+
 }
