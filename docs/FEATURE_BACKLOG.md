@@ -196,3 +196,12 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Accept a direct \`charset\` attribute, or a legacy charset only when \`http-equiv=Content-Type\` and the \`content\` attribute declares it.
 - [x] Add TC-278 for charset-like description/keyword text and TC-279 for a real charset following unrelated metadata.
 - [ ] Run TC-273–TC-279 and the complete Reader regression suite at the owner-approved manual validation checkpoint; tests remain unexecuted.
+
+
+## SH-006 — Unicode-safe quote selection and context capture — TC-280–TC-282 (2026-10-30)
+
+- [x] Normalize selection start/end boundaries outward when they fall inside a UTF-16 surrogate pair; keep stored offsets aligned with the captured quote.
+- [x] Keep the bounded before/after context windows from starting or ending inside a supplementary Unicode character.
+- [x] Reject collapsed and out-of-range selection offsets before creating a quote payload.
+- [x] Add TC-280–TC-282 source coverage.
+- [ ] Run TC-280–TC-282 and the full Reader regression suite at the owner-approved manual validation checkpoint; tests remain unexecuted.
