@@ -1777,3 +1777,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Prefer an explicit HTTP Content-Type charset over a conflicting HTML meta charset | `_parseResponse` in `lib/services/article_reader_io.dart` | TC-276; `prefers the HTTP charset over an HTML meta charset` in `test/article_reader_test.dart` | Existing precedence source is covered by a new regression; not executed; native/web validation pending |
+
+
+## SH-006 bounded charset prescan limit traceability — TC-277 — 2026-10-30
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Ignore HTML meta charset declarations located after the first 1,024 response bytes | `_charsetFromHtmlMeta` in `lib/services/article_reader_io.dart` | TC-277; `ignores HTML meta charset declarations beyond the 1024-byte prescan` in `test/article_reader_test.dart` | Existing byte bound is covered by a new regression; not executed; native/web validation pending |
