@@ -130,10 +130,21 @@ void main() {
       ),
     );
 
+    final malformedQuote = findSavedAnnotationAnchor(
+      articleText: 'A sufficiently long target passage appears here.',
+      annotation: _annotation(quote: 'target passage\\uD800'),
+    );
+    final malformedContext = findSavedAnnotationAnchor(
+      articleText: 'A sufficiently long target passage appears here.',
+      annotation: _annotation(contextBefore: 'old\\uDC00context'),
+    );
+
     expect(empty.status, AnnotationAnchorStatus.invalidInput);
     expect(oversized.status, AnnotationAnchorStatus.invalidInput);
     expect(tooShort.status, AnnotationAnchorStatus.invalidInput);
     expect(excessiveContext.status, AnnotationAnchorStatus.invalidInput);
+    expect(malformedQuote.status, AnnotationAnchorStatus.invalidInput);
+    expect(malformedContext.status, AnnotationAnchorStatus.invalidInput);
   });
 
   test('retains overlapping quote occurrences as ambiguous candidates', () {
