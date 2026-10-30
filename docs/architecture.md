@@ -228,3 +228,8 @@ The exact matcher rejects malformed UTF-16 in stored quote/context strings (incl
 ### Re-anchor confirmation conflict guard — 2026-10-30
 
 The Reader passes the expected quote alongside the annotation ID when requesting a position update. Before writing, Item Details reloads the current record and verifies that the annotation still exists, its quote is unchanged, and the proposed range length equals the current quote length and remains within the Reader offset cap. This prevents a stale Reader route from overwriting a newer annotation that reused the same ID. The Reader also displays a compact before/quote/after excerpt for review, while retaining the full-text highlight. TC-288 covers the stale-quote conflict; source remains unexecuted.
+
+
+### Re-anchored annotations and portable backup/export — 2026-10-30
+
+Re-anchoring changes only the selected annotation's offset and bounded context metadata; the fetched article remains transient. The existing versioned backup serializes the saved annotation fields, while CSV/Markdown exports contain only the user's saved quote and note, not fetched page paragraphs. TC-289 exercises the re-anchor → JSON backup decode → CSV/Markdown path and checks that the saved item's original title/content/URL remain unchanged. Test source exists but has not been executed.
