@@ -2164,3 +2164,17 @@ The repository widget regression source now checks three export formats after sa
 - Open a Reader locate flow for an annotation, then simulate another session updating that same annotation's offsets and surrounding context while leaving its ID and quote unchanged.
 - Verify the older Reader suggestion is rejected and the newer offsets/context and note remain intact.
 - **Status:** Repository/widget regression source committed in \`test/article_reader_repository_test.dart\`; not run. Execute TC-283–TC-290 and the complete Reader/repository suite at the owner-approved manual validation checkpoint.
+
+
+### TC-291 — Exclude closed forms and interactive widgets from Reader text (2026-10-30)
+
+- Serve HTML containing forms, labels, buttons, select/option controls, textareas and dialog content both outside and inside the article. Confirm those widget strings are omitted while the article heading and surrounding paragraphs remain readable.
+- Confirm the Reader output stays plain text and does not expose interactive-control markup.
+- **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-291 with TC-292 and the complete native Reader sanitizer/response suite at the owner-approved manual validation checkpoint.
+
+
+### TC-292 — Exclude malformed unclosed form and widget tails (2026-10-30)
+
+- Feed malformed HTML with a readable paragraph followed by an unclosed form, and a separate page with a readable paragraph followed by an unclosed button.
+- Confirm the readable text before each malformed widget remains available and the widget tail is not leaked into Reader output.
+- **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-291–TC-292 with the complete Reader suite at the owner-approved manual validation checkpoint.
