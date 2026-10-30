@@ -1826,3 +1826,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Reject a position update when the current annotation quote no longer matches the quote originally opened in Reader, even if its annotation ID is unchanged | \`ItemDetailsPage._updateReaderAnnotationAnchor\` in \`lib/main.dart\`; expected quote supplied by \`ArticleReaderPage\` | TC-288; \`does not apply a stale re-anchor after the saved quote changes\` in \`test/article_reader_repository_test.dart\` | Source and repository regression committed; not run |
+
+
+### SH-006 re-anchored backup/export compatibility — TC-289 — 2026-10-30
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Re-anchored offsets/context survive the versioned JSON backup round trip, while saved annotation quote/note are included in CSV/Markdown and the fetched page body remains transient | \`SavedAnnotation.toMap/fromMap\`; \`BackupCodec\`; \`buildLibraryCsv\`; \`buildSelectedItemsMarkdown\`; temporary Reader state remains separate from \`SavedItem.content\` | TC-289; \`explicitly re-anchors a saved quote without changing its text or note\` in \`test/article_reader_repository_test.dart\` | Source regression committed; not run |
