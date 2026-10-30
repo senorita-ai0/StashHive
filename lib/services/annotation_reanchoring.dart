@@ -2,6 +2,7 @@ import '../models/saved_item.dart';
 import 'article_reader.dart';
 
 const int maxAnnotationAnchorCandidates = 8;
+const int minAnnotationAnchorQuoteCharacters = 8;
 const int minAnnotationContextMatchCharacters = 12;
 
 enum AnnotationAnchorStatus {
@@ -60,8 +61,10 @@ AnnotationAnchorResult findSavedAnnotationAnchor({
   required SavedAnnotation annotation,
 }) {
   final quote = annotation.quote;
-  if (quote.trim().isEmpty ||
+  if (quote.trim().length < minAnnotationAnchorQuoteCharacters ||
       quote.length > maxSavedAnnotationQuoteCharacters ||
+      annotation.contextBefore.length > maxSavedAnnotationContextCharacters ||
+      annotation.contextAfter.length > maxSavedAnnotationContextCharacters ||
       articleText.length > maxArticleTextCharacters ||
       quote.length > articleText.length) {
     return const AnnotationAnchorResult(
