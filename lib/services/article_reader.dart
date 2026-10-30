@@ -35,6 +35,69 @@ class ArticleReaderResult {
   bool get isSuccess => state == ArticleReaderState.success;
 }
 
+/// A selection from the temporary reader text with UTF-16 offsets and
+/// bounded, well-formed surrounding context.
+class ArticleReaderSelection {
+  const ArticleReaderSelection({
+    required this.quote,
+    required this.startOffset,
+    required this.endOffset,
+    required this.contextBefore,
+    required this.contextAfter,
+  });
+
+  final String quote;
+  final int startOffset;
+  final int endOffset;
+  final String contextBefore;
+  final String contextAfter;
+}
+
+/// Captures a selection without leaving either endpoint inside a UTF-16
+/// surrogate pair. Context edges are adjusted the same way so persisted
+/// excerpts remain valid Unicode even when a window lands on a pair boundary.
+ArticleReaderSelection? captureArticleReaderSelection(
+  String text,
+  int startOffset,
+  int endOffset, {
+  int contextCharacters = 80,
+}) {
+  if (startOffset < 0 ||
+      endOffset <= startOffset ||
+      endOffset > text.length ||
+      contextCharacters < 0) {
+    return null;
+  }
+
+  var start = startOffset;
+  var end = endOffset;
+  if (_splitsSurrogatePair(text, start)) start--;
+  if (_splitsSurrogatePair(text, end)) end++;
+
+  var contextStart = (start - contextCharacters).clamp(0, start).toInt();
+  var contextEnd = (end + contextCharacters).clamp(end, text.length).toInt();
+  if (_splitsSurrogatePair(text, contextStart)) contextStart--;
+  if (_splitsSurrogatePair(text, contextEnd)) contextEnd++;
+
+  return ArticleReaderSelection(
+    quote: text.substring(start, end),
+    startOffset: start,
+    endOffset: end,
+    contextBefore: text.substring(contextStart, start),
+    contextAfter: text.substring(end, contextEnd),
+  );
+}
+
+bool _splitsSurrogatePair(String text, int offset) {
+  if (offset <= 0 || offset >= text.length) return false;
+  final previous = text.codeUnitAt(offset - 1);
+  final next = text.codeUnitAt(offset);
+  return previous >= 0xD800 &&
+      previous <= 0xDBFF &&
+      next >= 0xDC00 &&
+      next <= 0xDFFF;
+}
+
 /// Bounded, already-received HTTP response data. This DTO is shared so the
 /// native request pipeline can be tested with a fake response and no network.
 class ArticleReaderTransportResponse {
