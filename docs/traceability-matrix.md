@@ -25,7 +25,7 @@
 | FR-019 | SCR-001, SCR-002 | SH-001 / TSK-533 | TC-019, TC-246, duplicate_detector_test.dart, quick_save_test.dart | IN PROGRESS — link-only normalized duplicate review is source implemented; tests and platform verification pending |
 | FR-022 | SCR-002, SCR-003 | SH-002 / TSK-534 | TC-247, TC-248, TC-249, search_filters_test.dart, search_filters_widget_test.dart | IN PROGRESS — local combined filters and saved preset storage/UI are source implemented; execution pending |
 | FR-023 | SCR-004 | SH-010 / TSK-536 / TSK-543 | TC-256, TC-263, saved_item_test.dart, quick_save_test.dart, rediscovery_test.dart, rediscovery_widget_test.dart | IN PROGRESS — status/progress and local 14-day Rediscover selection are source-covered; regression execution and platform verification pending |
-| FR-024 | SCR-004 | SH-006 / TSK-537 | TC-257, annotations_widget_test.dart, saved_item_test.dart, backup_codec_test.dart, export tests | IN PROGRESS — user-entered quote/note records, local Item Details CRUD, search and exports are source implemented; reader mode/page text selection is not implemented; tests and platform verification pending |
+| FR-024 | SCR-004 | SH-006 / TSK-537, TSK-544 | TC-257, TC-264–TC-268, TC-280–TC-292, annotations_widget_test.dart, article_reader_* tests | IN PROGRESS — user-entered annotations, explicit temporary Reader, selectable quote capture, bounded native fetch and conservative exact-text/context re-anchoring are source implemented; parsing/readability remains lightweight, tests and Android/web verification pending |
 | FR-025 | SCR-002, SCR-007 | SH-008 / TSK-538 | TC-258, smart_tag_rules_test.dart, smart_tag_rules_widget_test.dart, quick_save_test.dart, library_repository_test.dart | IN PROGRESS — local phrase/tag rules, preference persistence, Settings management and review-before-add Quick Save chips are source implemented; tests/platform verification pending |
 | FR-026 | SCR-004 | SH-009 / TSK-539 | TC-259, link_health_test.dart, accessibility_widgets_test.dart, library_repository_test.dart | IN PROGRESS — explicit Android-only network check with local result persistence and browser limitation messaging is source implemented; regression execution/platform verification pending |
 | NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | IN PROGRESS — no backend/account integration in core source; offline and network inspection pending |
@@ -1840,3 +1840,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Reject a re-anchor update if the same annotation ID and quote now carry different saved offsets/context from the snapshot opened in Reader | \`ItemDetailsPage._updateReaderAnnotationAnchor\` compares the current record with the complete expected \`SavedAnnotation\` quote/offset/context snapshot | TC-290; \`does not apply a stale re-anchor after the saved position changes\` in \`test/article_reader_repository_test.dart\` | Source and repository regression committed; not run |
+
+
+### SH-006 Reader interactive-widget filtering — TC-291/TC-292 — 2026-10-30
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Remove closed form, button, select, textarea and dialog blocks before semantic article extraction while preserving article headings and paragraphs | `sanitizeArticleMarkup` in `lib/services/article_reader.dart` | TC-291; `removes closed forms and interactive widgets but preserves article text` in `test/article_reader_test.dart` | Source and regression committed; not run |
+| Remove the remainder of an unclosed form or interactive widget so malformed page tails are not shown as article text | `sanitizeArticleMarkup` in `lib/services/article_reader.dart` | TC-292; `does not leak the tail of an unclosed form or interactive widget` in `test/article_reader_test.dart` | Source and regression committed; not run |
