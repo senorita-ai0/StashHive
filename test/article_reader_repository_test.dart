@@ -235,9 +235,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(
-      find.byKey(const ValueKey('locate-annotation-reanchor-existing')),
-    );
+    final locateButton =
+        find.byKey(const ValueKey('locate-annotation-reanchor-existing'));
+    await tester.ensureVisible(locateButton);
+    await tester.tap(locateButton);
     await tester.pumpAndSettle();
 
     expect(find.text('Saved quote found'), findsOneWidget);
