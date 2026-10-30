@@ -1287,3 +1287,9 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 
 - Added a synthetic HTML response whose HTTP header declares Windows-1252 while an early meta tag claims UTF-8. The 0x80 body byte must decode as the euro sign, proving that the explicit HTTP charset remains authoritative over the fallback meta prescan.
 - This protects the existing `_parseResponse` precedence expression; no production decoder behavior was changed. Test source was committed as `766b8dda50a8960f61414454b00978bd523b28c1` but has not been executed. No formatter, analyzer, tests, build or CI were run; SH-006 remains partial and CI manual-only.
+
+
+## SH-006 — bounded charset prescan limit regression (TC-277) — 2026-10-30
+
+- Added a synthetic HTML response with 1,024 leading bytes before a Windows-1252 meta tag and a subsequent 0x80 article byte. The expected replacement character proves that declarations outside the bounded prescan do not influence decoding.
+- This protects the existing 1,024-byte limit; no production source behavior changed. Regression source commit: `95b0c68fbed0decc824d812e369ced76798016ba`. Test not run; no formatter, analyzer, tests, builds or CI were run. SH-006 remains partial and CI manual-only.
