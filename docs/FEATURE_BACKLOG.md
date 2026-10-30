@@ -234,3 +234,11 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Extend the repository re-anchor flow regression to round-trip updated annotation offsets and context through the versioned JSON backup.
 - [x] Confirm CSV/Markdown retain the user-saved quote and note but omit unrelated fetched article paragraphs; saved item title/content/URL remain unchanged.
 - [ ] Run TC-283–TC-289 plus backup, CSV, Markdown and Reader suites at the manual validation checkpoint.
+
+
+### SH-006 — complete expected-anchor snapshot guard — TC-290 (2026-10-30)
+
+- [x] Pass the original saved annotation snapshot into the update callback rather than just the annotation ID/quote.
+- [x] Reject a write if the currently stored quote, offsets or context differ from the snapshot opened in Reader; preserve the latest note by updating only location metadata.
+- [x] Add a same-quote/different-offset repository race regression (TC-290).
+- [ ] Run TC-283–TC-290 and the complete Reader/repository/export suites at the manual validation checkpoint.
