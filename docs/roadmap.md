@@ -1715,3 +1715,8 @@ The re-anchor card now displays the candidate quote with its surrounding context
 ### SH-006 — re-anchor recovery/export compatibility — TC-289 — 2026-10-30
 
 The successful explicit re-anchor repository scenario now checks that refreshed offsets/context survive versioned JSON backup decoding and that CSV/Markdown preserve the quote/note while excluding unrelated temporary page paragraphs. No production storage/export changes were needed; the increment closes a regression-coverage gap only. Execute TC-289 together with backup/export and Reader suites during manual validation.
+
+
+### SH-006 — full re-anchor snapshot conflict check — TC-290 — 2026-10-30
+
+The re-anchor write now compares the complete original annotation anchor snapshot (quote, old offsets and old before/after context) with the current local record. A stale Reader route is rejected even when another session updated the same quote's position without changing its text or ID. The latest personal note is retained; only location metadata is replaced after a successful check. TC-290 covers this same-quote stale-position race; regression remains unrun.
