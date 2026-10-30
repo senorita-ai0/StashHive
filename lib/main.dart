@@ -4075,6 +4075,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
   Future<bool> _updateReaderAnnotationAnchor(
     String itemId,
     String annotationId,
+    String expectedQuote,
     int startOffset,
     int endOffset,
     String contextBefore,
@@ -4088,6 +4089,13 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     if (index < 0) return false;
 
     final previous = current.annotations[index];
+    if (previous.quote != expectedQuote ||
+        startOffset < 0 ||
+        endOffset < startOffset ||
+        endOffset - startOffset != previous.quote.length ||
+        endOffset > maxSavedAnnotationSourceOffset) {
+      return false;
+    }
     final refreshed = SavedAnnotation(
       id: previous.id,
       quote: previous.quote,
@@ -4140,6 +4148,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
               ? null
               : (
                   annotationId,
+                  expectedQuote,
                   startOffset,
                   endOffset,
                   contextBefore,
