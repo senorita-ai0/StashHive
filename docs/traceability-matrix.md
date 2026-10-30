@@ -1784,3 +1784,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Ignore HTML meta charset declarations located after the first 1,024 response bytes | `_charsetFromHtmlMeta` in `lib/services/article_reader_io.dart` | TC-277; `ignores HTML meta charset declarations beyond the 1024-byte prescan` in `test/article_reader_test.dart` | Existing byte bound is covered by a new regression; not executed; native/web validation pending |
+
+
+## SH-006 meta charset attribute parsing — TC-278/TC-279 — 2026-10-30
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Ignore charset-like text inside unrelated meta name/content attributes | \`_charsetFromHtmlMeta\` and \`_parseMetaAttributes\` in \`lib/services/article_reader_io.dart\` | TC-278; \`ignores charset-like text in unrelated meta attributes\` in \`test/article_reader_test.dart\` | Parser source and regression committed; not executed; native/web validation pending |
+| Continue to a real direct charset attribute after unrelated metadata | \`_charsetFromHtmlMeta\` and \`_parseMetaAttributes\` in \`lib/services/article_reader_io.dart\` | TC-279; \`continues scanning after unrelated meta content to find a real charset\` in \`test/article_reader_test.dart\` | Parser source and regression committed; not executed; native/web validation pending |
