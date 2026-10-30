@@ -3,7 +3,7 @@
 **Last audited:** 2026-10-30  
 **Repository:** [senorita-ai0/StashHive](https://github.com/senorita-ai0/StashHive)  
 **Default branch:** `main`  
-**Audit baseline commit:** `8ab71c00e58a4d255d2bf1163e98996c9a61200d`  
+**Audit baseline commit:** `608d07997c0283a755c2ddc130aa21f7956971a6`  
 **Purpose:** This is the short, durable status page for the owner and any future ChatGPT session. Read it before resuming development and update it after every meaningful implementation, test, build, or scope change.
 
 > **Important status distinction:** “Source implemented” means code and/or test source has been committed. It does **not** mean tests pass or the feature is ready. Mark a feature fully done only when its required automated and platform checks have evidence recorded.
@@ -271,3 +271,8 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - Reader now displays a compact excerpt showing surrounding context and the proposed quote, in addition to highlighting the candidate in the full temporary article.
 - The update callback carries the expected quote. The current repository annotation must still have that same quote and the proposed offset range must match its length and remain within the Reader cap; otherwise the write is rejected. This prevents a stale Reader route from moving a newer annotation that retained the same ID.
 - Added TC-288 and re-fetched the updated Reader, Item Details, unit/widget/repository test sources, and documentation. No formatter, analyzer, tests, builds or CI were run. CI remains manual-only; SH-006 is still partial and unverified.
+
+
+### SH-006 local validation environment note — 2026-10-30
+
+The current working runtime has no \`flutter\` or \`dart\` executable, so Dart/Flutter tests, formatting and analyzer checks could not be executed in this session. The new regression sources are committed but unverified; no GitHub Actions workflow/build was triggered. The owner's manual validation checkpoint remains necessary.
