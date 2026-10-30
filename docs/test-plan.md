@@ -2143,3 +2143,10 @@ The repository widget regression source now checks three export formats after sa
 
 - Verify empty/too-short quotes, malformed UTF-16 quote/context, oversized article text and oversized stored context are rejected. Verify overlapping occurrences are counted and the exposed candidate list is capped at eight.
 - **Status:** Regression source committed in \`test/annotation_reanchoring_test.dart\`; not run. Execute TC-283–TC-287 and the complete Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-288 — Reject a stale re-anchor after the saved quote changes (2026-10-30)
+
+- Open Reader to locate a saved quote, then simulate the annotation being edited elsewhere with the same annotation ID but a different quote before the position-update action is confirmed.
+- Verify the Reader's stale suggestion is rejected and the newer quote, note and offsets remain unchanged.
+- **Status:** Repository/widget regression source committed in \`test/article_reader_repository_test.dart\`; not run. Execute TC-283–TC-288 and the complete Reader/repository suite at the owner-approved manual validation checkpoint.
