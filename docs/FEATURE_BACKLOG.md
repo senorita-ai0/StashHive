@@ -188,3 +188,11 @@ Before source implementation, follow [the article-reader feasibility and privacy
 
 - [x] Add a synthetic response regression with a Windows-1252 meta declaration positioned after byte 1,024; verify the declaration is ignored and UTF-8 fallback remains active.
 - [ ] Run TC-273–TC-277 and the complete Reader regression suite at the owner-approved manual validation checkpoint; tests remain unexecuted.
+
+
+## SH-006 — parse only actual meta charset attributes — TC-278/TC-279 (2026-10-30)
+
+- [x] Parse meta tag attributes rather than searching the entire tag text for \`charset=\`.
+- [x] Accept a direct \`charset\` attribute, or a legacy charset only when \`http-equiv=Content-Type\` and the \`content\` attribute declares it.
+- [x] Add TC-278 for charset-like description/keyword text and TC-279 for a real charset following unrelated metadata.
+- [ ] Run TC-273–TC-279 and the complete Reader regression suite at the owner-approved manual validation checkpoint; tests remain unexecuted.
