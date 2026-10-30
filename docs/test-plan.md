@@ -2066,3 +2066,10 @@ The repository widget regression source now checks three export formats after sa
 - Inject an HTML response whose HTTP Content-Type declares Windows-1252 while an early HTML meta tag declares UTF-8; include byte 0x80 in the article body.
 - Verify the HTTP header remains authoritative and the body decodes the byte as the Windows-1252 euro sign.
 - **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-273–TC-276 and the complete Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-277 — Ignore HTML charset declarations beyond the bounded prescan (2026-10-30)
+
+- Inject an HTML response without an HTTP charset; place a Windows-1252 meta declaration after the first 1,024 response bytes and include byte 0x80 in the article body.
+- Verify the out-of-window declaration is ignored and UTF-8 fallback produces the replacement character rather than a Windows-1252 euro sign.
+- **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-273–TC-277 and the complete Reader suite at the owner-approved manual validation checkpoint.
