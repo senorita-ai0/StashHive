@@ -215,3 +215,9 @@ Historical note: the pre-Phase-2 pipeline passed dependency resolution, formatti
 - Hardened the bounded HTML charset prescan so comments and script/style/noscript blocks are removed from the scanned prefix before locating meta charset declarations. This prevents a fake tag embedded in untrusted content from overriding text decoding.
 - Added TC-275 regression source containing fake Windows-1252 meta tags inside both an HTML comment and script text, with an invalid UTF-8 byte in the article body to make false detection visible.
 - Source and test were committed together in df4b3c4 using a clean single-copy Reader file after an earlier attempted update duplicated source fragments. Re-fetched file verification is pending in this turn. No tests, formatter, analyzer, build or CI were run; SH-006 remains partial.
+
+
+## SH-006 HTTP charset precedence regression — TC-276 (2026-10-30)
+
+- Added a deterministic Reader regression where the HTTP header declares Windows-1252 while the HTML meta tag declares UTF-8. The test expects byte 0x80 to decode as the euro sign, protecting the explicit-header-first policy already implemented in `_parseResponse`.
+- Test source commit: `766b8dda50a8960f61414454b00978bd523b28c1`. The test has not been run. No formatter, analyzer, tests, builds or CI were run; SH-006 remains partial and CI manual-only.
