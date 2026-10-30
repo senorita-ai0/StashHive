@@ -1770,3 +1770,10 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Ignore meta-like charset hints in comments and script/style/noscript blocks during bounded HTML prescan | _charsetFromHtmlMeta in lib/services/article_reader_io.dart | TC-275; ignores charset-looking tags inside scripts and comments | Source and regression committed together; not executed; native/web validation pending |
+
+
+## SH-006 HTTP charset precedence traceability — TC-276 — 2026-10-30
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Prefer an explicit HTTP Content-Type charset over a conflicting HTML meta charset | `_parseResponse` in `lib/services/article_reader_io.dart` | TC-276; `prefers the HTTP charset over an HTML meta charset` in `test/article_reader_test.dart` | Existing precedence source is covered by a new regression; not executed; native/web validation pending |
