@@ -2178,3 +2178,17 @@ The repository widget regression source now checks three export formats after sa
 - Feed malformed HTML with a readable paragraph followed by an unclosed form, and a separate page with a readable paragraph followed by an unclosed button.
 - Confirm the readable text before each malformed widget remains available and the widget tail is not leaked into Reader output.
 - **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-291–TC-292 with the complete Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-293 — Extract the complete outer article when semantic article containers are nested (2026-10-30)
+
+- Serve HTML with an outer article containing a nested article and a paragraph after the inner closing tag. Include markup-looking text inside a quoted attribute and a second sibling article.
+- Confirm the extracted text retains the outer introduction, nested article content and outer continuation, while excluding attribute text and the sibling article.
+- **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-293–TC-294 and the complete native Reader sanitizer/response suite at the owner-approved manual validation checkpoint.
+
+
+### TC-294 — Extract the complete main container when main elements are nested (2026-10-30)
+
+- Serve HTML with a main container containing a nested main and text after the inner closing tag, plus a semantic page header outside main.
+- Confirm all content inside the balanced outer main is retained and content outside that main is not included.
+- **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-293–TC-294 and the complete native Reader suite at the owner-approved manual validation checkpoint.
