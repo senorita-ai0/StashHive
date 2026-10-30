@@ -1311,3 +1311,13 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Updated \`ArticleReaderPage\` to use the same helper when displaying a selected quote and immediately before saving it, keeping UI and persisted data consistent.
 - Added TC-280–TC-282 source tests in \`test/article_reader_test.dart\`. Source commit: \`a79b83098c8443047ad12891bf712fb6e3588535\`; Reader UI integration commit: \`1e58492ac78088d34cf61c3d686d52098e08281b\`; regression source commit: \`ca09268a44a70cb4e8a2e7cd915755dc604eded5\`.
 - Test and source files were re-fetched. No formatter, analyzer, tests, builds or CI were run. SH-006 remains partial; CI remains manual-only.
+
+
+## SH-006 — conservative saved-quote re-anchoring (TC-283–TC-287) — 2026-10-30
+
+- Added \`lib/services/annotation_reanchoring.dart\` with a pure, local matcher for saved annotations and freshly fetched Reader text. It ignores stored offsets, finds exact quote occurrences and compares contiguous before-context suffix / after-context prefix matches.
+- A unique exact quote can be suggested directly. Repeated quotes are suggested only when one candidate has a uniquely stronger context score of at least 12 code units. Ties, weak context and absent quotes return no recommendation. Quotes shorter than 8 characters, article text beyond the Reader's 60,000-character cap and invalid/oversized context are rejected; the result exposes at most 8 candidates.
+- Added **Find in latest article** to each quote annotation on a link. Reader highlights only a safe suggestion in its temporary preview. The original annotation is not modified on open or on a failed/ambiguous match.
+- Added a separate **Update saved position** action. It rechecks the selected quote range, then updates only the annotation's source offsets and bounded context, preserving its ID, quote, personal note and creation time. The saved item title/content/URL remain unchanged.
+- Regression sources: \`test/annotation_reanchoring_test.dart\` (TC-283–TC-285, TC-287), \`test/article_reader_page_test.dart\` (TC-285–TC-286), and \`test/article_reader_repository_test.dart\` (TC-286). Source commits include \`bad4a7ff\`, \`1405e99d\`, \`4f2ed7ff\`, \`e5fb7339\`; test commits include \`d8074be1\`, \`69f818f0\`, \`700b145a\`, \`f7399449\`.
+- Source/tests were re-fetched from \`main\`. No formatter, analyzer, tests, builds or CI were run. The matching is exact-text only, not fuzzy/readability-aware; SH-006 remains partial and CI manual-only.
