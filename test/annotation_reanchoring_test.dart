@@ -149,18 +149,18 @@ void main() {
 
   test('retains overlapping quote occurrences as ambiguous candidates', () {
     final result = findSavedAnnotationAnchor(
-      articleText: 'aaaa',
+      articleText: 'aaaaaaaaa',
       annotation: _annotation(
-        quote: 'aa',
+        quote: 'aaaaaaaa',
         contextBefore: '',
         contextAfter: '',
       ),
     );
 
     expect(result.status, AnnotationAnchorStatus.ambiguous);
-    expect(result.totalMatches, 3);
+    expect(result.totalMatches, 2);
     expect(result.candidates.map((candidate) => candidate.startOffset),
-        [0, 1, 2]);
+        [0, 1]);
 
     final manyMatches = findSavedAnnotationAnchor(
       articleText: List<String>.filled(20, 'target passage').join(' | '),
