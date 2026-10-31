@@ -1404,3 +1404,12 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added TC-297 for an unterminated double-quoted attribute and TC-298 for a single-quoted attribute, each asserting that preceding readable text remains and the malformed tail is absent.
 - Source commit: `2a85c8c26e738353f80f59e5b308856e65a54b1b`; regression source commit: `342b060342e0186ada0c07e2061e3b15ea9a7e91`.
 - Source/tests were re-fetched. No Flutter/Dart executable is available; formatter, analyzer, unit/widget tests, builds and CI were not run. SH-006 remains partial and CI manual-only. The scanner is not a full HTML5 parser and does not attempt error recovery after an unterminated tag.
+
+
+#### TSK-548 follow-up — document declarations in Reader fallback — TC-299 — 2026-10-31
+
+- Extended the quote-aware scanner to consume HTML declaration/processing-instruction tokens such as `<!DOCTYPE html>` and `<?xml ...?>` using the same quote-state boundary logic. Incomplete declaration tokens discard the remaining malformed tail.
+- This preserves the previous sanitizer behavior of removing declaration-like markup in pages where no semantic article/main container is selected, instead of showing DOCTYPE/XML syntax in the whole-document plain-text fallback.
+- Added TC-299 in `test/article_reader_test.dart` for readable body content with both declaration forms and no semantic container.
+- Follow-up source commit: `5a6a176787205800985603f539ed96a26dbe2f4d`; test commit: `cada754ddc56a49c002402fa8e1a617fccbe8437`.
+- Dart/Flutter commands remain unavailable; no formatter, analyzer, test, build or CI run was performed. TSK-548 and SH-006 remain source-implemented but verification-pending.
