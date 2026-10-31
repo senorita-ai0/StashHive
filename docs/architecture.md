@@ -266,3 +266,8 @@ The final native Reader tag scanner tracks single- and double-quoted attribute v
 
 
 The same final scanner also strips declaration and processing-instruction tokens (for example, DOCTYPE and XML-style declarations) from the whole-document fallback, preventing those tokens from appearing before readable body text when no semantic article/main container exists. TC-299 covers that fallback. The scanner remains deliberately conservative and is not a complete HTML5 tokenizer.
+
+
+### Reader active-content filtering follow-up (2026-10-31)
+
+The Reader's active-block prefilter now recognizes quoted single- and double-attribute values containing `>` in opening tags before semantic article extraction and during post-extraction cleanup. This closes a mismatch with the later quote-aware tag stripper. TC-300 covers script, style, iframe and form/button blocks. The sanitizer remains a lightweight bounded fallback rather than a complete HTML5 parser.
