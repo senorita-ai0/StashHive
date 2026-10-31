@@ -1395,3 +1395,12 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added TC-296 in `test/article_reader_test.dart` for block and inline elements with quoted `>` values, verifying attribute strings are absent, paragraphs remain separated and inline words do not concatenate.
 - Source commit: `ef077675adbd413f203e35789930084b9c953aab`; regression source commit: `c80bc2f9d679ca7ba1c67d0c10c7ad40b6a5fdec`.
 - A separate JavaScript fixture sanity check confirmed attribute strings are excluded and inline words remain joined. It is not a Dart/Flutter test. Flutter/Dart executables remain unavailable; formatter, analyzer, unit/widget tests, builds and CI were not run. SH-006 remains partial; CI remains manual-only.
+
+
+### SH-006 — malformed quoted-tag tail handling — TSK-548 / TC-297–TC-298 — 2026-10-31
+
+- Replaced regex token enumeration in `_stripHtmlTagsPreservingBlockBoundaries` with an explicit character scan. It recognizes tag starts and tag names, tracks either single- or double-quote state while locating the real closing `>`, and emits the existing structural line break or inline spacing only after a complete tag is found.
+- If a candidate tag has no closing `>` or its quoted attribute remains open at end-of-input, the helper returns the already accumulated text and drops the malformed remainder. It never prints the unfinished attribute value as page text.
+- Added TC-297 for an unterminated double-quoted attribute and TC-298 for a single-quoted attribute, each asserting that preceding readable text remains and the malformed tail is absent.
+- Source commit: `2a85c8c26e738353f80f59e5b308856e65a54b1b`; regression source commit: `342b060342e0186ada0c07e2061e3b15ea9a7e91`.
+- Source/tests were re-fetched. No Flutter/Dart executable is available; formatter, analyzer, unit/widget tests, builds and CI were not run. SH-006 remains partial and CI manual-only. The scanner is not a full HTML5 parser and does not attempt error recovery after an unterminated tag.
