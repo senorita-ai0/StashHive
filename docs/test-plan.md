@@ -2206,3 +2206,17 @@ The repository widget regression source now checks three export formats after sa
 - Serve an article where block and inline tags have attributes containing a literal `>` character. Confirm each complete tag is removed as one token rather than stopping at the first quoted `>`.
 - Confirm attribute-only strings are not visible, paragraph boundaries remain line-separated, and adjacent inline words remain readable rather than concatenating.
 - **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-296 with TC-291–TC-295 and the complete native Reader sanitizer/response suite at the owner-approved manual validation checkpoint.
+
+
+### TC-297 — Stop Reader text at an unterminated double-quoted tag attribute (2026-10-31)
+
+- Provide an article with a readable paragraph followed by an opening tag whose double-quoted attribute contains a `>` but never closes.
+- Confirm the complete paragraph before the malformed tag remains readable and no attribute value or text after the malformed tag appears in Reader output.
+- **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-297–TC-298 with TC-291–TC-296 and the complete Reader sanitizer/response suite at the owner-approved manual validation checkpoint.
+
+
+### TC-298 — Stop Reader text at an unterminated single-quoted tag attribute (2026-10-31)
+
+- Repeat the malformed-markup case using a single-quoted attribute containing a `>` that never closes.
+- Confirm preceding complete article text remains available and the malformed attribute/page tail is discarded.
+- **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-297–TC-298 with the complete native Reader suite at the owner-approved manual validation checkpoint.
