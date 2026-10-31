@@ -236,7 +236,7 @@ String _stripHtmlTagsPreservingBlockBoundaries(String source) {
     r'''<(?:[^>"']|"[^"]*"|'[^']*')*>''',
   );
   final blockTag = RegExp(
-    r'^<\\s*/?\\s*(?:address|article|blockquote|dd|div|dl|dt|fieldset|figcaption|figure|h[1-6]|li|main|ol|p|pre|section|table|tbody|td|tfoot|th|thead|tr|ul|br|hr)\\b',
+    r'^<\s*/?\s*(?:address|article|blockquote|dd|div|dl|dt|fieldset|figcaption|figure|h[1-6]|li|main|ol|p|pre|section|table|tbody|td|tfoot|th|thead|tr|ul|br|hr)\\b',
     caseSensitive: false,
   );
 
