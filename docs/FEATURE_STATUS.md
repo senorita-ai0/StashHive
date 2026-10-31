@@ -335,3 +335,11 @@ The current working runtime has no \`flutter\` or \`dart\` executable, so Dart/F
 - Added TC-299 for an HTML document with DOCTYPE/XML-style declaration and readable body text but no semantic article/main container.
 - Source commit: `5a6a176787205800985603f539ed96a26dbe2f4d`; regression source commit: `cada754ddc56a49c002402fa8e1a617fccbe8437`.
 - No Flutter/Dart executable is available in the current runtime. Formatter, analyzer, tests, builds and CI remain unrun. SH-006 remains partial and manual platform validation is pending; CI remains manual-only.
+
+
+## SH-006 active-block quoted-attribute filtering — TSK-549 / TC-300 (2026-10-31)
+
+- Hardened the pre- and post-extraction active-content filters to consume quoted single/double attribute values containing `>` in opening tags for scripts, styles, embedded media, navigation and interactive widgets.
+- Added TC-300 to verify hidden script/style/iframe/form/button content is removed while surrounding article text remains readable.
+- Source commit: `1b85403020913b7a1bfc1391397e3626e18cd3e7`; regression source commit: `050fbdb1ddb841c78f7d6b7587eb5143d0059597`.
+- No Dart/Flutter formatter, analyzer, unit/widget test, build or CI run was performed. SH-006 remains partial and verification pending; CI remains manual-only. The regex prefilter is not a standards-complete HTML parser.
