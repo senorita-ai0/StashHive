@@ -1756,3 +1756,12 @@ The re-anchor write now compares the complete original annotation anchor snapsho
 - **Behavior:** Complete tags are tokenized while respecting quoted attribute values, avoiding partial tag removal when an attribute contains `>`. Structural tags become line boundaries and inline tags become spaces; fetched markup remains plain-text-only.
 - **Tests:** TC-296 in `test/article_reader_test.dart`.
 - **Status:** Source and regression source committed; formatter, analyzer, Dart tests, Android/web builds and platform extraction review remain pending. Malformed unclosed-quote tags remain an open edge case; this is not a full HTML5 parser.
+
+
+### TSK-548 — Discard malformed Reader tag/attribute tails (SH-006) — 2026-10-31
+
+- **Implementation:** `lib/services/article_reader.dart`, `_stripHtmlTagsPreservingBlockBoundaries`.
+- **Requirements:** FR-024, NFR-002, NFR-005, NFR-006.
+- **Behavior:** The final plain-text tag scanner tracks single/double quote state. An incomplete tag or unterminated quoted attribute causes the remaining malformed tail to be discarded, while previously accumulated article text is preserved.
+- **Tests:** TC-297 (double quote) and TC-298 (single quote), `test/article_reader_test.dart`.
+- **Status:** Source and test source committed; formatter, analyzer, Dart tests, Android/web builds and page extraction checks pending. This conservative fallback is not a full HTML5 parser.
