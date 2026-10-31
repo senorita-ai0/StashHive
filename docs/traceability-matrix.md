@@ -25,7 +25,7 @@
 | FR-019 | SCR-001, SCR-002 | SH-001 / TSK-533 | TC-019, TC-246, duplicate_detector_test.dart, quick_save_test.dart | IN PROGRESS — link-only normalized duplicate review is source implemented; tests and platform verification pending |
 | FR-022 | SCR-002, SCR-003 | SH-002 / TSK-534 | TC-247, TC-248, TC-249, search_filters_test.dart, search_filters_widget_test.dart | IN PROGRESS — local combined filters and saved preset storage/UI are source implemented; execution pending |
 | FR-023 | SCR-004 | SH-010 / TSK-536 / TSK-543 | TC-256, TC-263, saved_item_test.dart, quick_save_test.dart, rediscovery_test.dart, rediscovery_widget_test.dart | IN PROGRESS — status/progress and local 14-day Rediscover selection are source-covered; regression execution and platform verification pending |
-| FR-024 | SCR-004 | SH-006 / TSK-537, TSK-544–TSK-547 | TC-257, TC-264–TC-268, TC-280–TC-296, annotations_widget_test.dart, article_reader_* tests | IN PROGRESS — local annotations, temporary Reader, selectable quotes, bounded native fetch, conservative re-anchoring, interactive-widget filtering, balanced semantic-container extraction, block layout and quote-aware tag stripping are source implemented; tests and Android/web verification pending |
+| FR-024 | SCR-004 | SH-006 / TSK-537, TSK-544–TSK-548 | TC-257, TC-264–TC-268, TC-280–TC-298, annotations_widget_test.dart, article_reader_* tests | IN PROGRESS — local annotations, temporary Reader, selectable quotes, bounded native fetch, conservative re-anchoring, widget filtering, balanced semantic containers, block layout and quote-aware malformed-tag handling are source implemented; tests and Android/web verification pending |
 | FR-025 | SCR-002, SCR-007 | SH-008 / TSK-538 | TC-258, smart_tag_rules_test.dart, smart_tag_rules_widget_test.dart, quick_save_test.dart, library_repository_test.dart | IN PROGRESS — local phrase/tag rules, preference persistence, Settings management and review-before-add Quick Save chips are source implemented; tests/platform verification pending |
 | FR-026 | SCR-004 | SH-009 / TSK-539 | TC-259, link_health_test.dart, accessibility_widgets_test.dart, library_repository_test.dart | IN PROGRESS — explicit Android-only network check with local result persistence and browser limitation messaging is source implemented; regression execution/platform verification pending |
 | NFR-001 | Architecture / all core flows | TSK-003, TSK-304 | TC-014, TC-018 | IN PROGRESS — no backend/account integration in core source; offline and network inspection pending |
@@ -1870,3 +1870,11 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Behavior | Source | Regression source | Status |
 |---|---|---|---|
 | Strip an entire complete HTML tag token while respecting quoted attribute values containing `>`; map structural elements to line breaks and inline elements to spaces | `_stripHtmlTagsPreservingBlockBoundaries` in `lib/services/article_reader.dart` | TC-296; `does not leak quoted attribute text while stripping block and inline tags` in `test/article_reader_test.dart` | Source and regression committed; not run |
+
+
+### SH-006 malformed quoted-tag tail handling — TC-297/TC-298 — 2026-10-31
+
+| Behavior | Source | Regression source | Status |
+|---|---|---|---|
+| Preserve readable content before an unfinished tag, then discard the malformed remainder when a double-quoted attribute does not close | `_stripHtmlTagsPreservingBlockBoundaries` in `lib/services/article_reader.dart` | TC-297; `drops the tail after an unterminated double-quoted tag attribute` in `test/article_reader_test.dart` | Source and regression committed; not run |
+| Apply the same safe fallback to an unclosed single-quoted attribute containing `>` | `_stripHtmlTagsPreservingBlockBoundaries` in `lib/services/article_reader.dart` | TC-298; `drops the tail after an unterminated single-quoted tag attribute` in `test/article_reader_test.dart` | Source and regression committed; not run |
