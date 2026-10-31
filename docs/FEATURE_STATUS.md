@@ -343,3 +343,9 @@ The current working runtime has no \`flutter\` or \`dart\` executable, so Dart/F
 - Added TC-300 to verify hidden script/style/iframe/form/button content is removed while surrounding article text remains readable.
 - Source commit: `1b85403020913b7a1bfc1391397e3626e18cd3e7`; regression source commit: `050fbdb1ddb841c78f7d6b7587eb5143d0059597`.
 - No Dart/Flutter formatter, analyzer, unit/widget test, build or CI run was performed. SH-006 remains partial and verification pending; CI remains manual-only. The regex prefilter is not a standards-complete HTML parser.
+
+
+### TSK-549 follow-up — malformed active-block opener — TC-301 (2026-10-31)
+
+- Added a regression for an unterminated script opening tag whose quoted attribute contains `>`; readable content before the malformed block must remain, while the unfinished attribute and remaining tail are discarded.
+- Test source commit: `5f9cf9ac3f76a076c8271d57bcb54a4c81e98a9f`. TC-301 is authored but unrun; no formatter, analyzer, tests, builds or CI were run. SH-006 remains partial and verification pending.
