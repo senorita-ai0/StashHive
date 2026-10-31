@@ -263,3 +263,6 @@ The native Reader now uses the same quote-aware tag-token approach for its final
 ### Malformed Reader tag fallback — 2026-10-31
 
 The final native Reader tag scanner tracks single- and double-quoted attribute values while searching for a tag's actual closing `>`. If a candidate tag never closes, or a quoted attribute remains open at end-of-input, it returns only the text accumulated before that tag and discards the malformed remainder. This prevents incomplete attribute values from becoming visible article content while preserving preceding complete paragraphs. TC-297/TC-298 cover both quote styles. The fallback does not repair malformed HTML or provide full HTML5 parsing/recovery; it is intentionally conservative.
+
+
+The same final scanner also strips declaration and processing-instruction tokens (for example, DOCTYPE and XML-style declarations) from the whole-document fallback, preventing those tokens from appearing before readable body text when no semantic article/main container exists. TC-299 covers that fallback. The scanner remains deliberately conservative and is not a complete HTML5 tokenizer.
