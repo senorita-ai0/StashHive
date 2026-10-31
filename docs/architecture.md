@@ -258,3 +258,8 @@ After semantic extraction and widget removal, the native Reader converts structu
 ### Quote-aware HTML tag removal — 2026-10-31
 
 The native Reader now uses the same quote-aware tag-token approach for its final HTML-to-text pass as for semantic-container matching. Each complete tag is consumed as one unit even when a quoted attribute contains a `>`; structural tags create line boundaries while inline tags become spaces. This prevents attribute suffixes from leaking into visible text and avoids joining adjacent inline words. TC-296 covers block/inline attributes and paragraph preservation. An unclosed quoted attribute is not guaranteed to be repaired; the sanitizer remains a bounded lightweight fallback rather than a standards-complete HTML parser.
+
+
+### Malformed Reader tag fallback — 2026-10-31
+
+The final native Reader tag scanner tracks single- and double-quoted attribute values while searching for a tag's actual closing `>`. If a candidate tag never closes, or a quoted attribute remains open at end-of-input, it returns only the text accumulated before that tag and discards the malformed remainder. This prevents incomplete attribute values from becoming visible article content while preserving preceding complete paragraphs. TC-297/TC-298 cover both quote styles. The fallback does not repair malformed HTML or provide full HTML5 parsing/recovery; it is intentionally conservative.
