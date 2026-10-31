@@ -1765,3 +1765,8 @@ The re-anchor write now compares the complete original annotation anchor snapsho
 - **Behavior:** The final plain-text tag scanner tracks single/double quote state. An incomplete tag or unterminated quoted attribute causes the remaining malformed tail to be discarded, while previously accumulated article text is preserved. Declaration/processing-instruction tokens are also stripped when the entire document is used as the plain-text fallback.
 - **Tests:** TC-297 (double quote), TC-298 (single quote), and TC-299 (DOCTYPE/XML-style declaration fallback), `test/article_reader_test.dart`.
 - **Status:** Source and test source committed; formatter, analyzer, Dart tests, Android/web builds and page extraction checks pending. This conservative fallback is not a full HTML5 parser.
+
+
+### SH-006 — active-content opening tags with quoted delimiters — TSK-549 / TC-300 (2026-10-31)
+
+The Reader's active-block removal pass now recognizes complete opening tags even when a quoted single- or double-attribute value contains a `>`. This keeps script/style/embedded/widget removal consistent with the later quote-aware plain-text scanner. TC-300 covers hidden content and surrounding article text. Source and test are committed but unrun; include TC-300 in the manual Reader validation checkpoint. This remains a bounded sanitizer, not a full HTML parser.
