@@ -108,3 +108,8 @@ Normal file selection, save, item/collection deletion and backup operation error
 ## Temporary Reader markup sanitization — source implemented, verification pending
 
 The native temporary Reader converts response markup to plain text before display. Its lightweight sanitizer removes active/embedded content and now also removes form, button, select, textarea and dialog blocks, including the remaining tail of a malformed unclosed widget. This reduces accidental display of newsletter/login/comment controls and their embedded text. It is not a standards-complete HTML parser, a security audit, or proof of complete readability extraction. The app must continue to display only sanitized plain text, never render the fetched HTML. TC-291/TC-292 are authored regressions; execution and Android/web behavior remain pending.
+
+
+## Reader malformed attribute handling — source implemented, verification pending
+
+The temporary Reader's final plain-text scanner does not expose the remainder of a malformed tag when its opening tag or single/double quoted attribute never closes. It retains already accumulated text and drops that malformed tail. TC-297/TC-298 cover the two quote styles. This is a defensive display boundary only; it is not a complete parser, does not sanitize the destination website itself, and remains unverified by automated or platform tests.
