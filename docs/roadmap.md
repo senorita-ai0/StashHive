@@ -1762,6 +1762,6 @@ The re-anchor write now compares the complete original annotation anchor snapsho
 
 - **Implementation:** `lib/services/article_reader.dart`, `_stripHtmlTagsPreservingBlockBoundaries`.
 - **Requirements:** FR-024, NFR-002, NFR-005, NFR-006.
-- **Behavior:** The final plain-text tag scanner tracks single/double quote state. An incomplete tag or unterminated quoted attribute causes the remaining malformed tail to be discarded, while previously accumulated article text is preserved.
-- **Tests:** TC-297 (double quote) and TC-298 (single quote), `test/article_reader_test.dart`.
+- **Behavior:** The final plain-text tag scanner tracks single/double quote state. An incomplete tag or unterminated quoted attribute causes the remaining malformed tail to be discarded, while previously accumulated article text is preserved. Declaration/processing-instruction tokens are also stripped when the entire document is used as the plain-text fallback.
+- **Tests:** TC-297 (double quote), TC-298 (single quote), and TC-299 (DOCTYPE/XML-style declaration fallback), `test/article_reader_test.dart`.
 - **Status:** Source and test source committed; formatter, analyzer, Dart tests, Android/web builds and page extraction checks pending. This conservative fallback is not a full HTML5 parser.
