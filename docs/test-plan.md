@@ -2199,3 +2199,10 @@ The repository widget regression source now checks three export formats after sa
 - Serve an article containing headings, paragraphs, a multi-paragraph blockquote, figure caption, ordered/unordered list items, table headings/cells, horizontal rule and a following paragraph.
 - Confirm block content stays in source order and is separated by line breaks; table cells must not collapse into an ambiguous run-on value and inline text should remain readable.
 - **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-295 with TC-293–TC-294 and the complete native Reader sanitizer/response suite at the owner-approved manual validation checkpoint.
+
+
+### TC-296 — Strip complete HTML tags without leaking quoted attribute values (2026-10-31)
+
+- Serve an article where block and inline tags have attributes containing a literal `>` character. Confirm each complete tag is removed as one token rather than stopping at the first quoted `>`.
+- Confirm attribute-only strings are not visible, paragraph boundaries remain line-separated, and adjacent inline words remain readable rather than concatenating.
+- **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-296 with TC-291–TC-295 and the complete native Reader sanitizer/response suite at the owner-approved manual validation checkpoint.
