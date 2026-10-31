@@ -293,6 +293,32 @@ String _stripHtmlTagsPreservingBlockBoundaries(String source) {
       nameStart++;
     }
 
+    // HTML declarations and processing instructions are markup too, even
+    // though they do not have an ordinary element name.
+    if (nameStart < source.length) {
+      final marker = source.codeUnitAt(nameStart);
+      if (marker == 0x21 || marker == 0x3F) {
+        var quote = 0;
+        var declarationEnd = nameStart + 1;
+        for (; declarationEnd < source.length; declarationEnd++) {
+          final codeUnit = source.codeUnitAt(declarationEnd);
+          if (quote != 0) {
+            if (codeUnit == quote) quote = 0;
+          } else if (codeUnit == 0x22 || codeUnit == 0x27) {
+            quote = codeUnit;
+          } else if (codeUnit == 0x3E) {
+            break;
+          }
+        }
+        if (declarationEnd >= source.length || quote != 0) {
+          return output.toString();
+        }
+        output.write(' ');
+        cursor = declarationEnd + 1;
+        continue;
+      }
+    }
+
     // A less-than sign followed by ordinary text is not treated as markup.
     if (nameStart >= source.length ||
         !isAsciiLetter(source.codeUnitAt(nameStart))) {
