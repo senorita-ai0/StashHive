@@ -371,14 +371,14 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
     // mistaken for the real article and hide the page's actual readable text.
     var sourceWithoutActiveContent = source.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b[^>]*>[\s\S]*?</\1\s*>',
+        r'''<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*?</\1\s*>''',
         caseSensitive: false,
       ),
       ' ',
     );
     sourceWithoutActiveContent = sourceWithoutActiveContent.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b[^>]*>[\s\S]*$',
+        r'''<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*$''',
         caseSensitive: false,
       ),
       ' ',
@@ -403,14 +403,14 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
     // Remove remaining navigation chrome and any unclosed active blocks.
     text = text.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b[^>]*>[\s\S]*?</\1\s*>',
+        r'''<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*?</\1\s*>''',
         caseSensitive: false,
       ),
       ' ',
     );
     text = text.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b[^>]*>[\s\S]*$',
+        r'''<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*$''',
         caseSensitive: false,
       ),
       ' ',
@@ -553,14 +553,14 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
     // mistaken for the real article and hide the page's actual readable text.
     var sourceWithoutActiveContent = source.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b[^>]*>[\s\S]*?</\1\s*>',
+        r'''<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*?</\1\s*>''',
         caseSensitive: false,
       ),
       ' ',
     );
     sourceWithoutActiveContent = sourceWithoutActiveContent.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b[^>]*>[\s\S]*$',
+        r'''<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*$''',
         caseSensitive: false,
       ),
       ' ',
@@ -585,14 +585,14 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
     // Remove remaining navigation chrome and any unclosed active blocks.
     text = text.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b[^>]*>[\s\S]*?</\1\s*>',
+        r'''<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*?</\1\s*>''',
         caseSensitive: false,
       ),
       ' ',
     );
     text = text.replaceAll(
       RegExp(
-        r'<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b[^>]*>[\s\S]*$',
+        r'''<(script|style|noscript|svg|iframe|object|template|nav|footer|aside|form|button|select|textarea|dialog)\b(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*$''',
         caseSensitive: false,
       ),
       ' ',
