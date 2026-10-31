@@ -1747,3 +1747,12 @@ The re-anchor write now compares the complete original annotation anchor snapsho
 - **Behavior:** Structural opening/closing tags now become line separators for headings, paragraphs, blockquotes, figures/captions, lists, description lists, tables/cells and horizontal rules. Inline formatting is not promoted to block spacing.
 - **Tests:** TC-295 in `test/article_reader_test.dart`.
 - **Status:** Source and regression source committed; Dart/Flutter tests, formatter, analyzer and Android/web text-selection/layout checks pending. Sanitization is still a lightweight fallback, not a complete HTML parser.
+
+
+### TSK-547 — Strip complete Reader HTML tags with quote-aware tokenization (SH-006) — 2026-10-31
+
+- **Implementation:** `lib/services/article_reader.dart`, `_stripHtmlTagsPreservingBlockBoundaries`.
+- **Requirements:** FR-024, NFR-002, NFR-005, NFR-006.
+- **Behavior:** Complete tags are tokenized while respecting quoted attribute values, avoiding partial tag removal when an attribute contains `>`. Structural tags become line boundaries and inline tags become spaces; fetched markup remains plain-text-only.
+- **Tests:** TC-296 in `test/article_reader_test.dart`.
+- **Status:** Source and regression source committed; formatter, analyzer, Dart tests, Android/web builds and platform extraction review remain pending. Malformed unclosed-quote tags remain an open edge case; this is not a full HTML5 parser.
