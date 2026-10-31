@@ -2227,3 +2227,6 @@ The repository widget regression source now checks three export formats after sa
 - Provide a normal HTML document with a DOCTYPE declaration and XML-style processing instruction, but no semantic `article` or `main` container.
 - Confirm readable body text remains visible while declaration text and markup delimiters are not exposed.
 - **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-297–TC-299 with TC-291–TC-296 and the complete native Reader sanitizer/response suite at the owner-approved manual validation checkpoint.
+
+
+| TC-300 | SH-006, NFR-002 | Reader active-block opening tags contain quoted `>` in script/style/iframe/form attributes | Active content and widget text are excluded; surrounding article text remains readable. | SOURCE ADDED — NOT RUN |
