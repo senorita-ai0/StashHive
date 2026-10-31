@@ -289,3 +289,12 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Keep DOCTYPE/declaration and processing-instruction tokens out of whole-document plain-text fallback; add TC-299.
 - [ ] Run TC-297–TC-299 with TC-291–TC-296 and the complete Reader suites at the owner-approved manual validation checkpoint.
 - [ ] Review HTML parser edge cases and real-world page extraction; this is a conservative fallback, not a complete HTML5 tokenizer/tree builder.
+
+
+## SH-006 — quote-aware active-block filtering — TSK-549 / TC-300 (2026-10-31)
+
+- [x] Make pre- and post-extraction active-block opening-tag matching honor quoted single/double attribute values containing `>`.
+- [x] Preserve removal of closed active blocks and malformed unclosed active-block tails.
+- [x] Add TC-300 for quoted-attribute script, style, iframe and form/button content while retaining surrounding article text.
+- [ ] Run TC-300 with TC-291–TC-299 and the complete Reader unit/widget/repository suite at the owner-approved manual validation checkpoint.
+- [ ] Review real-page extraction and Android/web behavior; the prefilter remains regex-based and is not a complete HTML5 parser.
