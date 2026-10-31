@@ -1890,3 +1890,5 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 
 | TSK-549 / TC-300 | SH-006, NFR-002 | Reader active-content filtering honors quoted attribute delimiters before and after semantic extraction. | `test/article_reader_test.dart` — TC-300 | Source committed; execution pending manual validation. |
+
+| TSK-549 / TC-301 | SH-006, NFR-002 | Malformed active-block opener cannot expose its quoted attribute or remaining page tail. | `test/article_reader_test.dart` — TC-301 | Source committed; execution pending manual validation. |
