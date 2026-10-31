@@ -228,6 +228,29 @@ String? _extractFirstBalancedElementContents(String source, String tagName) {
   return null;
 }
 
+/// Removes complete HTML tag tokens without ending at a \`>\` inside a
+/// quoted attribute. Structural elements become line breaks; inline elements
+/// become spaces so adjacent words do not accidentally concatenate.
+String _stripHtmlTagsPreservingBlockBoundaries(String source) {
+  final tagTokens = RegExp(
+    r'''<(?:[^>"']|"[^"]*"|'[^']*')*>''',
+  );
+  final blockTag = RegExp(
+    r'^<\\s*/?\\s*(?:address|article|blockquote|dd|div|dl|dt|fieldset|figcaption|figure|h[1-6]|li|main|ol|p|pre|section|table|tbody|td|tfoot|th|thead|tr|ul|br|hr)\\b',
+    caseSensitive: false,
+  );
+
+  final output = StringBuffer();
+  var consumed = 0;
+  for (final match in tagTokens.allMatches(source)) {
+    output.write(source.substring(consumed, match.start));
+    output.write(blockTag.hasMatch(match[0]!) ? '\n' : ' ');
+    consumed = match.end;
+  }
+  output.write(source.substring(consumed));
+  return output.toString();
+}
+
 /// Removes active markup and decodes a conservative set of text entities.
 /// The result is plain text and must never be interpreted as HTML.
 String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
@@ -284,14 +307,7 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
     );
     text = text.replaceAll(RegExp(r'<!--[\s\S]*?-->'), ' ');
     text = text.replaceAll(RegExp(r'<!--[\s\S]*$'), ' ');
-    text = text.replaceAll(
-      RegExp(
-        r'<(?:br|hr)\b[^>]*>|</?(address|article|blockquote|dd|div|dl|dt|fieldset|figcaption|figure|h[1-6]|li|main|ol|p|pre|section|table|tbody|td|tfoot|th|thead|tr|ul)\b[^>]*>',
-        caseSensitive: false,
-      ),
-      '\n',
-    );
-    text = text.replaceAll(RegExp(r'<[^>]{0,2048}>'), ' ');
+    text = _stripHtmlTagsPreservingBlockBoundaries(text);
   }
 
   // Decode numeric references before named references so escaped ampersands
