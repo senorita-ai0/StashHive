@@ -908,4 +908,24 @@ void main() {
     expect(text, isNot(contains('xml version')));
     expect(text, isNot(contains('<?')));
   });
+
+  test('removes active blocks when opening attributes contain quoted greater-than signs', () {
+    final text = sanitizeArticleMarkup(
+      '<article><h1>Visible article title.</h1>'
+      '<script data-note="first > second">secretScript()</script>'
+      '<style data-note=\'first > second\'>secretStyle { display: none; }</style>'
+      '<iframe title="frame > label">secretFrame()</iframe>'
+      '<form aria-label="form > label"><button>Secret action</button></form>'
+      '<p>Visible article ending.</p></article>',
+    );
+
+    expect(text, contains('Visible article title.'));
+    expect(text, contains('Visible article ending.'));
+    expect(text, isNot(contains('secretScript')));
+    expect(text, isNot(contains('secretStyle')));
+    expect(text, isNot(contains('secretFrame')));
+    expect(text, isNot(contains('Secret action')));
+    expect(text, isNot(contains('first > second')));
+  });
+
 }
