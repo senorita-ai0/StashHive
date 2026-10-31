@@ -1386,3 +1386,12 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added TC-295 in `test/article_reader_test.dart` covering a heading, paragraphs, multi-paragraph quotation, figure caption, list items, table header/cells and a following paragraph.
 - Source commit: `4b2fa7af3b3c578387e0c2b3b782bc547f9fba44`; test commit: `ed291a2e06c15bd9c2103800b39ca8624970e523`.
 - A separate JavaScript sanity check of the fixture's separator/normalization logic preserved expected order and line boundaries; it is not a Dart/Flutter test result. Flutter/Dart remain unavailable, so formatter, analyzer, unit/widget tests, builds and CI were not run. SH-006 remains partial; CI remains manual-only.
+
+
+### SH-006 — quote-aware HTML tag stripping — TSK-547 / TC-296 — 2026-10-31
+
+- Identified a mismatch after balanced semantic-container selection: the later block-separator and generic tag-removal regexes still stopped at the first `>`, even when it occurred inside a quoted attribute. This could leak the remainder of an attribute into visible Reader text.
+- Replaced that final regex pair with `_stripHtmlTagsPreservingBlockBoundaries`. It tokenizes complete tags while consuming quoted attribute values, writes a newline for structural tags and a space for inline tags, and never renders fetched HTML.
+- Added TC-296 in `test/article_reader_test.dart` for block and inline elements with quoted `>` values, verifying attribute strings are absent, paragraphs remain separated and inline words do not concatenate.
+- Source commit: `ef077675adbd413f203e35789930084b9c953aab`; regression source commit: `c80bc2f9d679ca7ba1c67d0c10c7ad40b6a5fdec`.
+- A separate JavaScript fixture sanity check confirmed attribute strings are excluded and inline words remain joined. It is not a Dart/Flutter test. Flutter/Dart executables remain unavailable; formatter, analyzer, unit/widget tests, builds and CI were not run. SH-006 remains partial; CI remains manual-only.
