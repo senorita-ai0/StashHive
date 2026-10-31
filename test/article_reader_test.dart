@@ -850,4 +850,23 @@ void main() {
     expect(text, contains('First list item.\n'));
     expect(text, contains('Year\n'));
   });
+
+  test('does not leak quoted attribute text while stripping block and inline tags', () {
+    final text = sanitizeArticleMarkup(
+      '<article>'
+      '<p data-label="hidden-before > hidden-after">First paragraph.</p>'
+      '<p>Second paragraph.</p>'
+      '<span title="inline-hidden-before > inline-hidden-after">kept inline</span>'
+      '<strong> words together.</strong>'
+      '</article>',
+    );
+
+    expect(text, contains('First paragraph.'));
+    expect(text, contains('Second paragraph.'));
+    expect(text, contains('kept inline words together.'));
+    expect(text, contains('First paragraph.\n'));
+    expect(text, isNot(contains('hidden-before')));
+    expect(text, isNot(contains('hidden-after')));
+    expect(text, isNot(contains('inline-hidden')));
+  });
 }
