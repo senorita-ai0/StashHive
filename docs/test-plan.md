@@ -2220,3 +2220,10 @@ The repository widget regression source now checks three export formats after sa
 - Repeat the malformed-markup case using a single-quoted attribute containing a `>` that never closes.
 - Confirm preceding complete article text remains available and the malformed attribute/page tail is discarded.
 - **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-297–TC-298 with the complete native Reader suite at the owner-approved manual validation checkpoint.
+
+
+### TC-299 — Keep document declarations out of plain-text Reader fallback (2026-10-31)
+
+- Provide a normal HTML document with a DOCTYPE declaration and XML-style processing instruction, but no semantic `article` or `main` container.
+- Confirm readable body text remains visible while declaration text and markup delimiters are not exposed.
+- **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute TC-297–TC-299 with TC-291–TC-296 and the complete native Reader sanitizer/response suite at the owner-approved manual validation checkpoint.
