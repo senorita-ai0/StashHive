@@ -232,22 +232,106 @@ String? _extractFirstBalancedElementContents(String source, String tagName) {
 /// quoted attribute. Structural elements become line breaks; inline elements
 /// become spaces so adjacent words do not accidentally concatenate.
 String _stripHtmlTagsPreservingBlockBoundaries(String source) {
-  final tagTokens = RegExp(
-    r'''<(?:[^>"']|"[^"]*"|'[^']*')*>''',
-  );
-  final blockTag = RegExp(
-    r'^<\s*/?\s*(?:address|article|blockquote|dd|div|dl|dt|fieldset|figcaption|figure|h[1-6]|li|main|ol|p|pre|section|table|tbody|td|tfoot|th|thead|tr|ul|br|hr)\b',
-    caseSensitive: false,
-  );
+  const blockTags = <String>{
+    'address',
+    'article',
+    'blockquote',
+    'dd',
+    'div',
+    'dl',
+    'dt',
+    'fieldset',
+    'figcaption',
+    'figure',
+    'h1',
+    'h2',
+    'h3',
+    'h4',
+    'h5',
+    'h6',
+    'li',
+    'main',
+    'ol',
+    'p',
+    'pre',
+    'section',
+    'table',
+    'tbody',
+    'td',
+    'tfoot',
+    'th',
+    'thead',
+    'tr',
+    'ul',
+    'br',
+    'hr',
+  };
+
+  bool isAsciiLetter(int value) =>
+      (value >= 0x41 && value <= 0x5A) ||
+      (value >= 0x61 && value <= 0x7A);
+
+  bool isTagNameCharacter(int value) =>
+      isAsciiLetter(value) ||
+      (value >= 0x30 && value <= 0x39) ||
+      value == 0x2D ||
+      value == 0x3A;
 
   final output = StringBuffer();
-  var consumed = 0;
-  for (final match in tagTokens.allMatches(source)) {
-    output.write(source.substring(consumed, match.start));
-    output.write(blockTag.hasMatch(match[0]!) ? '\n' : ' ');
-    consumed = match.end;
+  var cursor = 0;
+  while (cursor < source.length) {
+    final opening = source.indexOf('<', cursor);
+    if (opening < 0) {
+      output.write(source.substring(cursor));
+      break;
+    }
+
+    output.write(source.substring(cursor, opening));
+    var nameStart = opening + 1;
+    if (nameStart < source.length &&
+        source.codeUnitAt(nameStart) == 0x2F) {
+      nameStart++;
+    }
+
+    // A less-than sign followed by ordinary text is not treated as markup.
+    if (nameStart >= source.length ||
+        !isAsciiLetter(source.codeUnitAt(nameStart))) {
+      output.write('<');
+      cursor = opening + 1;
+      continue;
+    }
+
+    var nameEnd = nameStart;
+    while (nameEnd < source.length &&
+        isTagNameCharacter(source.codeUnitAt(nameEnd))) {
+      nameEnd++;
+    }
+    final tagName = source.substring(nameStart, nameEnd).toLowerCase();
+
+    // Find the real tag terminator, ignoring '>' characters inside either
+    // quote style. If a quote or tag never closes, discard the malformed tail
+    // instead of exposing attribute contents as article prose.
+    var quote = 0;
+    var tagEnd = nameEnd;
+    for (; tagEnd < source.length; tagEnd++) {
+      final codeUnit = source.codeUnitAt(tagEnd);
+      if (quote != 0) {
+        if (codeUnit == quote) quote = 0;
+      } else if (codeUnit == 0x22 || codeUnit == 0x27) {
+        quote = codeUnit;
+      } else if (codeUnit == 0x3E) {
+        break;
+      }
+    }
+
+    if (tagEnd >= source.length || quote != 0) {
+      return output.toString();
+    }
+
+    output.write(blockTags.contains(tagName) ? '\n' : ' ');
+    cursor = tagEnd + 1;
   }
-  output.write(source.substring(consumed));
+
   return output.toString();
 }
 
