@@ -928,4 +928,18 @@ void main() {
     expect(text, isNot(contains('first > second')));
   });
 
+
+  test('drops an unterminated active-block tag with a quoted greater-than attribute', () {
+    final text = sanitizeArticleMarkup(
+      '<article><p>Readable content before the broken block.</p>'
+      '<script data-note="unfinished > hidden script tail '
+      'and content that must not be shown',
+    );
+
+    expect(text, contains('Readable content before the broken block.'));
+    expect(text, isNot(contains('unfinished')));
+    expect(text, isNot(contains('hidden script tail')));
+    expect(text, isNot(contains('must not be shown')));
+  });
+
 }
