@@ -1887,3 +1887,6 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | Preserve readable content before an unfinished tag, then discard the malformed remainder when a double-quoted attribute does not close | `_stripHtmlTagsPreservingBlockBoundaries` in `lib/services/article_reader.dart` | TC-297; `drops the tail after an unterminated double-quoted tag attribute` in `test/article_reader_test.dart` | Source and regression committed; not run |
 | Apply the same safe fallback to an unclosed single-quoted attribute containing `>` | `_stripHtmlTagsPreservingBlockBoundaries` in `lib/services/article_reader.dart` | TC-298; `drops the tail after an unterminated single-quoted tag attribute` in `test/article_reader_test.dart` | Source and regression committed; not run |
 | Remove DOCTYPE/declaration and processing-instruction tokens from whole-document plain-text fallback | `_stripHtmlTagsPreservingBlockBoundaries` in `lib/services/article_reader.dart` | TC-299; `does not expose document declarations when no semantic container exists` in `test/article_reader_test.dart` | Source and regression committed; not run |
+
+
+| TSK-549 / TC-300 | SH-006, NFR-002 | Reader active-content filtering honors quoted attribute delimiters before and after semantic extraction. | `test/article_reader_test.dart` — TC-300 | Source committed; execution pending manual validation. |
