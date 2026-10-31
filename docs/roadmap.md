@@ -1770,3 +1770,8 @@ The re-anchor write now compares the complete original annotation anchor snapsho
 ### SH-006 — active-content opening tags with quoted delimiters — TSK-549 / TC-300 (2026-10-31)
 
 The Reader's active-block removal pass now recognizes complete opening tags even when a quoted single- or double-attribute value contains a `>`. This keeps script/style/embedded/widget removal consistent with the later quote-aware plain-text scanner. TC-300 covers hidden content and surrounding article text. Source and test are committed but unrun; include TC-300 in the manual Reader validation checkpoint. This remains a bounded sanitizer, not a full HTML parser.
+
+
+#### TSK-549 follow-up — malformed active-block opener — TC-301 (2026-10-31)
+
+TC-301 covers an unterminated script opening tag with a quoted `>` attribute. The expected behavior is to preserve text before the malformed tag and discard the unfinished attribute and remaining tail. Test source is committed but unrun; execute it with TC-300 and the full Reader suite at the manual validation checkpoint.
