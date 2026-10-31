@@ -895,4 +895,17 @@ void main() {
     expect(text, isNot(contains('secret attribute tail')));
     expect(text, isNot(contains('remaining malformed page content')));
   });
+
+  test('does not expose document declarations when no semantic container exists', () {
+    final text = sanitizeArticleMarkup(
+      '<!DOCTYPE html>'
+      '<?xml version="1.0" encoding="UTF-8"?>'
+      '<html><body><p>Readable page text.</p></body></html>',
+    );
+
+    expect(text, contains('Readable page text.'));
+    expect(text, isNot(contains('DOCTYPE')));
+    expect(text, isNot(contains('xml version')));
+    expect(text, isNot(contains('<?')));
+  });
 }
