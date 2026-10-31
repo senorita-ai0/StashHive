@@ -1413,3 +1413,11 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added TC-299 in `test/article_reader_test.dart` for readable body content with both declaration forms and no semantic container.
 - Follow-up source commit: `5a6a176787205800985603f539ed96a26dbe2f4d`; test commit: `cada754ddc56a49c002402fa8e1a617fccbe8437`.
 - Dart/Flutter commands remain unavailable; no formatter, analyzer, test, build or CI run was performed. TSK-548 and SH-006 remain source-implemented but verification-pending.
+
+### TSK-549 — quote-aware active-block filtering — TC-300 (2026-10-31)
+
+- Updated the Reader's pre-extraction and post-extraction active-content filters so opening tags for script, style, embedded media, navigation and interactive widgets are matched across quoted single- or double-attribute values containing `>`.
+- Kept closed-block removal and malformed unclosed-block tail removal behavior; the change does not render HTML or broaden the Reader's fetch policy.
+- Added TC-300 for quoted `>` in script, style, iframe and form/button opening attributes, asserting that hidden content is excluded while surrounding article paragraphs remain.
+- Source commit: `1b85403020913b7a1bfc1391397e3626e18cd3e7`; regression source commit: `050fbdb1ddb841c78f7d6b7587eb5143d0059597`.
+- Flutter/Dart formatter, analyzer, unit/widget tests, builds and CI have not been run. CI remains manual-only; SH-006 remains partial and verification pending. The regex-based prefilter remains a bounded fallback, not a complete HTML5 parser.
