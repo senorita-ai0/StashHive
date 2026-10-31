@@ -270,3 +270,12 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Add TC-295 covering content order and line separation across quotes, captions, lists and tables.
 - [ ] Run TC-295 with TC-291–TC-294 and the complete Reader unit/widget/repository suites at the owner-approved manual validation checkpoint.
 - [ ] Review real-page text quality and selection behavior on Android/web; extraction remains a lightweight sanitizer and is not standards-complete.
+
+
+## SH-006 — quote-aware Reader HTML tag stripping — TSK-547 / TC-296 (2026-10-31)
+
+- [x] Replace the final `<[^>]*>`-style removal pass with quote-aware tag-token scanning, so a `>` inside a quoted attribute does not end the tag early.
+- [x] Preserve line breaks for structural tags and a separating space for inline tags while removing the full attribute payload.
+- [x] Add TC-296 for block and inline elements with quoted `>` attribute values, including paragraph separation and adjacent inline words.
+- [ ] Run TC-296 with TC-291–TC-295 and the full Reader tests at the owner-approved manual validation checkpoint.
+- [ ] Review malformed unclosed-quote tags and real-world extraction quality; this remains a lightweight sanitizer, not a standards-complete HTML parser.
