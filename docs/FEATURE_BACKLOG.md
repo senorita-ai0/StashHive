@@ -298,3 +298,9 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Add TC-300 for quoted-attribute script, style, iframe and form/button content while retaining surrounding article text.
 - [ ] Run TC-300 with TC-291–TC-299 and the complete Reader unit/widget/repository suite at the owner-approved manual validation checkpoint.
 - [ ] Review real-page extraction and Android/web behavior; the prefilter remains regex-based and is not a complete HTML5 parser.
+
+
+### TSK-549 follow-up — malformed quoted active-block opener — TC-301
+
+- [x] Add TC-301 proving an unterminated script opener with a quoted `>` attribute cannot leak its attribute or remaining page tail.
+- [ ] Run TC-300–TC-301 and the full Reader regression suite at the owner-approved manual validation checkpoint.
