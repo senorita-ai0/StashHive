@@ -113,3 +113,6 @@ The native temporary Reader converts response markup to plain text before displa
 ## Reader malformed attribute handling — source implemented, verification pending
 
 The temporary Reader's final plain-text scanner does not expose the remainder of a malformed tag when its opening tag or single/double quoted attribute never closes. It retains already accumulated text and drops that malformed tail. TC-297/TC-298 cover the two quote styles. This is a defensive display boundary only; it is not a complete parser, does not sanitize the destination website itself, and remains unverified by automated or platform tests.
+
+
+The scanner also removes declaration/processing-instruction tokens from whole-document fallback content so document prolog syntax is not displayed as article text. TC-299 covers a DOCTYPE and XML-style declaration in the absence of semantic article/main containers. This display boundary remains source-only until automated and Android/web checks are run.
