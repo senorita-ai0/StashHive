@@ -279,3 +279,12 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Add TC-296 for block and inline elements with quoted `>` attribute values, including paragraph separation and adjacent inline words.
 - [ ] Run TC-296 with TC-291–TC-295 and the full Reader tests at the owner-approved manual validation checkpoint.
 - [ ] Review malformed unclosed-quote tags and real-world extraction quality; this remains a lightweight sanitizer, not a standards-complete HTML parser.
+
+
+## SH-006 — discard malformed unterminated Reader tag tails — TSK-548 / TC-297–TC-298 (2026-10-31)
+
+- [x] Replace regex-only final tag tokenization with an explicit bounded string scan that honors both single and double attribute quotes.
+- [x] If a tag or quoted attribute never closes, preserve already-read text and discard the malformed tag plus its remaining tail rather than showing attribute content.
+- [x] Add TC-297/TC-298 regression source for unclosed double- and single-quoted attributes containing `>`.
+- [ ] Run TC-297–TC-298 with TC-291–TC-296 and the complete Reader suites at the owner-approved manual validation checkpoint.
+- [ ] Review HTML parser edge cases and real-world page extraction; this is a conservative fallback, not a complete HTML5 tokenizer/tree builder.
