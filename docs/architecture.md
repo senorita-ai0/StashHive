@@ -253,3 +253,8 @@ Native Reader extraction now uses a small tag-token scan for semantic `article` 
 ### Reader block-layout normalization — 2026-10-30
 
 After semantic extraction and widget removal, the native Reader converts structural opening and closing tags to line separators before stripping remaining inline markup. This includes headings, paragraphs, blockquotes, figures/captions, list and description-list structures, tables/sections/rows/cells, and horizontal rules. Inline formatting such as emphasis remains in the same text run. The goal is to avoid paragraph, quote, list and table text running together while continuing to show only sanitized plain text. TC-295 provides source regression coverage; rendered typography, selectable offsets and accessibility still require Android/web validation.
+
+
+### Quote-aware HTML tag removal — 2026-10-31
+
+The native Reader now uses the same quote-aware tag-token approach for its final HTML-to-text pass as for semantic-container matching. Each complete tag is consumed as one unit even when a quoted attribute contains a `>`; structural tags create line boundaries while inline tags become spaces. This prevents attribute suffixes from leaking into visible text and avoids joining adjacent inline words. TC-296 covers block/inline attributes and paragraph preservation. An unclosed quoted attribute is not guaranteed to be repaired; the sanitizer remains a bounded lightweight fallback rather than a standards-complete HTML parser.
