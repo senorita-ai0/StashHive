@@ -869,4 +869,30 @@ void main() {
     expect(text, isNot(contains('hidden-after')));
     expect(text, isNot(contains('inline-hidden')));
   });
+
+  test('drops the tail after an unterminated double-quoted tag attribute', () {
+    final text = sanitizeArticleMarkup(
+      '<article><p>Readable text before malformed markup.</p>'
+      '<span title="unfinished > private attribute tail '
+      'and text that must not be exposed',
+    );
+
+    expect(text, contains('Readable text before malformed markup.'));
+    expect(text, isNot(contains('unfinished')));
+    expect(text, isNot(contains('private attribute tail')));
+    expect(text, isNot(contains('must not be exposed')));
+  });
+
+  test('drops the tail after an unterminated single-quoted tag attribute', () {
+    final text = sanitizeArticleMarkup(
+      '<article><p>Keep this complete paragraph.</p>'
+      '<em data-note=\'unfinished > secret attribute tail '
+      'and remaining malformed page content',
+    );
+
+    expect(text, contains('Keep this complete paragraph.'));
+    expect(text, isNot(contains('unfinished')));
+    expect(text, isNot(contains('secret attribute tail')));
+    expect(text, isNot(contains('remaining malformed page content')));
+  });
 }
