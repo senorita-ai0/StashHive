@@ -1435,3 +1435,11 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added TC-302 for a fake charset meta string following a closing-tag-looking substring inside a quoted script attribute, and TC-303 for a valid legacy charset declaration after a quoted `>` attribute.
 - Source commit: `d7eef5f45593e4bca30bac39816fe8e50e1c4a26`; regression commit: `eb32ae926a996bb1d7ef0fcd574404e3d22a2b4e`.
 - Tests are authored but unrun. No formatter, analyzer, unit/widget test, build or CI was executed; CI remains manual-only. The scan remains bounded to the first 1024 response bytes and is not a complete HTML5 encoding prescan implementation.
+
+
+### TSK-551 — Reader legacy web charset aliases — TC-304–TC-306 — 2026-11-02
+
+- Mapped common web labels `iso-8859-1`, `iso8859-1`, `us-ascii` and `ascii` to the existing Windows-1252 decoder, matching their legacy HTML/web interpretation for bytes in the 0x80–0x9F range.
+- Kept explicit `latin1` and `latin-1` behavior unchanged to avoid silently changing the app's existing compatibility contract. Unsupported labels continue to use tolerant UTF-8 decoding.
+- Added tests for ISO-8859-1, US-ASCII and unsupported-label fallback. Source commit: `5ed6b31be4422b0a8e643083910499c5a04d32ad`; tests: `86cad90b971ea67dcf95bc4fa23cb540321ecd55`.
+- Tests authored but not run; no formatter, analyzer, build or CI executed. CI remains manual-only.
