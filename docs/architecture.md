@@ -271,3 +271,8 @@ The same final scanner also strips declaration and processing-instruction tokens
 ### Reader active-content filtering follow-up (2026-10-31)
 
 The Reader's active-block prefilter now recognizes quoted single- and double-attribute values containing `>` in opening tags before semantic article extraction and during post-extraction cleanup. This closes a mismatch with the later quote-aware tag stripper. TC-300 covers script, style, iframe and form/button blocks. The sanitizer remains a lightweight bounded fallback rather than a complete HTML5 parser.
+
+
+### Reader charset prescan follow-up (2026-11-02)
+
+The native Reader's bounded first-1024-byte HTML encoding prescan uses quote-aware opening-tag matching when removing script/style/noscript blocks and quote-aware meta-tag enumeration. This avoids mistaking a closing-tag-looking substring inside a quoted attribute for a real close and supports valid charset attributes after quoted `>` content. TC-302 and TC-303 cover both cases. This remains a lightweight bounded prescan, not a complete HTML5 encoding algorithm.
