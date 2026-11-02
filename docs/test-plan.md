@@ -2232,3 +2232,6 @@ The repository widget regression source now checks three export formats after sa
 | TC-300 | SH-006, NFR-002 | Reader active-block opening tags contain quoted `>` in script/style/iframe/form attributes | Active content and widget text are excluded; surrounding article text remains readable. | SOURCE ADDED — NOT RUN |
 
 | TC-301 | SH-006, NFR-002 | Reader receives an unterminated script opener with a quoted `>` attribute | Text before the malformed tag remains; the attribute and remaining tail are discarded. | SOURCE ADDED — NOT RUN |
+
+| TC-302 | SH-006, NFR-002 | Script opening-tag attribute contains a closing-tag-looking string followed by fake meta charset markup | Fake declaration is ignored; body bytes are decoded without the false legacy charset. | SOURCE ADDED — NOT RUN |
+| TC-303 | SH-006, NFR-002 | Valid meta charset follows an attribute containing quoted `>` | The complete meta tag is parsed and the declared legacy encoding is applied. | SOURCE ADDED — NOT RUN |
