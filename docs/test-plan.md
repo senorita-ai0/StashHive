@@ -2235,3 +2235,22 @@ The repository widget regression source now checks three export formats after sa
 
 | TC-302 | SH-006, NFR-002 | Script opening-tag attribute contains a closing-tag-looking string followed by fake meta charset markup | Fake declaration is ignored; body bytes are decoded without the false legacy charset. | SOURCE ADDED — NOT RUN |
 | TC-303 | SH-006, NFR-002 | Valid meta charset follows an attribute containing quoted `>` | The complete meta tag is parsed and the declared legacy encoding is applied. | SOURCE ADDED — NOT RUN |
+
+
+### TC-304 — Decode the ISO-8859-1 web label using Windows-1252 (2026-11-02)
+
+- Return plain-text bytes containing 0x80 and Windows-1252 quotation marks with `charset=iso-8859-1`.
+- Confirm the Reader displays the euro sign and curly quotes, consistent with the legacy HTML/web label mapping.
+- **Status:** Regression source committed; not run.
+
+### TC-305 — Decode the US-ASCII web label using Windows-1252 (2026-11-02)
+
+- Return bytes containing 0x80 and ordinary ASCII text with `charset=us-ascii`.
+- Confirm the high byte is decoded with the Windows-1252 mapping while ASCII remains intact.
+- **Status:** Regression source committed; not run.
+
+### TC-306 — Fall back safely for an unsupported charset label (2026-11-02)
+
+- Return valid UTF-8 text with an unknown declared charset label.
+- Confirm tolerant UTF-8 fallback preserves multilingual and supplementary Unicode text.
+- **Status:** Regression source committed; not run. Include TC-304–TC-306 with the full Reader charset/transport suite at the owner-approved manual validation checkpoint.
