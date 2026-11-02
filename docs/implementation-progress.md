@@ -1443,3 +1443,11 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Kept explicit `latin1` and `latin-1` behavior unchanged to avoid silently changing the app's existing compatibility contract. Unsupported labels continue to use tolerant UTF-8 decoding.
 - Added tests for ISO-8859-1, US-ASCII and unsupported-label fallback. Source commit: `5ed6b31be4422b0a8e643083910499c5a04d32ad`; tests: `86cad90b971ea67dcf95bc4fa23cb540321ecd55`.
 - Tests authored but not run; no formatter, analyzer, build or CI executed. CI remains manual-only.
+
+
+### TSK-552 — Reject unexpected partial Reader HTTP responses — TC-307 — 2026-11-02
+
+- The native Reader does not issue Range requests, so an unsolicited HTTP 206 Partial Content response cannot be assumed to contain a complete page. The response parser now returns a network error and discards the fragment instead of presenting it as a complete article.
+- Added TC-307 with an injected 206 HTML response, asserting a network-error state, empty visible text and a useful partial-page message.
+- Source commit: `7fba8e9e24caf6e877d94ef5bdabeeba9d2ee542`; regression commit: `fc702a189b2ad1a2d3286a087b4bff80dbf7cbba`.
+- Test source committed but not run; no formatter, analyzer, tests, builds or CI were executed. CI remains manual-only.
