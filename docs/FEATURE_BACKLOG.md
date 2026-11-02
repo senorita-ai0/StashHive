@@ -304,3 +304,12 @@ Before source implementation, follow [the article-reader feasibility and privacy
 
 - [x] Add TC-301 proving an unterminated script opener with a quoted `>` attribute cannot leak its attribute or remaining page tail.
 - [ ] Run TC-300–TC-301 and the full Reader regression suite at the owner-approved manual validation checkpoint.
+
+
+### SH-006 — quote-aware charset prescan — TSK-550 / TC-302–TC-303 (2026-11-02)
+
+- [x] Ignore fake meta declarations exposed only by a closing-tag-looking substring inside a quoted script/style/noscript opening-tag attribute.
+- [x] Recognize a valid charset attribute that follows a quoted `>` value in the same meta tag.
+- [x] Add TC-302 and TC-303 for fake and valid declarations.
+- [ ] Run TC-302–TC-303 with the complete Reader transport/charset regression suite at the manual validation checkpoint.
+- [ ] Verify encoding behavior on representative real sites and supported Android/web runtime targets; current prescan remains bounded and lightweight.
