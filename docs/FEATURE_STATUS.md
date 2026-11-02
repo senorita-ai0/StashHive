@@ -3,7 +3,7 @@
 **Last audited:** 2026-11-02  
 **Repository:** [senorita-ai0/StashHive](https://github.com/senorita-ai0/StashHive)  
 **Default branch:** `main`  
-**Audit baseline commit:** `d7e3e416c4cbd2d40e6fe10d86c658a54a87c519`  
+**Audit baseline commit:** `86cad90b971ea67dcf95bc4fa23cb540321ecd55`  
 **Purpose:** This is the short, durable status page for the owner and any future ChatGPT session. Read it before resuming development and update it after every meaningful implementation, test, build, or scope change.
 
 > **Important status distinction:** “Source implemented” means code and/or test source has been committed. It does **not** mean tests pass or the feature is ready. Mark a feature fully done only when its required automated and platform checks have evidence recorded.
@@ -358,3 +358,11 @@ The current working runtime has no \`flutter\` or \`dart\` executable, so Dart/F
 - Added TC-302 (fake charset markup in a quoted script attribute) and TC-303 (valid charset after a quoted greater-than attribute).
 - Source commit: `d7eef5f45593e4bca30bac39816fe8e50e1c4a26`; regression commit: `eb32ae926a996bb1d7ef0fcd574404e3d22a2b4e`.
 - Tests are authored but unrun; no formatter, analyzer, unit/widget test, build or CI was executed. SH-006 remains partial and verification pending. The scan remains bounded to 1024 bytes and is not a complete HTML5 encoding prescan implementation.
+
+
+## SH-006 source increment — legacy web charset aliases — TSK-551 / TC-304–TC-306 (2026-11-02)
+
+- Added WHATWG-compatible Windows-1252 handling for common legacy web labels `iso-8859-1`, `iso8859-1`, `us-ascii` and `ascii`, while preserving explicit `latin1` / `latin-1` byte mapping for compatibility.
+- Added TC-304 (ISO-8859-1 label), TC-305 (US-ASCII label) and TC-306 (unsupported charset falls back to tolerant UTF-8).
+- Source commit: `5ed6b31be4422b0a8e643083910499c5a04d32ad`; regression commit: `86cad90b971ea67dcf95bc4fa23cb540321ecd55`.
+- Regression source is committed but unrun. No formatter, analyzer, tests, builds or CI were run; manual-only CI policy is unchanged.
