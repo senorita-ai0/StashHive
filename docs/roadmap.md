@@ -1775,3 +1775,8 @@ The Reader's active-block removal pass now recognizes complete opening tags even
 #### TSK-549 follow-up — malformed active-block opener — TC-301 (2026-10-31)
 
 TC-301 covers an unterminated script opening tag with a quoted `>` attribute. The expected behavior is to preserve text before the malformed tag and discard the unfinished attribute and remaining tail. Test source is committed but unrun; execute it with TC-300 and the full Reader suite at the manual validation checkpoint.
+
+
+### SH-006 — quote-aware charset prescan — TSK-550 / TC-302–TC-303 (2026-11-02)
+
+The Reader's bounded HTML charset prescan now strips script/style/noscript blocks using quote-aware opening-tag recognition and enumerates meta tags without treating a quoted `>` as the end of the tag. TC-302 covers fake charset markup hidden in a quoted script attribute; TC-303 covers a valid charset attribute after a quoted delimiter. Source and regression tests are committed but unrun; include them in the manual Reader validation checkpoint. The scanner remains bounded to the first 1024 bytes and is not a full HTML5 encoding prescan.
