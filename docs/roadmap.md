@@ -1780,3 +1780,8 @@ TC-301 covers an unterminated script opening tag with a quoted `>` attribute. Th
 ### SH-006 — quote-aware charset prescan — TSK-550 / TC-302–TC-303 (2026-11-02)
 
 The Reader's bounded HTML charset prescan now strips script/style/noscript blocks using quote-aware opening-tag recognition and enumerates meta tags without treating a quoted `>` as the end of the tag. TC-302 covers fake charset markup hidden in a quoted script attribute; TC-303 covers a valid charset attribute after a quoted delimiter. Source and regression tests are committed but unrun; include them in the manual Reader validation checkpoint. The scanner remains bounded to the first 1024 bytes and is not a full HTML5 encoding prescan.
+
+
+### SH-006 — Reader legacy charset alias handling — TSK-551 / TC-304–TC-306 — 2026-11-02
+
+The native Reader decoder now treats common legacy HTML/web labels `iso-8859-1`, `iso8859-1`, `us-ascii` and `ascii` as Windows-1252. Explicit `latin1` / `latin-1` continues to map bytes directly, and unknown labels fall back to tolerant UTF-8. TC-304–TC-306 are committed as source only and remain unrun. This is a bounded compatibility improvement, not full encoding-label coverage.
