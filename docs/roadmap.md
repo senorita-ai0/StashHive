@@ -1785,3 +1785,8 @@ The Reader's bounded HTML charset prescan now strips script/style/noscript block
 ### SH-006 — Reader legacy charset alias handling — TSK-551 / TC-304–TC-306 — 2026-11-02
 
 The native Reader decoder now treats common legacy HTML/web labels `iso-8859-1`, `iso8859-1`, `us-ascii` and `ascii` as Windows-1252. Explicit `latin1` / `latin-1` continues to map bytes directly, and unknown labels fall back to tolerant UTF-8. TC-304–TC-306 are committed as source only and remain unrun. This is a bounded compatibility improvement, not full encoding-label coverage.
+
+
+### SH-006 — Unexpected HTTP partial-content response — TSK-552 / TC-307 — 2026-11-02
+
+The native Reader now refuses unsolicited HTTP 206 Partial Content responses because it never requests a byte range and cannot establish that the fragment is a complete representation. TC-307 covers the network-error state and confirms the partial body is not shown. Source and test are committed but unrun; Android native transport verification remains pending.
