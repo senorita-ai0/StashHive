@@ -150,6 +150,15 @@ ArticleReaderResult _parseResponse(ArticleReaderTransportResponse response) {
           'This page redirects to another address. Open it in your browser instead.',
     );
   }
+  // This request never asks for a byte range. A 206 response is therefore
+  // unexpected and may represent an incomplete representation; do not present
+  // a truncated fragment as if it were a complete article.
+  if (response.statusCode == 206) {
+    return const ArticleReaderResult(
+      state: ArticleReaderState.networkError,
+      message: 'The website returned only part of the page. Open it in your browser instead.',
+    );
+  }
   if (response.statusCode < 200 || response.statusCode >= 300) {
     return const ArticleReaderResult(
       state: ArticleReaderState.networkError,
