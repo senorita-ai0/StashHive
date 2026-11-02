@@ -349,3 +349,12 @@ The current working runtime has no \`flutter\` or \`dart\` executable, so Dart/F
 
 - Added a regression for an unterminated script opening tag whose quoted attribute contains `>`; readable content before the malformed block must remain, while the unfinished attribute and remaining tail are discarded.
 - Test source commit: `5f9cf9ac3f76a076c8271d57bcb54a4c81e98a9f`. TC-301 is authored but unrun; no formatter, analyzer, tests, builds or CI were run. SH-006 remains partial and verification pending.
+
+
+## SH-006 Reader charset prescan quote handling — TSK-550 / TC-302–TC-303 (2026-11-02)
+
+- Hardened the bounded charset prescan so script/style/noscript blocks are removed using quote-aware opening-tag matching before meta declarations are inspected. This prevents a closing-tag-looking string inside a quoted opening-tag attribute from exposing fake charset markup.
+- Meta tag enumeration now honors quoted attribute values containing `>`, allowing later valid charset attributes to be parsed.
+- Added TC-302 (fake charset markup in a quoted script attribute) and TC-303 (valid charset after a quoted greater-than attribute).
+- Source commit: `d7eef5f45593e4bca30bac39816fe8e50e1c4a26`; regression commit: `eb32ae926a996bb1d7ef0fcd574404e3d22a2b4e`.
+- Tests are authored but unrun; no formatter, analyzer, unit/widget test, build or CI was executed. SH-006 remains partial and verification pending. The scan remains bounded to 1024 bytes and is not a complete HTML5 encoding prescan implementation.
