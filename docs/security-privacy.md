@@ -121,3 +121,8 @@ The scanner also removes declaration/processing-instruction tokens from whole-do
 ### Reader markup filtering follow-up (2026-10-31)
 
 Active-content filtering now handles quoted `>` delimiters in opening-tag attributes for script/style, embedded media and interactive widgets, reducing the chance that hidden active-block contents are misclassified as readable article text. TC-300 is authored but unrun. This is defense-in-depth for plain-text display, not a complete HTML parser or a substitute for the Reader's existing URL/network restrictions.
+
+
+### Reader charset prescan follow-up (2026-11-02)
+
+The native Reader's charset prescan now respects quoted attribute boundaries when excluding embedded script/style/noscript content and enumerating meta tags. This prevents false encoding declarations from quoted markup-like attribute values and avoids missing a real charset attribute after a quoted `>`. TC-302/TC-303 are authored but unrun. No network destinations, request methods, proxy behavior or data retention were changed.
