@@ -313,3 +313,12 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Add TC-302 and TC-303 for fake and valid declarations.
 - [ ] Run TC-302–TC-303 with the complete Reader transport/charset regression suite at the manual validation checkpoint.
 - [ ] Verify encoding behavior on representative real sites and supported Android/web runtime targets; current prescan remains bounded and lightweight.
+
+
+### SH-006 — legacy web charset aliases — TSK-551 / TC-304–TC-306 (2026-11-02)
+
+- [x] Decode common HTML/web `iso-8859-1` / `iso8859-1` and `us-ascii` / `ascii` labels using Windows-1252 mappings.
+- [x] Preserve the existing explicit `latin1` / `latin-1` byte mapping.
+- [x] Add TC-304–TC-305 for legacy label mappings and TC-306 for tolerant UTF-8 fallback when the declared label is unsupported.
+- [ ] Run TC-304–TC-306 with TC-302–TC-303 and the full Reader charset/transport suite at the owner-approved manual validation checkpoint.
+- [ ] Confirm decoding against representative real pages and target runtimes; this remains a deliberately small supported-label set, not a complete WHATWG Encoding Standard implementation.
