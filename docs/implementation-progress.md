@@ -1427,3 +1427,11 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 
 - Added a regression for an unterminated script opening tag with a quoted `>` attribute. The sanitizer must preserve preceding readable content and discard the malformed attribute and all remaining tail content.
 - Test source commit: `5f9cf9ac3f76a076c8271d57bcb54a4c81e98a9f`. No Dart/Flutter formatter, analyzer, unit/widget test, build or CI run was performed; CI remains manual-only.
+
+### TSK-550 — quote-aware Reader charset prescan — TC-302–TC-303 (2026-11-02)
+
+- Updated the bounded HTML encoding prescan to consume complete quoted script/style/noscript opening tags before looking for meta declarations. This prevents a closing-tag-looking string embedded in a quoted opening-tag attribute from exposing fake meta markup to the charset scanner.
+- Updated meta-tag enumeration to honor quoted single/double attribute values containing `>`, so a valid charset attribute later in the same tag is not missed.
+- Added TC-302 for a fake charset meta string following a closing-tag-looking substring inside a quoted script attribute, and TC-303 for a valid legacy charset declaration after a quoted `>` attribute.
+- Source commit: `d7eef5f45593e4bca30bac39816fe8e50e1c4a26`; regression commit: `eb32ae926a996bb1d7ef0fcd574404e3d22a2b4e`.
+- Tests are authored but unrun. No formatter, analyzer, unit/widget test, build or CI was executed; CI remains manual-only. The scan remains bounded to the first 1024 response bytes and is not a complete HTML5 encoding prescan implementation.
