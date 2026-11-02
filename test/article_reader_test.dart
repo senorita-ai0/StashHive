@@ -402,6 +402,54 @@ void main() {
       expect(latin.text.codeUnitAt(0), 0x80);
     });
 
+    test('treats the ISO-8859-1 web label as Windows-1252', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/plain; charset=iso-8859-1',
+            body: <int>[0x80, 0x20, 0x93, 0x78, 0x94],
+          );
+
+      final result = await loadArticleForReader(
+        'https://example.com/iso-8859-1-web-label',
+      );
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text, '€ “x”');
+    });
+
+    test('treats the US-ASCII web label as Windows-1252', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/plain; charset=us-ascii',
+            body: <int>[0x80, 0x20, 0x41],
+          );
+
+      final result = await loadArticleForReader(
+        'https://example.com/us-ascii-web-label',
+      );
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text, '€ A');
+    });
+
+    test('falls back to tolerant UTF-8 for an unsupported charset label', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/plain; charset=x-unknown-encoding',
+            body: utf8.encode('Fallback سلام 🙂'),
+          );
+
+      final result = await loadArticleForReader(
+        'https://example.com/unknown-charset',
+      );
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text, 'Fallback سلام 🙂');
+    });
+
     test('enforces the response byte cap even with an injected response', () async {
       articleReaderTransportForTesting = (uri, addresses, timeout) async =>
           ArticleReaderTransportResponse(
