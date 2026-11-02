@@ -322,8 +322,15 @@ String _decodeText(List<int> bytes, String? charset) {
     return utf8.decode(bytes.sublist(3), allowMalformed: true);
   }
   final normalizedCharset = charset?.trim().toLowerCase();
+  // WHATWG-compatible labels that HTML documents commonly use for
+  // Windows-1252. In particular, ISO-8859-1 and US-ASCII are legacy web
+  // labels for Windows-1252 rather than strict Latin-1/7-bit ASCII.
   if (normalizedCharset == 'windows-1252' ||
-      normalizedCharset == 'cp1252') {
+      normalizedCharset == 'cp1252' ||
+      normalizedCharset == 'iso-8859-1' ||
+      normalizedCharset == 'iso8859-1' ||
+      normalizedCharset == 'us-ascii' ||
+      normalizedCharset == 'ascii') {
     // Latin-1 and Windows-1252 differ in the 0x80–0x9F range. Mapping these
     // bytes as Latin-1 would turn common punctuation and the euro sign into
     // invisible control characters in reader previews.
@@ -361,7 +368,7 @@ String _decodeText(List<int> bytes, String? charset) {
     ));
   }
   if (normalizedCharset == 'latin1' ||
-      normalizedCharset == 'iso-8859-1') {
+      normalizedCharset == 'latin-1') {
     return latin1.decode(bytes, allowInvalid: true);
   }
   return utf8.decode(bytes, allowMalformed: true);
