@@ -166,6 +166,57 @@ void main() {
       expect(result.text, contains('Price: \uFFFD'));
       expect(result.text, isNot(contains('€')));
     });
+
+    test('ignores fake charset markup inside script attributes containing a closing-tag string', () async {
+      final prefix =
+          '<html><head><script data-note="</script><meta charset=windows-1252>">'
+          'const template = "not page markup";'
+          '</script></head><body><article>Price: ';
+      const suffix = '</article></body></html>';
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/html',
+            body: <int>[
+              ...utf8.encode(prefix),
+              0x80,
+              ...utf8.encode(suffix),
+            ],
+          );
+
+      final result = await loadArticleForReader(
+        'https://example.com/script-attribute-fake-meta',
+      );
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text, 'Price: �');
+      expect(result.text, isNot(contains('€')));
+    });
+
+    test('recognizes a valid meta charset after a quoted greater-than attribute', () async {
+      const prefix =
+          '<html><head><meta data-note="first > second" '
+          'charset="windows-1252"></head><body><article>Price: ';
+      const suffix = '</article></body></html>';
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 200,
+            contentType: 'text/html',
+            body: <int>[
+              ...utf8.encode(prefix),
+              0x80,
+              ...utf8.encode(suffix),
+            ],
+          );
+
+      final result = await loadArticleForReader(
+        'https://example.com/meta-charset-quoted-delimiter',
+      );
+
+      expect(result.state, ArticleReaderState.success);
+      expect(result.text, 'Price: €');
+    });
+
     test('uses an early HTML meta charset when the response omits charset', () async {
       final prefix =
           '<html><head><meta charset="windows-1252"></head><body>'
