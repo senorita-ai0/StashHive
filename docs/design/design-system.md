@@ -43,6 +43,11 @@
 - `PremiumEmptyState` and `PremiumSkeletonList`: consistent empty/loading states.
 - `PremiumReveal`: brief entrance motion that respects reduced-motion preferences.
 
+StashHive-only surfaces live in `lib/ui/premium_surfaces.dart` so the shared kit can stay identical across the three apps:
+
+- `PremiumPageBackground`: low-alpha mint/brand radial glows behind a page; never changes the canvas colour and ignores pointer input.
+- `PremiumGlassCard`: faint gradient surface with a hairline border and soft shadow for saved-item tiles; pair `selected` with a visible checkbox/semantics because border colour alone is not sufficient.
+
 Use `PremiumTokens` and shared kit widgets rather than introducing slightly different colors or radii in each page. Keep content-list items quieter than action/hero surfaces so the saved content remains the focus.
 
 ## Iconography and branding

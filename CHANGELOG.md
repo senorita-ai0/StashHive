@@ -2,6 +2,12 @@
 
 Changes worth noting are recorded here. StashHive is in source development and platform verification; no production release or post-Phase-2 validated build is claimed.
 
+## Unreleased — 2026-11-02
+
+- UI polish toward the FinMate/Stockly look: new `premium_surfaces.dart` (page glows and glass cards), shared theme chrome for both themes, refined navigation bar and cards, glass item tiles.
+- Fixed dark-mode inconsistencies (page transition, app-bar title, floating button colours, low-contrast brand-blue text), the last Library item sitting under the floating Save button, and full-size decoding of image thumbnails.
+- Tests authored but not run; no formatter, analyzer, tests or builds were executed. The Android `FilePickerPlugin` build issue is still unverified. GitHub Actions remains manual-only.
+
 ## Unreleased — 2026-10-28
 
 - Bounded incoming Android share batches to 100 ordered entries with a visible warning for the remainder, capped waiting batches at eight, and preflighted share-event fingerprint inputs by raw field lengths before normalizing or serializing.

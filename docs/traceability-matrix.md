@@ -1903,3 +1903,6 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 
 | TSK-552 / TC-307 | SH-006, NFR-002 | Do not present unsolicited HTTP 206 partial content as a complete article. | `test/article_reader_test.dart` — TC-307 | Source committed; execution pending manual validation. |
+
+
+| TSK-553 / TC-308–TC-310 | SH-007, NFR-002 | Premium surface/theme polish with dark/light parity, no layout-metric changes, bounded image-preview decoding. | `test/premium_surfaces_test.dart` — TC-308–TC-310 | Source committed; execution and device/browser visual review pending manual validation. |

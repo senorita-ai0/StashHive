@@ -2261,3 +2261,20 @@ The repository widget regression source now checks three export formats after sa
 - Inject a successful-looking HTML body with HTTP status 206, although the Reader did not request a range.
 - Confirm the result is a network error, the partial response body is not displayed, and the message directs the user to open the page in a browser.
 - **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute with the existing redirect/status/content-type cases and complete Reader suite at the manual validation checkpoint.
+
+
+### TC-308 — Premium glass card and page background (2026-11-02)
+
+- Render `PremiumGlassCard` in light and dark themes; confirm content is shown, `onTap` and a child `InkWell` both fire, and `selected` draws a thicker primary border.
+- Render `PremiumPageBackground` and confirm a button above the glows is still tappable and no exception is thrown.
+- **Status:** Source in `test/premium_surfaces_test.dart`; not run. Visually verify on Android and a browser in light and dark mode at the manual checkpoint.
+
+### TC-309 — Shared theme chrome parity (2026-11-02)
+
+- Confirm light and dark themes both define tooltip, bottom-sheet, navigation-bar elevation/indicator, bold app-bar title, snack-bar and dialog-title styling.
+- **Status:** Source in `test/premium_surfaces_test.dart`; not run.
+
+### TC-310 — Dark/light page transition parity (2026-11-02)
+
+- Confirm the dark theme registers the same page-transition builder types as the light theme for every platform.
+- **Status:** Source in `test/premium_surfaces_test.dart`; not run. Also confirm Library last-item actions are reachable above the floating Save button and large image attachments scroll smoothly in the Library list.

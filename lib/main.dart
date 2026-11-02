@@ -30,6 +30,7 @@ import 'services/share_intake.dart';
 import 'services/web_url.dart';
 import 'ui/layout_metrics.dart';
 import 'ui/premium_kit.dart';
+import 'ui/premium_surfaces.dart';
 
 const Color kBrand = PremiumTokens.brand;
 const Color kInk = Color(0xFF10203A);
@@ -308,7 +309,7 @@ ThemeData buildLightTheme() {
     bodyMedium: baseTheme.textTheme.bodyMedium?.copyWith(height: 1.4),
   );
 
-  return ThemeData(
+  return _withPremiumChrome(ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
     colorScheme: colors,
@@ -347,11 +348,11 @@ ThemeData buildLightTheme() {
       ),
     ),
     cardTheme: CardThemeData(
-      elevation: 1,
+      elevation: 2,
       margin: EdgeInsets.zero,
       color: surface,
       surfaceTintColor: Colors.transparent,
-      shadowColor: PremiumTokens.brand.withValues(alpha: .08),
+      shadowColor: PremiumTokens.brand.withValues(alpha: .12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(PremiumTokens.radiusCard),
         side: const BorderSide(color: kBorder),
@@ -447,14 +448,27 @@ ThemeData buildLightTheme() {
     navigationBarTheme: NavigationBarThemeData(
       height: 72,
       backgroundColor: surface,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: PremiumTokens.brand.withValues(alpha: .18),
       indicatorColor: const Color(0xFFEAF2FF),
-      elevation: 0,
+      indicatorShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+      ),
+      elevation: 6,
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
+        final selected = states.contains(WidgetState.selected);
         return TextStyle(
           fontSize: 11,
-          fontWeight: states.contains(WidgetState.selected)
-              ? FontWeight.w800
-              : FontWeight.w600,
+          fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+          color: selected ? PremiumTokens.brand : kMutedLight,
+        );
+      }),
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        return IconThemeData(
+          size: 24,
+          color: states.contains(WidgetState.selected)
+              ? PremiumTokens.brand
+              : kMutedLight,
         );
       }),
     ),
@@ -472,6 +486,77 @@ ThemeData buildLightTheme() {
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
+  ));
+}
+
+/// Chrome shared by both themes (tooltips, sheets, switches, progress bars,
+/// snack bars and dialog text) so light and dark stay visually identical and
+/// match FinMate/Stockly. It only restyles; it never changes layout metrics.
+ThemeData _withPremiumChrome(ThemeData theme) {
+  final scheme = theme.colorScheme;
+  final dark = theme.brightness == Brightness.dark;
+  return theme.copyWith(
+    tooltipTheme: TooltipThemeData(
+      waitDuration: const Duration(milliseconds: 450),
+      showDuration: const Duration(seconds: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: scheme.inverseSurface,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      textStyle: TextStyle(
+        color: scheme.onInverseSurface,
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: scheme.surface,
+      surfaceTintColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+    ),
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith<Color?>((states) {
+        if (states.contains(WidgetState.disabled)) return null;
+        if (states.contains(WidgetState.selected)) return scheme.onPrimary;
+        return scheme.onSurfaceVariant;
+      }),
+      trackColor: WidgetStateProperty.resolveWith<Color?>((states) {
+        if (states.contains(WidgetState.disabled)) return null;
+        if (states.contains(WidgetState.selected)) return scheme.primary;
+        return scheme.surfaceContainerHighest;
+      }),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+    ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: scheme.primary,
+      linearTrackColor: scheme.primaryContainer.withValues(alpha: .55),
+    ),
+    snackBarTheme: theme.snackBarTheme.copyWith(
+      backgroundColor:
+          dark ? const Color(0xFF1E2B3D) : const Color(0xFF17253B),
+      actionTextColor: const Color(0xFF8DB8FF),
+      contentTextStyle: const TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+    dialogTheme: theme.dialogTheme.copyWith(
+      titleTextStyle: TextStyle(
+        color: scheme.onSurface,
+        fontSize: 21,
+        fontWeight: FontWeight.w900,
+      ),
+      contentTextStyle: TextStyle(
+        color: scheme.onSurfaceVariant,
+        fontSize: 15,
+        height: 1.45,
+      ),
     ),
   );
 }
@@ -528,7 +613,7 @@ ThemeData buildDarkTheme() {
     bodyMedium: baseTheme.textTheme.bodyMedium?.copyWith(height: 1.4),
   );
 
-  return ThemeData(
+  return _withPremiumChrome(ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
     colorScheme: colors,
@@ -541,20 +626,39 @@ ThemeData buildDarkTheme() {
     splashFactory: InkSparkle.splashFactory,
     iconTheme: IconThemeData(color: colors.primary, size: 22),
     primaryIconTheme: IconThemeData(color: colors.onPrimary, size: 22),
-    appBarTheme: const AppBarTheme(
+    // Dark mode previously fell back to the platform default transition while
+    // light mode used the fade-forwards transition; keep them identical.
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
+        TargetPlatform.linux: CupertinoPageTransitionsBuilder(),
+      },
+    ),
+    appBarTheme: AppBarTheme(
       centerTitle: false,
       elevation: 0,
       scrolledUnderElevation: 0,
-      backgroundColor: darkCanvas,
+      backgroundColor: darkCanvas.withValues(alpha: .96),
       foregroundColor: darkInk,
       surfaceTintColor: Colors.transparent,
+      iconTheme: IconThemeData(color: colors.primary),
+      actionsIconTheme: IconThemeData(color: colors.primary),
+      titleTextStyle: const TextStyle(
+        color: darkInk,
+        fontSize: 22,
+        fontWeight: FontWeight.w900,
+        letterSpacing: -.6,
+      ),
     ),
     cardTheme: CardThemeData(
-      elevation: 1,
+      elevation: 2,
       margin: EdgeInsets.zero,
       color: darkSurface,
       surfaceTintColor: Colors.transparent,
-      shadowColor: Colors.black.withValues(alpha: .24),
+      shadowColor: Colors.black.withValues(alpha: .32),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(PremiumTokens.radiusCard),
         side: const BorderSide(color: darkBorder),
@@ -640,11 +744,32 @@ ThemeData buildDarkTheme() {
       labelStyle: const TextStyle(color: Color(0xFFCDD7E6), fontSize: 12, fontWeight: FontWeight.w600),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
     ),
-    navigationBarTheme: const NavigationBarThemeData(
+    navigationBarTheme: NavigationBarThemeData(
       height: 72,
       backgroundColor: darkSurface,
-      indicatorColor: Color(0xFF203858),
-      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.black.withValues(alpha: .5),
+      indicatorColor: const Color(0xFF203858),
+      indicatorShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(PremiumTokens.radiusControl),
+      ),
+      elevation: 6,
+      labelTextStyle: WidgetStateProperty.resolveWith((states) {
+        final selected = states.contains(WidgetState.selected);
+        return TextStyle(
+          fontSize: 11,
+          fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+          color: selected ? colors.primary : kMutedDark,
+        );
+      }),
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        return IconThemeData(
+          size: 24,
+          color: states.contains(WidgetState.selected)
+              ? colors.primary
+              : kMutedDark,
+        );
+      }),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: colors.primary,
@@ -661,7 +786,7 @@ ThemeData buildDarkTheme() {
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
-  );
+  ));
 }
 
 class HomeShell extends StatefulWidget {
@@ -1030,13 +1155,15 @@ class _HomeShellState extends State<HomeShell> {
       ),
     ];
     return Scaffold(
-      body: IndexedStack(index: _selectedTab, children: pages),
+      body: PremiumPageBackground(
+        child: IndexedStack(index: _selectedTab, children: pages),
+      ),
+      // Colours come from the theme so dark mode uses the lighter brand blue
+      // with dark foreground instead of a hard-coded light-mode pair.
       floatingActionButton: _selectedTab == 0
           ? FloatingActionButton(
               onPressed: () => _openAdd(null),
               tooltip: 'Save something',
-              backgroundColor: kBrand,
-              foregroundColor: Colors.white,
               child: const Icon(Icons.add_rounded, size: 30),
             )
           : null,
@@ -1476,8 +1603,19 @@ class _LibraryPageState extends State<LibraryPage> {
                         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 3),
                         child: Row(
                           children: [
-                            Text(_sort, style: const TextStyle(fontSize: 12, color: kBrand)),
-                            const Icon(Icons.expand_more_rounded, color: kBrand, size: 19),
+                            Text(
+                              _sort,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            Icon(
+                              Icons.expand_more_rounded,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 19,
+                            ),
                           ],
                         ),
                       ),
@@ -1514,7 +1652,9 @@ class _LibraryPageState extends State<LibraryPage> {
                           if (_layoutMode == 'list') {
                             return ListView.separated(
                               key: const ValueKey('library-list-layout'),
-                              padding: const EdgeInsets.fromLTRB(0, 2, 0, 22),
+                              // Extra bottom room keeps the last item's actions
+                              // clear of the floating Save button.
+                              padding: const EdgeInsets.fromLTRB(0, 2, 0, 92),
                               itemCount: shown.length,
                               itemBuilder: (context, index) =>
                                   _buildLibraryItemTile(shown[index]),
@@ -1526,7 +1666,7 @@ class _LibraryPageState extends State<LibraryPage> {
                           final columns = constraints.maxWidth >= 690 ? 2 : 1;
                           return GridView.builder(
                             key: const ValueKey('library-grid-layout'),
-                            padding: const EdgeInsets.fromLTRB(0, 2, 0, 22),
+                            padding: const EdgeInsets.fromLTRB(0, 2, 0, 92),
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: columns,
                               mainAxisExtent: savedItemCardExtentForTextScale(
@@ -2494,14 +2634,19 @@ class _SearchPageState extends State<SearchPage> {
                                     children: [
                                       Text(
                                         _filters.sortOrder,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 12,
-                                          color: kBrand,
+                                          fontWeight: FontWeight.w700,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
                                         ),
                                       ),
-                                      const Icon(
+                                      Icon(
                                         Icons.expand_more_rounded,
-                                        color: kBrand,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                         size: 19,
                                       ),
                                     ],
@@ -2674,15 +2819,11 @@ class SavedItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      elevation: 0,
-      color: theme.colorScheme.surface,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(PremiumTokens.radiusCard),
-        side: BorderSide(color: theme.dividerColor),
-      ),
-      clipBehavior: Clip.antiAlias,
+    // The glass surface only restyles the old Card; the InkWell, padding and
+    // contents below are unchanged so card extents and tap targets are stable.
+    return PremiumGlassCard(
+      padding: EdgeInsets.zero,
+      selected: selectionMode && isSelected,
       child: InkWell(
         onTap: onTap,
         onLongPress: onLongPress,
@@ -2889,6 +3030,11 @@ class _ItemThumbnailState extends State<_ItemThumbnail> {
   Widget build(BuildContext context) {
     final item = widget.item;
     final size = widget.size;
+    // Decode previews near their display size instead of the full attachment
+    // (up to 15 MB). Only the width is bounded so aspect ratio is preserved;
+    // 2x leaves enough resolution for wide images shown with BoxFit.cover.
+    final previewDecodeWidth =
+        (size * MediaQuery.devicePixelRatioOf(context) * 2).round();
     if (item.kind == ItemKind.image && item.attachmentKey != null) {
       return FutureBuilder<Uint8List?>(
         future: _attachmentFuture,
@@ -2901,6 +3047,7 @@ class _ItemThumbnailState extends State<_ItemThumbnail> {
                 semanticLabel: 'Image preview: ${item.title}',
                 width: size,
                 height: size,
+                cacheWidth: previewDecodeWidth,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => _fallback(),
               ),
@@ -5065,11 +5212,19 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.link_rounded, color: kBrand),
+                        Icon(
+                          Icons.link_rounded,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                         const SizedBox(width: 10),
                         Expanded(
-                          child: SelectableText(item.url!,
-                              style: const TextStyle(color: kBrand, fontSize: 13)),
+                          child: SelectableText(
+                            item.url!,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
                       ],
                     ),

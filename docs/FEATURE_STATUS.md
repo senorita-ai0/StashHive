@@ -374,3 +374,13 @@ The current working runtime has no \`flutter\` or \`dart\` executable, so Dart/F
 - Added TC-307 to verify a 206 response produces a network error and exposes none of the partial body.
 - Source commit: `7fba8e9e24caf6e877d94ef5bdabeeba9d2ee542`; regression commit: `fc702a189b2ad1a2d3286a087b4bff80dbf7cbba`.
 - Regression source is committed but unrun. No formatter, analyzer, unit/widget tests, builds or CI were run; CI remains manual-only. SH-006 remains partial and verification pending.
+
+
+## UI polish increment — premium surfaces and theme chrome — TSK-553 / TC-308–TC-310 (2026-11-02)
+
+- Brought the app chrome closer to FinMate/Stockly without touching the shared `lib/ui/premium_kit.dart` (which must stay identical across the three apps). New `lib/ui/premium_surfaces.dart` adds `PremiumPageBackground` (low-alpha brand/mint glows behind the tab pages; the theme canvas colour is unchanged) and `PremiumGlassCard` (gradient surface, hairline border, soft shadow, ink-safe).
+- Library/Search item tiles now use the glass card; their padding, tap targets and contents are unchanged so grid card extents are not affected.
+- Both themes share a new `_withPremiumChrome` layer (tooltips, bottom sheets, switches, checkboxes, progress, snack bars, dialog text). Navigation bar gained a soft shadow, rounded indicator and explicit selected/unselected label and icon colours. Card elevation/shadow strengthened.
+- Fixes found while reviewing the source: dark mode lacked the fade-forwards page transition and the bold app-bar title that light mode had; the floating Save button hard-coded the light-mode colour pair in dark mode; the Library/Search sort label and the Item Details URL used the light-mode brand blue on dark surfaces (low contrast) and now use the theme primary; the last Library item could sit under the floating Save button (list/grid bottom padding raised 22 → 92 dp); image previews decoded the full attachment (up to 15 MB) for a 72 dp thumbnail and now bound the decode width.
+- Tests: `test/premium_surfaces_test.dart` (TC-308 glass card/background behaviour, TC-309 theme chrome parity, TC-310 dark/light page-transition parity). **Authored but not run.** No formatter, analyzer, unit/widget test, web build or Android build was executed (no Flutter SDK was available in the authoring environment). CI remains manual-only.
+- Not changed / still open: the Android `FilePickerPlugin` debug-build failure remains **BLOCKED / UNVERIFIED**; the Library header is still a non-scrolling column above the list, so very small heights with large text and visible banners can still be tight. Visual result has not been checked on a device or browser.

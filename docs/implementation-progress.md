@@ -1451,3 +1451,11 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added TC-307 with an injected 206 HTML response, asserting a network-error state, empty visible text and a useful partial-page message.
 - Source commit: `7fba8e9e24caf6e877d94ef5bdabeeba9d2ee542`; regression commit: `fc702a189b2ad1a2d3286a087b4bff80dbf7cbba`.
 - Test source committed but not run; no formatter, analyzer, tests, builds or CI were executed. CI remains manual-only.
+
+
+### TSK-553 — Premium surfaces and shared theme chrome — TC-308–TC-310 — 2026-11-02
+
+- Added `lib/ui/premium_surfaces.dart` (`PremiumPageBackground`, `PremiumGlassCard`) and applied it to the tab shell and `SavedItemTile`; shared kit left untouched.
+- Added `_withPremiumChrome` to `buildLightTheme`/`buildDarkTheme`; polished the navigation bar and cards; aligned dark mode with light mode for page transitions and the app-bar title.
+- Fixed dark-mode contrast for the sort label and Item Details URL, the hard-coded floating button colours, last-item overlap with the floating button, and full-size thumbnail decoding.
+- Added `test/premium_surfaces_test.dart`. Authored but not run; no formatter, analyzer, tests, builds or CI executed. CI remains manual-only.
