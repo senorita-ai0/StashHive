@@ -109,6 +109,23 @@ void main() {
       expect(result.message, contains('redirects'));
     });
 
+    test('rejects an unexpected partial-content response', () async {
+      articleReaderTransportForTesting = (uri, addresses, timeout) async =>
+          ArticleReaderTransportResponse(
+            statusCode: 206,
+            contentType: 'text/html; charset=utf-8',
+            body: utf8.encode('<article>Only a truncated fragment</article>'),
+          );
+
+      final result = await loadArticleForReader(
+        'https://example.com/partial-content',
+      );
+
+      expect(result.state, ArticleReaderState.networkError);
+      expect(result.text, isEmpty);
+      expect(result.message, contains('part of the page'));
+    });
+
     test('rejects non-HTML response content types', () async {
       articleReaderTransportForTesting = (uri, addresses, timeout) async =>
           ArticleReaderTransportResponse(
