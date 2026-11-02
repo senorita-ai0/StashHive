@@ -2254,3 +2254,10 @@ The repository widget regression source now checks three export formats after sa
 - Return valid UTF-8 text with an unknown declared charset label.
 - Confirm tolerant UTF-8 fallback preserves multilingual and supplementary Unicode text.
 - **Status:** Regression source committed; not run. Include TC-304–TC-306 with the full Reader charset/transport suite at the owner-approved manual validation checkpoint.
+
+
+### TC-307 — Reject an unsolicited HTTP 206 Partial Content response (2026-11-02)
+
+- Inject a successful-looking HTML body with HTTP status 206, although the Reader did not request a range.
+- Confirm the result is a network error, the partial response body is not displayed, and the message directs the user to open the page in a browser.
+- **Status:** Regression source committed in `test/article_reader_test.dart`; not run. Execute with the existing redirect/status/content-type cases and complete Reader suite at the manual validation checkpoint.
