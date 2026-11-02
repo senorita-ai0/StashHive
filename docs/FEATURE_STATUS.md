@@ -3,7 +3,7 @@
 **Last audited:** 2026-11-02  
 **Repository:** [senorita-ai0/StashHive](https://github.com/senorita-ai0/StashHive)  
 **Default branch:** `main`  
-**Audit baseline commit:** `86cad90b971ea67dcf95bc4fa23cb540321ecd55`  
+**Audit baseline commit:** `fc702a189b2ad1a2d3286a087b4bff80dbf7cbba`  
 **Purpose:** This is the short, durable status page for the owner and any future ChatGPT session. Read it before resuming development and update it after every meaningful implementation, test, build, or scope change.
 
 > **Important status distinction:** “Source implemented” means code and/or test source has been committed. It does **not** mean tests pass or the feature is ready. Mark a feature fully done only when its required automated and platform checks have evidence recorded.
@@ -366,3 +366,11 @@ The current working runtime has no \`flutter\` or \`dart\` executable, so Dart/F
 - Added TC-304 (ISO-8859-1 label), TC-305 (US-ASCII label) and TC-306 (unsupported charset falls back to tolerant UTF-8).
 - Source commit: `5ed6b31be4422b0a8e643083910499c5a04d32ad`; regression commit: `86cad90b971ea67dcf95bc4fa23cb540321ecd55`.
 - Regression source is committed but unrun. No formatter, analyzer, tests, builds or CI were run; manual-only CI policy is unchanged.
+
+
+## SH-006 source increment — reject unexpected partial HTTP responses — TSK-552 / TC-307 (2026-11-02)
+
+- The native Reader does not send a Range request. It now rejects HTTP 206 Partial Content rather than displaying a possibly truncated representation as a complete article.
+- Added TC-307 to verify a 206 response produces a network error and exposes none of the partial body.
+- Source commit: `7fba8e9e24caf6e877d94ef5bdabeeba9d2ee542`; regression commit: `fc702a189b2ad1a2d3286a087b4bff80dbf7cbba`.
+- Regression source is committed but unrun. No formatter, analyzer, unit/widget tests, builds or CI were run; CI remains manual-only. SH-006 remains partial and verification pending.
