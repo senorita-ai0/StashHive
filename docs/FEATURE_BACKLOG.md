@@ -322,3 +322,11 @@ Before source implementation, follow [the article-reader feasibility and privacy
 - [x] Add TC-304–TC-305 for legacy label mappings and TC-306 for tolerant UTF-8 fallback when the declared label is unsupported.
 - [ ] Run TC-304–TC-306 with TC-302–TC-303 and the full Reader charset/transport suite at the owner-approved manual validation checkpoint.
 - [ ] Confirm decoding against representative real pages and target runtimes; this remains a deliberately small supported-label set, not a complete WHATWG Encoding Standard implementation.
+
+
+### SH-006 — reject unexpected partial HTTP responses — TSK-552 / TC-307 (2026-11-02)
+
+- [x] Reject HTTP 206 Partial Content because the Reader never requests a byte range and cannot safely treat an unsolicited fragment as a complete article.
+- [x] Add TC-307 asserting a 206 response becomes a network error and its body is not exposed.
+- [ ] Run TC-307 with the existing redirect/status/content-type and complete Reader transport suite at the owner-approved manual validation checkpoint.
+- [ ] Verify behavior against native HTTP responses on supported Android runtimes; the injected transport regression does not replace platform verification.
