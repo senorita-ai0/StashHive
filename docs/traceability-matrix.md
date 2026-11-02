@@ -1900,3 +1900,6 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 | TSK-551 / TC-304 | SH-006, NFR-002 | Interpret the legacy ISO-8859-1 web label with Windows-1252 byte mappings. | `test/article_reader_test.dart` — TC-304 | Source committed; execution pending manual validation. |
 | TSK-551 / TC-305 | SH-006, NFR-002 | Interpret the legacy US-ASCII web label with Windows-1252 byte mappings. | `test/article_reader_test.dart` — TC-305 | Source committed; execution pending manual validation. |
 | TSK-551 / TC-306 | SH-006, NFR-002 | Unsupported declared charset safely falls back to tolerant UTF-8. | `test/article_reader_test.dart` — TC-306 | Source committed; execution pending manual validation. |
+
+
+| TSK-552 / TC-307 | SH-006, NFR-002 | Do not present unsolicited HTTP 206 partial content as a complete article. | `test/article_reader_test.dart` — TC-307 | Source committed; execution pending manual validation. |
