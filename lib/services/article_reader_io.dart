@@ -226,20 +226,20 @@ String? _charsetFromHtmlMeta(List<int> bytes) {
       .replaceAll(RegExp(r'<!--[\s\S]*$'), ' ')
       .replaceAll(
         RegExp(
-          r'<(script|style|noscript)\b[^>]*>[\s\S]*?</\1\s*>',
+          r'''<(script|style|noscript)\b(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*?</\1\s*>''',
           caseSensitive: false,
         ),
         ' ',
       )
       .replaceAll(
         RegExp(
-          r'<(script|style|noscript)\b[^>]*>[\s\S]*$',
+          r'''<(script|style|noscript)\b(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*$''',
           caseSensitive: false,
         ),
         ' ',
       );
   final metaTags = RegExp(
-    r'<meta\b[^>]{0,1024}>',
+    r'''<meta\b(?:[^>"']|"[^"]*"|'[^']*')*>''',
     caseSensitive: false,
   ).allMatches(prefix);
 
