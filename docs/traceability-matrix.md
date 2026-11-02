@@ -1895,3 +1895,8 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 | TSK-550 / TC-302 | SH-006, NFR-002 | Charset prescan does not expose fake meta markup embedded in a quoted script attribute. | `test/article_reader_test.dart` — TC-302 | Source committed; execution pending manual validation. |
 | TSK-550 / TC-303 | SH-006, NFR-002 | Charset prescan recognizes a valid meta charset after quoted `>` attribute content. | `test/article_reader_test.dart` — TC-303 | Source committed; execution pending manual validation. |
+
+
+| TSK-551 / TC-304 | SH-006, NFR-002 | Interpret the legacy ISO-8859-1 web label with Windows-1252 byte mappings. | `test/article_reader_test.dart` — TC-304 | Source committed; execution pending manual validation. |
+| TSK-551 / TC-305 | SH-006, NFR-002 | Interpret the legacy US-ASCII web label with Windows-1252 byte mappings. | `test/article_reader_test.dart` — TC-305 | Source committed; execution pending manual validation. |
+| TSK-551 / TC-306 | SH-006, NFR-002 | Unsupported declared charset safely falls back to tolerant UTF-8. | `test/article_reader_test.dart` — TC-306 | Source committed; execution pending manual validation. |
