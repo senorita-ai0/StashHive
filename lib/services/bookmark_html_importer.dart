@@ -70,7 +70,7 @@ BookmarkHtmlImportResult parseBookmarkHtml(String source) {
     dotAll: true,
   );
   final attributePattern = RegExp(
-    r'([a-zA-Z_:][a-zA-Z0-9_:.-]*)\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s>]+))',
+    r'''([a-zA-Z_:][a-zA-Z0-9_:.-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))''',
     caseSensitive: false,
   );
 

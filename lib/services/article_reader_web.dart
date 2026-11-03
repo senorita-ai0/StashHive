@@ -1,4 +1,4 @@
-import 'article_reader.dart';
+import 'article_reader_core.dart';
 
 /// Cross-origin browser fetches are blocked unless the destination opts into
 /// CORS. Do not add a hosted proxy or send saved content to another service.

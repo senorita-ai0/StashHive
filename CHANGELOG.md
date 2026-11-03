@@ -6,6 +6,7 @@ Changes worth noting are recorded here. StashHive is in source development and p
 
 - UI polish toward the FinMate/Stockly look: new `premium_surfaces.dart` (page glows and glass cards), shared theme chrome for both themes, refined navigation bar and cards, glass item tiles.
 - Fixed dark-mode inconsistencies (page transition, app-bar title, floating button colours, low-contrast brand-blue text), the last Library item sitting under the floating Save button, and full-size decoding of image thumbnails.
+- Repaired compile-blocking defects (duplicated tail in `article_reader.dart`, a broken raw string in `bookmark_html_importer.dart`), removed three import cycles via `article_reader_core.dart`, made the Library header scroll-safe, and added a local Library summary card.
 - Tests authored but not run; no formatter, analyzer, tests or builds were executed. The Android `FilePickerPlugin` build issue is still unverified. GitHub Actions remains manual-only.
 
 ## Unreleased — 2026-10-28

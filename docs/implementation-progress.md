@@ -1459,3 +1459,10 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Added `_withPremiumChrome` to `buildLightTheme`/`buildDarkTheme`; polished the navigation bar and cards; aligned dark mode with light mode for page transitions and the app-bar title.
 - Fixed dark-mode contrast for the sort label and Item Details URL, the hard-coded floating button colours, last-item overlap with the floating button, and full-size thumbnail decoding.
 - Added `test/premium_surfaces_test.dart`. Authored but not run; no formatter, analyzer, tests, builds or CI executed. CI remains manual-only.
+
+
+### TSK-554–TSK-556 — Source repairs, header scroll, summary card — TC-311–TC-312 — 2026-11-03
+
+- Repaired the duplicated tail in `article_reader.dart` and the broken raw string in `bookmark_html_importer.dart`; split `article_reader_core.dart` to remove three import cycles (checker: none).
+- Made the Library header scroll-safe and added `LibraryStats` / `LibrarySummaryCard` with `test/library_stats_test.dart`.
+- Authored but not run; no formatter, analyzer, tests, builds or CI executed. CI remains manual-only.

@@ -20,6 +20,7 @@ import 'services/bookmark_html_importer.dart';
 import 'services/bounded_bytes_reader.dart';
 import 'services/duplicate_detector.dart';
 import 'services/library_csv_export.dart';
+import 'services/library_stats.dart';
 import 'services/link_health_checker.dart';
 import 'services/mime_types.dart';
 import 'services/rediscovery.dart';
@@ -1197,6 +1198,106 @@ class _HomeShellState extends State<HomeShell> {
   }
 }
 
+/// Gradient overview of the library: totals first, then a labelled count per
+/// item type. Every figure is text, so type is never conveyed by colour alone.
+class LibrarySummaryCard extends StatelessWidget {
+  const LibrarySummaryCard({required this.stats, super.key});
+
+  final LibraryStats stats;
+
+  @override
+  Widget build(BuildContext context) {
+    final summary = '${stats.total} saved, ${stats.favorites} starred, '
+        '${stats.inProgress} in progress, ${stats.toRevisit} to revisit';
+    return Semantics(
+      container: true,
+      label: 'Library summary: $summary',
+      child: ExcludeSemantics(
+        child: PremiumHeroCard(
+          padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: 22,
+                runSpacing: 10,
+                children: [
+                  _SummaryFigure(value: stats.total, label: 'Saved'),
+                  _SummaryFigure(value: stats.favorites, label: 'Starred'),
+                  _SummaryFigure(value: stats.inProgress, label: 'Reading'),
+                  _SummaryFigure(value: stats.toRevisit, label: 'To revisit'),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                children: [
+                  for (final kind in ItemKind.values)
+                    if (stats.countFor(kind) > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: .18),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Text(
+                          '${stats.countFor(kind)} ${kind.label.toLowerCase()}'
+                          '${stats.countFor(kind) == 1 ? '' : 's'}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SummaryFigure extends StatelessWidget {
+  const _SummaryFigure({required this.value, required this.label});
+
+  final int value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '$value',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.w900,
+            letterSpacing: -.6,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: .86),
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _StorageSafetyReminder extends StatelessWidget {
   const _StorageSafetyReminder({
     required this.onDismiss,
@@ -1376,9 +1477,22 @@ class _LibraryPageState extends State<LibraryPage> {
           constraints: const BoxConstraints(maxWidth: 1040),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-            child: Column(
+            // The header scrolls inside a box capped at 65% of the page height,
+            // so banners, large text or short screens can never push the list
+            // off screen or overflow the column.
+            child: LayoutBuilder(
+              builder: (context, box) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight:
+                        box.hasBoundedHeight ? box.maxHeight * .65 : double.infinity,
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                 Row(
                   children: [
                     const BrandMark(size: 37),
@@ -1429,6 +1543,17 @@ class _LibraryPageState extends State<LibraryPage> {
                       onCreateBackup: widget.onCreateBackup ?? () {},
                     ),
                   ),
+                ValueListenableBuilder<List<SavedItem>>(
+                  valueListenable: widget.repository.items,
+                  builder: (context, items, _) {
+                    final stats = LibraryStats.compute(items);
+                    if (stats.isEmpty) return const SizedBox.shrink();
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 14),
+                      child: LibrarySummaryCard(stats: stats),
+                    );
+                  },
+                ),
                 const SizedBox(height: 17),
                 ValueListenableBuilder<int>(
                   valueListenable: widget.repository.skippedRecordCount,
@@ -1635,6 +1760,10 @@ class _LibraryPageState extends State<LibraryPage> {
                     ),
                   ),
                 const SizedBox(height: 8),
+                      ],
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: ValueListenableBuilder<List<SavedItem>>(
                     valueListenable: widget.repository.items,
@@ -1687,6 +1816,7 @@ class _LibraryPageState extends State<LibraryPage> {
                   ),
                 ),
               ],
+              ),
             ),
           ),
         ),

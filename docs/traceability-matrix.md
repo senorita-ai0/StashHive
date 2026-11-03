@@ -1906,3 +1906,6 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 
 | TSK-553 / TC-308–TC-310 | SH-007, NFR-002 | Premium surface/theme polish with dark/light parity, no layout-metric changes, bounded image-preview decoding. | `test/premium_surfaces_test.dart` — TC-308–TC-310 | Source committed; execution and device/browser visual review pending manual validation. |
+
+
+| TSK-554–TSK-556 / TC-311–TC-312 | SH-007, SH-006, NFR-002 | Library summary/stats, scroll-safe header, Reader source repairs and import-cycle removal. | `test/library_stats_test.dart` — TC-311–TC-312; `tool/check_dart_import_cycles.py` | Source committed; execution pending manual validation. |

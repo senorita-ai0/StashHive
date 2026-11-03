@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'article_reader.dart';
+import 'article_reader_core.dart';
 
 Future<ArticleReaderResult> loadArticleForReader(
   String url, {

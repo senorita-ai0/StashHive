@@ -2278,3 +2278,14 @@ The repository widget regression source now checks three export formats after sa
 
 - Confirm the dark theme registers the same page-transition builder types as the light theme for every platform.
 - **Status:** Source in `test/premium_surfaces_test.dart`; not run. Also confirm Library last-item actions are reachable above the floating Save button and large image attachments scroll smoothly in the Library list.
+
+
+### TC-311 — Library statistics (2026-11-03)
+
+- Verify totals, favorites, in-progress, per-kind counts and the to-revisit count (same cutoff as Rediscover) for empty and mixed libraries; confirm `byKind` is unmodifiable.
+- **Status:** Source in `test/library_stats_test.dart`; not run.
+
+### TC-312 — Library summary card display (2026-11-03)
+
+- Confirm labelled figures and per-type counts (singular/plural), a single screen-reader summary label, no overflow at 280 dp width with 2x text, and that the Library header still scrolls with banners present.
+- **Status:** Source in `test/library_stats_test.dart`; not run. Also review on a device/browser.
