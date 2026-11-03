@@ -1466,3 +1466,8 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 - Repaired the duplicated tail in `article_reader.dart` and the broken raw string in `bookmark_html_importer.dart`; split `article_reader_core.dart` to remove three import cycles (checker: none).
 - Made the Library header scroll-safe and added `LibraryStats` / `LibrarySummaryCard` with `test/library_stats_test.dart`.
 - Authored but not run; no formatter, analyzer, tests, builds or CI executed. CI remains manual-only.
+
+
+### TSK-557 — Static-review repairs — 2026-11-03
+
+- Fixed a duplicate local in `BackupCodec.decode`, a missing `dart:convert` import in `library_repository.dart`, a missing test import, CRLF handling in the Reader sanitizer and two escaped-`$` UI strings. Source only; nothing was run.

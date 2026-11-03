@@ -228,7 +228,7 @@ String? _extractFirstBalancedElementContents(String source, String tagName) {
   return null;
 }
 
-/// Removes complete HTML tag tokens without ending at a \`>\` inside a
+/// Removes complete HTML tag tokens without ending at a `>` inside a
 /// quoted attribute. Structural elements become line breaks; inline elements
 /// become spaces so adjacent words do not accidentally concatenate.
 String _stripHtmlTagsPreservingBlockBoundaries(String source) {
@@ -488,7 +488,11 @@ String sanitizeArticleMarkup(String source, {bool isHtml = true}) {
   // Remove non-printing control bytes; keep tabs and line separators for the
   // following whitespace normalization, and preserve meaningful Unicode.
   text = text.replaceAll(RegExp(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]'), ' ');
-  text = text.replaceAll('\r', '\n').replaceAll(RegExp(r'[\t\f\v ]+'), ' ');
+  // Treat CRLF as one line break so Windows-style text does not gain a blank line.
+  text = text
+      .replaceAll('\r\n', '\n')
+      .replaceAll('\r', '\n')
+      .replaceAll(RegExp(r'[\t\f\v ]+'), ' ');
   text = text
       .replaceAll(RegExp(r' *\n *'), '\n')
       .replaceAll(RegExp(r'\n{3,}'), '\n\n');

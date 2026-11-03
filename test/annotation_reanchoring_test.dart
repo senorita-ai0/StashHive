@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/services/annotation_reanchoring.dart';
+import 'package:stashhive/services/article_reader.dart';
 
 SavedAnnotation _annotation({
   String quote = 'target passage',

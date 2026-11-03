@@ -395,3 +395,9 @@ The current working runtime has no \`flutter\` or \`dart\` executable, so Dart/F
 - **Library header** now scrolls inside a box capped at 65% of the page height, so banners, large text or short screens can no longer push the list off screen.
 - **Library summary card** (`LibraryStats`, `LibrarySummaryCard`): totals for saved, starred, in-progress and to-revisit items plus a labelled count per item type, computed locally from the existing list. Hidden when the library is empty. TC-311 (stats logic), TC-312 (card display, semantics, narrow/large-text layout) in `test/library_stats_test.dart`.
 - All of the above is **unrun**: no formatter, analyzer, tests or builds. CI remains manual-only. At the checkpoint, run the Reader suites first to confirm the article_reader repair behaves as the tests expect.
+
+
+## Static-review repairs — TSK-557 (2026-11-03)
+
+- A read-only static review (no compiler available) found and the following were repaired: `backup_codec.dart` declared `referencedAttachmentKeys` twice in `BackupCodec.decode` (second renamed `attachmentKeysUsedByItems`, behaviour unchanged); `library_repository.dart` used `jsonEncode` without importing `dart:convert`; `annotation_reanchoring_test.dart` lacked the `article_reader.dart` import for `maxArticleTextCharacters`; the Reader sanitizer now treats CRLF as one line break (matches the existing normalization test); the annotation-review messages showed a literal `${result.totalMatches}` because of an escaped `$`.
+- Still unverified: `receive_sharing_intent ^1.9.0` was not checked against the `SharedMediaFile` fields the code assumes (`path`, `type`, `mimeType`, `message`, `SharedMediaType.image/video/file/text/url`). Everything remains unrun; CI stays manual-only.

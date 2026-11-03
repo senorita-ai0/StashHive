@@ -622,16 +622,16 @@ class BackupCodec {
       value.remove('base64');
     }
 
-    final referencedAttachmentKeys = items
+    final attachmentKeysUsedByItems = items
         .where((item) => item.hasAttachment)
         .map((item) => item.attachmentKey!)
         .toSet();
-    if (referencedAttachmentKeys.any((key) => !attachments.containsKey(key))) {
+    if (attachmentKeysUsedByItems.any((key) => !attachments.containsKey(key))) {
       throw const FormatException(
         'The backup is missing data for one or more attachments.',
       );
     }
-    if (attachments.keys.any((key) => !referencedAttachmentKeys.contains(key))) {
+    if (attachments.keys.any((key) => !attachmentKeysUsedByItems.contains(key))) {
       throw const FormatException(
         'The backup contains attachment data that no saved item references.',
       );

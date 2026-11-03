@@ -221,12 +221,12 @@ class _ArticleReaderPageState extends State<ArticleReaderPage> {
         ),
       AnnotationAnchorStatus.contextualMatch => (
           'Saved quote matched by context',
-          'The quote appears \${result.totalMatches} times. Its surrounding text identifies one strongest match. Review the highlighted passage before updating its saved position.',
+          'The quote appears ${result.totalMatches} times. Its surrounding text identifies one strongest match. Review the highlighted passage before updating its saved position.',
           Icons.manage_search_rounded,
         ),
       AnnotationAnchorStatus.ambiguous => (
           'Saved quote has multiple matches',
-          '\${result.totalMatches} exact copies were found, but the saved context does not safely distinguish one. Nothing has been highlighted or moved.',
+          '${result.totalMatches} exact copies were found, but the saved context does not safely distinguish one. Nothing has been highlighted or moved.',
           Icons.help_outline_rounded,
         ),
       AnnotationAnchorStatus.notFound => (
