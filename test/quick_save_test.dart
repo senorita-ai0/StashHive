@@ -11,6 +11,7 @@ import 'package:stashhive/main.dart' as app;
 import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/services/share_intake.dart';
 import 'package:stashhive/services/smart_tag_rules.dart';
+import 'support/fake_platform_file.dart';
 
 late Directory testDirectory;
 late LibraryRepository repository;
@@ -594,11 +595,7 @@ void main() {
           await releaseFailure.future;
           throw StateError('private provider path should not be shown');
         }
-        return PlatformFile(
-          name: 'retry.png',
-          size: attachmentBytes.length,
-          bytes: attachmentBytes,
-        );
+        return FakePlatformFile(name: 'retry.png', bytes: attachmentBytes);
       };
       addTearDown(() {
         app.quickSaveAttachmentPickerForTesting = null;
@@ -671,11 +668,7 @@ void main() {
         if (pickerAttempts == 1) {
           return _FailingLengthPlatformFile('unreadable.png');
         }
-        return PlatformFile(
-          name: 'retry-after-size-error.png',
-          size: attachmentBytes.length,
-          bytes: attachmentBytes,
-        );
+        return FakePlatformFile(name: 'retry-after-size-error.png', bytes: attachmentBytes);
       };
       addTearDown(() {
         app.quickSaveAttachmentPickerForTesting = null;
@@ -732,11 +725,7 @@ void main() {
             attachmentBytes.length,
           );
         }
-        return PlatformFile(
-          name: 'retry-after-read-error.png',
-          size: attachmentBytes.length,
-          bytes: attachmentBytes,
-        );
+        return FakePlatformFile(name: 'retry-after-read-error.png', bytes: attachmentBytes);
       };
       addTearDown(() {
         app.quickSaveAttachmentPickerForTesting = null;

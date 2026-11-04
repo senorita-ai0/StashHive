@@ -1471,3 +1471,8 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 ### TSK-557 — Static-review repairs — 2026-11-03
 
 - Fixed a duplicate local in `BackupCodec.decode`, a missing `dart:convert` import in `library_repository.dart`, a missing test import, CRLF handling in the Reader sanitizer and two escaped-`$` UI strings. Source only; nothing was run.
+
+
+### TSK-558 — file_picker 12 test compatibility and Android blocker analysis — 2026-11-05
+
+- Added `FakePlatformFile` and replaced eight removed-constructor uses in tests. Verified `receive_sharing_intent 1.9.0` and file_picker 12.x APIs against upstream source. Android debug build remains unverified. Nothing was run.

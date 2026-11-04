@@ -9,6 +9,7 @@ import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/main.dart' as app;
 import 'package:stashhive/models/saved_item.dart';
+import 'support/fake_platform_file.dart';
 
 late Directory testDirectory;
 late LibraryRepository repository;
@@ -28,11 +29,7 @@ SavedItem buildExistingLink() => SavedItem(
 
 PlatformFile bookmarkFile(String html) {
   final bytes = Uint8List.fromList(utf8.encode(html));
-  return PlatformFile(
-    name: 'bookmarks.html',
-    size: bytes.length,
-    bytes: bytes,
-  );
+  return FakePlatformFile(name: 'bookmarks.html', bytes: bytes);
 }
 
 const String mixedBookmarkHtml = '''

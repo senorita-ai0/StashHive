@@ -14,6 +14,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:stashhive/data/library_repository.dart';
 import 'package:stashhive/models/saved_item.dart';
 import 'package:stashhive/main.dart' as app;
+import 'support/fake_platform_file.dart';
 
 final class _FailingBackupLengthFile extends PlatformFile {
   _FailingBackupLengthFile();
@@ -519,11 +520,7 @@ void main() {
       app.backupFilePickerForTesting = () async {
         pickerAttempts++;
         if (pickerAttempts == 1) return _FailingBackupLengthFile();
-        return PlatformFile(
-          name: 'retry-backup.json',
-          size: backupBytes.length,
-          bytes: backupBytes,
-        );
+        return FakePlatformFile(name: 'retry-backup.json', bytes: backupBytes);
       };
       addTearDown(() {
         app.backupFilePickerForTesting = null;
@@ -594,11 +591,7 @@ void main() {
       app.backupFilePickerForTesting = () async {
         pickerAttempts++;
         if (pickerAttempts == 1) return _FailingBackupByteStreamFile();
-        return PlatformFile(
-          name: 'retry-after-stream-error.json',
-          size: backupBytes.length,
-          bytes: backupBytes,
-        );
+        return FakePlatformFile(name: 'retry-after-stream-error.json', bytes: backupBytes);
       };
       addTearDown(() {
         app.backupFilePickerForTesting = null;
@@ -668,11 +661,7 @@ void main() {
       final backupBytes = Uint8List.fromList(
         utf8.encode(await repository.createBackup()),
       );
-      app.backupFilePickerForTesting = () async => PlatformFile(
-            name: 'restore-navigation-guard.json',
-            size: backupBytes.length,
-            bytes: backupBytes,
-          );
+      app.backupFilePickerForTesting = () async => FakePlatformFile(name: 'restore-navigation-guard.json', bytes: backupBytes);
       addTearDown(() {
         app.backupFilePickerForTesting = null;
       });
@@ -793,11 +782,7 @@ void main() {
       final backupBytes = Uint8List.fromList(
         utf8.encode(await repository.createBackup()),
       );
-      app.backupFilePickerForTesting = () async => PlatformFile(
-            name: 'restore-failure-guard.json',
-            size: backupBytes.length,
-            bytes: backupBytes,
-          );
+      app.backupFilePickerForTesting = () async => FakePlatformFile(name: 'restore-failure-guard.json', bytes: backupBytes);
       addTearDown(() {
         app.backupFilePickerForTesting = null;
       });
