@@ -7,6 +7,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform, visibleForTesting;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'
+    show Clipboard, ClipboardData, HardwareKeyboard, KeyDownEvent, KeyEvent, LogicalKeyboardKey;
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,6 +25,7 @@ import 'services/library_csv_export.dart';
 import 'services/library_stats.dart';
 import 'services/link_health_checker.dart';
 import 'services/mime_types.dart';
+import 'services/reading_time.dart';
 import 'services/rediscovery.dart';
 import 'services/search_filters.dart';
 import 'services/smart_tag_rules.dart';
@@ -836,6 +839,7 @@ class _HomeShellState extends State<HomeShell> {
   void initState() {
     super.initState();
     _showStorageReminder = !widget.repository.hasSeenStorageReminder;
+    HardwareKeyboard.instance.addHandler(_handleShortcutKey);
     // Incoming share intents are configured for Android only in this phase.
     // The browser build and unsupported platforms never invoke the native plugin.
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
@@ -1058,8 +1062,22 @@ class _HomeShellState extends State<HomeShell> {
     );
   }
 
+  /// Ctrl/Cmd+K opens Search. It only acts while this shell is the visible
+  /// route, so it never interrupts a dialog, form or detail page.
+  bool _handleShortcutKey(KeyEvent event) {
+    if (event is! KeyDownEvent || event.logicalKey != LogicalKeyboardKey.keyK) {
+      return false;
+    }
+    final keyboard = HardwareKeyboard.instance;
+    if (!keyboard.isControlPressed && !keyboard.isMetaPressed) return false;
+    if (!mounted || ModalRoute.of(context)?.isCurrent != true) return false;
+    _openSearch('');
+    return true;
+  }
+
   @override
   void dispose() {
+    HardwareKeyboard.instance.removeHandler(_handleShortcutKey);
     unawaited(_shareSubscription?.cancel() ?? Future<void>.value());
     // Also release the currently active batch: it has already been removed
     // from the waiting list, and a navigator teardown could otherwise leave
@@ -1207,8 +1225,12 @@ class LibrarySummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final summary = '${stats.total} saved, ${stats.favorites} starred, '
+    var summary = '${stats.total} saved, ${stats.favorites} starred, '
         '${stats.inProgress} in progress, ${stats.toRevisit} to revisit';
+    if (stats.topTags.isNotEmpty) {
+      summary += ', top tags: '
+          '${stats.topTags.map((t) => '${t.tag} ${t.count}').join(', ')}';
+    }
     return Semantics(
       container: true,
       label: 'Library summary: $summary',
@@ -1256,6 +1278,38 @@ class LibrarySummaryCard extends StatelessWidget {
                       ),
                 ],
               ),
+              if (stats.topTags.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    for (final tag in stats.topTags)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: .5),
+                          ),
+                        ),
+                        child: Text(
+                          '${tag.tag} · ${tag.count}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
@@ -3031,7 +3085,7 @@ class SavedItemTile extends StatelessWidget {
                         const SizedBox(width: 7),
                         Expanded(
                           child: Text(
-                            _dateLabel(item.updatedAt),
+                            _dateAndReadingLabel(item),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.bodySmall?.copyWith(
@@ -3071,6 +3125,26 @@ class SavedItemTile extends StatelessWidget {
                     }
                   } else if (action == 'open') {
                     onTap();
+                  } else if (action == 'copy') {
+                    final url = item.url;
+                    if (url == null) return;
+                    var copied = true;
+                    try {
+                      await Clipboard.setData(ClipboardData(text: url));
+                    } catch (_) {
+                      copied = false;
+                    }
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            copied
+                                ? 'Link copied.'
+                                : 'Could not copy the link. Open the item and copy it from there.',
+                          ),
+                        ),
+                      );
+                    }
                   }
                 },
                 itemBuilder: (_) => [
@@ -3079,6 +3153,8 @@ class SavedItemTile extends StatelessWidget {
                     child: Text(item.isFavorite ? 'Remove favorite' : 'Add to favorites'),
                   ),
                   const PopupMenuItem(value: 'open', child: Text('View details')),
+                  if (item.url != null)
+                    const PopupMenuItem(value: 'copy', child: Text('Copy link')),
                 ],
               ),
             ],
@@ -3093,6 +3169,12 @@ class SavedItemTile extends StatelessWidget {
     if (item.content.trim().isNotEmpty) return item.content.trim();
     if (item.attachmentName != null) return item.attachmentName!;
     return 'Saved locally';
+  }
+
+  String _dateAndReadingLabel(SavedItem item) {
+    final date = _dateLabel(item.updatedAt);
+    final reading = readingTimeLabel(item.content);
+    return reading == null ? date : '$date · $reading';
   }
 
   String _dateLabel(DateTime date) {

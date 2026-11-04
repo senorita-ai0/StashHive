@@ -1912,3 +1912,6 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 
 | TSK-559 / TC-313 | SH-007, NFR-002 | Document previews show a text file-type label without exposing the file name. | `test/document_badge_test.dart` — TC-313 | Source committed; execution pending manual validation. |
+
+
+| TSK-560–TSK-563 / TC-314–TC-317 | SH-007, SH-010, NFR-002 | Local reading-time estimate, top-tag summary, safe Copy link, and a visible-route-only Search shortcut. | `test/feature_pack_test.dart` — TC-314–TC-317 | Source committed; execution and browser verification pending manual validation. |

@@ -2296,3 +2296,12 @@ The repository widget regression source now checks three export formats after sa
 - `fileExtensionBadge`: uppercase extension for common names/paths; null for no extension, dotfiles, trailing dot, over-long or non-alphanumeric extensions; never returns part of the name.
 - Document tile shows the badge; no badge without an extension or for non-document kinds; no overflow at 2x text.
 - **Status:** Source in `test/document_badge_test.dart`; not run. Visually check on a device.
+
+
+### TC-314–TC-317 — Reading time, top tags, Copy link, Ctrl/Cmd+K (2026-11-05)
+
+- TC-314: no estimate below 400 words; 400 -> 2 min, 401 -> 3 min, 1000 -> 5 min; Urdu text counted; cap at 999.
+- TC-315: tag ranking, case grouping, blank tags ignored, unmodifiable list, card display and screen-reader label.
+- TC-316: tile shows "3 min read" for 600 words and none for short text; Copy link copies the URL, reports a clipboard failure safely, and is absent for items without a URL.
+- TC-317: Ctrl+K and Cmd+K select Search, plain K does not, and nothing happens while another page covers the shell.
+- **Status:** Source in `test/feature_pack_test.dart`; not run. Check the shortcut in Chrome, Firefox and Safari.

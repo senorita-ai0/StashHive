@@ -1481,3 +1481,8 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 ### TSK-559 — Document type badge — TC-313 — 2026-11-05
 
 - Added `fileExtensionBadge` and the document thumbnail badge with `test/document_badge_test.dart`. Authored but not run; no formatter, analyzer, tests, builds or CI executed.
+
+
+### TSK-560–TSK-563 — Feature pack — TC-314–TC-317 — 2026-11-05
+
+- Added `reading_time.dart`, top-tag ranking in `LibraryStats`, the Copy link action and the Ctrl/Cmd+K handler, with `test/feature_pack_test.dart`. Authored but not run; no formatter, analyzer, tests, builds or CI executed.

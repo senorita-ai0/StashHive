@@ -425,3 +425,12 @@ The current working runtime has no \`flutter\` or \`dart\` executable, so Dart/F
 
 - Document tiles without an image preview now show a short file-type label (for example PDF, DOCX) under the icon, derived only from the stored attachment name's extension (`fileExtensionBadge`); the file name is not repeated. Text label, not colour alone; hidden for thumbnails smaller than 56 dp.
 - Tests in `test/document_badge_test.dart` (helper cases plus tile rendering at 2x text). **Authored but not run.** Masonry layout and image previews beyond this remain optional refinements.
+
+
+## Feature pack — reading time, top tags, Copy link, Ctrl/Cmd+K — TSK-560–TSK-563 / TC-314–TC-317 (2026-11-05)
+
+- **Reading-time estimate** (`lib/services/reading_time.dart`): items with at least 400 whitespace-separated words show "N min read" (200 wpm, rounded up, capped at 999) after the date. Computed locally from stored text; nothing is stored. Languages written without spaces (for example Chinese) are undercounted, so it is a hint.
+- **Top tags** on the Library summary card: the three most-used tags (case-insensitive, first-seen casing, each counted once per item) with counts, also announced in the card's screen-reader label.
+- **Copy link** in each link item's actions menu: user-initiated clipboard copy with a safe failure message; nothing is logged.
+- **Ctrl/Cmd+K** opens Search (web/desktop companion convenience). It uses a global keyboard handler that acts only when the main shell is the visible route, so dialogs, forms and detail pages are never interrupted.
+- Tests: `test/feature_pack_test.dart` (TC-314 reading time, TC-315 top tags, TC-316 tile reading label and Copy link, TC-317 shortcut). **Authored but not run.** Browsers may reserve Ctrl/Cmd+K in some configurations; the shortcut is untested in a real browser.
