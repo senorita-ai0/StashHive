@@ -411,3 +411,11 @@ The current working runtime has no \`flutter\` or \`dart\` executable, so Dart/F
 - **Test repair:** file_picker 12 made `PlatformFile` an abstract base class and removed the old `PlatformFile(name:, size:, bytes:)` constructor, so eight test constructions would not compile. Added `test/support/fake_platform_file.dart` (`FakePlatformFile`) and switched the bookmark, backup/restore and Quick Save tests to it.
 - **SH-005 stays blocked:** the isolated PDF probe has to be executed (it needs a Flutter SDK or the manual workflow) before any OCR/PDF decision; no production dependency was added.
 - Still unrun; CI remains manual-only.
+
+## Executed checks — 2026-11-05 (authoring environment, Python 3.13, no Flutter/Dart SDK)
+
+- `python3 -m unittest tool.test_configure_android_build`: 4 tests, OK.
+- `python3 -m unittest tool.test_configure_android_share_intents`: 7 tests, OK.
+- `python3 -m unittest tool.test_check_dart_import_cycles`: 4 tests, OK.
+- `python3 tool/check_dart_import_cycles.py`: no local import/export cycles in 32 source files (it reported three before the `article_reader_core.dart` split).
+- **Not run (no SDK):** `dart format`, `flutter analyze`, `flutter test`, web build, Android build, the PDF probe. The configurators were tested against synthetic fixtures only, not a freshly generated Flutter Android runner.
