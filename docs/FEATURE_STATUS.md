@@ -419,3 +419,9 @@ The current working runtime has no \`flutter\` or \`dart\` executable, so Dart/F
 - `python3 -m unittest tool.test_check_dart_import_cycles`: 4 tests, OK.
 - `python3 tool/check_dart_import_cycles.py`: no local import/export cycles in 32 source files (it reported three before the `article_reader_core.dart` split).
 - **Not run (no SDK):** `dart format`, `flutter analyze`, `flutter test`, web build, Android build, the PDF probe. The configurators were tested against synthetic fixtures only, not a freshly generated Flutter Android runner.
+
+
+## SH-007 increment — document type badge — TSK-559 / TC-313 (2026-11-05)
+
+- Document tiles without an image preview now show a short file-type label (for example PDF, DOCX) under the icon, derived only from the stored attachment name's extension (`fileExtensionBadge`); the file name is not repeated. Text label, not colour alone; hidden for thumbnails smaller than 56 dp.
+- Tests in `test/document_badge_test.dart` (helper cases plus tile rendering at 2x text). **Authored but not run.** Masonry layout and image previews beyond this remain optional refinements.

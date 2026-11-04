@@ -1909,3 +1909,6 @@ FR-001–007, FR-010–011 and the source portion of FR-012–013 have initial i
 
 
 | TSK-554–TSK-556 / TC-311–TC-312 | SH-007, SH-006, NFR-002 | Library summary/stats, scroll-safe header, Reader source repairs and import-cycle removal. | `test/library_stats_test.dart` — TC-311–TC-312; `tool/check_dart_import_cycles.py` | Source committed; execution pending manual validation. |
+
+
+| TSK-559 / TC-313 | SH-007, NFR-002 | Document previews show a text file-type label without exposing the file name. | `test/document_badge_test.dart` — TC-313 | Source committed; execution pending manual validation. |

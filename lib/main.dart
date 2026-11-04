@@ -3203,7 +3203,37 @@ class _ItemThumbnailState extends State<_ItemThumbnail> {
           color: item.kind.accent.withValues(alpha: .15),
         ),
       ),
-      child: Icon(item.kind.icon, color: item.kind.accent, size: 29),
+      child: _fallbackContent(item, size),
+    );
+  }
+
+  /// Documents also show their file type (for example PDF) so saved files are
+  /// distinguishable at a glance; the label is text, not colour alone.
+  Widget _fallbackContent(SavedItem item, double size) {
+    final badge =
+        item.kind == ItemKind.document && size >= 56
+            ? fileExtensionBadge(item.attachmentName)
+            : null;
+    if (badge == null) {
+      return Icon(item.kind.icon, color: item.kind.accent, size: 29);
+    }
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(item.kind.icon, color: item.kind.accent, size: 24),
+        const SizedBox(height: 2),
+        Text(
+          badge,
+          maxLines: 1,
+          overflow: TextOverflow.clip,
+          style: TextStyle(
+            color: item.kind.readableTextAccent,
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: .4,
+          ),
+        ),
+      ],
     );
   }
 }

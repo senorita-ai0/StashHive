@@ -1476,3 +1476,8 @@ Added a regression case for charset=cp1252 and a paired Latin-1 assertion so bot
 ### TSK-558 — file_picker 12 test compatibility and Android blocker analysis — 2026-11-05
 
 - Added `FakePlatformFile` and replaced eight removed-constructor uses in tests. Verified `receive_sharing_intent 1.9.0` and file_picker 12.x APIs against upstream source. Android debug build remains unverified. Nothing was run.
+
+
+### TSK-559 — Document type badge — TC-313 — 2026-11-05
+
+- Added `fileExtensionBadge` and the document thumbnail badge with `test/document_badge_test.dart`. Authored but not run; no formatter, analyzer, tests, builds or CI executed.

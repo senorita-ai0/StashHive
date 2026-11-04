@@ -2289,3 +2289,10 @@ The repository widget regression source now checks three export formats after sa
 
 - Confirm labelled figures and per-type counts (singular/plural), a single screen-reader summary label, no overflow at 280 dp width with 2x text, and that the Library header still scrolls with banners present.
 - **Status:** Source in `test/library_stats_test.dart`; not run. Also review on a device/browser.
+
+
+### TC-313 — Document type badge (2026-11-05)
+
+- `fileExtensionBadge`: uppercase extension for common names/paths; null for no extension, dotfiles, trailing dot, over-long or non-alphanumeric extensions; never returns part of the name.
+- Document tile shows the badge; no badge without an extension or for non-document kinds; no overflow at 2x text.
+- **Status:** Source in `test/document_badge_test.dart`; not run. Visually check on a device.
