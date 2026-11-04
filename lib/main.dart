@@ -6188,7 +6188,7 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 22),
-              const Center(
+              Center(
                 child: Text(
                   'Made for the things you want to keep.',
                   style: TextStyle(color: mutedTextColor(context), fontSize: 12),
@@ -7091,7 +7091,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                       color: const Color(0xFFE7F7EF),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
                         Icon(Icons.verified_user_outlined, color: Color(0xFF2F8968), size: 28),
                         SizedBox(width: 12),
@@ -7251,7 +7251,7 @@ class _BackupPrivacyPageState extends State<BackupPrivacyPage> {
                   const SizedBox(height: 20),
                   const DetailSectionLabel(label: 'BACKUP FORMAT'),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Version 1 JSON backup. Includes saved metadata, tags, collections, and copied attachments up to 15 MB each and 100 MB combined. Import validates the version, IDs, URL schemes, file sizes and attachment data, and checks SHA-256 integrity for checksummed attachments before writing.',
                     style: TextStyle(color: mutedTextColor(context), fontSize: 12, height: 1.5),
                   ),

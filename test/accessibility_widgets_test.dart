@@ -1592,20 +1592,23 @@ void main() {
   });
 
   testWidgets('Collection contents match assignments ignoring casing', (tester) async {
-    repository.items.value = const [
-      SavedItem(
-        id: 'lowercase-collection-content',
-        kind: ItemKind.link,
-        title: 'Case-insensitive collection result',
-        content: '',
-        url: 'https://example.com/case',
-        tags: [],
-        collection: 'learning',
-        isFavorite: false,
-        createdAtMs: 1,
-        updatedAtMs: 2,
-      ),
-    ];
+    // `items` is read-only, so seed a legacy lowercase assignment directly in
+    // storage and reopen the repository, as other tests in this file do.
+    final legacy = SavedItem(
+      id: 'lowercase-collection-content',
+      kind: ItemKind.link,
+      title: 'Case-insensitive collection result',
+      content: '',
+      url: 'https://example.com/case',
+      tags: const <String>[],
+      collection: 'learning',
+      isFavorite: false,
+      createdAtMs: 1,
+      updatedAtMs: 2,
+    );
+    await Hive.box<dynamic>('stashhive_items_v1').put(legacy.id, legacy.toMap());
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
 
     await tester.pumpWidget(
       MaterialApp(
@@ -1625,20 +1628,21 @@ void main() {
 
   testWidgets('collection row counts legacy assignments case-insensitively', (tester) async {
     await repository.addCollection('Learning');
-    repository.items.value = const [
-      SavedItem(
-        id: 'lowercase-collection-count',
-        kind: ItemKind.link,
-        title: 'Count this legacy item',
-        content: '',
-        url: 'https://example.com/collection-count',
-        tags: [],
-        collection: 'learning',
-        isFavorite: false,
-        createdAtMs: 1,
-        updatedAtMs: 2,
-      ),
-    ];
+    final legacy = SavedItem(
+      id: 'lowercase-collection-count',
+      kind: ItemKind.link,
+      title: 'Count this legacy item',
+      content: '',
+      url: 'https://example.com/collection-count',
+      tags: const <String>[],
+      collection: 'learning',
+      isFavorite: false,
+      createdAtMs: 1,
+      updatedAtMs: 2,
+    );
+    await Hive.box<dynamic>('stashhive_items_v1').put(legacy.id, legacy.toMap());
+    repository.dispose();
+    repository = await LibraryRepository.openInitializedForTesting();
 
     await tester.pumpWidget(
       MaterialApp(
